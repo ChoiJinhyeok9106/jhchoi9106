@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.commons.maria.file">
+	<select id="getFileList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.FILE_ID
+			 , A.FILE_KEY
+			 , A.FILE_HANGMOK
+			 , A.FILE_NO
+			 , A.FILE_NM
+			 , A.FILE_SIZE
+			 , A.FILE_PATH
+			 , A.FILE_TYPE
+			 , A.INSERT_DTTM
+			 , A.INSERT_ID
+			 , A.INSERT_IP
+			 , A.INSERT_PGM
+			 , A.UPDATE_DTTM
+			 , A.UPDATE_ID
+			 , A.UPDATE_IP
+			 , A.UPDATE_PGM
+		  FROM ${SERVICE_ABBR_NM}_FILE A
+		 WHERE 1=1
+		   AND A.FILE_ID = #{FILE_ID}
+		   AND A.FILE_KEY = #{FILE_KEY}
+		   AND A.FILE_HANGMOK = #{FILE_HANGMOK}
+		   <if test="FILE_NO != null and !''.equals(FILE_NO)">AND A.FILE_NO = #{FILE_NO}</if>
+		 ORDER BY A.FILE_NM 
+	</select>
+	
+	<insert id="insertFile" parameterType="hashMap">
+		<selectKey resultType="string" keyProperty="fileNo" order="BEFORE">
+			SELECT COALESCE(MAX(CAST(A.FILE_NO AS INTEGER)),0)+1 
+			  FROM ${SERVICE_ABBR_NM}_FILE A
+			 WHERE A.FILE_ID = #{FILE_ID}
+			   AND A.FILE_KEY = #{FILE_KEY}
+			   AND A.FILE_HANGMOK = #{FILE_HANGMOK}
+		</selectKey> 
+		
+		INSERT INTO ${SERVICE_ABBR_NM}_FILE
+	 	(
+	 		FILE_ID
+		  , FILE_KEY
+		  , FILE_HANGMOK
+		  , FILE_NO
+		  , FILE_NM
+		  , FILE_SIZE
+		  , FILE_PATH
+		  , FILE_TYPE
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+	 	)VALUES 
+	 	(
+	 		#{FILE_ID}
+		  , #{FILE_KEY}
+		  , #{FILE_HANGMOK}
+		  , #{fileNo}
+		  , #{FILE_NM}
+		  , #{FILE_SIZE}
+		  , #{FILE_PATH}
+		  , #{FILE_TYPE}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+   		)
+	</insert>
+	
+	<delete id="deleteFile" parameterType="hashMap">
+		DELETE FROM ${SERVICE_ABBR_NM}_FILE
+		 WHERE FILE_ID = #{FILE_ID}
+		   AND FILE_KEY = #{FILE_KEY}
+		   AND FILE_HANGMOK = #{FILE_HANGMOK}
+		   <if test="FILE_NO != null">AND FILE_NO = #{FILE_NO}</if>
+	</delete>
+</mapper>

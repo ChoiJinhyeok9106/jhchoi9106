@@ -1,0 +1,218 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mileage.css" />  
+
+<h2>마일리지 관리</h2>
+<section class="sub_cont_box mileage-stu">
+    <div class="mileage-stu-top">
+        <div class="row form-row">
+            <div class="form-group col s12 l12 xl6">            
+                <div class="user-info-box">
+                    <div class="photo-line">
+                        <span class="photo"><img src="/service/design/images/mileage/counsel_main_photo04.jpg" alt=""></span>
+                    </div>
+                    <span class="name">강수민</span>
+                    <span class="mileage"><span class="initial">M</span><span class="num">15,000</span>마일리지</span>
+                </div>
+            </div>
+            <div class="form-group col s12 l12 xl6">                                     
+                <div class="user-info-box f-right">
+                    <ul class="info-list">
+                        <li>201202001</li>
+                        <li>간호과</li>
+                        <li>2학년</li>
+                    </ul>
+                    <div class="btn-line">
+                        <a href="#!" class="btn-myinfo">개인정보관리</a>
+                    </div>
+                </div>                              
+            </div>
+        </div>
+    </div>
+    <div class="box-type03 pd20 row form-row">
+        <div class="col s12">
+            <div class="col-inline left">
+                <label class="label-type00 size-m icon-search">검색</label> 
+                <select name="pSearchType" id="pSearchType" class="size-m" style="width: 180px;">
+                    <option value="">마일리지 구분</option>
+                </select> 
+                <select name="pSearchType" id="pSearchType" class="size-m" style="width: 250px;">
+                    <option value="">마일리지 상태</option>
+                </select>                                  
+                <input type="button" value="조회" class="btn type01 size-m"> 
+            </div>
+        </div>
+    </div>
+    <div class="row form-row mileage-array">
+        <div class="form-group col s12 l6">
+            <h2 class="h2">마일리지 내역</h2>
+        </div>
+        <div class="form-group col s12 l6 right">
+            <div class="array-list">
+                <a href="#!" class="active">신청일순</a>
+                <a href="#!">처리일순</a>
+            </div>
+        </div>
+    </div>
+
+    <table class="table-type05 response">
+        <caption>마일리지 내역 테이블로 내역, 신청일자, 처리일자, 포인트, 진행상태 항목별 순서대로 안내하는 표입니다</caption>
+        <colgroup>
+            <col>
+            <col width="30%" />
+            <col width="15%" />
+            <col width="18%" />
+        </colgroup>                        
+        <tbody>
+            <!-- 상태아이콘 종류 (icon-alert-circle col2),(icon-slash col01),(icon-checkmark col03) 색상과 아이콘을 셋트로 써야함
+                진행상태 글자색도 같은색상으로 써야함 상태가col01이면 진행상태도 col01  
+                리스트 클릭하면 아래로 펼쳐짐 -->
+            <tr>
+                <td data-header="내역" class="left">
+                    <span class="mileage-division">이력활동</span><span class="mileage-title">기타역량 추가 마일리지</span>
+                </td>
+                <td data-header="날짜" class="left">
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit">신청일자 :</span><span class="mileage-date">2019.02.25</span>
+                    </div>
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit second">처리일자 :</span><span class="mileage-date">2019.02.26</span>
+                    </div>
+                </td>
+                <td data-header="마일리지" class="left">
+                    <span class="mileage-tit">[적립]</span><span class="mileage-point col01">100</span>
+                </td>
+                <td data-header="진행상태">
+                    <span class="statue-txt col01">적립거부</span><span class="statue-icon icon-slash col01"></span>
+                </td>
+            </tr>
+            <tr class="hidden-tr">
+                <td colspan="4" class="one-col">
+                    <div class="detail-box">
+                        <span class="tit">거부사유</span><span class="cont red">최대 적립 횟수 초과입니다</span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="내역" class="left">
+                    <span class="mileage-division">이력활동</span><span class="mileage-title">외국어역량 추가 마일리지</span>
+                </td>
+                <td data-header="날짜" class="left">
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit">신청일자 :</span><span class="mileage-date">2019.02.03</span>
+                    </div>
+                    <div class="mileage-date-line"><span class="mileage-date-tit second">처리일자 :</span></div>
+                </td>
+                <td data-header="마일리지" class="left">
+                    <span class="mileage-tit">[적립]</span><span class="mileage-point col01">100</span>
+                </td>
+                <td data-header="진행상태">
+                    <span class="statue-txt col02">적립신청</span><span class="statue-icon icon-alert-circle col02"></span>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="내역" class="left">
+                    <span class="mileage-division">장학금</span><span class="mileage-title">도서상품권 5만원</span>
+                </td>
+                <td data-header="날짜" class="left">
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit">차감일자 :</span><span class="mileage-date">2019.02.16</span>
+                    </div>
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit second">취소일자 :<span class="mileage-date">2019.02.17</span>
+                    </div>
+                </td>
+                <td data-header="마일리지" class="left">
+                    <span class="mileage-tit">[반환]</span><span class="mileage-point col02">1000</span>
+                </td>
+                <td data-header="진행상태">
+                    <span class="statue-txt col01">차감취소</span><span class="statue-icon icon-slash col01"></span>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="내역" class="left">
+                    <span class="mileage-division">장학금</span><span class="mileage-title">도서상품권 10만원</span>
+                </td>
+                <td data-header="날짜" class="left">
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit">차감일자 :</span><span class="mileage-date">2019.02.05</span>
+                    </div>
+                </td>
+                <td data-header="마일리지" class="left">
+                    <span class="mileage-tit">[차감]</span><span class="mileage-point col03">1500</span>
+                </td>
+                <td data-header="진행상태">
+                    <span class="statue-txt col03">차감승인</span><span class="statue-icon icon-checkmark col03"></span>
+                </td>
+            </tr>
+            <tr class="hidden-tr">
+                <td colspan="4" class="one-col">
+                    <div class="detail-box">
+                        <p class="tit02">상세내역</p>
+                        <p class="cont02">[차감승인] 장학금  - 도서상품권 10만원<br/>
+                        [차감마일리지] 1500 마일리지<br/>
+                        [차감일자] 2019.01.10</p>
+                    </div>
+                    <div class="btn-line center">
+                        <a href="#!" class="btn type02 size-m bg-red">차감취소</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="내역" class="left">
+                    <span class="mileage-division">비교과프로그램</span><span class="mileage-title">비교과 수강 마일리지</span>
+                </td>
+                <td data-header="날짜" class="left">
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit">신청일자 :</span><span class="mileage-date">2019.02.03</span>
+                    </div>
+                    <div class="mileage-date-line">
+                        <span class="mileage-date-tit second">처리일자 :<span class="mileage-date">2019.02.03</span>
+                    </div>
+                </td>
+                <td data-header="마일리지" class="left">
+                    <span class="mileage-tit">[적립]</span><span class="mileage-point col02">300</span>
+                </td>
+                <td data-header="진행상태">
+                    <span class="statue-txt col03">적립승인</span><span class="statue-icon icon-checkmark col03"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- 페이징 -->
+    <div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+            <a href="#" class="active" title="1 페이지">1</a>
+            <a href="#" title="2 페이지">2</a>
+            <a href="#" title="3 페이지">3</a>
+            <a href="#" title="4 페이지">4</a>
+            <a href="#" title="5 페이지">5</a>
+            <a href="#" title="6 페이지">6</a>
+            <a href="#" title="7 페이지">7</a>
+            <a href="#" title="8 페이지">8</a>
+            <a href="#" title="9 페이지">9</a>
+            <a href="#" title="10 페이지">10</a>
+        </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+</section>
+
+            
+<script>
+    $(document).ready(function() {
+        // 마일리지 상세 펼치고, 닫침
+        $('.table-type05 tbody tr').not('.hidden-tr').on('click', function() {            
+            if ($(this).hasClass('active')) {
+                $(this).next('.hidden-tr').removeClass('on');
+                $(this).removeClass('active');
+                
+            } else {
+                $('.table-type05 tr').removeClass('active');
+               $('.table-type05 .hidden-tr').removeClass('on');
+                $(this).next('.hidden-tr').addClass('on');
+                $(this).not('.hidden-tr').addClass('active');
+            }
+        });
+    });    
+</script>

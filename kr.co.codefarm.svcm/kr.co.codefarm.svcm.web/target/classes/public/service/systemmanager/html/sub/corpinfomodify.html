@@ -1,0 +1,183 @@
+<script src="/assets/js/vendor/rsa/jsbn.js"></script>
+<script src="/assets/js/vendor/rsa/rsa.js"></script>
+<script src="/assets/js/vendor/rsa/prng4.js"></script>
+<script src="/assets/js/vendor/rsa/rng.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+
+<h2>업체정보수정</h2>
+<section class="sub_cont_box" id="app">
+    <section class="form-section myinfo-modify" id="mainListLoading">
+        <h2 class="h2">업체정보</h2>                    
+        <div class="row form-row resume-basic" v-if="corpObj">
+            <div class="form-group col s12 xl12">
+                <div class="row form-row">
+					<div class="form-group col s12 l6">
+			            <label class="label-type01 required" for="bizno">기관사업자번호</label>
+			            <input class="size-m" type="text" id="bizno"  name="bizno" data-vv-as="기관사업자번호" v-model="corpObj.BIZNO" v-validate="{required: true, regex: /^([0-9]{3})-([0-9]{2})-([0-9]{5})$/}" v-bind:class="{'invalid':errors.has('bizno')}" maxlength="12"/>
+			            <invalid-message :visible="true" :name="'bizno'" :verror="errors"/>
+			        </div> 
+			    	<div class="form-group col s12 l6">
+			            <label class="label-type01 required" for="insttNm">회사명</label>
+			            <input class="size-m" type="text" id="insttNm"  name="insttNm" data-vv-as="회사명" v-model="corpObj.INSTT_NM" v-validate="'required|max:300'" v-bind:class="{'invalid':errors.has('insttNm')}"/>
+			    		<invalid-message :visible="true" :name="'insttNm'" :verror="errors"/>
+			        </div> 
+			    </div>
+				<div class="row form-row">
+			        <div class="form-group col s12 m6">
+			            <label class="label-type01 required" for="ceoNm">대표자명</label>
+			            <input class="size-m" type="text" id="ceoNm"  name="ceoNm" data-vv-as="회사명" v-model="corpObj.CEO_NM" v-validate="'max:300'" v-bind:class="{'invalid':errors.has('ceoNm')}" maxlength="50"/>
+			            <invalid-message :visible="true" :name="'ceoNm'" :verror="errors"/>
+			        </div> 
+			    	<div class="form-group col s12 m6">
+			            <label class="label-type01 required" for="telNo">전화 번호</label>
+			            <input class="size-m" type="text" id="telNo"  name="telNo" data-vv-as="전화번호" v-model="corpObj.TEL_NO" v-validate="'required|min:11|max:13'" minlegnth="11" maxlength="13"  v-bind:class="{'invalid':errors.has('telNo')}" maxlength="100"/>
+			            <invalid-message :visible="true" :name="'telNo'" :verror="errors"/>
+			        </div>
+				</div>
+            </div>
+        </div>
+	    <div class="btn-line right">	    	
+<!-- 	    	<a href="#!" class="btn type02 size-m" @click="messageModal.openModal('confirm','업체정보 수정','현재정보로 저장하시겠습니까?','middle','save','')">저장</a> -->
+	    	<a href="#!" class="btn type02 size-m" @click="openModal()">저장</a>
+	    </div>
+    </section>
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		pwd: '',
+		key: '',
+		corpObj: '',
+	    mainListLoading: {id:'mainListLoading', val:false},
+        messageModal: new ModalSet('message-modal'),	// confirm 모달
+	},
+	//데이터 감시
+	watch: {
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+		'corpObj.BIZNO':{
+			handler: function(val, oldVal){
+				this.corpObj.BIZNO = this.corpObj.BIZNO.replace(/[^0-9]/g,'').replaceAll('-','').replace(/([0-9]{3})([0-9]{2})([0-9]{5})$/, '$1-$2-$3');
+			}
+		},
+		'corpObj.TEL_NO':{
+			handler: function(val, oldVal){
+				this.corpObj.TEL_NO = this.corpObj.TEL_NO.replace(/[^0-9]/g,'').replaceAll('-','').replace(/([0-9]{2,3})([0-9]{3,4})([0-9]{4})$/, '$1-$2-$3');
+			}
+		},
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setCorp();
+	},
+	//함수
+	methods: {
+		/* 업체정보 리스트 조회 */
+		setCorp: function(){
+			var self = this;
+			
+			self.mainListLoading.val = true;
+			var returnVal = userApi.myCorp(false);
+			returnVal.then(function(response) {
+				self.corpObj = response.data;
+			}).finally(function(){
+				self.mainListLoading.val = false;
+				self.$forceUpdate();
+			});
+		},
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					self.mainListLoading.val = true;
+
+					var returnVal = userApi.updateMyCorp(self.corpObj, true);
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							
+							if(data == '1'){
+								notifySubmit('success', '업체정보 저장', '저장이 완료되었습니다.', 'icon-save');
+								modal_close('signModal');
+								self.setCorp();
+							}else if(data == '-4'){
+								notifySubmit('warning', '업체정보 저장', '사업자번호 중복으로 저장에 실패하였습니다.', 'icon-caution');
+							}else{
+								notifySubmit('warning', '업체정보 저장', '시스템 오류로 저장에 실패하였습니다.', 'icon-caution');
+							}
+							 
+						}).finally(function(){
+							self.mainListLoading.val = false;
+						});
+					}
+				}else{
+					notifySubmit('warning', '업체정보 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		openModal: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					if(!(self.corpObj.TEL_NO.startsWith('0') && !self.corpObj.TEL_NO.startsWith('1',1) && !self.corpObj.TEL_NO.startsWith('9',1))){
+						alert('전화번호로 사용가능한 번호는 지역번호 또는 인터넷전화번호만 입력이 가능합니다.');
+						$('#telNo').focus();
+					}else{
+						self.messageModal.openModal('confirm', '사용자 저장', '사용자 저장을 진행하시겠습니까?', 'small', 'save','');
+					}
+				}else{
+					notifySubmit('warning', '사용자 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		messagePopupCallback : function(pGb, pId) {
+
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    	case 'save' :
+	    		this.saveRow();
+	    		break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+function sha256Enc(pwd) {
+	var hash = CryptoJS.SHA256(pwd);
+	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+
+	return hashInBase64;
+}
+
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

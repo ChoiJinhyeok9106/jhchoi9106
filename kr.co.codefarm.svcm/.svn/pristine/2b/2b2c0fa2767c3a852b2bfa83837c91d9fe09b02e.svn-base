@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.acqmgmt">
+
+    <!-- 자산 목록 조회 -->
+    <select id="getAsstAcqMgmtList"  parameterType="hashMap" resultType="hashMap">
+    	SELECT /* TA_ASSET_ACQ_selectAsstAcqMgmtList */ 
+	A_.*,
+	CM_GETDEPTNM(A_.ACQ_DEPT_CD, A_.AGENCY_ID) AS ACQ_DEPT_NM,                                                    /* 취득부서명					*/ 	                                                                                                                                
+	cm_getcodenm('CM0030', A_.ACNTS_SE_CD, A_.AGENCY_ID)ACNTS_SE_NM,                                              /* 회계구분명(CM0030) 			*/       
+	cm_getcodenm('GM0010', A_.ACQ_SE_CD, A_.AGENCY_ID)ACQ_SE_NM,                                                  /* 취득구분명(GM0010) 			*/       
+	cm_getcodenm('GM0210', A_.ASSET_ITEM_SE_CD,A_.AGENCY_ID) AS ASSET_ITEM_SE_NM,                                 /* 자산항목구분명(CM0034) 		*/     	 
+	cm_getcodenm('GM0120', A_.TAG_KIND_CD,A_.AGENCY_ID) AS TAG_KIND_NM,                                           /* 태그명(GM0120) 				*/     	  
+	cm_getcodenm('CM0034', A_.AST_DS_CD,A_.AGENCY_ID) AST_DS_NM,                                                  /* 자산구분명(CM0034) 			*/ 	     
+	cm_getcodenm('CM0031', A_.BDGT_CD,A_.AGENCY_ID) BDGT_NM,                                                      /* 예산부서명(CM0031) 			*/ 	     
+	cm_getcodenm('CM0033', A_.EXPND_ITEM_CD,A_.AGENCY_ID) EXPND_ITEM_NM,                                          /* 지출항목명(CM0033) 			*/ 	     
+	cm_getcodenm('CM0032', A_.EXPN_ITEM_CD,A_.AGENCY_ID) EXPN_ITEM_NM                                             /* 비목구분명(CM0032) 			*/
+         FROM                                                                                                     	
+              (SELECT 
+              		<if test="pPageNo != null and pPageNo != ''.toString()">
+		             ROW_NUMBER() OVER(ORDER BY A.ASSET_ACQ_NO DESC) AS RNUM
+		           , COUNT(*) OVER() AS CNT
+		            </if>                                       
+                   , A.ASSET_ACQ_NO                                                                                	/* 자산취득번호 				*/       
+                   , A.INST_ASSET_MGMT_NO																			/* 기관자산번호					*/
+                   , A.ACQ_DEPT_CD                                                                    				/* 취득부서코드 				*/       
+                   , A.ACNTS_SE_CD                                                                                 	/* 회계구분코드 				*/       
+                   , A.ACQ_SE_CD                                                                                   	/* 취득구분코드 				*/       
+                   , A.ASSET_CL_NO                                                                                 	/* 자산분류번호 				*/       
+                   , B.ASSET_CL_KO_NM                                                                              	/* 자산분류명 					*/   
+                   , A.ASSET_STND_NO                                                                               	/* 자산규격번호 				*/       
+                   , C.ASSET_STND_KO_NM                                                                            	/* 자산규격명 					*/   
+                   , CONCAT(IFNULL(A.ASSET_CL_NO, ''),'-' , IFNULL(A.ASSET_STND_NO, '')) AS ASSET_CL_STND_CD        /* 물품목록번호	 				*/                                                 
+                   , A.BUY_DT                                                                                       /* 구입일자  					*/                                         
+                   , A.ACQ_DT                                                                                       /* 취득일자  					*/
+                   , A.ACQ_ARNG_DT                                                                                  /* 취득정리일자					*/	
+                   , A.BUY_QTY                                                                                      /* 구입수량  					*/                                         
+                   , A.BUY_UPRICE                                                                                   /* 구입단가  					*/                 
+                   , A.RMK                                                                                          /* 비고 						*/                                     
+                   , A.REGUSER_ID                                                                                   /* 등록자ID 					*/                                 
+                   , A.REG_DATE                                                                                     /* 등록일시					*/                                                 
+                   , A.ASSET_ITEM_SE_CD                                                                             /* 자산항목구분코드 				*/                                 
+                   , B.USE_YYCNT                                                                                    /* 내용연수 					*/                                 
+                   , B.TAG_KIND_CD                                                                                  /* 태그코드 					*/         
+                   , A.ACQ_RFLC_AT                                                                                  /* 자산반영여부 				*/                         
+                   , CASE A.ACQ_RFLC_AT WHEN 'Y' THEN                                                               /* 층코드 						*/                                             
+                               '반영'                                                                             	/* 프린터발급일시 				*/                                 
+                                WHEN 'N' THEN                                                                   	/* 사용자ID 					*/                                                     
+                               '미반영' END AS ACQ_RFLC_NM                                                       		/* 자산반영여부명 				*/                                     
+                   , A.BUY_CTRL_NO                                                                             		/* 구매번호 					*/                                 
+			       , A.AST_DS_CD                                                                                    /* 자산구분코드 				*/                                             
+			       , A.BDGT_CD                                                                                      /* 예산구분코드					*/                                     
+			       , A.EXPND_ITEM_CD                                                                                 /* 지출항목코드 				*/                                                 
+			       , A.EXPN_ITEM_CD                                                                                 /* 비목항목코드					*/                         
+			       , A.AGENCY_ID                                                                                    /* 기관코드					*/                                   
+                FROM TA_ASSET_ACQ A 
+                INNER JOIN TA_ASSET_CL_CD B ON B.AGENCY_ID = A.AGENCY_ID AND A.ASSET_CL_NO = B.ASSET_CL_NO
+                INNER JOIN TA_ASSET_STND_CD C ON C.AGENCY_ID = A.AGENCY_ID AND A.ASSET_STND_NO = C.ASSET_STND_NO  AND A.ASSET_CL_NO = C.ASSET_CL_NO                                                                                                                      
+               	WHERE A.AGENCY_ID = '00000000'
+				<!-- 물품분류번호 -->
+				<if test="pAssetClNo != null and pAssetClNo != ''.toString()">
+					AND A.ASSET_CL_NO LIKE CONCAT('%' , #{pAssetClNo} , '%')
+				</if>
+				<!-- 물품명 -->
+				<if test="pAssetClKoNm != null and pAssetClKoNm != ''.toString()">
+					AND B.ASSET_CL_KO_NM LIKE CONCAT('%' , #{pAssetClKoNm} , '%')
+				</if>
+				<!-- 물품규격번호 -->
+				<if test="pAssetStndNo != null and pAssetStndNo != ''.toString()">
+					AND A.ASSET_STND_NO LIKE CONCAT('%' , #{pAssetStndNo} , '%')
+				</if>
+				<!-- 규격명 -->
+				<if test="pAssetStndKoNm != null and pAssetStndKoNm != ''.toString()">
+					AND C.ASSET_STND_KO_NM LIKE CONCAT('%' , #{pAssetStndKoNm} , '%')
+				</if>
+				<!-- 반영여부 -->
+				<if test="pAcqRflcAt != null and pAcqRflcAt != ''.toString()">
+					<if test="pAcqRflcAt != 'ALL'">
+						AND ACQ_RFLC_AT = #{pAcqRflcAt}
+					</if>
+				</if>
+				<!-- 취득구분 -->
+				<if test="pAcqSeCd != null and pAcqSeCd != ''.toString()">
+					<if test="pAcqSeCd != 'ALL'">
+						AND ACQ_SE_CD = #{pAcqSeCd}
+					</if>
+				</if>
+				<!-- 회계구분 -->
+				<if test="pAcntsSeCd != null and pAcntsSeCd != ''.toString()">
+					<if test="pAcntsSeCd != 'ALL'">
+						AND ACNTS_SE_CD = #{pAcntsSeCd}
+					</if>
+				</if>
+				<!-- 자산구분 -->
+				<if test="pAstDsCd != null and pAstDsCd != ''.toString()">
+					<if test="pAstDsCd != 'ALL'">
+						AND AST_DS_CD = #{pAstDsCd}
+					</if>
+				</if>
+				<!-- 구입 일자 -->
+				<if test="pBuyDt_S != null and pBuyDt_S != ''.toString() and pBuyDt_E != null and pBuyDt_E != ''.toString()">
+		        	AND BUY_DT BETWEEN #{pBuyDt_S} AND #{pBuyDt_E}
+		        </if>
+		        <!-- 취득 일자 -->
+				<if test="pAcqDt_S != null and pAcqDt_S != ''.toString() and pAcqDt_E != null and pAcqDt_E != ''.toString()">
+		        	AND ACQ_DT BETWEEN #{pAcqDt_S} AND #{pAcqDt_E}
+		        </if>
+		        <!-- 취득 정리 일자 -->
+				<if test="pAcqArngDt_S != null and pAcqArngDt_S != ''.toString() and pAcqArngDt_E != null and pAcqArngDt_E != ''.toString()">
+		        	AND ACQ_ARNG_DT BETWEEN #{pAcqArngDt_S} AND #{pAcqArngDt_E}
+		        </if>
+		        <!-- 구입 단가 -->
+				<if test="pBuyUprice_S != null and pBuyUprice_S != ''.toString() and pBuyUprice_E != null and pBuyUprice_E != ''.toString()">
+		        	AND BUY_UPRICE BETWEEN #{pBuyUprice_S} AND #{pBuyUprice_E}
+		        </if>
+		        <!-- 자산 취득 번호 -->
+				<if test="pAssetAcqNo != null and pAssetAcqNo != ''.toString()">
+					AND A.ASSET_ACQ_NO LIKE CONCAT('%' , #{pAssetAcqNo} , '%')
+				</if>
+				<!-- 기관 자산 취득 번호 -->
+				<if test="pInstAssetMgmtNo != null and pInstAssetMgmtNo != ''.toString()">
+					AND INST_ASSET_MGMT_NO LIKE CONCAT('%' , #{pInstAssetMgmtNo} , '%')
+				</if>
+				<!-- 비고 -->
+				<if test="pRmk != null and pRmk != ''.toString()">
+					AND A.RMK LIKE CONCAT('%' , #{pRmk} , '%')
+				</if>
+				<!-- 부서 코드 -->
+				<if test='pAcqDeptCd != null and pAcqDeptCd != ""'>
+					<if test='pAcqDeptCd != "00"'>
+						AND A.ACQ_DEPT_CD IN ( WITH RECURSIVE CTE_CONNECT_BY AS ( 
+							SELECT 1 AS LEVEL, S.DEPT_CD AS ACQ_DEPT_CD, S.AGENCY_ID, S.UP_DEPT_CD  FROM VA_DEPT S WHERE S.DEPT_CD = #{pAcqDeptCd} AND S.AGENCY_ID = '00000000'
+							UNION ALL
+							SELECT LEVEL + 1 AS LEVEL, S.DEPT_CD AS ACQ_DEPT_CD, S.AGENCY_ID,S.UP_DEPT_CD AS ACQ_DEPT_CD FROM CTE_CONNECT_BY R INNER JOIN VA_DEPT S ON  R.ACQ_DEPT_CD = S.UP_DEPT_CD  WHERE S.AGENCY_ID = '00000000' 
+							)  
+							SELECT ACQ_DEPT_CD FROM  CTE_CONNECT_BY WHERE AGENCY_ID = '00000000')
+					</if>
+				</if>
+				
+		             ) A_
+		             
+		        WHERE 1=1
+				<if test="pPageNo != null and pPageNo != ''.toString()">
+	      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+	    		</if>
+	    		ORDER BY A_.ASSET_ACQ_NO DESC
+       </select>
+	
+    <!-- 자산 신규 입력 -->
+    <insert id="insertAsstAcq" parameterType="hashMap">
+		INSERT INTO TA_ASSET_ACQ 
+		( 
+		      ASSET_ACQ_NO
+		    , ACQ_DEPT_CD
+		    , INST_ASSET_MGMT_NO
+		    , ACNTS_SE_CD					/* 회계 구분 */
+		    , ACQ_SE_CD						/* 취득 구분 */
+		    , ASSET_CL_NO
+		    , ASSET_STND_NO
+		    , BUY_DT
+		    , ACQ_DT
+		    , ACQ_ARNG_DT					/* 취득 정리 일자 */
+		    , BUY_QTY
+		    , BUY_UPRICE
+		    , AST_DS_CD						/* 자산 구분 */
+		    , BDGT_CD						/* 예산 구분 */
+		    , EXPN_ITEM_CD					/* 비목 구분 */
+		    , REG_DATE
+		    , REGUSER_ID
+		    , ACQ_RFLC_AT
+		    , AGENCY_ID
+		) 
+		VALUES 
+		(
+		    (select ASSET_ACQ_NO 
+	                from 
+	                (select case when 
+						(select ASSET_ACQ_NO from TA_ASSET_ACQ where ASSET_ACQ_NO = #{ASSET_ACQ_NO} AND AGENCY_ID= '00000000' ) is not null 
+					then #{ASSET_ACQ_NO}
+						else (select (LPAD(IFNULL(RIGHT(MAX(ASSET_ACQ_NO),8),0)+1,16,CONCAT(DATE_FORMAT(NOW(),'%Y%m%d'),'00000001'))) FROM TA_ASSET_ACQ WHERE AGENCY_ID= '00000000') 
+	                end ASSET_ACQ_NO) tmp)
+		    , #{ACQ_DEPT_CD}
+		    , #{INST_ASSET_MGMT_NO}
+		    , #{ACNTS_SE_CD}
+		    , #{ACQ_SE_CD}
+		    , #{ASSET_CL_NO}
+		    , #{ASSET_STND_NO}
+		    , #{BUY_DT}
+		    , #{ACQ_DT}
+		    , #{ACQ_ARNG_DT}
+		    , #{BUY_QTY}
+		    , #{BUY_UPRICE}
+		    , #{AST_DS_CD}
+		    , #{BDGT_CD}
+		    , #{EXPN_ITEM_CD}
+		    , NOW()
+		    , #{SYSTEM_ID}
+		    , 'N'
+		    , '00000000'
+		)
+
+	</insert>
+    
+    <!-- 취득 자산 수정 -->
+	<update id="updateAsstAcq" parameterType="hashMap">
+		UPDATE TA_ASSET_ACQ
+		SET
+			  INST_ASSET_MGMT_NO	= #{INST_ASSET_MGMT_NO}
+			, ACQ_DEPT_CD			= #{ACQ_DEPT_CD}
+			, ACQ_SE_CD				= #{ACQ_SE_CD}
+			, ASSET_CL_NO			= #{ASSET_CL_NO}
+			, ASSET_STND_NO			= #{ASSET_STND_NO}
+			, ACQ_DT				= #{ACQ_DT}
+			, BUY_DT				= #{BUY_DT}
+			, BUY_QTY				= #{BUY_QTY}
+			, BUY_UPRICE			= #{BUY_UPRICE}
+			, ACQ_DEPT_CD			= #{ACQ_DEPT_CD}
+			, ACNTS_SE_CD			= #{ACNTS_SE_CD}
+			, ASSET_ITEM_SE_CD		= #{ASSET_ITEM_SE_CD}
+			, AST_DS_CD				= #{AST_DS_CD}
+			, ACQ_ARNG_DT			= #{ACQ_ARNG_DT}
+			, BDGT_CD				= #{BDGT_CD}
+			, EXPN_ITEM_CD			= #{EXPN_ITEM_CD}
+			, RMK					= #{RMK}
+			
+		   	
+		WHERE ASSET_ACQ_NO			= #{ASSET_ACQ_NO}
+		AND AGENCY_ID				= '00000000'
+	</update>
+    
+    <!-- 자산 삭제 -->
+    <delete id="deleteAsstAcq" parameterType="hashMap">
+     
+     	DELETE FROM TA_ASSET_ACQ
+    	WHERE ASSET_ACQ_NO 	= #{assetAcqNo}
+    	AND AGENCY_ID		= '00000000'
+    	
+    </delete>
+    
+    <!-- 자산 취득 반영 -->
+    <insert id="assetDtlInsert" parameterType="hashMap">
+	
+		INSERT INTO 
+	       TA_ASSET_ACQ_DTL 
+	       ( 
+	           ASSET_MGMT_NO 
+	         , MTHRGDS_ASSET_MGMT_NO 
+	         , ASSET_ACQ_NO
+	         , INST_ASSET_MGMT_NO
+	         , DEPT_CD 
+	         , ACNTS_SE_CD 
+	         , HAVE_SE_CD 
+	         , ACQ_SE_CD
+	         , ASSET_CL_NO 
+	         , ASSET_STND_NO 
+	         , BUY_DT 
+	         , ACQ_DT 
+	         , BUY_UPRICE 
+	         , ASSET_STAT_CD 
+	         , LOC_CD 
+	         , PRT_ISSU_DATE 
+	         , USR_ID 
+	         , MNGR_ID 
+	         , TAG_KIND_CD
+	         , RMK 
+	         , USE_AT 
+	         , REGUSER_ID 
+	         , REG_DATE
+	         , CHGR_ID
+	         , CHG_DATE
+	         , ASSET_ITEM_SE_CD 
+	         , AGENCY_ID
+	    
+	       ) 
+		SELECT 
+			(		
+			SELECT CONCAT(DATE_FORMAT(A.BUY_DT,'%Y%m%d'),LPAD(IFNULL(MAX(SUBSTR(ASSET_MGMT_NO,9,6))+1,'000001'),6,'0'))
+	        FROM TA_ASSET_ACQ_DTL
+	        WHERE AGENCY_ID='00000000'
+			 ) 
+	     , NULL 
+	     , A.ASSET_ACQ_NO
+	     , A.INST_ASSET_MGMT_NO
+	     , A.ACQ_DEPT_CD 
+	     , A.ACNTS_SE_CD 
+	     , A.ACQ_SE_CD 
+	     , A.ACQ_SE_CD 
+	     , A.ASSET_CL_NO 
+	     , A.ASSET_STND_NO 
+	     , A.BUY_DT 
+	     , A.ACQ_DT 
+	     , A.BUY_UPRICE
+	     , '10' 
+	     , NULL 
+	     , NULL 
+	     , NULL 
+	     , NULL 
+	     , (SELECT 
+	              TAG_KIND_CD 
+	         FROM 
+	              TA_ASSET_CL_CD B 
+	        WHERE 
+	              A.ASSET_CL_NO = B.ASSET_CL_NO 
+	              AND A.AGENCY_ID = B.AGENCY_ID
+	       ) 
+	     , RMK 
+	     , 'Y' 
+	     , #{SYSTEM_ID}
+	     , NOW()
+	     , NULL
+	     , NULL
+	     , A.ASSET_ITEM_SE_CD 
+	     , A.AGENCY_ID
+		  FROM 
+		       TA_ASSET_ACQ A
+		 WHERE 
+		       A.ASSET_ACQ_NO = #{ASSET_ACQ_NO}
+		       AND A.AGENCY_ID = '00000000'
+		
+	</insert>
+
+	<!-- 자산 반영 여부 수정 -->
+	<update id="assetAcqRflcAtUpdate" parameterType="hashMap">
+		UPDATE TA_ASSET_ACQ
+		SET
+			  ACQ_RFLC_AT	= 'Y'
+		   	
+		WHERE ASSET_ACQ_NO			= #{ASSET_ACQ_NO}
+		AND AGENCY_ID				= '00000000'
+	</update>
+    
+</mapper>

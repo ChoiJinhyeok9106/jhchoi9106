@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.common">
+
+           
+	<!-- 부서코드 조회 -->
+	<select id="getDeptList"  parameterType="hashMap" resultType="hashMap">
+		SELECT
+			  ORGNZT_ID
+			, ORGNZT_NM
+		FROM LETTNORGNZTINFO
+	</select>
+	
+	<!-- 물품코드 조회 -->
+	<select id="getAsstNoList" parameterType="hashMap" resultType="hashMap" >
+		 SELECT 
+		 		A_.* 
+	         FROM 
+              (SELECT 
+                    <if test="pPageNo != null and pPageNo != ''.toString()">
+			             ROW_NUMBER() OVER(ORDER BY A.ASSET_CL_NO DESC) AS RNUM
+			           	, COUNT(*) OVER() AS CNT
+		            </if>             
+                   , A.ASSET_CL_NO
+                   , A.USE_AT	  	                   
+                   , A.ASSET_STND_NO
+                   , A.ASSET_STND_KO_NM
+                   , A.ASSET_STND_EN_NM
+                   , A.PRODT_CORPO_NM
+                   , B.ASSET_CL_KO_NM
+                   , B.TAG_KIND_CD
+                   , B.USE_YYCNT
+                   , CM_GETCODENM('GM0120',TAG_KIND_CD,'00000000') TAG_KIND_NM
+               	   , CONCAT(A.ASSET_CL_NO ,'-',  A.ASSET_STND_NO) AS CL_STND_CD 
+                FROM 
+                     TA_ASSET_STND_CD A
+                   , TA_ASSET_CL_CD B 
+               WHERE 
+                     A.ASSET_CL_NO = B.ASSET_CL_NO
+                     AND A.ASSET_STND_NO &gt; ' ' 
+                     AND A.ASSET_CL_NO &gt; ' ' 
+                     AND A.AGENCY_ID = '00000000'
+                     AND B.AGENCY_ID = '00000000'
+		             <!-- 규격코드 -->
+		             <if test='pModalAssetStndNo != null and pModalAssetStndNo != ""'>
+		             	AND A.ASSET_STND_NO like CONCAT('%' , #{pModalAssetStndNo} , '%')
+		             </if>
+		             <!-- 규격이름 -->
+		             <if test='pModalAssetStndKoNm != null and pModalAssetStndKoNm != ""'>
+		             	AND upper(A.ASSET_STND_KO_NM) like CONCAT('%' , upper(#{pModalAssetStndKoNm}) , '%')
+		             </if> 
+		             <!-- 분류이름 -->
+		             <if test='pModalAssetClKoNm != null and pModalAssetClKoNm != ""'>
+		             	AND upper(B.ASSET_CL_KO_NM) like CONCAT('%' , upper(#{pModalAssetClKoNm}) , '%')
+		             </if> 
+		           ) A_ 
+		           
+		            WHERE 1=1
+					<if test="pPageNo != null and pPageNo != ''.toString()">
+		      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		    		</if>
+		    		ORDER BY A_.ASSET_CL_NO DESC
+	</select>	
+	
+   	<!-- 사용자검색 -->
+	<select id="getUsrList" parameterType="hashMap" resultType="hashMap">
+	SELECT 
+	       A_.* 
+	         FROM 
+	              (SELECT 
+					<if test="pPageNo != null and pPageNo != ''.toString()">
+						ROW_NUMBER() OVER(ORDER BY DEPT_ID) AS RNUM
+						, COUNT(*) OVER() AS CNT
+		            </if>     
+	                    , USER_ID 
+	                    , ORGNZT_ID AS DEPT_ID
+	                    , USER_NM 
+	                    , (SELECT DEPT_NM  FROM VA_DEPT WHERE  USE_YN = 1 AND DEPT_CD=TRIM(ORGNZT_ID)) AS DEPT_NM
+	                FROM 
+	                     COMVNUSERMASTER 
+	                     where 1=1
+	                     and USER_ID != 'ejudata'
+	                     AND AGENCY_ID = '00000000'
+	                     <if test="pModalDeptCd != null and pModalDeptCd != ''.toString()">
+	                     	<if test='pModalDeptCd != "00"'>
+	                     		 AND ORGNZT_ID IN (( WITH RECURSIVE CTE_CONNECT_BY AS (
+										SELECT 1 AS LEVEL, S.* FROM VA_DEPT S WHERE DEPT_CD = #{pModalDeptCd}
+										UNION ALL
+										SELECT LEVEL + 1 AS LEVEL, S.* FROM CTE_CONNECT_BY R INNER JOIN VA_DEPT S ON  r.DEPT_CD = s.UP_DEPT_CD
+										)
+									SELECT DEPT_CD FROM CTE_CONNECT_BY
+									))
+	                     		</if>
+	                     	</if>
+	                     	<if test="pModalUsrNm != null and pModalUsrNm != ''.toString()">
+								AND upper(USER_NM) LIKE CONCAT('%',upper(#{pModalUsrNm}),'%')
+							</if>
+	              ) A_
+	              
+	              WHERE 1=1
+	              <if test="pPageNo != null and pPageNo != ''.toString()">
+	      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+	    		</if>
+	    		ORDER BY A_.DEPT_ID 
+
+	</select>
+    
+</mapper>

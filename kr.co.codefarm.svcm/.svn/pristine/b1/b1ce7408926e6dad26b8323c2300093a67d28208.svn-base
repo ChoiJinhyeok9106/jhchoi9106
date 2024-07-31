@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.app">
+    <select id="getAppList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+             , A.APP_NM
+             , A.APP_VER
+             , A.APP_JAKSEONGJA_ID
+             , A.APP_ENM
+             , A.ENDPOINT
+             , A.TAG
+             , A.APP_DESC
+             , A.ICON
+             , A.COLOR
+             , A.USE_DEVICE_GB
+             , A.DAEPYO_IMG_FILE_NO
+             , A.USE_YN
+             , A.DEFAULT_APP_YN
+             , NVL(A.APP_TYPE_GB, '') AS APP_TYPE_GB
+             , NVL(A.OPEN_TYPE_GB, '') AS OPEN_TYPE_GB
+             , A.MENUAL_YN
+             <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             </if>
+   			 <if test="pWidgetCntYn eq 'Y'.toString()">
+   			 , COALESCE(A.WIDGET_CNT, 0) AS WIDGET_CNT
+   			 </if>
+          FROM (
+                   SELECT SA.APP_ID
+                        , SA.APP_NM
+                        , SA.APP_VER
+                        , SA.APP_JAKSEONGJA_ID
+                        , SA.APP_ENM
+                        , SA.ENDPOINT
+                        , SA.TAG
+                        , SA.APP_DESC
+			            , SA.ICON
+			            , SA.COLOR
+             			, SA.USE_DEVICE_GB
+                        , SA.DAEPYO_IMG_FILE_NO
+                        , SA.USE_YN
+                        , SA.DEFAULT_APP_YN
+                        , SA.APP_TYPE_GB
+                        , SA.OPEN_TYPE_GB
+			            , SA.INSERT_DTTM
+			            , SA.MENUAL_YN
+			            <if test="pPageNo != null and pPageNo != ''.toString()">
+                        , ROW_NUMBER() OVER(ORDER BY INSERT_DTTM DESC,APP_NM DESC) AS RNUM
+             			, COUNT(*) OVER() AS CNT
+             			</if>
+             			<if test="pWidgetCntYn eq 'Y'.toString()">
+             			, SB.WIDGET_CNT
+             			</if>
+                     FROM SMN_APP SA
+         			<if test="pWidgetCntYn eq 'Y'.toString()">
+         			 LEFT OUTER JOIN 
+         			      (
+         			          SELECT SSA.APP_ID
+         			               , COUNT(*) AS WIDGET_CNT
+         			            FROM SMN_WIDGET SSA
+         			           WHERE 1=1
+         			           GROUP BY SSA.APP_ID
+         			      ) SB
+         			   ON SA.APP_ID = SB.APP_ID
+         			</if>
+                    WHERE 1=1
+			       	<if test="pSearchType eq '1'.toString()">AND SA.APP_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '2'.toString()">AND SA.APP_ENM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '3'.toString()">AND SA.APP_DESC LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+         			<if test="pUseYn != null and pUseYn != ''.toString()">AND SA.USE_YN = #{pUseYn}</if>
+               ) A
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+	      ORDER BY A.RNUM DESC
+         </if>
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.APP_NM
+         </if>
+    </select>
+    
+    <select id="getApp" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+             , A.APP_NM
+             , A.APP_VER
+             , A.APP_JAKSEONGJA_ID
+             , A.APP_ENM
+             , A.ENDPOINT
+             , A.TAG
+             , A.APP_DESC
+	         , A.ICON
+	         , A.COLOR
+	         , A.USE_DEVICE_GB
+             , A.DAEPYO_IMG_FILE_NO
+             , A.USE_YN
+             , A.DEFAULT_APP_YN
+             , NVL(A.APP_TYPE_GB, '') AS APP_TYPE_GB
+             , NVL(A.OPEN_TYPE_GB, '') AS OPEN_TYPE_GB
+             , A.MENUAL_YN
+          FROM SMN_APP A
+         WHERE APP_ID = #{APP_ID}
+    </select>
+    
+    <insert id="insertApp" parameterType="hashMap" useGeneratedKeys="true" keyProperty="id">
+    	INSERT INTO SMN_APP
+     	(
+     		 APP_ID
+           , APP_NM
+           , APP_VER
+           , APP_JAKSEONGJA_ID
+           , APP_ENM
+           , ENDPOINT
+           , TAG
+           , APP_DESC
+           , ICON
+           , COLOR
+           , USE_DEVICE_GB
+           , DAEPYO_IMG_FILE_NO
+           , USE_YN
+           , DEFAULT_APP_YN
+           , APP_TYPE_GB
+           , OPEN_TYPE_GB
+           , MENUAL_YN
+		   , INSERT_DTTM
+		   , INSERT_ID
+		   , INSERT_IP
+		   , INSERT_PGM
+		   , UPDATE_DTTM
+		   , UPDATE_ID
+		   , UPDATE_IP
+		   , UPDATE_PGM
+		)
+		VALUES 
+     	(
+     		 #{APP_ID}
+           , #{APP_NM}
+           , #{APP_VER}
+           , #{APP_JAKSEONGJA_ID}
+           , #{APP_ENM}
+           , #{ENDPOINT}
+           , #{TAG}
+           , #{APP_DESC}
+           , #{ICON}
+           , #{COLOR}
+           , #{USE_DEVICE_GB}
+           , #{DAEPYO_IMG_FILE_NO}
+           , #{USE_YN}
+           , #{DEFAULT_APP_YN}
+           , #{APP_TYPE_GB}
+           , #{OPEN_TYPE_GB}
+           , #{MENUAL_YN}
+		   , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		   , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		)
+    </insert>
+
+    <update id="updateApp" parameterType="hashMap">
+    	UPDATE SMN_APP
+    	   SET APP_NM = #{APP_NM}
+	         , APP_VER = #{APP_VER}
+	         , APP_JAKSEONGJA_ID = #{APP_JAKSEONGJA_ID}
+	         , APP_ENM = #{APP_ENM}
+	         , ENDPOINT = #{ENDPOINT}
+	         , TAG = #{TAG}
+	         , APP_DESC = #{APP_DESC}
+	         , ICON = #{ICON}
+	         , COLOR = #{COLOR}
+	         , USE_DEVICE_GB = #{USE_DEVICE_GB}
+	         , DAEPYO_IMG_FILE_NO = #{DAEPYO_IMG_FILE_NO}
+	         , USE_YN = #{USE_YN}
+	         , DEFAULT_APP_YN = #{DEFAULT_APP_YN}
+	         , APP_TYPE_GB = #{APP_TYPE_GB}
+	         , OPEN_TYPE_GB = #{OPEN_TYPE_GB}
+	         , MENUAL_YN = #{MENUAL_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE APP_ID = #{APP_ID}
+    </update>
+    
+    <delete id="deleteApp" parameterType="hashMap">
+    
+    	DELETE FROM SMN_LAYOUT_CONTENT
+    	 WHERE APP_ID = #{appId};
+    	 
+    	DELETE FROM SMN_WIDGET
+    	 WHERE APP_ID = #{appId};
+    	 
+    	DELETE FROM SMN_APP_MENU_AUTH
+    	 WHERE APP_ID = #{appId};
+    	 
+    	DELETE FROM SMN_APP_MENU
+    	 WHERE APP_ID = #{appId};
+    	 
+    	DELETE FROM SMN_APP_AUTH
+    	 WHERE APP_ID = #{appId};
+    	 
+    	DELETE FROM SMN_APP
+    	 WHERE APP_ID = #{appId};
+
+        DELETE FROM SMN_APP_MENU_MANUAL
+		 WHERE APP_ID = #{appId};
+	
+    </delete>
+    
+</mapper>

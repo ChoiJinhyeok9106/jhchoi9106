@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.appApi">
+    <select id="getAppList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+             , A.APP_NM
+             , A.APP_VER
+             , A.APP_JAKSEONGJA_ID
+             , A.APP_ENM
+             , A.ENDPOINT
+             , A.TAG
+             , A.APP_DESC
+             , A.ICON
+             , A.COLOR
+             , A.USE_DEVICE_GB
+             , A.DAEPYO_IMG_FILE_NO
+             , A.USE_YN
+             , A.DEFAULT_APP_YN
+             , NVL(A.APP_TYPE_GB, '') AS APP_TYPE_GB
+             , NVL(A.OPEN_TYPE_GB, '') AS OPEN_TYPE_GB
+             , A.MENUAL_YN
+           	 <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             </if>
+          FROM (
+                   SELECT SA.APP_ID
+                        , SA.APP_NM
+                        , SA.APP_VER
+                        , SA.APP_JAKSEONGJA_ID
+                        , SA.APP_ENM
+                        , SA.ENDPOINT
+                        , SA.TAG
+                        , SA.APP_DESC
+			            , SA.ICON
+			            , SA.COLOR
+             			, SA.USE_DEVICE_GB
+                        , SA.DAEPYO_IMG_FILE_NO
+                        , SA.USE_YN
+                        , SA.DEFAULT_APP_YN
+                        , SA.APP_TYPE_GB
+                        , SA.OPEN_TYPE_GB
+			            , SA.INSERT_DTTM
+			            , SA.MENUAL_YN
+           				<if test="pPageNo != null and pPageNo != ''.toString()">
+                        , ROW_NUMBER() OVER(ORDER BY INSERT_DTTM DESC) AS RNUM
+             			, COUNT(*) OVER() AS CNT
+             			</if>
+                     FROM SMN_APP SA
+                    WHERE 1=1
+			       	<if test="pSearchType eq '1'.toString()">AND SA.APP_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '2'.toString()">AND SA.APP_ENM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '3'.toString()">AND SA.DESC LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+               ) A
+		   WHERE 1=1
+		     AND A.USE_YN = 'Y'
+           <if test="pPageNo != null and pPageNo != ''.toString()">
+			 AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+           ORDER BY A.RNUM
+           </if>
+           <if test="pPageNo == null or pPageNo eq ''.toString()">
+           ORDER BY A.INSERT_DTTM DESC
+           </if>
+    </select>
+    
+    <select id="getApp" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+             , A.APP_NM
+             , A.APP_VER
+             , A.APP_JAKSEONGJA_ID
+             , A.APP_ENM
+             , A.ENDPOINT
+             , A.TAG
+             , A.APP_DESC
+	         , A.ICON
+	         , A.COLOR
+	         , A.USE_DEVICE_GB
+             , A.DAEPYO_IMG_FILE_NO
+             , A.USE_YN
+             , A.DEFAULT_APP_YN
+             , NVL(A.APP_TYPE_GB, '') AS APP_TYPE_GB
+             , NVL(A.OPEN_TYPE_GB, '') AS OPEN_TYPE_GB
+             , A.MENUAL_YN
+          FROM SMN_APP A
+         WHERE APP_ID = #{APP_ID}
+    </select>
+    
+    <select id="getSubscribeAppList" parameterType="hashMap" resultType="hashMap">
+    	SELECT A.APP_ID
+             , A.APP_NM
+             , A.APP_VER
+             , A.APP_JAKSEONGJA_ID
+             , A.APP_ENM
+             , A.ENDPOINT
+             , A.TAG
+             , A.APP_DESC
+             , A.ICON
+             , A.COLOR
+             , A.USE_DEVICE_GB
+             , A.DAEPYO_IMG_FILE_NO
+             , A.USE_YN
+             , A.DEFAULT_APP_YN	
+             , NVL(A.APP_TYPE_GB, '') AS APP_TYPE_GB
+             , NVL(A.OPEN_TYPE_GB, '') AS OPEN_TYPE_GB
+             , COALESCE(C.WIDGET_CNT,0) AS WIDGET_CNT
+             , A.MENUAL_YN
+    	  FROM SMN_APP A
+    	 INNER JOIN
+    	       (
+    	       		SELECT SA.APP_ID
+    	       		  FROM SMN_APP_AUTH SA
+    	       		 WHERE 1=1
+    	       		   AND (
+    	       		           SA.AUTH_CD = #{AUTH_CD}
+    	       		           OR
+	    	       		       EXISTS
+	    	       		       (
+	    	       		          SELECT 'X'
+	    	       		            FROM SMN_USER_AUTH SSA
+	    	       		           WHERE 1=1
+	    	       		             AND SA.AUTH_CD = SSA.AUTH_CD
+	    	       		             AND SSA.USER_ID = #{USER_ID}
+	    	       		           UNION ALL
+	    	       		          SELECT 'X'
+	    	       		            FROM SMN_CORP_USER SSC<!-- 기업권한추가 -->
+	    	       		            JOIN SMN_CORP_AUTH SSD
+	    	       		              ON SSC.CORP_ID = SSD.CORP_ID
+	    	       		           WHERE 1=1
+	    	       		             AND SA.AUTH_CD = SSD.CORP_AUTH_CD
+	    	       		             AND SSC.USER_ID = #{USER_ID}
+	    	       		       )
+	    	       		   )
+    	       		 UNION 
+			        SELECT A.APP_ID
+			          FROM SMN_APP A
+			         WHERE 1=1
+			           AND A.DEFAULT_APP_YN = 'Y'
+    	       ) B
+    	     ON A.APP_ID = B.APP_ID
+           LEFT OUTER JOIN 
+               (
+                  SELECT SA.APP_ID
+				    , COUNT(*) AS WIDGET_CNT
+				 FROM SMN_WIDGET SA
+				INNER JOIN SMN_WIDGET_AUTH SSA 
+				   ON SSA.APP_ID = SA.APP_ID 
+				  AND SSA.WIDGET_SEQ = SA.WIDGET_SEQ
+				 LEFT JOIN SMN_USER_AUTH SSSA 
+				   ON SSSA.AUTH_CD = SSA.AUTH_CD 
+				  AND SSSA.USER_ID = #{USER_ID}
+			    WHERE SA.USE_YN = 'Y'
+				  AND (SSSA.USER_ID IS NOT NULL OR SSA.AUTH_CD = #{AUTH_CD})
+				GROUP BY SA.APP_ID
+                   <!-- SELECT SA.APP_ID
+                        , COUNT(*) AS WIDGET_CNT
+                     FROM SMN_WIDGET SA
+                    WHERE 1=1
+                      AND SA.USE_YN = 'Y'
+                      AND EXISTS
+                          (
+                              SELECT 'X' 
+                                FROM SMN_WIDGET_AUTH SSA
+                               WHERE 1=1
+                                 AND SSA.APP_ID = SA.APP_ID
+                                 AND SSA.WIDGET_SEQ = SA.WIDGET_SEQ
+                                 AND (
+                                 	     SSA.AUTH_CD IN 
+                                         (
+                                             SELECT SSSA.AUTH_CD 
+                                               FROM SMN_USER_AUTH SSSA
+                                              WHERE 1=1
+                                                AND SSSA.USER_ID = #{USER_ID}
+                                         )
+                                         OR
+                                         SSA.AUTH_CD = #{AUTH_CD}
+                                     )
+                          )
+                    GROUP BY SA.APP_ID -->
+               ) C
+            ON A.APP_ID = C.APP_ID
+    	  WHERE A.USE_YN = 'Y'
+          ORDER BY A.APP_NM
+    </select>
+</mapper>

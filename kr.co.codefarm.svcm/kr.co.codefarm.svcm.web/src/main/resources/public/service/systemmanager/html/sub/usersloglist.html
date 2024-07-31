@@ -1,0 +1,427 @@
+<h2>접속자 수</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l4">
+					<label for="tonggyeGb" class="label-type01">통계 구분</label> 
+			        <select class="size-m" name="tonggyeGb" id="tonggyeGb" v-model="pSearchInfo.tonggyeGb" @change="pSearchInfo.univCd = '412000'; drawGrid(); setLogList();">
+			        	<option value="MONTH">월별건수</option>
+			        	<option value="GRADE">학년별건수</option>
+			        	<option value="UNIV">대학별건수</option>
+					</select>
+				</div>
+				<div class="form-group col s12 l4" v-if="pSearchInfo.tonggyeGb == 'UNIV'">
+					<label for="pUnivCd" class="label-type01">소속대학</label> 
+			        <select class="size-m" name="pUnivCd" id="pUnivCd" v-model="pSearchInfo.univCd">
+						<option v-for="(item, index) in upDeptCodeSet.data" v-bind:value="item.UNIV_CD" v-if="item.UNIV_CD=='401000'||item.UNIV_CD=='402000'||item.UNIV_CD=='403000'||item.UNIV_CD=='410000'||item.UNIV_CD=='411000'||item.UNIV_CD=='412000'||item.UNIV_CD=='413000'||item.UNIV_CD=='416000'||item.UNIV_CD=='418000'">{{item.UNIV_NM}}</option>
+					</select>
+				</div>
+				<div class="form-group col s12 l4">
+					<label for="haknyeondo" class="label-type01">학년도</label>
+	                <input type="text" id="haknyeondo" name="haknyeondo" class="size-m" @keyup.13="search()" v-model="pSearchInfo.haknyeondo" placeholder="학년도">
+				</div>
+				<div class="form-group col s12 l4" v-if="pSearchInfo.tonggyeGb != 'UNIV'">
+					<label for="frdt" class="label-type01">검색 기간</label>
+					<div class="row form-row">
+						<div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="pSearchInfo.strDate" @input="function(value){ pSearchInfo.strDate = value }" ></date-picker>
+	                            <input id="pStartDt" type="hidden" name="pStartDt" data-vv-as="날짜 " v-model="pSearchInfo.strDate">
+	                        </div>
+	                    </div>
+	                    <div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="pSearchInfo.endDate" @input="function(value){ pSearchInfo.endDate = value }"></date-picker>
+	                            <input id="pEndDt" type="hidden" name="pEndDt" data-vv-as="날짜 " v-model="pSearchInfo.endDate">
+	                        </div>
+	                    </div>
+					</div>
+				</div>
+			</div>
+			<div class="row form-row" v-if="pSearchInfo.tonggyeGb == 'UNIV'">
+				<div class="form-group col s12 l4">
+					<label for="frdt" class="label-type01">검색 기간</label>
+					<div class="row form-row">
+						<div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="pSearchInfo.strDate" @input="function(value){ pSearchInfo.strDate = value }" ></date-picker>
+	                            <input id="pStartDt" type="hidden" name="pStartDt" data-vv-as="날짜 " v-model="pSearchInfo.strDate">
+	                        </div>
+	                    </div>
+	                    <div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="pSearchInfo.endDate" @input="function(value){ pSearchInfo.endDate = value }"></date-picker>
+	                            <input id="pEndDt" type="hidden" name="pEndDt" data-vv-as="날짜 " v-model="pSearchInfo.endDate">
+	                        </div>
+	                    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group col s12 l12 col-inline right">
+			<a href="#!" @click="excelCountCheck()">
+	    		<download-excel class="btn type02 size-m" :data="excelData" :name="getFileName()">엑셀 다운로드</download-excel>
+	    	</a>
+			<a href="#!" class="btn type01 size-m" @click="search();">검색</a>
+		</div>
+		<div id="grid"></div>
+	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		pSearchInfo: {
+			'haknyeondo': moment().format('YYYY'),
+			'tonggyeGb': 'MONTH',
+			'univCd': '412000',
+			'strDate': '',
+			'endDate': '',
+		},
+		excelData: new Array,									// 로그 목록
+	    upDeptCodeSet: new CustomcodeSet('/api/bou-univ/cs/up-dept',{}),
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+	},
+	//계산된 속성 표현 시
+	computed: {
+	},
+	//데이터 감시
+	watch: {
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setLogList();
+		this.drawGrid();
+	},
+	//함수
+	methods: {
+		/* 검색 */
+		search: function(){
+	       this.setLogList();
+		},
+		/* 로그 목록 조회 */
+		setLogList: function(){
+			var self = this;
+			
+			var returnVal = loglistApi.getUsersLogList(self.pSearchInfo, false);	
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.excelData = new Array();
+					
+					_.forEach(response.data, function(obj, index) {
+						let pObj = {};
+						
+						if(self.pSearchInfo.tonggyeGb == 'MONTH') {
+							pObj = {
+								'월': obj.MM_NM,
+								'접속자 건수': obj.JEOPSOKJA_CNT,
+								'접속자 인원': obj.JEOPSOKJA_INWON_CNT,
+								'전체 접속 건수': obj.TOT_JEOPSOKJA_CNT,
+								'전월대비': obj.NOW_DATA,
+							}
+						}else if(self.pSearchInfo.tonggyeGb == 'GRADE') {
+							pObj = {
+								'학년': obj.USER_TYPE_GBNM,
+								'남자인원': obj.M_CNT,
+								'남자건수': obj.M_JEOPSOK_CNT,
+								'여자인원': obj.W_CNT,
+								'여자건수': obj.W_JEOPSOK_CNT,
+								'전체접속인원': obj.TOT_CNT,
+								'전체접속건수': obj.TOT_JEOPSOK_CNT,
+							}
+						}else if(self.pSearchInfo.tonggyeGb == 'UNIV') {
+							pObj = {
+								'학과': obj.DEPT_NM,
+								'접속건수': obj.JEOPSOK_CNT,
+								'접속인원': obj.INWON_CNT,
+							}
+						}
+						
+						self.excelData.push(pObj);	
+					});
+					
+					self.grid.resetData(response.data);
+				}
+			});
+		},
+		drawGrid: function() {
+    		var self = this;
+			$('#grid').empty();
+    		
+			if(self.pSearchInfo.tonggyeGb == 'MONTH') {
+				self.grid = new tui.Grid({
+	       		    el: document.getElementById('grid'),
+	       			scrollX: true,
+	       		 	bodyHeight: 500,
+// 	       		 	rowHeaders: ['rowNum'],
+	       		    columns: [
+	       		    	{
+	       		    		header:'월',
+	       		    		name:'MM_NM',
+	       			     	minWidth: 30,
+	  	       			    whiteSpace: 'normal',
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	       		    	},
+	       		    	{
+	       		    		header:'접속자 건수', 
+	       		    		name:'JEOPSOKJA_CNT',
+	  	       			    whiteSpace: 'normal',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	  	       			},
+	       		    	{
+	  	       				header:'접속자 인원', 
+	  	       				name:'JEOPSOKJA_INWON_CNT',
+	  	       			    whiteSpace: 'normal',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	  	       			},
+	       		    	{
+	  	       				header:'전체 접속 건수', 
+	  	       				name:'TOT_JEOPSOKJA_CNT',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	  	       			    whiteSpace: 'normal',
+	 	  	       			align: 'center'
+	  	       			},
+	       		    	{
+	  	       				header:'전월대비', 
+	  	       				name:'NOW_DATA',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	  	       			    whiteSpace: 'normal',
+	 	  	       			align: 'center',
+		 	  	       	    formatter: function(value) {
+		 	  	       	      let backgroudColor = "";
+		 	  	       	      
+		 	  	       	      if (value.value < 0){
+		 	  	       	        backgroudColor = "red";
+		 	  	       	      } else {
+		 	  	       	        backgroudColor = "blue";
+		 	  	       	      }
+		 	  	       	      
+		 	  	       	      return '<div style="color:'+backgroudColor+'">'+value.value+'</div>';
+		 	  	       	    }
+	  	       			},
+	       		    ]
+	    		});
+			}else if(self.pSearchInfo.tonggyeGb == 'GRADE') {
+				self.grid = new tui.Grid({
+	       		    el: document.getElementById('grid'),
+	       			scrollX: true,
+	       		 	bodyHeight: 250,
+// 	       		 	rowHeaders: ['rowNum'],
+	       		    columns: [
+	       		    	{
+	       		    		header:'학년',
+	       		    		name:'USER_TYPE_GBNM',
+	       			     	minWidth: 30,
+	  	       			    whiteSpace: 'normal',
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	       		    	},
+	       		    	{
+	       		    		header:'남자인원', 
+	       		    		name:'M_CNT',
+	  	       			    whiteSpace: 'normal',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	  	       			},
+	       		    	{
+	  	       				header:'남자건수', 
+	  	       				name:'M_JEOPSOK_CNT',
+	  	       			    whiteSpace: 'normal',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	  	       			},
+	       		    	{
+	  	       				header:'여자인원', 
+	  	       				name:'W_CNT',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	  	       			    whiteSpace: 'normal',
+	 	  	       			align: 'center'
+	  	       			},
+	       		    	{
+	  	       				header:'여자건수', 
+	  	       				name:'W_JEOPSOK_CNT',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	  	       			    whiteSpace: 'normal',
+	 	  	       			align: 'center',
+	  	       			},
+	       		    	{
+	  	       				header:'전체접속인원', 
+	  	       				name:'TOT_CNT',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	  	       			    whiteSpace: 'normal',
+	 	  	       			align: 'center',
+	  	       			},
+	       		    	{
+	  	       				header:'전체접속건수', 
+	  	       				name:'TOT_JEOPSOK_CNT',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	  	       			    whiteSpace: 'normal',
+	 	  	       			align: 'center',
+	  	       			}
+	       		    ],
+		  			summary: {
+		   				height: 40,
+		   				position: 'bottom', // or 'top'
+		   				columnContent: {
+		   					USER_TYPE_GBNM: {
+		   						template: function() {
+		   							return '합계';
+		   						}
+		   					},
+		   					M_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   					M_JEOPSOK_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   					W_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   					W_JEOPSOK_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   					TOT_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   					TOT_JEOPSOK_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   				}
+		   			}
+	    		});
+			}else if(self.pSearchInfo.tonggyeGb == 'UNIV') {
+				self.grid = new tui.Grid({
+	       		    el: document.getElementById('grid'),
+	       			scrollX: true,
+	       		 	bodyHeight: 300,
+// 	       		 	rowHeaders: ['rowNum'],
+	       		    columns: [
+	       		    	{
+	       		    		header:'학과',
+	       		    		name:'DEPT_NM',
+	       			     	minWidth: 180,
+	  	       			    whiteSpace: 'normal',
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	       		    	},
+	       		    	{
+	       		    		header:'접속건수', 
+	       		    		name:'JEOPSOK_CNT',
+	  	       			    whiteSpace: 'normal',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	  	       			},
+	       		    	{
+	  	       				header:'접속인원', 
+	  	       				name:'INWON_CNT',
+	  	       			    whiteSpace: 'normal',
+	       			     	minWidth: 60,
+		   			        sortable: true,
+	 	  	       			align: 'center'
+	  	       			},
+	       		    ],
+		  			summary: {
+		   				height: 40,
+		   				position: 'bottom', // or 'top'
+		   				columnContent: {
+		   					DEPT_NM: {
+		   						template: function() {
+		   							return '합계';
+		   						}
+		   					},
+		   					JEOPSOK_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   					INWON_CNT: {
+		   						template: function(valueMap) {
+		   							return valueMap.sum;
+		   						}
+		   					},
+		   				}
+		   			}
+	    		});
+			}	
+    	},
+		excelCountCheck: function() {
+			/**/
+			if(this.excelData.length == 0){
+				 notifySubmit('warning', '접속자 수', '다운로드 받을 항목이 없습니다.', 'icon-caution');
+			}
+		},
+		getFileName: function() {
+			let pFileName = '';
+			
+			switch(this.pSearchInfo.tonggyeGb) {
+				case 'MONTH':
+					pFileName = '월별건수 통계.xls';
+					break;
+				case 'GRADE':
+					pFileName = '학년별건수 통계.xls';
+					break;
+				case 'UNIV':
+					pFileName = '대학별건수 통계.xls';
+					break;
+			}
+			
+			return pFileName;
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

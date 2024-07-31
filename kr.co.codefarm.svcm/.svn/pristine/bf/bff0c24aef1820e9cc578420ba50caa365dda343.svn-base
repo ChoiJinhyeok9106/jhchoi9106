@@ -1,0 +1,872 @@
+<h2>앱 관리</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h2 class="h2">앱 리스트</h2>
+        <div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pSearchType" v-model="pSearchType" style="width:184px;" class="size-m">
+                <option value="1">앱 명</option>
+                <option value="2">앱 영문명</option>
+                <option value="3">설명</option>
+            </select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	        <div class="f-right">
+	            <input type="button" value="신규" class="btn type02 size-m" @click="newRow()">
+	        </div>
+	    </div>
+
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{appListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{appListPaging.getCurrentPage()}}</span> / {{appListPaging.getTotalPage()}})</span>
+		</div>
+        <div class="app-list" id="mainListLoading">
+            <div class="title-line">
+                <span style="width:31%;">앱 명</span>
+                <span style="width:20%;">앱 영문 명</span>
+                <span style="width:10%;">버전</span>
+                <span style="width:25%;" class="left">ENDPOINT</span>
+                <span style="width:7%;">삭제</span>
+                <span style="width:7%;">상태</span>
+            </div>
+            <div v-if="appList.getRowCount() > 0 && appList.getRowType(index) != 8 && !appList.isFilterRow(index)" v-for="(item, index) in appList.getData()" :key="index">
+                <div class="app-list-box" :class="{'active': index == appList.rowposition}">
+                    <div data-header="앱명" style="width:31%;">
+                        <span @click="appList.selectRow(index);">
+                            <span><span class="icon-bg" :class="[item.ICON]"></span><span class="tit">{{item.APP_NM}}</span></span>
+                        </span>
+                    </div>
+                    <div data-header="앱 영문 명" style="width:20%;">
+                        <span><span><span class="text">{{item.APP_ENM}}</span></span></span>
+                    </div>
+                    <div data-header="버전" style="width:10%;">
+                        <span><span><span class="text">{{item.APP_VER}}</span></span></span>
+                    </div>
+                    <div data-header="ENDPOINT" style="width:25%;">
+                        <span><span class="left"><span class="text">{{item.ENDPOINT}}</span></span></span>
+                    </div>
+                    <div data-header="삭제" style="width:7%;">
+                        <span><span><a href="#!"><span class="icon icon-trashcan" @click="messagePopup('delete',index)"></span></a></span></span>
+                    </div>
+                    <div data-header="상태" style="width:7%;">
+                        <span><span><a href="#!"><span class="icon" :class="appList.getRowType(index, 'class')"></span></a></span></span>
+                    </div>
+                </div>
+                <transition name="slide">
+                    <div id="appDetail" class="app-info-layer" v-show="index == appList.rowposition">
+                        <div class="box-type03">
+                            <div class="left-zone">
+                                <div class="left-zone-box">
+                                	<single-file-uploader :fileset="picFile" :type="'img'" :fileid="'SMN_APP'" :filekey="item.APP_ID" :filehangmok="'appImg'" :modify="true"></single-file-uploader>
+                                    <div class="form-group row form-row">
+                                        <div class="col s12 l9 col-label">
+                                            <label for="useYn" class="label-type01 required">사용여부</label>
+                                        </div>
+                                        <div class="col s12 l3">
+                                            <div class="form-check">
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부 " v-model="item.USE_YN" true-value="Y" false-value="N">
+                                                    <span class="slider bg-red round"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row form-row">
+                                        <div class="col s12 l9 col-label">
+                                            <label for="defaultAppYn" class="label-type01 required">디폴트 앱 여부</label>
+                                        </div>
+                                        <div class="col s12 l3">
+                                            <div class="form-check">
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="defaultAppYn" name="defaultAppYn" data-vv-as="디폴트 앱 여부 " v-model="item.DEFAULT_APP_YN" true-value="Y" false-value="N">
+                                                    <span class="slider bg-red round"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right-zone">
+                                <div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="appDesc" class="label-type01">앱 설명</label>
+                                        <textarea id="appDesc" class="size-m" rows="10" name="appDesc" placeholder="앱에 대한 설명을 작성해주세요" data-vv-as="앱 설명 " v-model="item.APP_DESC" rows="10" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('appDesc')}"></textarea>
+                                        <invalid-message :visible="index == appList.rowposition" :name="'appDesc'" :verror="errors"/>
+                                    </div>
+                                </div>
+                                <div class="row form-row">
+                                    <div class="form-group col s12 l4">
+                                        <label for="appId" class="label-type01 required">앱 아이디</label>
+                                        <input type="text" id="appId" class="size-m" name="appId" placeholder="앱 아이디(유일한, 영문)" data-vv-as="앱 아이디 " v-model="item.APP_ID" v-validate="'required|max:30'" :disabled="updateDisabled" v-bind:class="{'invalid': errors.has('appId')}">
+                                        <invalid-message :visible="index == appList.rowposition" :name="'appId'" :verror="errors"/>
+                                    </div>
+                                    <div class="form-group col s12 l4">
+                                        <label for="appNm" class="label-type01 required">앱 명</label>
+                                        <input type="text" id="appNm" class="size-m" name="appNm" placeholder="앱 한글 이름" data-vv-as="앱 명 " v-model.trim="item.APP_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('appNm')}">
+                                        <invalid-message :visible="index == appList.rowposition" :name="'appNm'" :verror="errors"/>
+                                    </div>
+                                    <div class="form-group col s12 l4">
+                                        <label for=appEnm class="label-type01">앱 영문명</label>
+                                        <input type="text" id="appEnm" class="size-m" name="appEnm" placeholder="앱 영문 이름" data-vv-as="앱 영문명 " v-model.trim="item.APP_ENM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('appEnm')}">
+                                        <invalid-message :visible="index == appList.rowposition" :name="'appEnm'" :verror="errors"/>
+                                    </div>
+                                </div>
+                                <div class="row form-row">
+                                    <div class="form-group col s12 l2">
+                                        <label for="appVer" class="label-type01 required">앱 버전</label>
+                                        <input type="text" id="appVer" class="size-m" name="appVer" placeholder="1. 0. 0"  data-vv-as="앱 버전 " v-model.trim="item.APP_VER" v-validate="'required|max:1000'" v-bind:class="{'invalid': errors.has('appVer')}">
+                                        <invalid-message :visible="index == appList.rowposition" :name="'appVer'" :verror="errors"/>
+                                    </div>
+                                    <div class="form-group col s12 l7">
+                                        <label for="endpoint" class="label-type01">ENDPOINT</label>
+                                        <input type="text" id="endpoint" class="size-m" name="endpoint" placeholder="/app-html/index.html or http://example.com"  data-vv-as="ENDPOINT " v-model.trim="item.ENDPOINT" v-validate="'max:450'" v-bind:class="{'invalid': errors.has('endpoint')}">
+                                        <invalid-message :visible="index == appList.rowposition" :name="'endpoint'" :verror="errors"/>
+                                    </div>
+                                    <div class="form-group col s12 l3">
+                                        <label for="appJakseongjaId" class="label-type01 required">작성자 아이디</label>
+                                        <input type="text" id="appJakseongjaId" class="size-m" name="appJakseongjaId" placeholder="작성자 아이디" data-vv-as="작성자 아이디 " v-model.trim="item.APP_JAKSEONGJA_ID" v-validate="'required|max:30'" v-bind:class="{'invalid': errors.has('appJakseongjaId')}">
+                                        <invalid-message :visible="index == appList.rowposition" :name="'appJakseongjaId'" :verror="errors"/>
+                                    </div>
+                                </div>
+                                <div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="tag" class="label-type01 required">태그</label>
+                                        <tag-input :id="'app-tags'" v-if="index == appList.rowposition" :tagset="appTagSet" :rowposition="appList.rowposition"></tag-input>
+                                        <input type="hidden" id="tag" class="size-m" name="tag" data-vv-as="태그 " v-model.trim="appTagSet.getTag()" v-validate="'required|max:2000'" v-bind:class="{'invalid': errors.has('tag')}">
+                                        <invalid-message :visible="index == appList.rowposition" :name="'tag'" :verror="errors"/>
+                                    </div>
+                                </div>
+                                <div class="row form-row">
+                                    <!-- <div class="form-group col s12 l4">
+                                        <label for="icon" class="label-type01">ICON</label>
+                                        <input type="text" id="icon" class="size-m" name="icon" data-vv-as="아이콘 " v-model.trim="item.ICON" v-validate="'required|max:100'" v-bind:class="{'invalid': errors.has('icon')}">
+                                        <select class="size-m" id="icon"  v-model="item.ICON" data-vv-as="아이콘 " v-bind:class="{'invalid': errors.has('icon')}">
+                                            <option value="">- 선택 -</option>
+                                            <option value="icon-xcloud001">icon-xcloud001</option>
+                                            <option value="icon-xcloud002">icon-xcloud002</option>
+                                            <option value="icon-xcloud003">icon-xcloud003</option>
+                                            <option value="icon-xcloud004">icon-xcloud004</option>
+                                            <option value="icon-xcloud005">icon-xcloud005</option>
+                                            <option value="icon-xcloud006">icon-xcloud006</option>
+                                            <option value="icon-xcloud007">icon-xcloud007</option>
+                                            <option value="icon-xcloud008">icon-xcloud008</option>
+                                            <option value="icon-xcloud009">icon-xcloud009</option>
+                                            <option value="icon-xcloud010">icon-xcloud010</option>
+                                            <option value="icon-xcloud011">icon-xcloud011</option>
+                                            <option value="icon-xcloud012">icon-xcloud012</option>
+                                            <option value="icon-xcloud013">icon-xcloud013</option>
+                                            <option value="icon-xcloud014">icon-xcloud014</option>
+                                            <option value="icon-xcloud015">icon-xcloud015</option>
+                                            <option value="icon-xcloud016">icon-xcloud016</option>
+                                            <option value="icon-xcloud017">icon-xcloud017</option>
+                                            <option value="icon-xcloud018">icon-xcloud018</option>
+                                            <option value="icon-xcloud019">icon-xcloud019</option>
+                                            <option value="icon-xcloud020">icon-xcloud020</option>
+                                            <option value="icon-xcloud021">icon-xcloud021</option>
+                                            <option value="icon-xcloud022">icon-xcloud022</option>
+                                            <option value="icon-xcloud023">icon-xcloud023</option>
+                                            <option value="icon-xcloud024">icon-xcloud024</option>
+                                            <option value="icon-xcloud025">icon-xcloud025</option>
+                                            <option value="icon-xcloud026">icon-xcloud026</option>
+                                            <option value="icon-xcloud027">icon-xcloud027</option>
+                                            <option value="icon-xcloud028">icon-xcloud028</option>
+                                            <option value="icon-xcloud029">icon-xcloud029</option>
+                                            <option value="icon-xcloud030">icon-xcloud030</option>
+                                            <option value="icon-xcloud031">icon-xcloud031</option>
+                                            <option value="icon-xcloud032">icon-xcloud032</option>
+                                            <option value="icon-xcloud033">icon-xcloud033</option>
+                                            <option value="icon-xcloud034">icon-xcloud034</option>
+                                            <option value="icon-xcloud035">icon-xcloud035</option>
+                                        </select>
+                                        <invalid-message :visible="index == appList.rowposition" :name="'icon'" :verror="errors"/>
+                                    </div>
+                                    <div class="form-group col s12 l4">
+                                        <label for="color" class="label-type01">COLOR</label>
+                                        <input type="text" id="color" class="size-m" name="color" data-vv-as="색상 " v-model.trim="item.COLOR" v-validate="'required|max:100'" v-bind:class="{'invalid': errors.has('color')}">
+                                        <select class="size-m" id="color"  v-model="item.COLOR" data-vv-as="색상 " v-bind:class="{'invalid': errors.has('color')}">
+                                            <option value="">- 선택 -</option>
+                                            <option value="app_color_cyan">CYAN</option>
+                                            <option value="app_color_blue">BLUE</option>
+                                            <option value="app_color_orange">ORANGE</option>
+                                            <option value="app_color_lightorange">LIGHT ORANGE</option>
+                                            <option value="app_color_green">GREEN</option>
+                                        </select>
+                                        <invalid-message :visible="index == appList.rowposition" :name="'color'" :verror="errors"/>
+                                    </div> -->
+<!--                                     <div class="form-group col s12 l4"> -->
+<!--                                         <label for="useDeviceGb" class="label-type01">사용기기</label> -->
+<!--                                         <select class="size-m" id="useDeviceGb"  v-model="item.USE_DEVICE_GB" data-vv-as="사용기기 " v-bind:class="{'invalid': errors.has('useDeviceGb')}"> -->
+<!--                                             <option value="">- 선택 -</option> -->
+<!--                                         </select> -->
+<!--                                         <invalid-message :visible="index == appList.rowposition" :name="'useDeviceGb'" :verror="errors"/> -->
+<!--                                         <small class="form-txt invalid" v-show="index == appList.rowposition">{{ errors.first('useDeviceGb') }}</small> -->
+<!--                                     </div> -->
+	                                <div class="row form-row">
+	                                    <div class="form-group col s12 l4">
+	                                        <label for="appTypeGb" class="label-type01">앱 유형</label>
+	                                        <select class="size-m" id="appTypeGb"  v-model="item.APP_TYPE_GB" data-vv-as="앱 유형 구분 " v-bind:class="{'invalid': errors.has('appTypeGb')}">
+	                                            <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'APP_TYPE_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+	                                        </select>
+	                                        <invalid-message :visible="index == appList.rowposition" :name="'appTypeGb'" :verror="errors"/>
+	                                        <small class="form-txt invalid" v-show="index == appList.rowposition">{{ errors.first('appTypeGb') }}</small>
+	                                    </div>
+	                                    <div class="form-group col s12 l4">
+	                                        <label for="openTypeGb" class="label-type01">오픈 유형</label>
+	                                        <select class="size-m" id="openTypeGb"  v-model="item.OPEN_TYPE_GB" data-vv-as="오픈 유형 구분 " v-bind:class="{'invalid': errors.has('openTypeGb')}">
+	                                            <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'OPEN_TYPE_GB', 'select', 'CD_NM', 'N', 'CD1'), function(e){return (e.CD1 == item.APP_TYPE_GB || e.CD1 == '');})" :value="item.CD">{{item.CD_NM}}</option>
+	                                        </select>
+	                                        <invalid-message :visible="index == appList.rowposition" :name="'openTypeGb'" :verror="errors"/>
+	                                        <small class="form-txt invalid" v-show="index == appList.rowposition">{{ errors.first('openTypeGb') }}</small>
+	                                    </div>
+	                                    <div class="form-group col s12 l4">
+											<label for="menualYn" class="label-type01">매뉴얼 표시여부</label>
+											<div class="form-check">
+												<label class="toggle-switch size-m">
+													<input class="size-m" type="checkbox" id="menualYn" name="menualYn" v-model="item.MENUAL_YN" data-vv-as="매뉴얼 표시여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('menualYn')}" />
+													<span class="slider round"></span>
+												</label>
+											</div>
+	                                        <invalid-message :visible="index == appList.rowposition" :name="'menualYn'" :verror="errors"/>
+	                                        <small class="form-txt invalid" v-show="index == appList.rowposition">{{ errors.first('menualYn') }}</small>
+	                                    </div>
+	                                </div>
+                                    <div class="form-group col s12 app-sel-list" v-if="index == appList.rowposition">
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio01" value="icon-xcloud015" v-model="item.ICON">
+									                    <label for="radio01"><span class="icon icon-xcloud015"></span>시스템관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio02" value="icon-xcloud026" v-model="item.ICON">
+									                    <label for="radio02"><span class="icon icon-xcloud026"></span>앱스토어</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio03" value="icon-xcloud034" v-model="item.ICON">
+									                    <label for="radio03"><span class="icon icon-xcloud034"></span>메인설정</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio04" value="icon-xcloud012" v-model="item.ICON">
+									                    <label for="radio04"><span class="icon icon-xcloud012"></span>배너관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio05" value="icon-xcloud002" v-model="item.ICON">
+									                    <label for="radio05"><span class="icon icon-xcloud002"></span>게시판관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio06" value="icon-xcloud014" v-model="item.ICON">
+									                    <label for="radio06"><span class="icon icon-xcloud014"></span>설문관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio07" value="icon-xcloud001" v-model="item.ICON">
+									                    <label for="radio07"><span class="icon icon-xcloud001"></span>스마트캠퍼스</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio08" value="icon-xcloud033" v-model="item.ICON">
+									                    <label for="radio08"><span class="icon icon-xcloud033"></span>학생역량강화</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio09" value="icon-xcloud021" v-model="item.ICON">
+									                    <label for="radio09"><span class="icon icon-xcloud021"></span>역량관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio10" value="icon-xcloud011" v-model="item.ICON">
+									                    <label for="radio10"><span class="icon icon-xcloud011"></span>비교과관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio11" value="icon-xcloud035" v-model="item.ICON">
+									                    <label for="radio11"><span class="icon icon-xcloud035"></span>실적관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio12" value="icon-xcloud005" v-model="item.ICON">
+									                    <label for="radio12"><span class="icon icon-xcloud005"></span>포트폴리오</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio13" value="icon-xcloud006" v-model="item.ICON">
+									                    <label for="radio13"><span class="icon icon-xcloud006"></span>마일리지</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio14" value="icon-xcloud025" v-model="item.ICON">
+									                    <label for="radio14"><span class="icon icon-xcloud025"></span>일정관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio15" value="icon-xcloud004" v-model="item.ICON">
+									                    <label for="radio15"><span class="icon icon-xcloud004"></span>취업지원</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio16" value="icon-xcloud030" v-model="item.ICON">
+									                    <label for="radio16"><span class="icon icon-xcloud030"></span>상담</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio17" value="icon-xcloud023" v-model="item.ICON">
+									                    <label for="radio17"><span class="icon icon-xcloud023"></span>커뮤니티</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio18" value="icon-xcloud009" v-model="item.ICON">
+									                    <label for="radio18"><span class="icon icon-xcloud009"></span>기타</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio19" value="icon-xcloud009 col02" v-model="item.ICON">
+									                    <label for="radio19"><span class="icon icon-xcloud009 col02"></span>개발자가이드</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio20" value="icon-xcloud009 col03" v-model="item.ICON">
+									                    <label for="radio20"><span class="icon icon-xcloud009 col03"></span>디자인팀 시안</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio21" value="icon-xcloud028" v-model="item.ICON">
+									                    <label for="radio21"><span class="icon icon-xcloud028"></span>디자인가이드</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio22" value="icon-xcloud036" v-model="item.ICON">
+									                    <label for="radio22"><span class="icon icon-xcloud036"></span>마이페이지</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio23" value="icon-xcloud037" v-model="item.ICON">
+									                    <label for="radio23"><span class="icon icon-xcloud037"></span>헬프데스크</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio24" value="icon-xcloud029" v-model="item.ICON">
+									                    <label for="radio24"><span class="icon icon-xcloud029"></span>진로설계</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio25" value="icon-xcloud007" v-model="item.ICON">
+									                    <label for="radio25"><span class="icon icon-xcloud007"></span>성과관리</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio26" value="icon-xcloud018" v-model="item.ICON">
+									                    <label for="radio26"><span class="icon icon-xcloud018"></span>전자결제</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio27" value="icon-xcloud038" v-model="item.ICON">
+									                    <label for="radio27"><span class="icon icon-xcloud038"></span>NCS</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio28" value="icon-xcloud039" v-model="item.ICON">
+									                    <label for="radio28"><span class="icon icon-xcloud039"></span>도서관</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio29" value="icon-xcloud040" v-model="item.ICON">
+									                    <label for="radio29"><span class="icon icon-xcloud040"></span>티칭</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio30" value="icon-xcloud041" v-model="item.ICON">
+									                    <label for="radio30"><span class="icon icon-xcloud041"></span>예산</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio31" value="icon-xcloud042" v-model="item.ICON">
+									                    <label for="radio31"><span class="icon icon-xcloud042"></span>문제은행</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio32" value="icon-xcloud003" v-model="item.ICON">
+									                    <label for="radio32"><span class="icon icon-xcloud003"></span>LMS</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    	</div>
+                                    	<div class="row form-row">
+                                    		<div class="form-group col s12 m6 l3">
+                                    			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio33" value="icon-xcloud043" v-model="item.ICON">
+									                    <label for="radio33"><span class="icon icon-xcloud043"></span>DevOps</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+                                    		</div>
+                                    		<div class="form-group col s12 m6 l3">
+	                                   			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio34" value="icon-xcloud044" v-model="item.ICON">
+									                    <label for="radio34"><span class="icon icon-xcloud044"></span>SWC</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+	                                   		</div>
+	                                   		<div class="form-group col s12 m6 l3">
+	                                   			<div class="form-check">
+									                <div class="radio size-m app-sel">
+									                    <input type="radio" id="radio35" value="icon-xcloud045" v-model="item.ICON">
+									                    <label for="radio35"><span class="icon icon-xcloud045"></span>외부링크</label>
+									                    <i class="radio-icon"></i>
+									                </div>
+									            </div>
+	                                   		</div>
+                                    	</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <file-uploader :fileset="screenshotFile" :type="'img'" :fileid="'SMN_APP'" :filekey="item.APP_ID" :filehangmok="'screenshot'" :title="'스크린샷'" :modify="true"></file-uploader>
+                                </div>
+                            </div>
+                            <div class="col-inline btn-line right">
+                                <a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+        </div>
+        <paging :pagingset="appListPaging" :type="'normal'"></paging>
+        <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+    </section>
+
+</section>
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+        appList: new Dataset(),
+        updateDisabled: false,
+        picFile: new SingleFileSet('SMN'),
+        screenshotFile: new FileSet('SMN', 10),
+        appListPaging: new PagingSet(5, 5),
+        messageModal: new ModalSet('app-modal'),
+        appTagSet: new Tagset(),
+        pSearchType: '1',
+        pSearchArgv: '',
+        mainListLoading: {id:'mainListLoading', val:false},
+    },
+    //생성 될 때
+    beforeCreate: function(){
+
+    },
+    //계산된 속성 표현 시
+    computed: {
+
+    },
+    //데이터 감시
+    watch: {
+        'appList.rowposition': {
+            handler: function (val, oldVal) {
+                if(this.appList.enableevent){
+                    var changeYn = this.appList.dataCompare(oldVal);
+                    var rowType = this.appList.getRowType(val);
+					var oldRowType = this.appList.getRowType(oldVal);
+
+                    if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+                        this.appList.setDefaultRow(oldVal);
+                    }
+                   	if(val != -1){
+                        var appId = this.appList.getColumn(val, 'APP_ID');
+
+                   		if(rowType == this.ROWTYPE_NORMAL || rowType == this.ROWTYPE_UPDATE){
+                            this.updateDisabled = true;
+                        }else{
+                            this.updateDisabled = false;
+                        }
+
+                        if(rowType != this.ROWTYPE_INSERT){
+                        	this.picFile.getFiles('SMN_APP', appId, 'appImg', null);
+                            this.screenshotFile.getFiles('SMN_APP', appId, 'screenshot', null);
+                        }
+                        this.appTagSet.init(this.appList, 'TAG', val, 'tag');
+                        this.$validator.reset();
+                   	}
+                }
+            }
+        },
+        'appList.data': {
+            handler: function (val, oldVal) {
+                if(this.appList.enableevent){
+                    var vm = this;
+                    val.filter( function( data, rowposition ) {
+                        return Object.keys(data ).some( function( colNm ) {
+                            var diff = data[colNm] !== vm.appList.beforeData[rowposition][colNm];
+                            vm.appList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+                            if(diff) {
+                                vm.appList.beforeData[rowposition][colNm] = _.cloneDeep(data[colNm]);
+                                vm.componentStateChange();
+                            }
+                        })
+                    });
+                }
+            },
+            deep: true
+        },
+        'appListPaging.currentPage': {
+            handler: function (val, oldVal) {
+                this.setAppList();
+            }
+        },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+        this.setAppList();
+//         this.messageModal.openModal('confirm', 'TEST TITLE', 'TEST-CONTENTS', 'small', 'ID1');
+    },
+    //함수
+    methods: {
+        /* 앱 리스트 조회 */
+        setAppList: function(){
+            var self = this;
+
+            if(isNull(this.pSearchArgv)) this.pSearchArgv = '';
+            if(isNull(this.pSearchType)){
+                this.pSearchType = '';
+                this.pSearchArgv = '';
+            }
+
+            var addObj = {
+                "pSearchType": this.pSearchType,
+                "pSearchArgv": this.pSearchArgv,
+                "pPageNo": this.appListPaging.currentPage,
+                "pRowCount": this.appListPaging.getRowCnt()
+            };
+
+			self.mainListLoading.val = true;
+            var returnVal = appApi.app(addObj, false);
+
+            returnVal.then(function(response) {
+            	self.appList.setData(response.data);
+
+                if(self.appList.getRowCount() > 0){
+                    var totalCnt = self.appList.data[0].CNT;
+                    self.appListPaging.setTotalCnt(totalCnt);
+                }else{
+                	self.appListPaging.setTotalCnt(0);
+                }
+            }).finally(function(){
+				self.mainListLoading.val = false;
+			});
+        },
+        /* 검색 */
+        search: function(){
+        	var pageNo = this.appListPaging.getCurrentPage();
+
+        	if(pageNo == 1){
+        		this.setAppList();
+        	}else{
+        		this.appListPaging.movePage(1);
+        	}
+        },
+        /* 앱 리스트 신규행 추가 */
+        newRow: function(){
+        	var addObj = {
+        		'APP_ID' : '',
+        		'APP_NM' : '',
+        		'APP_VER' : '1.0.0',
+        		'APP_JAKSEONGJA_ID' : 'admin',
+        		'APP_ENM' : '',
+        		'ENDPOINT' : '/app-html/index.html',
+        		'TAG' : '',
+        		'APP_DESC' : '',
+        		'ICON' : 'icon-xcloud016',
+        		'COLOR' : 'app_color_orange',
+        		'USE_DEVICE_GB' : '',
+        		'DAEPYO_IMG_FILE_NO' : '',
+        		'USE_YN' : 'Y',
+        		'DEFAULT_APP_YN' : 'Y',
+        		'APP_TYPE_GB': '',
+        		'OPEN_TYPE_GB': '',
+        		'MENUAL_YN': 'Y'
+        	};
+
+//         	addObj['APP_ID'] = null;
+//          addObj['APP_NM'] = null;
+//          addObj['APP_VER'] = '1.0.0';
+//          addObj['APP_JAKSEONGJA_ID'] = 'admin';
+//          addObj['APP_ENM'] = null;
+//          addObj['ENDPOINT'] = '/app/{{appId}}/html/main/index.html';
+//          addObj['TAG'] = null;
+//          addObj['APP_DESC'] = null;
+//          addObj['ICON'] = 'icon-xcloud023';
+//          addObj['COLOR'] = 'app_color_orange';
+//          addObj['USE_DEVICE_GB'] = null;
+//          addObj['DAEPYO_IMG_FILE_NO'] = null;
+//          addObj['USE_YN'] = 'Y';
+//          addObj['DEFAULT_APP_YN'] = 'Y';
+
+            var newRowPosition = this.appList.addRow(addObj);
+        },
+        /* 앱 리스트 저장,수정 */
+        saveRow: function(){
+            var validate = this.$validator.validateAll();
+            var self = this;
+
+            validate.then(function(response) {
+                if(response){
+                    var rowposition = self.appList.rowposition;
+                    var rowType = self.appList.getRowType(rowposition);
+                    var returnVal = null;
+
+                    //신규
+                    if(rowType == self.ROWTYPE_INSERT){
+                        returnVal = appApi.appInsert(self.appList.currentRow, true);
+                    }
+                    //수정
+                    else if(rowType == self.ROWTYPE_UPDATE){
+                        returnVal = appApi.appUpdate(self.appList.currentRow, true);
+                    }else{
+                        notifySubmit('info', '앱 저장', '저장할 내역이 없습니다.', 'icon-message');
+                    }
+
+                    if(!isNull(returnVal)) {
+						returnVal.then(function(response) {
+							var data = response.data;
+
+							if(response.data == '1'){
+								self.setAppList();
+								notifySubmit('success', '앱 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '앱 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						});
+					}
+                }else{
+                    notifySubmit('warning', '앱 저장', '입력항목을 확인해주세요.', 'icon-caution');
+                }
+            });
+        },
+        /* 앱 리스트 삭제 */
+        deleteRow: function(row){
+            var rowType = this.appList.getRowType(row);
+            var returnVal = null;
+            var appId = this.appList.getColumn(row, 'APP_ID');
+            var self = this;
+
+            if(rowType == self.ROWTYPE_INSERT){
+            	this.appList.deleteRow(row);
+            	notifySubmit('success', '앱 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+            }else{
+                returnVal = appApi.appDelete(appId, true);
+                returnVal.then(function(response) {
+                    var data = response.data;
+                    self.setAppList();
+                    notifySubmit('success', '앱 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+                }).catch(function(error) {
+                	notifySubmit('warning', '앱 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+                });
+            }
+        },
+        /* 앱 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+        componentStateChange: function(){
+            var rowposition = this.appList.rowposition;
+            var rowType = this.appList.getRowType(rowposition);
+
+            if(rowType == this.ROWTYPE_NORMAL || rowType == this.ROWTYPE_UPDATE){
+                $('#appId').attr('disabled', true);
+            }else{
+                $('#appId').attr('disabled', false);
+            }
+        },
+		/* 저장할때 메세지창 띄우기*/
+    	messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+
+            switch(pId) {
+	    		case 'delete':
+                    title = '삭제';
+                    cont = '선택한 앱을 삭제 하시겠습니까?<br /><span style="color:#c90000;">(앱, 위젯, 레이아웃, 앱 권한, 앱 메뉴, 앱 메뉴권한,구독<br />정보 등 모든 데이터가 삭제되며 복구가 불가능합니다.)</span>';
+	    			break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+
+	    	switch(pId) {
+	    		case 'delete':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    },
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>
+

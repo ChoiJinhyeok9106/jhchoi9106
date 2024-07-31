@@ -1,0 +1,382 @@
+<h2>IP 접근허용 관리</h2>
+<section class="sub_cont_box" id="app">
+	<h2 class="h2" v-if="!ipRestrictedAccessMngList.currentRow">접근허용 IP 리스트</h2>
+	<!-- 검색조건 -->
+	<div class="box-type03" v-if="!ipRestrictedAccessMngList.currentRow">
+        <div class="row form-row">
+            <!-- 사용자 ID/명 -->
+            <div class="form-group col s12 l6">
+	            <label class="label-type01" for="searchUserIdNm">사용자 ID/명</label> 
+	            <input type="text" id="searchUserIdNm" name="searchUserIdNm" class="size-m" @keyup.13="search()" v-model="searchData.USER_ID_NM">
+	        </div>
+	    </div>
+	</div>
+	
+	<div class="row form-row" v-if="!ipRestrictedAccessMngList.currentRow">                        
+        <div class="form-group col s12 l5">
+            <span class="board-info-txt size-m">총 <span>{{ ipRestrictedAccessMngList.getRowCount() > 0 ? ipRestrictedAccessMngList.getColumn(0, 'CNT') : 0 }}</span>건의 접근허용 IP가 있습니다. 
+            (<span>{{ ipRestrictedAccessMngList.getRowCount() > 0 ? ipRestrictedAccessMngListPaging.currentPage : 0 }}</span> / {{ ipRestrictedAccessMngListPaging.getTotalPage() }})</span>
+        </div>     
+        <div class="form-group col s12 l7 col-inline right">
+	        <a href="#!" class="btn type01 size-m" @click="search()">검색</a>
+            <a href="#!" class="btn type02 size-m" @click="addRow()">신규</a>
+        </div>
+    </div>
+	
+	<!-- 접근허용 IP 리스트 -->
+	<div class="col s12 m12 xl12" v-if="!ipRestrictedAccessMngList.currentRow">
+		<table class="table-type01 response" summary="접근허용 IP의 사용자 ID, 사용자 명, 접근허용 IP를 조회 항목별 순서대로 안내하는 표입니다.">
+			<caption>접근허용 IP 리스트</caption>
+			<colgroup>
+				<col width="20%"/>
+				<col width="20%"/>
+				<col />
+				<col width="7%"/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col">사용자 ID</th>
+					<th scope="col">사용자 명</th>
+					<th scope="col">접근허용 IP</th>
+					<th scope="col">삭제</th>
+				</tr>
+			</thead>
+			<tbody>
+			    <tr v-for="(item, index) in ipRestrictedAccessMngList.data" v-if="ipRestrictedAccessMngList.getRowCount() > 0">
+			        <td class="left" data-header="사용자 ID" @click="ipRestrictedAccessMngList.selectRow(index)" style="cursor:pointer;">{{ item.USER_ID }}</td>
+	                <td data-header="사용자 명" @click="ipRestrictedAccessMngList.selectRow(index)" style="cursor:pointer;">{{ item.USER_NM }}</td>
+	                <td class="left" data-header="접근허용 IP" @click="ipRestrictedAccessMngList.selectRow(index)" style="cursor:pointer;">{{ item.ALLOW_IP }}</td>
+			        <td data-header="삭제"><span class="icon-trashcan" @click="confirmOpen('deleteRow', index)"></span></td>
+			    </tr>
+			    <tr v-if="ipRestrictedAccessMngList.getRowCount() == 0">
+			        <td colspan="100" data-header="검색결과 없음">검색결과가 없습니다.</td>
+			    </tr>
+			</tbody>
+		</table>
+		<!-- 접근허용 IP 리스트 페이징 -->
+		<paging :pagingset="ipRestrictedAccessMngListPaging" :type="'normal'"></paging>
+	</div>
+	
+	<!-- 접근허용 IP 리스트 상세 -->
+    <h3 class="h3" v-if="ipRestrictedAccessMngList.currentRow">접근허용 IP 상세</h3>
+	<div class="style_set box-type01" v-if="ipRestrictedAccessMngList.currentRow">
+		<div class="row form-row">
+		    <div class="form-group col s12 l3">
+		        <label class="label-type01 required" for="userId">사용자 ID</label>
+	            <input type="text" id="userId" name="userId" class="size-m" v-model="ipRestrictedAccessMngList.currentRow.USER_ID" :disabled="true"
+	                   placeholder="사용자 명 입력시 자동 입력">
+		    </div>
+			<div class="form-group col s12 l3">
+		        <label class="label-type01 required" for="userNm">사용자 명</label>
+                <div class="btn-input">
+       		        <a href="#!" class="btn type02 size-m center-icon" @click="ipRestrictedAccessMngList.currentRow.ROW_TYPE == ROWTYPE_INSERT ? openPopupUser() : ''"><span class="icon-search"></span></a>
+		            <input class="size-m" type="text" id="userNm" name="userNm" data-vv-as="사용자 명 " v-model="ipRestrictedAccessMngList.currentRow.USER_NM" readonly="readonly" 
+		                   v-validate="'required'" v-bind:class="{'invalid': errors.has('userNm')}"/>
+		            <invalid-message :visible="ipRestrictedAccessMngList.currentRow" :name="'userNm'" :verror="errors"/>
+       	        </div>
+		    </div>
+		    <div class="form-group col s12 l6">
+		        <label class="label-type01 required" for="allowIp">접근허용 IP</label>
+	            <input type="text" id="allowIp" name="allowIp" class="size-m" v-model="ipRestrictedAccessMngList.currentRow.ALLOW_IP" 
+	                   :disabled="ipRestrictedAccessMngList.currentRow.ROW_TYPE == ROWTYPE_INSERT ? false : true"
+	                   data-vv-as="접근허용 IP " v-validate="'required|max:30|ip'" v-bind:class="{'invalid': errors.has('allowIp')}">
+		        <invalid-message :visible="ipRestrictedAccessMngList.currentRow" :name="'allowIp'" :verror="errors"/>
+		    </div>
+		</div>
+	    <div class="row form-row">
+	        <div class="form-group col s12 l12">
+                <div class="highlight-txt">
+		            <span class="icon icon-caution3"></span><span class="text">사용자의 접근허용 IP 수정을 원하실 경우, 존재하는 접근허용 IP 정보를 삭제 하신 후 등록하시기 바랍니다.</span>
+		        </div>
+		    </div>
+        </div>
+    </div>
+	<div class="btn-line right" v-if="ipRestrictedAccessMngList.currentRow">
+    	<a href="#!" class="btn type01 size-m" @click="goList()">목록</a>
+    	<a href="#!" class="btn type02 size-m" @click="confirmOpen('deleteRow', ipRestrictedAccessMngList.rowposition)">삭제</a>
+		<a href="#!" class="btn type02 size-m" @click="saveValidate()">저장</a>
+	</div>
+	
+	<!-- confirm -->
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+	
+	<!-- popup-user -->
+	<popup-user ref="popupuser" v-on:callback="popupUserCallback" :lovcomp="false"></popup-user>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		searchData : {'USER_ID_NM' : ''}, /* 검색 데이터 (사용자ID/명) */
+		ipRestrictedAccessMngList : new Dataset(), /* 접근 허용 IP 리스트 */
+		ipRestrictedAccessMngListPaging : new PagingSet(5, 5), /* 접근 허용 IP 리스트 페이징 */
+		messageModal: new ModalSet('modal-message'), /* confirm */
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		'ipRestrictedAccessMngList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.ipRestrictedAccessMngList.enableevent){
+					var changeYn = this.ipRestrictedAccessMngList.dataCompare(oldVal);
+					var oldRowType = this.ipRestrictedAccessMngList.getRowType(oldVal);
+					var rowType = this.ipRestrictedAccessMngList.getRowType(val);
+					
+					if(!changeYn || oldRowType == ROWTYPE_INSERT){
+						this.ipRestrictedAccessMngList.setDefaultRow(oldVal);
+					}
+					
+					if(this.ipRestrictedAccessMngList.getRowCount() == 0) {
+						this.ipRestrictedAccessMngListPaging.setTotalCnt(0);
+					} 
+					
+					this.$validator.reset();
+				}
+			}
+		},		
+		'ipRestrictedAccessMngList.data': {
+			handler: function (val, oldVal) {
+				if(this.ipRestrictedAccessMngList.enableevent){
+					var vm = this;
+				  	val.filter(function(data, rowposition) {
+				      	return Object.keys(data).some(function(colNm) {
+				          	var diff = data[colNm] !== vm.ipRestrictedAccessMngList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.ipRestrictedAccessMngList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },		
+		'ipRestrictedAccessMngListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				/* 접근 허용 IP 리스트 조회 */
+				this.setIpRestrictedAccessmngList();
+			}
+	    }
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		/* 검색 */
+        this.search();
+	},
+	//함수
+	methods: {
+		/* confirm */
+		confirmOpen : function(id, row){
+			/* 접근 허용 IP 삭제 */
+			if(id == 'deleteRow') {
+				this.messageModal.openModal('confirm', '삭제', '삭제하시겠습니까?', 'small', 'deleteRow', {'row': row});	
+			}
+		},
+		/* confirm callback */
+        messagepoppupcallback : function(gb, currentId, customData){
+        	/* 접근 허용 IP 삭제 */
+        	if(gb == 'confirm' && currentId == 'deleteRow'){
+        		this.deleteRow(customData.row);
+        	}
+        },
+        /* 검색 */
+        search : function() {
+        	var pageNo = this.ipRestrictedAccessMngListPaging.getCurrentPage();
+			
+	        if(pageNo == 1){
+	        	/* 접근 허용 IP 리스트 조회 */
+	        	this.setIpRestrictedAccessmngList();
+	        }else{
+	        	this.ipRestrictedAccessMngListPaging.movePage(1);
+	        } 
+        },
+        /* 접근 허용 IP 리스트 조회 */
+        setIpRestrictedAccessmngList : function() {
+			var self = this;
+			
+			var userIdNm = self.searchData.USER_ID_NM; /* 사용자ID/명 */
+			var pageNo = self.ipRestrictedAccessMngListPaging.getCurrentPage(); 
+			var rowCnt = self.ipRestrictedAccessMngListPaging.getRowCnt();
+			
+			if(isNull(userIdNm)) userIdNm = '';
+			if(isNull(pageNo)) pageNo = '';
+			if(isNull(rowCnt)) rowCnt = '';
+			
+			var returnVal = authApi.ipRestrictedAccessMng(null, null, userIdNm, pageNo, rowCnt, true);
+			returnVal.then(function(response) {
+				self.ipRestrictedAccessMngList.setData(response.data);
+				
+				if(self.ipRestrictedAccessMngList.getRowCount() > 0){
+					var totalCnt = self.ipRestrictedAccessMngList.getColumn(0, 'CNT');
+					self.ipRestrictedAccessMngListPaging.setTotalCnt(totalCnt);
+				}
+				else {
+					self.ipRestrictedAccessMngListPaging.setTotalCnt(0);
+				}
+			});
+        },
+        /* 목록 */
+        goList : function() {
+        	this.ipRestrictedAccessMngList.selectRow(-1);
+        },
+        /* 신규 */
+        addRow : function() {
+			var addObj = {
+			   		'USER_ID' : '',
+			   		'USER_NM' : '',
+			   		'ALLOW_IP' : ''
+			   	};
+			
+			this.ipRestrictedAccessMngList.addRow(addObj);
+        },
+        /* 사용자 검색 팝업 */
+        openPopupUser: function(){
+    		this.$refs.popupuser.showUserPopup();
+    	},
+    	popupUserCallback : function(message){
+			this.returnMessage = message;
+			
+			var rowposition = this.ipRestrictedAccessMngList.rowposition;
+			this.ipRestrictedAccessMngList.setColumn(rowposition, "USER_ID", this.returnMessage.USER_ID);
+			this.ipRestrictedAccessMngList.setColumn(rowposition, "USER_NM", this.returnMessage.USER_NM);
+    	},
+        /* 저장 전 validate */
+        saveValidate : function() {
+        	var self = this;
+        	
+        	var validate = self.$validator.validateAll();
+        	validate.then(function(response) {
+				if(response) {
+					/* 초기화 */
+					self.$validator.reset();
+					
+					var rowposition = self.ipRestrictedAccessMngList.rowposition;
+                    var rowType = self.ipRestrictedAccessMngList.getRowType(rowposition);
+                    
+                    /* 신규 */
+                    if(rowType == ROWTYPE_INSERT) {
+                    	/* 사용자 ID, 접근허용 IP 중복성 체크 */
+                    	self.userIdIpCheck();
+                    }
+                    /* 그 외 */
+        			else{
+        				notifySubmit('info', '접근허용 IP 저장', '저장할 내역이 없습니다.', 'icon-message');
+        			}
+				}else{
+					notifySubmit('warning', '접근허용 IP 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+        },
+        /* 사용자 ID, 접근허용 IP 중복성 체크 */
+        userIdIpCheck : function() {
+        	var self = this;
+        	
+        	var rowposition = self.ipRestrictedAccessMngList.rowposition;
+        	var userId = self.ipRestrictedAccessMngList.getColumn(rowposition, 'USER_ID'); /* 사용자 ID */
+        	var allowIp = self.ipRestrictedAccessMngList.getColumn(rowposition, 'ALLOW_IP'); /* 접근허용 IP */
+        	
+        	if(isNull(userId)) userId = '';
+			if(isNull(allowIp)) allowIp = '';
+
+			
+			var returnVal = authApi.ipRestrictedAccessMng(userId, allowIp, null, null, null, true);
+			returnVal.then(function(response) {
+				var data = response.data;
+				
+				if(data.length > 0) {
+					notifySubmit('error', '접근허용 IP 저장', '이미 존재하는 사용자 ID와 IP입니다.', 'icon-caution');
+				}
+				else if(data.length == 0) {
+					self.saveRow();
+				}
+			});
+        	
+        },
+        /* 저장 */
+        saveRow : function() {
+            var self = this;
+			
+            var rowposition = self.ipRestrictedAccessMngList.rowposition;
+			var rowType = self.ipRestrictedAccessMngList.getRowType(rowposition);
+			
+			var returnVal = null;
+			
+			/* 신규 */
+			if(rowType == ROWTYPE_INSERT) {
+				returnVal = authApi.ipRestrictedAccessMngInsert(self.ipRestrictedAccessMngList.currentRow, true);
+			}
+			
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					var data = response.data;
+					
+					if(data == '1'){
+						notifySubmit('success', '접근허용 IP 저장', '저장이 완료되었습니다.', 'icon-save');
+						/* 재조회 */
+						if(rowType ==  ROWTYPE_INSERT) {
+					        self.search();
+					    }
+					}else{
+						notifySubmit('warning', '접근허용 IP 저장', '저장에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+        },
+        /* 삭제 */
+		deleteRow : function(row) {
+			var self = this;
+			
+			var rowType = self.ipRestrictedAccessMngList.getRowType(row);
+			var userId = self.ipRestrictedAccessMngList.getColumn(row, 'USER_ID'); /* 사용자 ID */
+        	var allowIp = self.ipRestrictedAccessMngList.getColumn(row, 'ALLOW_IP'); /* 접근허용 IP */
+			
+			var returnVal = null;
+			
+			/* 신규 행이 아닐 때 */
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = authApi.ipRestrictedAccessMngDelete(userId, allowIp, true);
+				returnVal.then(function(response) {
+					var data = response.data;
+					
+					if(parseInt(data,10) > 0){
+						self.search();
+					}else{
+						notifySubmit('warning', '접근허용 IP 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+					}
+				});	
+			}
+			/* 신규 행일 때 */
+			else if(rowType == ROWTYPE_INSERT) {
+				self.ipRestrictedAccessMngList.deleteRow(row);
+			}
+			notifySubmit('success', '접근허용 IP 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

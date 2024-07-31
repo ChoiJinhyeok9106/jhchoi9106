@@ -1,0 +1,284 @@
+<link rel="stylesheet" type="text/css" href="/app/design/assets/css/ability.css" />
+<script type="text/javascript" src="/app-assets/js/api/sns/talk.api.js"></script>
+
+<h2>웹 소켓</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">채팅 및 푸시 테스트</h3>
+        <form>
+		<div class="box-type02">
+		    <div class="row form-row">
+		        <div class="form-group col s12 l6 form-row">
+        			<div class="col s6 col-label">
+                   		<label for="useYn" class="label-type01 size-m">WebSocket connection</label>
+                    </div>
+                    <div class="col s4">
+                    	<label class="toggle-switch size-m">
+                    		<input class="size-m" type="checkbox" id="connectYn" name="connectYn" data-vv-as="연결여부" v-model="isConnect" true-value="Y" false-value="N" @/>
+                    	       	<span class="slider round"></span>
+                       	</label>
+                    </div>
+            	</div>
+		    </div>
+		    <div class="form-group row form-row">
+				<div class="form-group col s12 l6">
+		            <label for="userId" class="label-type01">사용자 ID(푸시 수신 및 채팅명)</label>
+		            <input type="text" id="userID" class="size-m" v-model="userId" :disabled="bModifyDisabled" placeholder="사용자 ID를 입력하세요.">
+		        </div>
+		        <div class="form-group col s12 l6">
+		            <label for="channel" class="label-type01">채널명(채팅채널)</label>
+		            <input type="text" id="channel" class="size-m" v-model="channelName" :disabled="bModifyDisabled"  placeholder="채널명을 입력하세요.">
+		        </div>
+            </div>
+         </div>
+         <div class="box-type02" v-show="isConnect=='Y'">
+            <div class="form-group row form-row">
+            	<div class="form-group col s12 l6">
+		            <label for="sendUserId" class="label-type01">푸시 수신 ID(푸시 보낼 대상)</label>
+		            <input type="text" id="sendUserId" class="size-m" v-model="sendUserId" placeholder="푸시 알림을 보낼 사용자 ID를 입력하세요.">
+		        </div>
+		        <div class="col s4 l2">
+					<div class="right">
+						<label class="label-type01">메일 푸시</label>
+						<a href="#!" @click="sendPush('mail')" class="btn type02 size-m">메일+</a>
+					</div>					
+				</div>
+				<div class="col s4 l2">
+					<div class="right">
+						<label class="label-type01">알림 푸시</label>
+						<a href="#!" @click="sendPush('noti')" class="btn type02 size-m">알림+</a>
+					</div>					
+				</div>
+				<div class="col s4 l2">
+					<div class="right">
+						<label class="label-type01">메시지 푸시</label>
+						<a href="#!" @click="sendPush('msg')" class="btn type02 size-m">메시지+</a>
+					</div>					
+				</div>
+            </div>
+            <div class="form-group row form-row">
+            	<div class="col s4 l4">
+					<div >
+						<label class="label-type01">나의 메일 푸시 카운트</label>
+						<input type="text" id="myMailPushCnt" v-model="mailPushCnt" class="size-m right" placeholder="size-m" disabled>
+					</div>					
+				</div>
+				<div class="col s4 l4">
+					<div>
+						<label class="label-type01">나의 알림 푸시 카운트</label>
+						<input type="text" id="myNotiushCnt" v-model="notiPushCnt" class="size-m right" placeholder="size-m" disabled>
+					</div>					
+				</div>
+				<div class="col s4 l4">
+					<div>
+						<label class="label-type01">나의 메시지 푸시 카운트</label>
+						<input type="text" id="myMsgPushCnt" v-model="msgPushCnt" class="size-m right" placeholder="size-m" disabled>
+					</div>					
+				</div>
+            </div>
+		    <div class="form-group row form-row">
+				<div class="col s12 l12">
+					<label class="label-type01" for="contents">내용 입력(채팅 내용)</label>
+				    <textarea rows="" cols="" class="size-m" id="contents"  name="contents" data-vv-as="내용 " placeholder="대화 내용을 입력하세요." @keyup.enter="sendMessage"></textarea>					
+				</div>
+            </div>
+            <div class="form-group row form-row">
+				<div class="col s12 l12">
+					<div class="right">
+						<a href="#!" @click="sendMessage" class="btn type02 size-m">전송(채팅)</a>
+					</div>					
+				</div>
+            </div>
+		</div>
+		</form>
+		<!-- <div class="row">
+			<div class="col-md-12">
+		    	<table id="conversation" class="table table-striped">
+		        	<thead>
+		                <tr>
+		                    <th>Talk..</th>
+		                </tr>
+		            </thead>
+		            <tbody id="chat">
+		            </tbody>
+		       </table>
+		   </div>
+		</div> -->
+		<perfect-scrollbar class="table-type01-wrap">
+	            <table id="conversation" class="table-type01 response">
+	     			<thead>
+		                <tr>
+		                    <th><div>Talk..</div></th>
+		                </tr>
+		            </thead>
+		            <tbody id="chat">
+		            </tbody>
+	            </table>
+	    </perfect-scrollbar>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     //사용할 데이터
+     data: {
+    	 stompClient: null,
+    	 isConnect: 'N',
+    	 userId: null,
+    	 sendUserId: null,
+    	 channelName: 'channel1',
+    	 bModifyDisabled: false,
+    	 mailPushCnt: 0,
+    	 notiPushCnt: 0,
+    	 msgPushCnt: 0
+     },
+     //마운트 된 시점수행
+     mounted: function(){
+    	 $("#conversation").hide();
+    	 this.userId = this.session.USER_ID;
+     },
+     watch: {
+ 		'isConnect': {
+ 			handler: function (val, oldVal) {
+ 					switch(val) {
+ 						case 'Y':
+ 							this.connect();
+ 							this.bModifyDisabled = true;
+ 							break;
+ 						case 'N':
+ 							this.disconnect();
+ 							this.bModifyDisabled = false;
+ 							break;
+ 					}					
+ 				}
+ 			}
+     },
+     //함수
+     methods: {
+    	 setConnected: function(isCon) {
+    		 if (isCon) {
+    		 	$("#conversation").show();
+    		 }
+    		 else {
+    		   $("#conversation").hide();
+    		 }
+    		 $("#chat").html("");
+    	 },
+    	 connect: function() {
+    		 //debugger
+    		 var socket = new SockJS('/portal-websocket');
+    		    this.stompClient = Stomp.over(socket);
+    		    var self = this;
+    		    self.stompClient.connect({}, function (frame) {
+    		    	self.setConnected(true);    		        
+    		    	// console.log('Connected: ' + frame);
+    		        
+    		    	//푸시 수신용(채널명 : 자신의 ID)
+    		    	self.stompClient.subscribe('/topic/'+ self.userId, function (recv) {
+    		    		self.pushCheck(JSON.parse(recv.body).content);
+    		        });
+    		 
+    		    	//채팅용
+    		       	self.stompClient.subscribe('/topic/'+ self.channelName, function (recv) {
+    		            self.showMessages(JSON.parse(recv.body).userId, JSON.parse(recv.body).content);
+    		        });
+    		 
+    		    	
+    		    });
+    		    // console.log(this.stompClient);
+    	 },
+    	 disconnect: function() {
+    		 if (this.stompClient !== null) {
+    			 this.stompClient.disconnect();
+    		    }
+    		 this.setConnected(false);
+    		    console.log("Disconnected");
+    	 },
+    	 sendMessage: function() {
+    		 this.stompClient.send("/send-to/test/"+ this.channelName, {}, JSON.stringify({'userId': this.userId, 'contents': $("#contents").val()}));
+       		$("#contents").val('');
+    	 },
+    	 showMessages: function(id, message) {
+    		 if(id == this.userId)
+    		 	$("#chat").append("<tr><td><div class='right'>" + message + "</div></td></tr>");
+    		 else
+    			 $("#chat").append("<tr><td><div class='left'>" + id + " : " +message + "</div></td></tr>"); 
+    	 },
+    	 sendPush: function(category) {
+    		 
+    		 if(isNull(this.sendUserId)) {
+    			 alert('푸시 대상 ID를 입력해주세요');
+    			 return;
+    		 }
+    			 
+    		 this.stompClient.send("/send-to/test/"+ this.sendUserId, {}, JSON.stringify({'userId': this.userId, 'contents': category}));
+    	 },
+    	 pushCheck: function(category) {
+    		 switch(category) {
+    		 	case 'mail': this.mailPushCnt++;
+    		 		break;
+    		 	case 'noti': this.notiPushCnt++;
+    		 		break;
+    		 	case 'msg': this.msgPushCnt++;
+    		 		break;
+    		 }
+    	 },
+    	 test: function() {
+    		 
+    		 //console.log(parent.staticVue.pushEvents);
+    		 // console.log(this.pushEvents);
+    	 },
+    	 test2: function() {
+    		 
+    		 var obj = {
+    				 'targetGb': '_targetGb'
+    				 ,'alarmGb': '04'
+    				 ,'title': '_title'
+    				 ,'contents': '_contents'
+    				 ,'openYn': '_openYn'
+    				 ,'sendDttm': '_sendDttm'
+    				 ,'sendId': '_sendId'
+    		 };
+    		
+    		 talkApi.push(this.session.USER_ID, obj);				//Push - REST API(POST Method) Send Test
+    		 //this.sendPushData(this.session.USER_ID, obj);		//Push - JS function Send
+    	 }	          
+    		    	
+    	 
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+	/* $(function () {
+	    $("form").on('submit', function (e) {
+	        e.preventDefault();
+	    });
+	}); */
+
+});
+
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

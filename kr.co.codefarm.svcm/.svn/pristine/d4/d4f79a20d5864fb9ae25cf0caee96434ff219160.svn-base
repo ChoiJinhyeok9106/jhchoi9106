@@ -1,0 +1,22 @@
+function ElectagApi(){}
+var electagApi = new ElectagApi(); // => 함수로 객체를 생성
+/********************************************************************************************
+ * 전자태그발급요청현황 조회
+ * @param: 검색어
+ * @return: 조회 리스트
+ ********************************************************************************************/
+
+
+ElectagApi.prototype.getElecTagReqStatusList = function(pEntry, pLoading){
+	var loadingYn = pLoading;
+	
+	if(isNull(loadingYn)) 		loadingYn 		= false;
+    
+    return axios.get("/amanager/electag/elecReq-list",
+	{
+		//post는 data사용 
+		params: pEntry,
+    	loading: loadingYn
+    });
+};
+

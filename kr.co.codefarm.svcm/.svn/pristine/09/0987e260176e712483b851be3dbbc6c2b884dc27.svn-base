@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 비교과,상담,취업지원 에서 쓰이기 때문에 사용 -->
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.authApi">
+	
+	<!-- 미인증된 사용자 리스트 -->
+	<select id="getNotAuthList" parameterType="hashMap"  resultType="hashMap">
+		SELECT A.CHK 
+    		 , A.USER_ID
+		     , A.AUTH_CD
+		     , A.INSERT_DTTM
+			 , A.USER_NM
+			 , A.BIRTHDAY
+			 , A.CNT
+		  FROM (
+		           SELECT '0' AS CHK 
+			    		, A.USER_ID
+					    , A.AUTH_CD
+					    , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d') AS INSERT_DTTM
+						, B.USER_NM
+						, COALESCE(CONCAT(SUBSTR(B.BIRTHDAY,0,4),'-',SUBSTR(B.BIRTHDAY,5,2),'-',SUBSTR(B.BIRTHDAY,7,2)),'미입력') AS BIRTHDAY
+						<if test="pPageNo != null and pPageNo != ''.toString()">
+						, ROW_NUMBER() OVER(ORDER BY A.INSERT_DTTM DESC) AS RNUM
+						</if> 
+						, COUNT(*) OVER() AS CNT
+					 FROM SMN_USER_AUTH A
+					 LEFT OUTER JOIN SMN_USER B
+					   ON A.USER_ID	=	B.USER_ID
+					WHERE A.AUTH_CD = #{pAuthCd}
+		       ) A
+		 WHERE 1=1
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+           AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCnt} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCnt} AS INTEGER)
+         ORDER BY A.RNUM
+         </if>
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.INSERT_DTTM DESC
+         </if>
+	</select>
+	
+	<!-- 권한 리스트 불러오기 -->
+	<select id="getAllAuthList" parameterType="hashMap"  resultType="hashMap">
+		SELECT AUTH_CD
+			 , AUTH_NM
+		  FROM SMN_AUTH
+	</select>
+	
+	<select id="getBaejeongAuthList" parameterType="hashMap"  resultType="hashMap">
+		SELECT DISTINCT AUTH.AUTH_CD
+             , AUTH.AUTH_NM
+             , AUTH.CD5
+		  FROM SMN_AUTH AUTH
+		 WHERE AUTH.CD5 IS NOT NULL
+		   AND USE_YN = 'Y'
+	</select>
+	
+	<select id="getSangdamsaList" parameterType="hashMap"  resultType="hashMap">
+		SELECT USER_ID
+		     , USER_NM
+		  FROM SMN_USER_V USER_V
+		 WHERE USER_V.USER_STATUS_GB IN ('81', '91', 'Y', '11')
+		   AND EXISTS (
+		    SELECT AUTH_CD
+		      FROM SMN_AUTH
+		     WHERE CD5 = #{BAEJEONG_AUTH_CD}
+		       AND USE_YN = 'Y'
+		       AND AUTH_CD = USER_V.DEFAULT_AUTH_CD
+			)
+		 UNION
+		SELECT USER_V.USER_ID
+		     , USER_V.USER_NM
+		  FROM SMN_USER_AUTH U_AUTH
+		  JOIN SMN_USER_V USER_V
+		    ON U_AUTH.USER_ID = USER_V.USER_ID
+		 WHERE USER_V.USER_STATUS_GB IN ('81', '91', 'Y', '11')
+		   AND EXISTS (
+		    SELECT AUTH_CD
+		      FROM SMN_AUTH
+		     WHERE CD5 = #{BAEJEONG_AUTH_CD}
+		       AND USE_YN = 'Y'
+		       AND AUTH_CD = U_AUTH.AUTH_CD
+			)
+	</select>
+    
+    <!-- 산업체 -> 인증산업체 업데이트 -->
+    <update id="updateCompany" parameterType="hashMap">
+        UPDATE SMN_USER_AUTH
+           SET AUTH_CD = 'U0004' <!-- 인증 산업체 -->
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE USER_ID = #{USER_ID} 
+           AND AUTH_CD = 'U0002' <!-- 일반 산업체 -->
+    </update>
+    
+    <!-- 상담사 -> 인증상담사 업데이트 -->
+    <update id="updateSangdamsa" parameterType="hashMap">
+        UPDATE SMN_USER_AUTH
+           SET AUTH_CD = #{AUTH_CD}
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE USER_ID = #{USER_ID} 
+           AND AUTH_CD = 'U0001'
+    </update>
+	
+	<!-- 인증된 비교과 강사 조회 -->
+	<select id="getApprovalGangsaList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.CHK 
+    		 , A.USER_ID
+		     , A.AUTH_CD
+		     , A.INSERT_DTTM
+			 , B.USER_NM
+			 , B.USER_GB
+			 , B.USER_GROUP_GB
+             , B.PWD
+             , B.INTERNAL_ID
+             , B.USER_NM
+             , B.DEFAULT_AUTH_CD
+             , CASE WHEN B.DEFAULT_AUTH_CD = 'S9999' THEN '외부인'
+                    ELSE  '내부인'
+               END DEFAULT_AUTH_NM
+             , B.RESNO
+             , B.BIRTHDAY
+             , B.GENDER_GB
+             , B.GENDER_GBNM
+             , B.DEPT_CD
+             , B.DEPT_NM
+             , B.TEL_NO
+             , B.HP_NO
+             , B.EMAIL
+             , B.ZIPNO
+             , B.ADDR1
+             , B.ADDR2
+             , B.JOIN_DT
+             , B.USER_STATUS_GB
+             , B.USER_STATUS_GB AS USE_YN
+             , B.USER_STATUS_GBNM
+             , B.USER_GRD_GB
+             , B.USER_GRD_GBNM
+             , B.USER_PIC
+             , B.ADD_COL1
+             , B.ADD_COL2
+			 , COALESCE(CONCAT(SUBSTR(B.BIRTHDAY,0,5),'-',SUBSTR(B.BIRTHDAY,5,2),'-',SUBSTR(B.BIRTHDAY,7,2)),'미입력') AS BIRTHDAY
+			 <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , A.CNT
+			 </if>
+	      FROM (
+	               SELECT '0' AS CHK 
+			    	    , A.USER_ID
+					    , A.AUTH_CD
+					    , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d') AS INSERT_DTTM
+						<if test="pPageNo != null and pPageNo != ''.toString()">
+						, ROW_NUMBER() OVER(ORDER BY A.INSERT_DTTM DESC) AS RNUM
+						, COUNT(*) OVER() AS CNT
+						</if>
+					 FROM SMN_USER_AUTH A
+					WHERE A.AUTH_CD = 'U0006' <!-- 미인증된 비교과 강사 -->
+	           ) A
+		 INNER JOIN SMN_USER_V B
+		    ON A.USER_ID = B.USER_ID
+	     WHERE 1=1 
+	       AND B.DEFAULT_AUTH_CD = 'S9999' <!-- 외부사용자 -->
+	     <if test="pDeptNm != null and !''.equals(pDeptNm)"> 
+		   AND B.DEPT_NM LIKE  #{pDeptNm},'%')
+		 </if>
+		 <if test="pUserNm != null and !''.equals(pUserNm)">
+		   AND (B.USER_NM LIKE  #{pUserNm},'%') OR B.USER_ID LIKE #{pUserNm},'%')) 
+		 </if>
+		 <if test="pUserStatusGb != null and !''.equals(pUserStatusGb)">
+		   AND B.USER_STATUS_GB = #{pUserStatusGb}
+		 </if>
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+           AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCnt} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCnt} AS INTEGER)
+         ORDER BY A.RNUM
+         </if>
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.INSERT_DTTM DESC
+         </if>
+	</select>
+	
+	<!-- 비교과 강사 -> 인증비교과 강사 업데이트 -->
+    <update id="updateGangsa" parameterType="hashMap">
+        UPDATE SMN_USER_AUTH
+           SET AUTH_CD = 'U0006' <!-- 인증 비교과 강사 -->
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE USER_ID = #{USER_ID} 
+           AND AUTH_CD = 'U0003' <!-- 일반 비교과 강사  -->
+    </update>
+    
+    <!-- 해당 사용자의 추가권한 정보를 가져온다. -->
+    <select id="selectUserAddAuthList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.USER_ID
+             , A.AUTH_CD
+             , B.AUTH_NM
+             , A.INSERT_DTTM
+             , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS INSERT_DT
+             <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             </if>
+             ,B.REMARK
+          FROM (
+                    SELECT SA.USER_ID
+                         , SA.AUTH_CD
+                         , SA.INSERT_DTTM
+                         <if test="pPageNo != null and pPageNo != ''.toString()">
+                         , ROW_NUMBER() OVER(ORDER BY SA.INSERT_DTTM ASC) AS RNUM
+                         , COUNT(*) OVER() AS CNT
+                         </if>
+                      FROM SMN_USER_AUTH SA
+                     WHERE 1=1
+                     <if test="USER_ID != null and USER_ID != ''.toString()">AND SA.USER_ID = #{USER_ID}</if>
+                     <if test="AUTH_CD != null and AUTH_CD != ''.toString()">AND SA.AUTH_CD = #{AUTH_CD}</if>
+               ) A
+         INNER JOIN SMN_AUTH B
+            ON A.AUTH_CD = B.AUTH_CD
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+              AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+            ORDER BY A.RNUM
+         </if>      
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.INSERT_DTTM ASC
+         </if>
+    </select>
+    
+    <!-- 2019-09-09 안소정 추가 -->
+    <!-- 사용자의 메뉴별 권한 조회 -->
+    <select id="selectUserAuth" parameterType="hashMap" resultType="hashMap">
+        SELECT TBL.AUTH_CD
+             , TBL.AUTH_GB
+             , TBL.AUTH_NM
+             , TBL.ORD
+             , TBL.GAEINJEONGBO_HIT_YN
+             , TBL.USE_YN
+             , TBL.SIGNUP_USE_YN
+             , TBL.AUTH_DESC
+             , TBL.REMARK
+             , TBL.DATA_GB
+             , TBL.CD1
+             , TBL.CD2
+             , TBL.CD3
+             , TBL.CD4
+             , TBL.CD5
+        <if test="pPageNo != null and pPageNo != ''.toString()">
+        	 , TBL.CNT
+        </if>
+          FROM (
+               SELECT TBL3.AUTH_CD
+                    , TBL3.AUTH_GB
+                    , TBL3.AUTH_NM
+                    , TBL3.ORD
+                    , TBL3.GAEINJEONGBO_HIT_YN
+                    , TBL3.USE_YN
+                    , TBL3.SIGNUP_USE_YN
+                    , TBL3.AUTH_DESC
+                    , TBL3.REMARK
+                    , TBL3.DATA_GB
+                    , TBL3.CD1
+                    , TBL3.CD2
+                    , TBL3.CD3
+                    , TBL3.CD4
+                    , TBL3.CD5
+               <if test="pPageNo != null and pPageNo != ''.toString()">
+                    , COUNT(1) OVER() AS CNT
+                    , ROW_NUMBER() OVER(ORDER BY TBL3.AUTH_CD ASC) AS ROW_NUM
+               </if>
+                 FROM SMN_USER_AUTH TBL1
+                INNER JOIN SMN_APP_MENU_AUTH TBL2
+                   ON TBL1.AUTH_CD = TBL2.AUTH_CD
+                INNER JOIN SMN_AUTH TBL3
+                   ON TBL2.AUTH_CD = TBL3.AUTH_CD
+                WHERE 1 = 1
+                  AND TBL1.USER_ID = #{pUserId}
+                <if test="pAppId != null and pAppId != ''.toString()">
+                  AND TBL2.APP_ID = #{pAppId}
+                </if>
+                <if test="pMenuCd != null and pMenuCd != ''.toString()">
+                  AND TBL2.MENU_CD = #{pMenuCd}
+                </if>
+             ) TBL
+         WHERE 1 = 1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+           AND TBL.ROW_NUM BETWEEN (CAST(COALESCE(#{pPageNo},'1') AS INTEGER) - 1) * #{pRowCnt} + 1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER) * #{pRowCnt}
+         ORDER BY TBL.ROW_NUM ASC
+         </if>
+         <if test="pPageNo == null or pPageNo == ''.toString()">
+         ORDER BY TBL.AUTH_CD ASC
+         </if>
+    </select>
+</mapper>

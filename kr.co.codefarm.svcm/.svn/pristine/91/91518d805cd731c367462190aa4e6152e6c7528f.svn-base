@@ -1,0 +1,1503 @@
+<script type="text/javascript" src="/app-assets/js/api/amanager/haveexcel.api.js"></script>
+<script type="text/javascript" src="/app-assets/js/api/amanager/commonsearch.api.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+
+<h3 style="margin-top:-20px;">자산취득 > 취득 > <strong>자산취득관리(엑셀업로드)</strong></h3>
+<section class="sub_cont_box" id="app" style="margin-top:10px;">
+	<section class="cont_box" v-if="!mainList.currentRow">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">보유부서</label>
+					<div class="select-group" style="display: flex; align-items: center;">
+						<select class="size-m" v-model="pDeptCd" name="pDeptCd" id="pDeptCd">
+							<option v-for="(item, index) in deptCodeSet.data" :value="item.ORGNZT_ID">{{item.ORGNZT_NM}}</option>
+						</select>
+						<button type="button" class="btn type02 size-s" @click="openModal('deptTreeModal');" style="width: 20px; display: flex; justify-content: center; align-items: center;">
+							<span class="icon icon-search"></span>
+						</button>
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">RFID자산번호</label>
+					<div class="input-group" style="display: flex; align-items: center;">
+						<input type="text" v-model="pAssetMgmtNo_S" id="pAssetMgmtNo_S" name="pAssetMgmtNo_S" class="size-m" v-on:keyup.13="search()">
+						<span style="padding: 5px;">-</span>
+						<input type="text" v-model="pAssetMgmtNo_E" id="pAssetMgmtNo_E" name="pAssetMgmtNo_E" class="size-m" v-on:keyup.13="search()">
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">물품명</label>
+					<input type="text" v-model="pAssetClKoNm" id="pAssetClKoNm" name="pAssetClKoNm" class="size-m" v-on:keyup.13="search()">
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="frdt" class="label-type01">구입일자</label>
+					<div class="date-group" style="display: flex; align-items: center;">
+						<div class="row form-row">
+							<div class="form-group col s12 l5">
+								<div class="date-form-wrap">
+									<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+									<date-picker :value="buyDt_S" @input="function(value){ buyDt_S = value }"></date-picker>
+									<input id="pBuyDt_Start" type="hidden" name="targetname" data-vv-as="날짜 " v-model="buyDt_S">
+								</div>
+							</div>
+							<div class="form-group col s12 l5">
+								<div class="date-form-wrap">
+									<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+									<date-picker :value="buyDt_E" @input="function(value){ buyDt_E = value }"></date-picker>
+									<input id="pBuyDt_End" type="hidden" name="targetname" data-vv-as="날짜 " v-model="buyDt_E">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">물품목록번호</label>
+					<div class="input-group" style="display: flex; align-items: center;">
+						<input type="text" v-model="pAssetClNo" id="pAssetClNo" name="pAssetClNo" class="size-m" v-on:keyup.13="search()">
+						<span style="padding: 5px;">-</span>
+						<input type="text" v-model="pAssetStndNo" id="pAssetStndNo" name="pAssetStndNo" class="size-m" v-on:keyup.13="search()">
+						<button type="button" class="btn type02 size-s" @click.prevent="openModal('assetSearchModal');" style="width: 20px; display: flex; justify-content: center; align-items: center;">
+							<span class="icon icon-search"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="row form-row">
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">반영여부</label>
+					<div class="select-group" style="display: flex; align-items: center;">
+						<select class="size-m" v-model="pRflcYn" name="pRflcYn" id="pRflcYn">
+							<option value="ALL">-전체-</option>
+							<option value="N">N</option>
+							<option value="Y">Y</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">기관자산번호</label>
+					<div class="input-group" style="display: flex; align-items: center;">
+						<input type="text" v-model="pInstAssetMgmtNo_S" id="pInstAssetMgmtNo_S" name="pInstAssetMgmtNo_S" class="size-m" v-on:keyup.13="search()">
+						<span style="padding: 5px;">-</span>
+						<input type="text" v-model="pInstAssetMgmtNo_E" id="pInstAssetMgmtNo_E" name="pInstAssetMgmtNo_E" class="size-m" v-on:keyup.13="search()">
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">규격명</label>
+					<input type="text" v-model="pAssetStndKoNm" id="pAssetStndKoMm" name="pAssetStndKoMm" class="size-m" v-on:keyup.13="search()">
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">오류여부</label>
+					<div class="select-group" style="display: flex; align-items: center;">
+						<select class="size-m" v-model="pErrYn" name="pErrYn" id="pErrYn">
+							<option value="ALL">-전체-</option>
+							<option value="N">N</option>
+							<option value="Y">Y</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">비고</label>
+					<div class="input-group" style="display: flex; align-items: center;">
+						<input type="text" v-model="pRmk" id="pRmk" name="pRmk" class="size-m" v-on:keyup.13="search()">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div style="display: flex; align-items: center;">
+			<div class="col s12 l12" style="flex: 1;">
+				<span class="board-info-txt size-m">총 <span>{{mainListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging.getCurrentPage()}}</span> / {{mainListPaging.getTotalPage()}})</span>
+			</div>
+		</div>
+		
+		<div class="btn_container">
+			<div class="col-inline btn-line left" style="display: flex; justify-content: flex-end;">
+				<a href="#!" class="btn type04 size-m" @click.prevent="modal_open('excelUploadModal');return false;">Excel등록</a>
+				<a href="#!" class="btn type04 size-m" @click="requestVrfExcelUpload">검증</a>
+				<a href="#!" class="btn type04 size-m" @click="messagePopup('GET_HAVE_DTL', null)">자산반영</a>
+			</div>
+		
+			<div class="col-inline btn-line right" style="display: flex; justify-content: flex-end;">
+				<a href="#!" class="btn type02 size-m center-icon" @click="resetFields"><span class="icon-refresh"></span></a>
+				<a href="#!" class="btn type04 size-m left-icon icon-search" @click="search()" style="margin-right: 5px;">조회</a>
+				<a href="#!" class="btn type02 size-m left-icon icon-report" @click="excelDownload()" style="margin-right: 5px;">엑셀</a>
+			</div>
+		</div>
+
+		<!-- 테이블 영역 -->
+		<div class="box-type03">
+			<div class="col s12 m12 xl12">
+				<div class="table-type01-wrap">
+					<perfect-scrollbar style="max-height: 450px;">
+					<table class="table-type01 response">
+						<caption></caption>
+						<thead class="thead-fixed">
+							<tr>
+								<th scope="col" @click="sort('RFLC_YN')" class="sortable"><span :class="sortIcon('RFLC_YN')"></span> 반영여부</th> 
+								<th scope="col" @click="sort('ERR_YN')" class="sortable"><span :class="sortIcon('ERR_YN')"></span> 오류여부</th>
+								<th scope="col" @click="sort('ERR_CN')" class="sortable"><span :class="sortIcon('ERR_CN')"></span> 오류내용</th>
+								<th scope="col" @click="sort('DTL_YN')" class="sortable"><span :class="sortIcon('DTL_YN')"></span> 삭제여부</th>
+								<th scope="col" @click="sort('EXCEL_ROW_NO')" class="sortable"><span :class="sortIcon('EXCEL_ROW_NO')"></span> ExcelRowNum</th>
+								<th scope="col" @click="sort('ASSET_MGMT_NO')" class="sortable"><span :class="sortIcon('ASSET_MGMT_NO')"></span> 자산관리번호</th>
+								<th scope="col" @click="sort('INST_ASSET_MGMT_NO')" class="sortable"><span :class="sortIcon('INST_ASSET_MGMT_NO')"></span> 기관자산번호</th>
+								<th scope="col" @click="sort('ASSET_CL_NM')" class="sortable"><span :class="sortIcon('ASSET_CL_NM')"></span> 물품명</th>
+								<th scope="col" @click="sort('ASSET_STND_NM')" class="sortable"><span :class="sortIcon('ASSET_STND_NM')"></span> 규격명</th>
+								<th scope="col" @click="sort('ASSET_CL_STND_CD')" class="sortable"><span :class="sortIcon('RFID_WRITE_NM')"></span> 물품목록번호</th>
+								<th scope="col" @click="sort('DEPT_NM')" class="sortable"><span :class="sortIcon('DEPT_NM')"></span> 보유부서</th>
+								<th scope="col" @click="sort('BUY_DT')" class="sortable"><span :class="sortIcon('BUY_DT')"></span> 구입일자</th>
+							</tr>
+						</thead>
+						<tbody v-if="sortedData.length > 0">
+							<tr v-for="(item, index) in sortedData" v-if="mainList.getRowType(index) != 8">
+								<td data-header="반영여부" style="text-align: center;">{{ item.RFLC_YN }}</td>
+								<td data-header="오류여부" style="text-align: center;">
+									<span v-if="item.ERR_YN === 'Y'" style="color: red;">{{ item.ERR_YN }}</span>
+									<span v-else>{{ item.ERR_YN }}</span>
+								</td>
+								<td data-header="오류내용" style="text-align: center;" :style="{ color: item.ERR_CN ? 'red' : 'inherit' }">{{ item.ERR_CN }}</td>
+								<td data-header="삭제여부" style="text-align: center;">{{ item.DTL_YN }}</td>
+								<td data-header="ExcelRowNum" style="text-align: right;">{{ item.EXCEL_ROW_NO }}</td>
+								<td data-header="자산관리번호" style="text-align: center;">{{ item.ASSET_MGMT_NO }}</td>
+								<td data-header="기관자산번호" style="text-align: center;">{{ item.INST_ASSET_MGMT_NO }}</td>
+								<td data-header="물품명" style="text-align: center;">{{ item.ASSET_CL_NM }}</td>
+								<td data-header="규격명" style="text-align: center;">{{ item.ASSET_STND_NM }}</td>
+								<td data-header="물품목록번호" style="text-align: center;">{{ item.ASSET_CL_STND_CD }}</td>
+								<td data-header="보유부서" style="text-align: left;">{{ item.DEPT_NM }}</td>
+								<td data-header="구입일자" style="text-align: center;">{{ item.BUY_DT | dateFormatter }}</td>
+							</tr>
+						</tbody>
+						<tbody v-else>
+							<tr>
+								<td colspan="100">검색결과가 없습니다.</td>
+							</tr>
+						</tbody>
+					</table>
+					</perfect-scrollbar>
+				</div>
+				
+				<!-- 페이지당 Row 선택 드랍다운 메뉴 -->
+				<div class="col s12 l6" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 10px;">
+					<div class="col s3" style="margin-top: -2px;">
+						<select class="size-s" v-model="pageSize" @change="changePageSize" name="pageSize" id="pageSize">
+							<option v-for="sizeOption in pageSizes" :value="sizeOption">{{ sizeOption }} 건</option>
+						</select>
+					</div>
+					<span style="margin-left: 10px; margin-bottom: 0;">/ 페이지당</span>
+				</div>
+				<paging :pagingset="mainListPaging" :type="'normal'" style="margin-top: -10px;"></paging>
+			</div>
+		</div>
+	</section>
+
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+
+	<!-- 물품 목록 검색 모달 -->
+	<div class="modal-layer-wrap">
+		<div id="assetSearchModal" class="modal-layer modal-large">
+			<div class="modal-container">
+				<div class="modal-header">
+					<p class="modal-title">자산 검색</p>
+				</div>
+				<section class="sub_cont_box">
+					<section class="cont_box" v-if="!assetmodalList.currentRow">
+						<div class="box-type03">
+							<div class="modal-content">
+								<div class="row form-row">
+									<div class="form-group col s12 l3">
+										<label for="pSearchType" class="label-type01">물품규격번호</label>
+										<input type="text" v-model="pModalAssetStndNo" id="pModalAssetStndNo" name="pModalAssetStndNo" class="size-m" v-on:keyup.13="searchModal()">
+									</div>
+	
+									<div class="form-group col s12 l3">
+										<label for="pSearchType" class="label-type01">물 품 명</label>
+										<input type="text" v-model="pModalAssetClKoNm" id="pModalAssetClKoNm" name="pModalAssetClKoNm" class="size-m" v-on:keyup.13="searchModal()">
+									</div>
+	
+									<div class="form-group col s12 l5">
+										<label for="pSearchType" class="label-type01">규 격 명</label>
+										<input type="text" v-model="pModalAssetStndKoNm" id="pModalAssetStndKoNm" name="pModalAssetStndKoNm" class="size-m" v-on:keyup.13="searchModal()">
+									</div>
+								</div>
+							</div>
+						</div>
+	
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1;">
+								<span class="board-info-txt size-m">총 <span>{{assetmodalListPaging.totalCnt}}</span>건의 게시물이있습니다. (<span>{{assetmodalListPaging.getCurrentPage()}}</span> /{{assetmodalListPaging.getTotalPage()}})</span>
+							</div>
+							<div class="col-inline btn-line right" style="display: flex; justify-content: flex-end;">
+								<a href="#!" class="btn type02 size-m center-icon" @click="resetModalFields"><span class="icon-refresh"></span></a>
+								<a href="#!" class="btn type04 size-m left-icon icon-search" @click="searchAssetModal()" style="margin-right: 5px;">조회</a>
+								<a href="#!" class="btn type04 size-m left-icon icon-close" @click.prevent="closeModal('assetSearchModal')" style="margin-right: 5px;">닫기</a>
+							</div>
+						</div>
+	
+						<div class="col s12 m12 xl12">
+							<div class="table-type01-wrap">
+								<perfect-scrollbar style="height:400px;">
+									<table class="table-type01 response">
+										<caption></caption>
+										<col width="7%" />
+										<col width="9%" />
+										<col width="16%" />
+										<col width="23%" />
+										<col width="45%" />
+										<thead class="thead-fixed">
+											<tr>
+												<th scope="col">선택</th>
+												<th scope="col">사용여부</th>
+												<th scope="col">물품목록번호</th>
+												<th scope="col">물품명</th>
+												<th scope="col">규격명</th>
+											</tr>
+										</thead>
+										<tbody v-if="assetmodalList.data.length > 0">
+											<tr v-for="(item, index) in assetmodalList.data" v-if="assetmodalList.getRowType(index) != 8">
+												<td data-header="선택"><a href="#!" @click="messagePopup('ASSET_SELECT', index)"><span class="icon-checkmark"></span></a></td>
+												<td data-header="사용여부">{{ item.USE_AT }}</td>
+												<td data-header="물품목록번호">{{ item.CL_STND_CD }}</td>
+												<td data-header="물품명" style="text-align: left;">{{ item.ASSET_CL_KO_NM }}</td>
+												<td data-header="규격명" style="text-align: left;">{{ item.ASSET_STND_KO_NM }}</td>
+											</tr>
+										</tbody>
+										<tbody v-else>
+											<tr>
+												<td colspan="100">검색결과가 없습니다.</td>
+											</tr>
+										</tbody>
+									</table>
+								</perfect-scrollbar>
+							</div>
+							<paging :pagingset="assetmodalListPaging" :type="'normal'"></paging>
+						</div>
+					</section>
+				</section>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 로딩 스피너 모달 -->
+	<div class="modal-layer-wrap">
+		<div id="loadingSpinModal" class="modal-layer modal-small">
+			<div class="modal-container">
+				<div class="modal-header">
+					<p class="modal-title">요청 처리 진행중</p>
+				</div>
+				<div class="modal-content" style="text-align: center;">
+					<div class="box-type04" style="display: flex; flex-direction: column; align-items: center;">
+						<img src="/images/common/loading_spin.svg" alt="loading spinner" style="width: 50px; height: auto; margin-bottom: 10px;">
+						<h3>요청하신 작업을 처리중입니다.<br />잠시만 기다려주세요.</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Excel 등록 모달 -->
+	<div class="modal-layer-wrap">
+		<div id="excelUploadModal" class="modal-layer">
+			<div class="modal-container">
+				<div class="modal-header">
+					<p class="modal-title">Excel 등록</p>
+				</div>
+				<div class="modal-content">
+					<div class="box-type04">
+						<span>Excel파일 업로드/검증 후 자산반영 버튼 클릭 시 <strong>[자산 보유 현황]</strong>에 반영됨<span>
+					</div>
+					<div class="box-type03">
+						<div class="row form-row">
+							<div class="form-group col s12 l12">
+								<label class="label-type01">Excel 양식 다운로드</label>
+								<div class="input-group" style="display: flex; align-items: center;">
+									<input type="text" style="visibility: hidden;" />
+									<a href="#!" class="btn type02 size-m left-icon icon-download" @click="downloadTemplateFile();" style="margin-right: 5px;">작성 양식</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="box-type03">
+						<div class="row form-row">
+							<div class="form-group col s12 l12">
+								<label class="label-type01">Excel 파일 업로드</label>
+								<single-file-uploader id="uploadField" :fileset="file" :type="'excel'" :modify="true" v-on:exceluploadcallback="exceluploadcallback"></single-file-uploader>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div style="display: flex; justify-content: flex-end; padding-right: 20px; padding-bottom: 10px; margin-top: -25px;">
+					<div class="col-inline btn-line right" style="display: flex;">
+						<a href="#!" class="btn type02 size-m left-icon icon-save" @click="uploadRequest();" style="margin-right: 5px;">저장</a>
+						<a href="#!" class="btn type04 size-m left-icon icon-close" @click.prevent="closeModal('excelUploadModal')" style="margin-right: 5px;">닫기</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 부서 검색 모달 레이어 팝업 -->
+	<div class="modal-layer-wrap">
+		<div id="deptTreeModal" class="modal-layer modal">
+			<div class="modal-container">
+				<div class="modal-header">
+					<p class="modal-title">부서검색</p>
+				</div>
+				<section class="sub_cont_box" style="min-height: 700px;">
+					<div class="box-type03" style="height: auto; padding: 10px;">
+						<div class="modal-content" style="padding: 10px;">
+							<div class="row form-row" style="margin: 0;">
+								<div class="form-group col s12 l5">
+									<label for="pModalDeptNm" class="label-type01">부서명</label>
+									<div class="input-group" style="display: flex; align-items: center;">   
+										<input type="text" v-model="pModalDeptNm" id="pModalDeptNm" name="pModalDeptNm" class="size-m" v-on:keyup.13="searchDeptModal()">
+										<button type="button" class="btn type02 size-s" @click="searchDeptModal()" style="width: 20px; display: flex; justify-content: center; align-items: center;">
+											<span class="icon icon-search"></span>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="box-type04">
+						<perfect-scrollbar style="max-height: 430px;">
+							<div class="col s12 m12 xl12">
+								<div v-if="deptTreeData.length === 0">
+									<span>검색 결과가 없습니다. 검색어를 확인 후 다시 검색해주세요.</span>
+								</div>
+								<div v-else>
+									<dept-tree :nodes="deptTreeData" :selectedNode.sync="selectedNode" v-model="selectedNodeId"></dept-tree>
+								</div>
+							</div>
+						</perfect-scrollbar>
+					</div>
+					
+					<div style="display: flex; justify-content: flex-end; align-items: center; max-height:50px;">
+						<div class="col-inline btn-line right" style="display: flex; justify-content: flex-end;">
+							<a href="#!" class="btn type02 size-m center-icon" @click="resetModalFields"><span class="icon-refresh"></span></a>
+							<a href="#!" class="btn type04 size-m left-icon icon-search" @click="searchDeptModal()" style="margin-right: 5px;">조회</a>
+							<a href="#!" class="btn type04 size-m left-icon icon-checkmark" @click="confirmDeptTreeModal()" style="margin-right: 5px;">선택</a>
+							<a href="#!" class="btn type04 size-m left-icon icon-close " @click.prevent="closeModal('deptTreeModal')" style="margin-right: 5px;">닫기</a>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+	</div>
+</section>
+
+<template id="dept-tree-template">
+	<ul class="dept-tree">
+		<li v-for="node in nodes" :key="node.id">
+			<div class="dept-node"
+				:class="{'selected': node.selected, 'has-children': node.children && node.children.length > 0, 'open': node.open}"
+				@click="toggle(node)">
+				<input type="checkbox" v-model="node.selected" @change="selectNode(node)" style="margin-right: 5px;" />
+				<i v-if="node.children && node.children.length" :class="{ 'open': node.open }"
+					@click.stop="toggle(node)"></i> {{ node.text }}
+			</div>
+			<ul v-if="node.open && node.children && node.children.length > 0" class="sub-tree">
+				<dept-tree v-for="childNode in node.children" :key="childNode.id" :nodes="[childNode]"
+					:selectedNode.sync="selectedNode"></dept-tree>
+			</ul>
+		</li>
+	</ul>
+</template>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+Vue.component('dept-tree', {
+	template: '#dept-tree-template',
+	props: {
+		nodes: Array,
+		selectedNode: String // 선택된 노드의 ID를 문자열로 받음
+	},
+	data() {
+		return {
+			selectedId: null // 초기값으로 null 설정
+		};
+	},
+	computed: {
+		// 선택된 노드의 id에 따라 클래스를 동적으로 반환
+		nodeClass() {
+			return (node) => ({
+				'selected': this.selectedId === node.id,
+				'has-children': node.children && node.children.length > 0,
+				'open': node.open
+			});
+		}
+	},
+	methods: {
+		toggle(node) {
+			Vue.set(node, 'open', !node.open);
+			// 부모 노드가 닫힌 상태일 때 자식 노드의 open 상태 초기화
+			if (!node.open) {
+				this.closeChildren(node);
+			}
+		},
+
+		selectNode(node) {
+			// 다른 체크박스들의 선택 상태를 해제
+			this.nodes.forEach(n => {
+				if (n !== node) {
+					Vue.set(n, 'selected', false);
+				}
+			});
+		},
+
+		closeChildren(parentNode) {
+			// 모든 자식 노드의 open 상태를 false로 설정
+			parentNode.children.forEach(child => {
+				Vue.set(child, 'open', false);
+				this.closeChildren(child); // 자식 노드도 재귀적으로 닫기
+			});
+		}
+	},
+	watch: {
+		nodes: {
+			handler(newValue, oldValue) {
+				// 체크된 노드의 ID 출력 및 selectedNode에 저장
+				newValue.forEach(node => {
+					if (node.selected) {
+						this.selectedId = node.id;
+					}
+				});
+				// 선택된 노드의 ID를 부모 컴포넌트로 전달
+				this.$emit('input', this.selectedId); // 선택된 노드의 ID를 부모 컴포넌트로 전달
+			},
+			deep: true // 객체의 내부까지 깊게 감시
+		},
+	}
+});
+
+var vm = new Vue({
+	el: '#app',
+	
+	//사용할 데이터
+	data: function() {
+		return {
+		mainList: new Dataset(),
+		assetmodalList: new Dataset(),
+		file: new SingleFileSet(),
+		initialState: {
+			buyDt_S: '',
+			buyDt_E: '',
+			pAssetMgmtNo_S: '',
+			pAssetMgmtNo_E: '',
+			pDeptCd: '00',
+			pAssetClNo: '',
+			pAssetClKoNm: '',
+			pAssetStndNo: '',
+			pAssetStndKoNm: '',
+			//pInstAssetMgmtNo: '',
+			pInstAssetMgmtNo_S: '',
+			pInstAssetMgmtNo_E: '',
+			pErrYn: 'ALL',
+			pRflcYn: 'ALL',
+			pRmk: '',
+		},
+		initialModalState: {
+			pModalAssetClKoNm: '',
+			pModalAssetStndNo: '',
+			pModalAssetStndKoNm: '',
+			pSelectedUploadFileNm: '',
+			pModalDeptNm: '',
+			pModalDeptCd: '',
+			pModalUpDeptCd: '',
+		},
+		sortKey: '',
+		sortOrders: {
+			RFLC_YN: 0,
+			ERR_YN: 'DESC',
+			ERR_CN: 0,
+			DTL_YN: 0,
+			EXCEL_ROW_NO: 0,
+			ASSET_MGMT_NO: 0,
+			INST_ASSET_MGMT_NO: 0,
+			ASSET_CL_NM: 0,
+			ASSET_STND_NM: 0,
+			ASSET_CL_STND_CD: 0,
+			DEPT_NM: 0,
+			BUY_DT: 0,
+		},
+		buyDt_S: '',
+		buyDt_E: '',
+		pAssetMgmtNo_S: '',
+		pAssetMgmtNo_E: '',
+		pDeptCd: '00',
+		pAssetClNo: '',
+		pAssetClKoNm: '',
+		pModalAssetClKoNm: '',
+		pAssetStndNo: '',
+		pAssetStndKoNm: '',
+		pModalAssetStndNo: '',
+		pModalAssetStndKoNm: '',
+		//pInstAssetMgmtNo: '',
+		pInstAssetMgmtNo_S: '',
+		pInstAssetMgmtNo_E: '',
+		pErrYn: 'ALL',
+		pRflcYn: 'ALL',
+		pSelectedUploadFileNm: '',
+		pRmk: '',
+		pModalDeptNm: '',
+		pModalDeptCd: '',
+		pModalUpDeptCd: '',
+		messageModal: new ModalSet('haveexcel-modal'),
+		mainListPaging: new PagingSet(10,100),
+		pageSizes: [100, 300, 500, 1000, 5000],
+		pageSize: 100,
+		size: 100,
+		assetmodalListPaging: new PagingSet(10,100),
+		deptCodeSet: new CustomcodeSet('/amanager/common/dept-list',{}),
+		excelData: [],
+		excelUploadData: [],
+		formedReturnData: null,
+		uploadReturnData: null,
+		deptTreeData: [],
+		selectedNodes: [],
+		selectedNode: '',
+		selectedNodeId: '',
+		};
+	},
+	
+	//생성 될 때
+	beforeCreate: function(){
+	},
+	
+	/* 계산된 속성 포현 시 */
+	computed: {
+		formattedBuyDt: {
+			get() {
+				return this.dateFormatter(this.mainList.currentRow.BUY_DT);
+			},
+			set(value) {
+				this.mainList.currentRow.BUY_DT = value.replace(/-/g, '');
+			}
+		},
+		
+		/* 테이블 정렬 추적 */
+		sortedData() {
+			if (this.sortKey) {
+				return this.mainList.data.slice().sort((a, b) => {
+					let result = 0;
+					if (a[this.sortKey] > b[this.sortKey]) {
+						result = 1;
+					} else if (a[this.sortKey] < b[this.sortKey]) {
+						result = -1;
+					}
+					return result * (this.sortOrders[this.sortKey] === 'ASC' ? 1 : -1);
+				});
+			} else {
+				return this.mainList.data;
+			}
+		}
+	},
+
+	filters: {
+		dateFormatter: function (value) {
+			if (!value) return '';
+			return value.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+		}
+	},
+	
+	/* 데이터 감시 */
+	watch: {
+		'mainList.rowposition': {
+			handler: function (val, oldVal) {
+				if (this.mainList.enableevent) {
+					var changeYn = this.mainList.dataCompare(oldVal);
+					var rowType = this.mainList.getRowType(val);
+
+					if (!changeYn) {
+						this.mainList.setDefaultRow(oldVal);
+					}
+					this.$validator.reset();
+				}
+			}
+		},
+
+		'mainList.data': {
+			handler: function (val, oldVal) {
+				if (this.mainList.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.mainList.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.mainList.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+
+		'mainListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList(null, val)
+			}
+		},
+
+		'assetmodalList.rowposition': {
+			handler: function (val, oldVal) {
+				if (this.assetmodalList.enableevent) {
+					var changeYn = this.assetmodalList.dataCompare(oldVal);
+					var rowType = this.assetmodalList.getRowType(val);
+
+					if (!changeYn) {
+						this.assetmodalList.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+
+		'assetmodalList.data': {
+			handler: function (val, oldVal) {
+				if (this.assetmodalList.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.assetmodalList.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.assetmodalList.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+
+		'assetmodalListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setassetmodalList(null, val)
+			}
+		},
+	},
+
+	/* 마운트 된 시험수행 */
+	mounted: function () {
+		this.setmainList();
+		document.addEventListener('keydown', this.handleEscKey);
+	},
+
+	beforeDestroy() {
+		document.removeEventListener('keydown', this.handleEscKey);
+	},
+
+	/* 함수 */
+	methods: {
+		/* 메인 화면 set */
+		setmainList: function(e, pPageNo, isExcelDownload, callback){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click' && isExcelDownload == 0){
+				var pAssetMgmtNo_S		= $('#pAssetMgmtNo_S').val();
+				var pAssetMgmtNo_E		= $('#pAssetMgmtNo_E').val();
+				//var pInstAssetMgmtNo 	= $('#pInstAssetMgmtNo').val();
+				var pInstAssetMgmtNo_S 	= $('#pInstAssetMgmtNo_S').val();
+				var pInstAssetMgmtNo_E 	= $('#pInstAssetMgmtNo_E').val();
+				var pDeptCd				= $('#pDeptCd option:selected').val();
+				var pAssetClNo			= $('#pAssetClNo').val();
+				var pAssetClKoNm		= $('#pAssetClKoNm').val();
+				var pAssetStndNo		= $('#pAssetStndNo').val();
+				var pAssetStndKoNm		= $('#pAssetStndKoNm').val();
+				var pRmk				= $('#pRmk').val();
+				var pServiceType 		= $('#pServiceType option:selected').val();
+				var pErrYn		 		= $('#pErrYn option:selected').val();
+				var pRflcYn		 		= $('#pRflcYn option:selected').val();
+				var pBuyDt_S			= this.buyDt_S
+				var pBuyDt_E			= this.buyDt_E;
+				var pageNo 				= pPageNo;
+				var rowCount 			= this.mainListPaging.getRowCnt();
+			
+				var rowCount = this.mainListPaging ? this.mainListPaging.getRowCnt() : 50;
+				
+				if(isNull(pAssetMgmtNo_S))		pAssetMgmtNo_S		= '';
+				if(isNull(pAssetMgmtNo_E))		pAssetMgmtNo_E		= '';
+				//if(isNull(pInstAssetMgmtNo))	pInstAssetMgmtNo		= '';
+				if(isNull(pInstAssetMgmtNo_S))	pInstAssetMgmtNo_S		= '';
+				if(isNull(pInstAssetMgmtNo_E))	pInstAssetMgmtNo_E		= '';
+				if(isNull(pDeptCd))				pDeptCd	= '';
+				if(isNull(pAssetClNo))			pAssetClNo	= '';
+				if(isNull(pAssetClKoNm))		pAssetClKoNm	= '';
+				if(isNull(pAssetStndNo))		pAssetStndNo	= '';
+				if(isNull(pAssetStndKoNm))		pAssetStndKoNm	= '';
+				if(isNull(pBuyDt_S))			pBuyDt_S	= '';
+				if(isNull(pBuyDt_E))			pBuyDt_E	= '';
+				if(isNull(pErrYn))				pErrYn	= 'ALL';
+				if(isNull(pRflcYn))				pRflcYn	= 'ALL';
+				if(isNull(pRmk))				pRmk	= '';
+				if(isNull(pageNo)) 				pageNo 			= 1;
+				if(isNull(rowCount)) 			rowCount 		= 50;
+				
+				// 엑셀 다운로드
+				if (isExcelDownload == 1) {
+					this.pagingset.rowCnt = 9999;
+					rowCount = 9999;
+					pageNo = 1;
+				}
+				
+				var param = {
+					'pAssetMgmtNo_S'	: pAssetMgmtNo_S,
+					'pAssetMgmtNo_E'	: pAssetMgmtNo_E,
+					//'pInstAssetMgmtNo' 	: pInstAssetMgmtNo,
+					'pInstAssetMgmtNo_S' 	: pInstAssetMgmtNo_S,
+					'pInstAssetMgmtNo_E' 	: pInstAssetMgmtNo_E,
+					'pDeptCd'			: pDeptCd,
+					'pAssetClNo'		: pAssetClNo,
+					'pAssetClKoNm'		: pAssetClKoNm,
+					'pAssetStndNo'		: pAssetStndNo,
+					'pAssetStndKoNm'	: pAssetStndKoNm,
+					'pBuyDt_S'			: pBuyDt_S,
+					'pBuyDt_E'			: pBuyDt_E,
+					'pErrYn'			: pErrYn,
+					'pRflcYn'			: pRflcYn,
+					'pRmk'				: pRmk,
+					'pPageNo'			: pageNo,
+					'pRowCount'			: this.pagingset ? this.pagingset.rowCnt : rowCount
+				};
+				
+				var self = this;
+				
+				var returnVal = haveExcelApi.getHaveExcelList(param, true);	
+				
+				returnVal.then(function(response) {
+					self.mainList.setData(response.data);
+					self.excelData = response.data;
+					self.excelUploadData = response.data;
+					
+					if(self.mainList.getRowCount() > 0){
+						var totalCnt = self.mainList.data[0].CNT;
+						self.mainListPaging.setTotalCnt(totalCnt);
+					} else {
+						self.mainListPaging.setTotalCnt(0);
+					}
+					
+					if (typeof callback === "function") {
+						callback();
+					}
+				});
+			}			
+		},
+		
+		/*  페이지 당 Row 선택 */
+		changePageSize: function () {
+			this.mainListPaging.setRowCnt(this.pageSize);
+			this.setmainList(null, 1);
+		},
+		
+		/* 자산 검색 모달 set */
+		setassetmodalList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				var pModalAssetClKoNm		= $('#pModalAssetClKoNm').val();
+				var pModalAssetStndKoNm		= $('#pModalAssetStndKoNm').val();
+				var pModalAssetStndNo		= $('#pModalAssetStndNo').val();
+				var pageNo 			= pPageNo;
+				var rowCount 		= this.assetmodalListPaging.getRowCnt();
+
+				if(isNull(pModalAssetClKoNm))	pModalAssetClKoNm		= '';
+				if(isNull(pModalAssetStndKoNm))	pModalAssetStndKoNm		= '';
+				if(isNull(pModalAssetStndNo))	pModalAssetStndNo		= '';
+				if(isNull(pageNo)) 				pageNo 			= 1;
+				if(isNull(rowCount)) 			rowCount 		= 20;
+				
+				var param = {
+					'pModalAssetClKoNm' 	: pModalAssetClKoNm,
+					'pModalAssetStndKoNm' 	: pModalAssetStndKoNm,
+					'pModalAssetStndNo' 	: pModalAssetStndNo,
+					'pPageNo'			: pageNo,
+					'pRowCount'			: rowCount
+				};
+				
+				var self = this;
+				
+				var returnVal = commonSearchApi.getAsstNoList(param, true);	
+				
+				returnVal.then(function(response) {
+					self.assetmodalList.setData(response.data);
+					
+					if(self.assetmodalList.getRowCount() > 0){
+						var totalCnt = self.assetmodalList.data[0].CNT;
+						self.assetmodalListPaging.setTotalCnt(totalCnt);
+					} else {
+						self.assetmodalListPaging.setTotalCnt(0);
+					}
+				});
+			}			
+		},
+		
+		/* 일반 조회 */
+		search: function (e, pPageNo) {
+			var pageNo = this.mainListPaging.getCurrentPage();
+
+			if (pageNo == 1) {
+				this.setmainList(e, pPageNo, 0);
+			} else {
+				this.mainListPaging.movePage(1);
+			}
+		},
+		
+		/* 자산 검색 모달 조회 */
+		searchAssetModal: function (e, pPageNo) {
+			var pageNo = this.assetmodalListPaging.getCurrentPage();
+
+			if (pageNo == 1) {
+				this.setassetmodalList(e, pPageNo);
+			} else {
+				this.assetmodalListPaging.movePage(1);
+			}
+		},
+		
+		/* 부서 검색 모달 조회 */
+		searchDeptModal() {
+			// Axios를 사용한 부서 검색 API 요청
+			axios.get('/amanager/common/depttree-list', {
+				params: {
+					pDeptNm: this.pModalDeptNm,
+				}
+			}).then(response => {
+				this.deptTreeData = this.buildTree(response.data);
+			});
+		},
+		
+		updateBuyDate(value) {
+			this.mainList.currentRow.BUY_DT = value;
+		},
+
+		numberFormatter(value) {
+			if (!value) return '';
+			return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		},
+
+		/* 업로드 화면에서 저장 버튼 클릭시 */
+		uploadRequest() {
+			const uploadReturnData = this.formedReturnData;
+
+			if (!uploadReturnData || Object.keys(uploadReturnData).length === 0) {
+				this.messageModal.openModal('message', '등록 실패', '엑셀 파일을 선택 후 다시 등록 해주시기 바랍니다.', 'middle', '', '');
+				return;
+			} else {
+				this.messagePopup('UPLOAD_CONFIRM', null);
+			}
+		},
+
+		/* 엑셀 데이터 삭제 */
+		async deleteExcelTable() {
+			modal_close('excelUploadModal');
+
+			try {
+				const deleteResult = await haveExcelApi.deleteHaveExcel('00000000', false);
+				if (deleteResult === "OK") {
+					notifySubmit('success', '삭제 성공', '기존 데이터를 삭제했습니다.', 'icon-save');
+				} else {
+					notifySubmit('warning', '삭제 실패', '삭제할 기존 데이터가 없습니다.', 'icon-save');
+				}
+			} catch (error) {
+				console.error('클라이언트 오류 발생:', error);
+				this.messageModal.openModal('message', '기존 데이터 삭제 실패', '클라이언트 오류 발생', 'middle', '', '');
+			} finally {
+				await this.sendDatatoServer();
+			}
+		},
+
+		/* 엑셀 데이터 전송 */
+		async sendDatatoServer() {
+			try {
+				modal_open('loadingSpinModal');
+				// 엑셀 파일 업로드 시작
+				const returnVal = await haveExcelApi.insertHaveExcel(this.formedReturnData);
+
+				// 업로드 결과에 따라 처리
+				if (returnVal === 'OK') {
+					this.setmainList(null, this.mainListPaging.currentPage, 0);
+					this.messageModal.openModal('message', '업로드 성공', '엑셀 파일을 정상적으로 업로드 하였습니다.', 'middle', '', '');
+				} else {
+					const errorMessage = returnVal.data ? returnVal.data : '업로드 진행중 서버 단계에서 오류가 발생했습니다. <br/><br/>업로드한 엑셀 파일의 양식을 확인해주세요.';
+					this.messageModal.openModal('message', '업로드 실패', errorMessage, 'middle', '', '');
+				}
+
+			} catch (error) {
+				console.error('서버 오류 발생:', error);
+				this.messageModal.openModal('message', '업로드 실패', '서버 오류 발생', 'middle', '', '');
+			} finally {
+				modal_close('loadingSpinModal');
+			}
+		},
+
+		/* 검증 로직 진입 */
+		requestVrfExcelUpload() {
+			const self = this;
+			const VrfData = self.excelUploadData;
+
+			// VrfData에서 ERR_YN 값을 추출
+			const errYnData = VrfData.map(item => item.ERR_YN);
+			console.log("ERRYNDATA : ", errYnData);
+
+			if (VrfData && VrfData.length > 0) {
+				// 모든 ERR_YN 값이 'N'인 경우
+				const allErrYnN = errYnData.every(value => value === 'N');
+
+				if (allErrYnN) {
+					this.messagePopup('VRF_DATA', VrfData);
+				} else {
+					this.messageModal.openModal('message', '자산 검증 실패', '한번 검증된 자산은 재검증이 불가능 합니다. <br/>엑셀 등록을 다시 해주시길 바랍니다.', 'middle', '', '');
+				}
+			} else {
+				this.messageModal.openModal('message', '자산 검증 실패', '검증할 데이터가 없습니다.', 'middle', '', '');
+			}
+		},
+		
+		/* 검증 로직 진행 */
+		async vrfExcelUpload() {
+			try {
+				modal_open('loadingSpinModal');
+				const self = this;
+				await haveExcelApi.updateMdtr(this.excelUploadData, false);
+				await haveExcelApi.updateAssetMgmtNo(this.excelUploadData, false);
+				await haveExcelApi.insertAsstClCd(this.excelUploadData, false);
+				await haveExcelApi.insertAsstStndCd(this.excelUploadData, false);
+				self.setmainList();
+				this.messageModal.openModal('message', '자산 검증 완료', '자산 검증이 완료되었습니다.', 'middle', '', '');
+			} catch (error) {
+				this.messageModal.openModal('message', '자산 검증 실패', '자산 검증이 실패했습니다.', 'middle', '', '');
+			} finally {
+				modal_close('loadingSpinModal');
+			}
+		},
+		
+		/* 자산 보유 현황 반영 */
+		async getHaveDtl() {
+			try {
+				const self = this;
+				// 체크 로직 추가: ERR_CN이 '검증전'인 데이터가 있는지 확인
+				const hasUnverifiedData = this.excelUploadData.some(item => item.ERR_CN === '검증전');
+
+				if (hasUnverifiedData) {
+					// 검증 전 데이터가 있으면 메시지를 띄우고 작업 중단
+					this.messageModal.openModal('message', '자산 반영 실패', '검증 전 데이터가 있습니다. 검증을 먼저 진행해주세요.', 'middle', '', '');
+					return;
+				}
+				/* 삭제 로직 */
+				// 히스토리 삭제
+				await haveExcelApi.deleteAcqDtlHist('00000000', false);
+				// 발급현황 삭제
+				await haveExcelApi.deletePrtIssu('00000000', false);
+				// 보유현황 삭제
+				await haveExcelApi.deleteAcqDtl('00000000', false);
+
+				/* 신규 입력 OR 수정 */
+				await haveExcelApi.insertAcqDtl(this.excelUploadData, false);
+				await haveExcelApi.insertAcq(this.excelUploadData, false);
+				await haveExcelApi.updateAcqDtl(this.excelUploadData, false);
+				await haveExcelApi.updateRflcYn(this.excelUploadData, false);
+
+				self.setmainList();
+				this.messageModal.openModal('message', '자산 반영 완료', '(오류 자산 제외)자산 반영이 완료되었습니다.', 'middle', '', '');
+			} catch (error) {
+				console.error('자산 반영 실패:', error);
+				this.messageModal.openModal('message', '자산 반영 실패', '자산 반영이 실패했습니다.', 'middle', '', '');
+			}
+		},
+		
+		/* 엑셀업로드 데이터를 JSON 문자열로 변환 */
+		exceluploadcallback: function(data){
+			this.formedReturnData = JSON.stringify(data);
+		},
+		
+		/* 물품 목록 번호 적용 */
+		selectAsset: function(row){
+			var self = this;
+			var rowType = this.assetmodalList.getRowType(row);
+			
+			var getAssetClNo = this.assetmodalList.getColumn(row, 'ASSET_CL_NO');
+			var getAssetStndNo = this.assetmodalList.getColumn(row, 'ASSET_STND_NO');
+			var getAssetClKoNm = this.assetmodalList.getColumn(row, 'ASSET_CL_KO_NM');
+			var getAssetStndKoNm = this.assetmodalList.getColumn(row, 'ASSET_STND_KO_NM');
+			
+			if (!this.mainList.currentRow) {
+				this.pAssetClNo = getAssetClNo;
+				this.pAssetStndNo = getAssetStndNo;
+			
+			} else if (this.mainList.currentRow !== null) {
+				this.mainList.currentRow.ASSET_CL_NO = getAssetClNo;
+				this.mainList.currentRow.ASSET_STND_NO = getAssetStndNo;
+				this.mainList.currentRow.ASSET_CL_KO_NM = getAssetClKoNm;
+				this.mainList.currentRow.ASSET_STND_KO_NM = getAssetStndKoNm;
+			}
+			modal_close('assetSearchModal');
+		},
+		
+		/* 메세지창 띄우기 */
+		messagePopup: function (pId, pData) {
+			console.log('messagePopup 호출됨', pId, pData); // 디버깅용 로그
+			var title = '확인';
+			var cont = '해당 작업을 수행하시겠습니까?';
+			var pGb = 'confirm';
+
+			switch (pId) {
+				case 'ASSET_SELECT':
+					title = '선택 및 적용';
+
+					var index = pData;
+					var selectedRow = this.assetmodalList.data[index];
+
+					if (selectedRow) {
+						var displayAssetClNo = selectedRow.ASSET_CL_NO;
+						var displayAssetStndNo = selectedRow.ASSET_STND_NO;
+						var displayAssetClNm = selectedRow.ASSET_CL_KO_NM;
+						var displayAssetStndNm = selectedRow.ASSET_STND_KO_NM;
+
+						cont = '해당 자산 <br /><br /> 물품번호 :  ' + displayAssetClNo + '-' + displayAssetStndNo +
+							'<br /> 물품명 :  ' + displayAssetClNm +
+							'<br /> 규격명 :  ' + displayAssetStndNm +
+							'<br /><br />을(를) 선택하시겠습니까?';
+					} else {
+						cont = '선택한 자산 정보를 가져올 수 없습니다.';
+					}
+					break;
+
+				case 'VRF_DATA':
+					title = '선택 및 적용';
+					cont = '검증을 진행하시겠습니까?.';
+					break;
+
+				case 'UPLOAD_CONFIRM':
+					title = '선택 및 적용';
+					cont = '엑셀 파일을 등록하시겠습니까?.';
+					break;
+
+				case 'GET_HAVE_DTL':
+					title = '선택 및 적용';
+					cont = '보유현황에 반영하시겠습니까?.';
+					break;
+			}
+			this.messageModal.openModal(pGb, title, cont, 'middle', pId, pData);
+		},
+		
+		/* 메시지 콜백 */
+		messagePopupCallback: function (pGb, pId, pData) {
+			if (pGb != 'confirm') return;
+
+			switch (pId) {
+				case 'ASSET_SELECT':
+					this.selectAsset(pData);
+					break;
+
+				case 'VRF_DATA':
+					this.vrfExcelUpload(pData);
+					break;
+
+				case 'UPLOAD_CONFIRM':
+					this.deleteExcelTable(pData);
+					break;
+
+				case 'GET_HAVE_DTL':
+					this.getHaveDtl(pData);
+					break;
+			}
+		},
+		
+		/*
+		#### 부서 검색 모달 관련 method####
+		 */
+		
+		/* 트리 구조 생성 */
+		buildTree(data) {
+			let tree = [];
+			let lookup = {};
+
+			// 데이터 각 항목에 대해 변환을 준비
+			data.forEach(item => {
+				lookup[item.id] = {...item, children: [], selected: false};
+			});
+
+			// 트리 구조를 만듦
+			data.forEach(item => {
+				if (item.parent === '##' || !item.parent) {
+					tree.push(lookup[item.id]);
+				} else {
+					// 부모 항목이 존재하는지 확인
+					if (lookup[item.parent]) {
+						const parent = lookup[item.parent];
+						if (!parent.children.some(child => child.id === item.id)) {
+							parent.children.push(lookup[item.id]);
+						}
+					} else {
+						console.warn(`Parent ID ${item.parent} not found for item ID ${item.id}`);
+					}
+				}
+			});
+			return tree;
+		},
+		
+		/* 부서 선택 후 적용 클릭 시 */
+		confirmDeptTreeModal() {
+			// 메인화면
+			if (this.selectedNodeId && !this.mainList.currentRow) {
+				this.pDeptCd = this.selectedNodeId;
+			// 입력 or 수정화면
+			} else {
+				// 선택된 노드가 없을 경우 기본 값으로 설정
+				this.pDeptCd = '00';
+			}
+			modal_close('deptTreeModal');
+		},
+		
+		/* 이벤트 핸들러: 부모 컴포넌트에서 선택된 노드 ID 업데이트 */
+		updateSelectedNodeId(nodeId) {
+			this.selectedNodeId = nodeId;
+		},
+		
+		/*
+		#### 부서 검색 모달 관련 method####
+		 */
+		
+		/* 검색조건 초기화 */
+		resetFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialState)));
+		},
+		
+		/* 모달 팝업 레이어 검색조건 초기화 */
+		resetModalFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialModalState)));
+		},
+		
+		/* 모달 레이어 팝업 Open */
+		openModal(modalId) {
+			modal_open(modalId);
+			this.resetModalFields();
+			if (modalId == 'assetSearchModal') {
+				this.searchAssetModal('', 1);
+			} else if (modalId == 'deptTreeModal') {
+				this.searchDeptModal();
+			}
+		},
+		
+		/* 모달 레이어 팝업 Close */
+		closeModal(modalId) {
+			if (!this.mainList.currentRow) {
+				modal_close(modalId);
+				this.resetModalFields();
+			} else {
+				modal_close(modalId);
+				this.resetModalFields();
+			}
+			
+			if (modalId == 'ESC') {
+				modal_close('assetSearchModal');
+				modal_close('deptTreeModal');
+				modal_close('excelUploadModal');
+				this.messageModal.closeModal()
+			}
+		},
+		
+		/* ESC 버튼 다운시 핸들러 */
+		handleEscKey(event) {
+			if (event.key === 'Escape' || event.key === 'Esc') {
+				this.closeModal('ESC');
+			}
+		},
+		
+		/* 엑셀 양식 파일 다운로드 */
+		downloadTemplateFile() {
+			const downloadUrl = '/service/amanager/file/excel_upload_template.xlsx';
+			axios({
+				url: downloadUrl,
+				method: 'GET',
+				responseType: 'blob',
+			})
+			.then(response => {
+				const url = window.URL.createObjectURL(new Blob([response.data]));
+				const link = document.createElement('a');
+				link.href = url;
+				link.setAttribute('download', 'excel_upload_template.xlsx');
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			})
+			.catch(error => {
+				console.error('Error downloading template file:', error);
+			});
+		},
+		
+		/* 엑셀 다운로드 */
+		excelDownload() {
+			// 데이터 조회
+			this.setmainList(null, 1, 1, () => {
+				let date = moment().format('YYYY-MM-DD');
+				let filename = '자산보유현황(엑셀업로드)_' + date + '.xlsx';
+
+				const dataForExcel = this.excelData.map((item, index) => ({
+					'No': index + 1,
+					'반영여부': item.RFLC_YN,
+					'오류여부': item.ERR_YN,
+					'오류내용': item.ERR_CN,
+					'EXCEL ROW': item.EXCEL_ROW_NO,
+
+					'자산관리번호': item.ASSET_MGMT_NO,
+					'기관자산번호': item.INST_ASSET_MGMT_NO,
+					'물품목록번호': item.ASSET_CL_STND_CD,
+					'물품명': item.ASSET_CL_KO_NM,
+					'규격명': item.ASSET_STND_KO_NM,
+
+					'취득일자': item.ACQ_DT,
+					'구입일자': item.BUY_DT,
+					'구입수량': item.BUY_QTY,
+					'구입단가': item.BUY_UPRICE,
+					'부서명': item.DEPT_NM,
+
+					'회계구분': item.ACNTS_SE_NM,
+					'취득구분': item.ACQ_SE_NM,
+					'자산구분': item.AST_DS_NM,
+					'태그종류': item.TAG_KIND_NM,
+				}));
+
+				// 데이터로 시트 생성
+				const workSheet = XLSX.utils.json_to_sheet(dataForExcel);
+
+				// 열 넓이 설정
+				const colWidths = [
+					{wpx: 30},		// No
+					{wpx: 30},		// 반영여부
+					{wpx: 30},		// 오류여부
+					{wpx: 70},		// 오류내용
+					{wpx: 50},		// EXCEL ROW
+
+					{wpx: 110},		// 자산관리번호
+					{wpx: 110},		// 기관자산번호
+					{wpx: 120},		// 물품목록번호
+					{wpx: 200},		// 물품명
+					{wpx: 300},		// 규격명
+
+					{wpx: 70},		// 취득일자
+					{wpx: 70},		// 구입일자
+					{wpx: 70},		// 구입수량
+					{wpx: 70},		// 구입단가
+					{wpx: 150},		// 보유부서
+
+					{wpx: 80},		// 회계구분
+					{wpx: 80},		// 취득구분
+					{wpx: 80},		// 자산구분
+					{wpx: 80},		// 태그종류
+				];
+				workSheet['!cols'] = colWidths;
+
+				// 워크북 생성 및 시트 추가
+				const workBook = XLSX.utils.book_new();
+				XLSX.utils.book_append_sheet(workBook, workSheet, '자산보유현황(엑셀업로드)');
+
+				XLSX.writeFile(workBook, filename);
+			});
+		},
+		
+		/* 테이블 정렬 상태값 적용 */
+		sort(key) {
+			if (this.sortKey === key) {
+				this.sortOrders[key] = this.sortOrders[key] === 'ASC' ? 'DESC' : 'ASC';
+			} else {
+				this.sortKey = key;
+				this.sortOrders = {
+					RFLC_YN: 0,
+					ERR_YN: 0,
+					ERR_CN: 0,
+					DTL_YN: 0,
+					EXCEL_ROW_NO: 0,
+					ASSET_MGMT_NO: 0,
+					INST_ASSET_MGMT_NO: 0,
+					ASSET_CL_NM: 0,
+					ASSET_STND_NM: 0,
+					ASSET_CL_STND_CD: 0,
+					DEPT_NM: 0,
+					BUY_DT: 0,
+				};
+				this.sortOrders[key] = 'ASC';
+			}
+		},
+		
+		/* 테이블 정렬 아이콘 */
+		sortIcon(key) {
+			if (this.sortOrders[key] === 'ASC') {
+				return 'icon-arrow3'; // 오름차순 아이콘
+			} else if (this.sortOrders[key] === 'DESC') {
+				return 'icon-arrow1'; // 내림차순 아이콘
+			} else {
+				return ''; // 초기 정렬 상태 아이콘
+			}
+		}
+	}	
+});
+
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+
+function handleNullValues(row) {
+	Object.keys(row).forEach(function (key) {
+		if (row[key] === '') {
+			row[key] = null;
+		}
+	});
+	return row;
+}
+
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+	
+</script>
+<style>
+	.thead-fixed {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background-color: #FFF;
+	}
+
+	.sub_cont_wrap {
+		width: 97%;
+		margin: 0 auto;
+		margin-top: 40px;
+		margin-bottom: 60px;
+	}
+
+	.sub_cont_wrap .sub_cont_box {
+		padding: 20px;
+		margin-bottom: 0px;
+	}
+
+	.btn_container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.row .col.l2 {
+		width: 20%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l4 {
+		width: 40%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l5 {
+		width: 50%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l6 {
+		width: 60%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.date-form-wrap .size-m {
+		font-size: 13.5px;
+	}
+
+	th,	td {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	/* 트리 구조를 위한 CSS */
+	.dept-tree {
+		list-style-type: none;
+		padding-left: 20px;
+	}
+
+	.dept-node {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		padding: 10px 0;
+		position: relative;
+	}
+
+	.dept-node.selected {
+		background-color: rgb(0, 64, 128);
+		color: white;
+	}
+
+	.dept-node.open:before {
+		content: "└";
+		/* 부모 노드가 열린 경우 */
+		margin-right: 5px;
+	}
+
+	.dept-node:not(.open):before {
+		content: "-";
+		/* 부모 노드가 닫힌 경우 */
+		margin-right: 5px;
+	}
+	
+	/* 자식 노드가 있는 경우를 나타내는 스타일 */
+	.dept-node.has-children {
+		color: #4f5685;
+		font-weight: bold;
+	}
+
+	/* 자식 노드가 있는 경우를 나타내는 스타일(before/open) */
+	.dept-node.has-children.open:before {
+		content: "└";
+		color: #4f5685;
+		font-weight: bold;
+	}
+	
+	/* 자식 노드가 있는 경우를 나타내는 스타일(before/closed) */
+	.dept-node.has-children::before {
+		content: "≡";
+		color: #4f5685;
+		font-weight: bold;
+	}
+
+	.sub-tree {
+		padding-left: 10px;
+		/* 자식 노드 리스트의 들여쓰기 설정 */
+	}
+
+	.parent-node {
+		cursor: pointer;
+		font-weight: bold;
+	}
+	
+	.sortable {
+		cursor: pointer;
+		transition: background-color 0.3s, color 0.3s;
+	}
+
+	.sortable:hover {
+		background-color: rgb(204, 204, 204);
+		color: #333;
+	}
+</style>

@@ -1,0 +1,138 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+
+<h2>회원탈퇴</h2>
+<section class="sub_cont_box password-change" id="app">
+    <div class="head">
+        <p class="name-kor">회원탈퇴</p>
+    </div>
+
+    <div class="cont"> <!-- id="mainListLoading" -->
+        <div class="notice">
+            <p class="icon-alert-circle">회원탈퇴 주의사항</p>
+            <ul class="list-type02">
+                <li>회원탈퇴시 저장되어있는 모든 개인정보가 즉시삭제됩니다.</li>
+                <li>회원탈퇴시 철회는 불가능하며 즉시로그인이 제한됩니다.</li>
+            </ul>
+        </div>
+        <form autocomplete="off" id="mainListLoading">
+            <div class="current-pwd">
+                <input type="password" class="size-l" placeholder="현재 비밀번호 입력" v-model="currPwd" id="curr-pwd" name="curr-pwd" data-vv-as="현재 비밀번호 " v-validate="'required'" v-bind:class="{'invalid': errors.has('curr-pwd')}" @keyup.enter="checkPwd()"/>
+                <invalid-message :visible="true" :name="'curr-pwd'" :verror="errors"/>
+            </div>
+            <div class="btn-line right">
+                <a href="#!" class="btn size-m type02" @click="openModal()">탈퇴</a>
+            </div>
+        </form>
+    </div>
+	
+    <form id="withDrawal" action="/system-manager/user/drop" method="POST">
+      <input type="hidden" name="KEY" id="KEY" />
+      <input type="hidden" name="EXKEY" id="EXKEY" />
+    </form>
+    
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	key: '',
+    	exKey: '',
+    	currPwd: '',
+	    mainListLoading: {id:'mainListLoading', val:false},
+        messageModal: new ModalSet('message-modal'),	// confirm 모달
+    },
+
+    //데이터 감시
+    watch: {
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    }
+
+    },
+    filters: {
+
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+
+    },
+    //함수
+    methods: {
+    	checkPwd: function(){
+    		var self = this;
+    		$.ajax({
+				url: '/publickeys',
+				cache: false,
+				success: function(data) {
+					var rsa = new RSAKey();
+					rsa.setPublic(data.modulus, data.publicExponent);
+		    		var params = {
+	        			PWD : rsa.encrypt(sha256Enc(self.currPwd)),
+	        		};
+		    		var returnVal = userApi.checkPwd(params,false);
+					returnVal.then(function(response) {
+						if(response.data){
+							$('#withDrawal').submit();
+						}else{
+							notifySubmit('warning', '회원탈퇴', '비밀번호가 일치하지 않습니다.', 'icon-caution');
+						}
+					});
+				},
+				error: function(jqXHR){
+					notifySubmit('warning', '회원탈퇴', '암호화오류로 회원탈퇴에 실패하였습니다.', 'icon-caution');
+					self.mainListLoading.val = false;
+				}
+			});
+    	},
+		openModal: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					self.messageModal.openModal('confirm', '회원탈퇴', '회원탈퇴를 진행하시겠습니까?', 'small', 'withDrawal','');
+				}else{
+					notifySubmit('warning', '회원탈퇴', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		messagePopupCallback : function(pGb, pId) {
+
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    	case 'withDrawal' :
+	    		this.checkPwd();
+	    		break;
+	    	}
+	    },
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+function sha256Enc(pwd) {
+	var hash = CryptoJS.SHA256(pwd);
+	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+
+	return hashInBase64;
+}
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>

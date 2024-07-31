@@ -1,0 +1,123 @@
+<h2 id="top">Dataset-SingleSingleFileSet</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Method</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type02">
+	        	<li v-for="(item, index) in methodData" style="margin-top:10px;"><a :href="'#item'+index" class="btn type01 size-s c-blue" style="border:1px solid #2549b0;" >{{item.name}} {{item.param}}</a> : {{item.description}}</li>
+			</ul>
+		</div>
+    </section>
+    
+    <section class="cont_box" v-for="(item, index) in methodData" :id="'item'+index">
+        <h3 class="h3">{{item.name}} {{item.param}}</h3>
+        <div class="row form-row">
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Description</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description.split('\n').join('<br />')"></p>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description2.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Syntax</label>
+	            <!-- <p class="txt_info" v-html="item.syntax.split('\n').join('<br />')"></p> -->
+<textarea :id="'codeEditor'+index" style="line-height:30px;" v-html="item.syntax">
+</textarea>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Parameters</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.parameters.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Return</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.returnVal.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <p class="right" style="line-height:30px;"><a href="#top" class="btn type01 size-m c-sky icon-arrow-up-circle" style="border:1px; font-size:20px;"></a></p>
+	        </div>
+	    </div>
+        <br/>
+   	</section>
+</section>
+
+<style>
+html {
+    scroll-behavior: smooth;
+}
+</style>
+
+<script type="text/javascript">
+//{name:'',param:'()',description:'',description2:'',syntax:'',parameters:'',returnVal:''},
+var method = [
+	{name:'SingleFileSet',param:'(pServiceAbbrNm)',description:'파일전송을 위한 파일 오브젝트입니다.',description2:'',syntax:'new SingleFileSet(pServiceAbbrNm);\n// Create Object\nvar ds = new SingleFileSet(pServiceAbbrNm);',parameters:'pServiceAbbrNm(String) : 서비스 약어(3자리)',returnVal:'SingleFileSet()'},
+	{name:'init',param:'()',description:'파일 정보 초기화',description2:'',syntax:'',parameters:'',returnVal:'boolean : 성공여부'},
+	{name:'uploadFile',param:'(pFileId, pFileKey, pFileHangmok)',description:'파일 업로드 시 사용되는 메소드 입니다.',description2:'',syntax:'SingleFileSet.uploadFile(pFileId, pFileKey, pFileHangmok)',parameters:'pFileId(String) : 업로드 대상 테이블 명 입니다.\npFileKey(String) : 업로드 대상 키 조합 입니다.(구분자 : #)\npFileHangmok(String) : 업로드 될 항목 명입니다.(예)logo, screenshot..)',returnVal:'성공여부(Boolean)'},
+	{name:'excelFileUpload',param:'(pTarget)',description:'엑셀파일 업로드 시 사용되는 메소드 입니다.',description2:'',syntax:'SingleFileSet.excelFileUpload(pTarget)',parameters:'pTarget(evnet.target.files) : 업로드 할 파일정보',returnVal:'엑셀파일을 Array로 변경하여 리턴합니다.'},
+	{name:'getFiles',param:'(pFileId, pFileKey, pFileHangmok, pFileNo)',description:'파일 리스트를 가져오는 메소드 입니다.',description2:'',syntax:'SingleFileSet.getFile(pFileId, pFileKey, pFileHangmok, pFileNo)',parameters:'pFileId(String) : 파일아이디(테이블 명)\npFileKey(String) :  파일키(해당테이블의 PK조합, 구분자:#)\npFileHangmok(String) : 사용자 지정 항목 (ex) logo, img, filelist 등)\npFileNo(Integer) : 파일 순번(null가능, null일 경우 다건조회)',returnVal:'성공여부(Boolean)'},
+	{name:'delFiles',param:'(pFileId, pFileKey, pFileHangmok, pFileNo, nRow)',description:'파일을 삭제 합니다.',description2:'',syntax:'SingleFileSet.delFiles(pFileId, pFileKey, pFileHangmok, pFileNo, nRow)',parameters:'pFileId(String) : 파일아이디(테이블 명)\npFileKey(String) :  파일키(해당테이블의 PK조합, 구분자:#)\npFileHangmok(String) : 사용자 지정 항목 (ex) logo, img, filelist 등)\npFileNo(Integer) : 파일 순번\nnRow : 삭제 할 파일 행',returnVal:'boolean : 성공여부'},
+	{name:'handleFileUpload',param:'(target, pFileid, pFileKey, pFileHangmok)',description:'input file 컴포넌트에 파일이 등록 될 때마다 this.fileData에 해당 파일정보를 쌓습니다.',description2:'',syntax:'SingleFileSet.handleFileUpload(target, pFileid, pFileKey, pFileHangmok)',parameters:'target(evnet.target.files) : 업로드 할 파일정보\npFileId(String) : 파일아이디(테이블 명)\npFileKey(String) :  파일키(해당테이블의 PK조합)\npFileHangmok(String) : 사용자 지정 항목 (ex) logo, img, filelist 등)',returnVal:'boolean : 성공여부'},
+	{name:'getFileCnt',param:'()',description:'현재 저장 된 파일 개수를 리턴합니다.',description2:'',syntax:'SingleFileSet.getFileCnt()',parameters:'',returnVal:'fileCnt(Integer) : 파일 개수'},
+	{name:'getFileList',param:'()',description:'현재 저장 된 파일 리스트를 리턴합니다.',description2:'',syntax:'SingleFileSet.getFileList(files)',parameters:'',returnVal:'fileList(Object) : 파일 리스트'},
+	{name:'download',param:'(pFileId, pFileKey, pFileHangmok, pFileNo, pFilename, pFilePath)',description:'파일을 다운로드 합니다.',description2:'',syntax:'SingleFileSet.download(pFileId, pFileKey, pFileHangmok, pFileNo, pFilename, pFilePath)',parameters:'pFileId(String) : 파일아이디(테이블 명)\npFileKey(String) :  파일키(해당테이블의 PK조합)\npFileHangmok(String) : 사용자 지정 항목 (ex) logo, img, filelist 등)\npFileNo(Integer) : 파일 순번\npFilename(Integer) : 파일명\npFilePath(Integer) : 파일경로',returnVal:'boolean : 성공여부'},
+]
+
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		testDate: new Date(),
+		methodData: _.sortBy(method, ['name']),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	_.forEach(vm.methodData, function(n, key) {
+		editor('codeEditor'+key, 100);
+	});
+	
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

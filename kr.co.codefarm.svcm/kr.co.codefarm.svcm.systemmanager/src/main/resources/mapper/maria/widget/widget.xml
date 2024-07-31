@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.widget">
+    <select id="getWidgetList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+             , A.WIDGET_SEQ
+             , A.WIDGET_NM
+             , A.WIDGET_ENM
+             , A.URL
+             , A.WIDGET_DESC
+             , A.USE_YN
+             , A.DEFAULT_WIDGET_YN
+             , A.WIDTH
+             , A.HEIGHT
+             , A.PARAMETER
+             , A.DEFAULT_IMAGE_PATH
+             , CONCAT(A.APP_ID,' ',A.WIDGET_SEQ) AS "i"
+             , CAST(A.WIDTH AS SIGNED) AS "w"
+             , CAST(A.HEIGHT AS SIGNED) AS "h"
+             , 0 AS "x"
+             , 0 AS "y"
+             , B.FILE_PATH
+             , #{SYSTEM_ID} AS USER_ID
+             , '' AS USER_PAGE_SEQ
+             <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             </if>
+          FROM (
+                   SELECT SA.APP_ID
+                        , SA.WIDGET_SEQ
+                        , SA.WIDGET_NM
+                        , SA.WIDGET_ENM
+                        , SA.URL
+                        , SA.WIDGET_DESC
+                        , SA.USE_YN
+                        , SA.DEFAULT_WIDGET_YN
+                        , SA.WIDTH
+                        , SA.HEIGHT
+                        , SA.PARAMETER
+                        , SA.DEFAULT_IMAGE_PATH
+			            , SA.INSERT_DTTM
+                        <if test="pPageNo != null and pPageNo != ''.toString()">
+                        , ROW_NUMBER() OVER(ORDER BY INSERT_DTTM DESC) AS RNUM
+                        , COUNT(*) OVER() AS CNT
+                        </if>
+                     FROM SMN_WIDGET SA
+                    WHERE 1=1
+        			<if test="pSearchAppId != null and pSearchAppId != ''.toString()">AND SA.APP_ID = #{pSearchAppId}</if>
+			       	<if test="pSearchType eq '1'.toString()">AND SA.WIDGET_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '2'.toString()">AND SA.WIDGET_ENM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '3'.toString()">AND SA.DESC LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq 'auth'.toString()">
+			          AND EXISTS
+                          (
+                              SELECT 'X' 
+                                FROM SMN_WIDGET_AUTH SSA
+                               WHERE 1=1
+                                 AND SSA.APP_ID = SA.APP_ID
+                                 AND SSA.WIDGET_SEQ = SA.WIDGET_SEQ
+                                 AND (
+                                 		 <if test="pRowCount != 'None'.toString()">
+                                 	     SSA.AUTH_CD IN 
+                                         (
+                                             SELECT SSSA.AUTH_CD 
+                                               FROM SMN_USER_AUTH SSSA
+                                              WHERE 1=1
+                                                AND SSSA.USER_ID = #{pUserId}
+                                         )
+                                         OR
+                                         </if>
+                                         SSA.AUTH_CD = #{pSearchArgv}
+                                     )
+                          )
+			        </if>
+               ) A
+          LEFT OUTER JOIN SMN_FILE B
+            ON B.FILE_ID = 'SMN_WIDGET'
+           AND B.FILE_KEY = CONCAT(A.APP_ID,'#',A.WIDGET_SEQ)
+           AND B.FILE_HANGMOK = 'widgetImg'
+	       AND NOT EXISTS
+	           (
+	               SELECT 'X'
+	                 FROM SMN_FILE SUB_A
+	                WHERE 1=1
+	                  AND B.FILE_ID = SUB_A.FILE_ID
+	                  AND B.FILE_KEY = SUB_A.FILE_KEY
+	                  AND B.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+	                  AND B.FILE_NO &lt; SUB_A.FILE_NO
+	           )
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+           AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+         ORDER BY A.RNUM
+         </if>
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.INSERT_DTTM ASC
+         </if>
+    </select>
+    
+    <select id="getWidget" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+             , A.WIDGET_SEQ
+             , A.WIDGET_NM
+             , A.WIDGET_ENM
+             , A.URL
+             , A.WIDGET_DESC
+             , A.USE_YN
+             , A.DEFAULT_WIDGET_YN
+             , A.WIDTH
+             , A.HEIGHT
+             , A.PARAMETER
+             , A.DEFAULT_IMAGE_PATH
+             , B.FILE_PATH
+          FROM SMN_WIDGET A
+          LEFT OUTER JOIN SMN_FILE B
+            ON B.FILE_ID = 'SMN_WIDGET'
+           AND B.FILE_KEY = CONCAT(A.APP_ID,'#',A.WIDGET_SEQ)
+           AND B.FILE_HANGMOK = 'widgetImg'
+	       AND NOT EXISTS
+	           (
+	               SELECT 'X'
+	                 FROM SMN_FILE SUB_A
+	                WHERE 1=1
+	                  AND B.FILE_ID = SUB_A.FILE_ID
+	                  AND B.FILE_KEY = SUB_A.FILE_KEY
+	                  AND B.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+	                  AND B.FILE_NO &lt; SUB_A.FILE_NO
+	           )
+         WHERE APP_ID = #{APP_ID}
+         <if test="WIDGET_SEQ != null and WIDGET_SEQ != ''.toString()">AND WIDGET_SEQ = #{WIDGET_SEQ}</if>
+         ORDER BY A.INSERT_DTTM DESC
+    </select>
+    
+    <insert id="insertWidget" parameterType="hashMap" useGeneratedKeys="true" keyProperty="id">
+    	<selectKey resultType="string" keyProperty="WIDGET_SEQ" order="BEFORE">
+        	SELECT COALESCE(MAX(A.WIDGET_SEQ),0)+1 AS WIDGET_SEQ
+        	  FROM SMN_WIDGET A
+        	 WHERE A.APP_ID = #{APP_ID}
+    	</selectKey>
+    	
+    	INSERT INTO SMN_WIDGET
+     	(
+     		APP_ID
+		  , WIDGET_SEQ
+		  , WIDGET_NM
+		  , WIDGET_ENM
+		  , URL
+		  , WIDGET_DESC
+		  , USE_YN
+		  , DEFAULT_WIDGET_YN
+          , WIDTH
+          , HEIGHT
+          , PARAMETER
+          , DEFAULT_IMAGE_PATH
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+     	)VALUES 
+     	(
+     		#{APP_ID}
+		  , #{WIDGET_SEQ}
+		  , #{WIDGET_NM}
+		  , #{WIDGET_ENM}
+		  , #{URL}
+		  , #{WIDGET_DESC}
+		  , #{USE_YN}
+		  , #{DEFAULT_WIDGET_YN}
+          , #{WIDTH}
+          , #{HEIGHT}
+          , #{PARAMETER}
+          , #{DEFAULT_IMAGE_PATH}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+   		)
+    </insert>
+    
+    <update id="updateWidget" parameterType="hashMap">
+    	UPDATE SMN_WIDGET
+    	   SET WIDGET_NM = #{WIDGET_NM}
+			 , WIDGET_ENM = #{WIDGET_ENM}
+			 , URL = #{URL}
+			 , WIDGET_DESC = #{WIDGET_DESC}
+			 , USE_YN = #{USE_YN}
+			 , DEFAULT_WIDGET_YN = #{DEFAULT_WIDGET_YN}
+			 , WIDTH = #{WIDTH}
+			 , HEIGHT = #{HEIGHT}
+			 , PARAMETER = #{PARAMETER}
+			 , DEFAULT_IMAGE_PATH = #{DEFAULT_IMAGE_PATH}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE APP_ID = #{APP_ID}
+    	   AND WIDGET_SEQ = #{WIDGET_SEQ}
+    </update>
+    
+    <delete id="deleteWidget" parameterType="hashMap">
+    
+    	DELETE FROM SMN_LAYOUT_CONTENT
+    	 WHERE APP_ID = #{appId}
+    	   AND WIDGET_SEQ = #{widgetSeq};
+    	   
+    	DELETE FROM SMN_WIDGET_AUTH
+    	 WHERE APP_ID = #{appId}
+    	   AND WIDGET_SEQ = #{widgetSeq};
+    	   
+    	DELETE FROM SMN_WIDGET
+    	 WHERE APP_ID = #{appId}
+    	   AND WIDGET_SEQ = #{widgetSeq};
+	
+    </delete>
+    
+    <!-- 위젯 권한 리스트 작성자(최대건 2019/06/10) -->
+    <select id="getWidgetAuthList" parameterType="hashMap" resultType="hashMap">
+	  SELECT  A.*	
+	    FROM (		
+				SELECT   SA.APP_ID
+					   , SA.WIDGET_SEQ
+					   , SA.WIDGET_NM
+					   , SA.WIDGET_ENM
+					   , SA.URL
+					   , SA.WIDGET_DESC
+					   , SA.USE_YN
+					   , SA.DEFAULT_WIDGET_YN
+					   , SA.WIDTH
+					   , SA.HEIGHT
+					   , SA.PARAMETER
+					   , SA.DEFAULT_IMAGE_PATH
+					   , SA.APP_NM
+					   <if test="pPageNo != null and pPageNo != ''.toString()">
+					   , ROW_NUMBER() OVER(ORDER BY SA.WIDGET_NM, SA.WIDGET_ENM) AS RNUM
+					   , COUNT(*) OVER() AS CNT
+					   </if>
+					   , SA.APP_AUTH_YN
+					   , SA.WIDGET_AUTH_YN
+				   FROM(
+							SELECT   SSA.APP_ID
+								   , SSA.WIDGET_SEQ
+								   , SSA.WIDGET_NM
+								   , SSA.WIDGET_ENM
+								   , SSA.URL
+								   , SSA.WIDGET_DESC
+								   , SSA.USE_YN
+								   , SSA.DEFAULT_WIDGET_YN
+								   , SSA.WIDTH
+								   , SSA.HEIGHT
+								   , SSA.PARAMETER
+								   , SSA.DEFAULT_IMAGE_PATH
+								   , SSB.APP_NM
+								   , (
+										SELECT CASE WHEN COUNT(0) > 0 THEN 'Y'
+													ELSE 'N'
+												END APP_AUTH_YN	
+										  FROM SMN_APP_AUTH
+										 WHERE APP_ID = SSA.APP_ID
+										   AND AUTH_CD =  #{pAuthCd}
+									 ) AS APP_AUTH_YN 
+								   , (
+										SELECT CASE WHEN COUNT(0) > 0 THEN 'Y'
+													ELSE 'N'
+												END APP_AUTH_YN	
+										  FROM SMN_WIDGET_AUTH
+										 WHERE APP_ID = SSA.APP_ID
+										   AND WIDGET_SEQ = SSA.WIDGET_SEQ
+										   AND AUTH_CD =  #{pAuthCd}
+									 ) AS WIDGET_AUTH_YN
+								   <if test="pPageNo != null and pPageNo != ''.toString()">		
+								   , COUNT(*) OVER() AS CNT
+								   </if>
+							  FROM SMN_WIDGET SSA 
+							  LEFT OUTER JOIN SMN_APP SSB
+								ON SSA.APP_ID	= SSB.APP_ID
+							  WHERE 1=1
+						  ) SA
+					 WHERE 1=1
+					  <if test="pAppUseYn !=null and pAppUseYn!=''.toString()"> AND SA.APP_AUTH_YN = #{pAppUseYn}</if>
+					  <if test="pSearchAppId != null and pSearchAppId != ''.toString()">AND SA.APP_ID = #{pSearchAppId}</if>
+					  <if test="pSearchType eq '1'.toString()">AND SA.WIDGET_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+					  <if test="pSearchType eq '2'.toString()">AND SA.WIDGET_ENM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+					  <if test="pSearchType eq '3'.toString()">AND SA.WIDGET_DESC LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+				) A
+		  WHERE 1=1
+		    <if test="pPageNo != null and pPageNo != ''.toString()">
+			AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		    ORDER BY A.RNUM
+		    </if>
+    </select>
+    
+    <update id="updateColor" parameterType="hashMap">
+    	UPDATE SMN_DEFAULTINFO
+    	   SET TOP_TITLE_COLOR = #{COLOR}
+    	 WHERE SITE_SEQ = #{SITE_SEQ} 
+    </update>
+</mapper>

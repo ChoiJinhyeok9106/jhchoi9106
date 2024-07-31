@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.useratymgmt">
+	
+<!-- 사용자관리 리스트 조회 -->
+<select id="getUsrAtyMgmtList" parameterType="hashMap" resultType="hashMap">
+SELECT
+      A_.* 
+         FROM 
+              (SELECT
+              		<if test="pPageNo != null and pPageNo != ''.toString()">
+					ROW_NUMBER() OVER(ORDER BY EMPLYR_ID DESC) AS RNUM
+					</if> 
+                   , COUNT(*) OVER() TOTAL_CNT
+                   , EMPLYR_ID 
+                   , ESNTL_ID 
+                   , ORGNZT_ID 
+                   , EMAIL_ADRES 
+    			   , EMPLYR_STTUS_CODE 
+    			   , CASE WHEN EMPLYR_STTUS_CODE = 'P' THEN '사용' ELSE '미사용' END AS EMPLYR_STTUS_NM
+    			   , FXNUM
+                   , OFFM_TELNO
+                   , MBTLNUM
+                   , a.AGENCY_ID 
+                   ,
+                     (SELECT 
+                            DEPT_NM 
+                       FROM 
+                            VA_DEPT 
+                      WHERE 
+                            TRIM(DEPT_CD) = TRIM(a.ORGNZT_ID) 
+                            AND AGENCY_ID = a.AGENCY_ID
+                     ) AS ORGNZT_NM 
+                   , USER_NM 
+                   , 
+                     (SELECT 
+                            group_concat(b.AUTHOR_NM ORDER BY b.AUTHOR_NM DESC SEPARATOR ',')  AS AUTHOR_NM
+                       FROM 
+                            LETTNEMPLYRSCRTYESTBS c INNER JOIN LETTNAUTHORINFO b ON b.AUTHOR_CODE    = c.AUTHOR_CODE AND b.AGENCY_ID = c.AGENCY_ID
+                      WHERE 
+                            SCRTY_DTRMN_TRGET_ID = a.ESNTL_ID 
+                            AND c.AGENCY_ID = a.AGENCY_ID 
+                     ) AS AUTHOR_NM 
+                FROM 
+                     (SELECT 
+                            * 
+                       FROM 
+                            LETTNEMPLYRINFO 
+                      WHERE 
+                            EMPLYR_ID != 'ejudata'
+                     ) a 
+                     LEFT JOIN  
+                     LETTNEMPLYRSCRTYESTBS e                      
+               	ON a.ESNTL_ID = SCRTY_DTRMN_TRGET_ID AND a.AGENCY_ID = e.AGENCY_ID
+               	WHERE 1=1
+				AND a.AGENCY_ID = '00000000'
+				<!-- 사용자이름검색 --> 
+				<if test="pUserNm != null and pUserNm != ''.toString()">
+					AND USER_NM LIKE CONCAT('%',#{pUserNm},'%')
+				</if>
+				<!-- 사용자아이디검색 -->
+				<if test="pEmplyrId != null and pEmplyrId != ''.toString()">
+					AND EMPLYR_ID LIKE CONCAT('%',#{pEmplyrId},'%')
+				</if>
+				<!-- 부서 -->
+				<if test="pOrgnztId != null and pOrgnztId != ''.toString()">
+					<if test="pOrgnztId != '00'">
+						AND TRIM(a.ORGNZT_ID) IN (( WITH RECURSIVE CTE_CONNECT_BY AS (
+							SELECT 1 AS LEVEL, S.* FROM VA_DEPT S WHERE DEPT_CD = #{pOrgnztId} AND S.AGENCY_ID = '00000000'
+							UNION ALL
+							SELECT LEVEL + 1 AS LEVEL, S.* FROM CTE_CONNECT_BY R INNER JOIN VA_DEPT S ON  R.DEPT_CD = S.UP_DEPT_CD WHERE R.AGENCY_ID = '00000000' AND S.AGENCY_ID = '00000000'
+							)
+							SELECT DEPT_CD FROM CTE_CONNECT_BY
+							)) 
+					</if>
+				</if>
+				<!-- 사용여부 -->
+				<if test="pEmplyrSttusCode != null and pEmplyrSttusCode != ''.toString()">
+					<if test="pEmplyrSttusCode != 'ALL'">
+						AND EMPLYR_STTUS_CODE = #{pEmplyrSttusCode}
+					</if>
+				</if>
+				<!-- 권한검색 -->
+				<if test="pAuthorCode != null and pAuthorCode != ''.toString()">
+					<if test="pAuthorCode != 'ALL'">
+						AND AUTHOR_CODE = #{pAuthorCode}
+					</if>
+				</if>
+               GROUP BY  EMPLYR_ID, ESNTL_ID, ORGNZT_ID, USER_NM ,EMAIL_ADRES, EMPLYR_STTUS_CODE, FXNUM, OFFM_TELNO, MBTLNUM
+              ) A_
+              WHERE 1=1
+	           <if test="pPageNo != null and pPageNo != ''.toString()">
+      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    			</if> 
+              ORDER BY A_.EMPLYR_ID DESC
+</select>
+
+<!-- 권한 리스트 조회(select) -->
+<select id="getAuthorCodeList" parameterType="hashMap" resultType="hashMap">
+	SELECT
+			* 
+  FROM LETTNAUTHORINFO 
+ WHERE AUTHOR_CODE !='ROLE_ANONYMOUS' 
+       AND AUTHOR_CODE !='ROLE_EJUDATA_ADMIN' 
+       AND AGENCY_ID = '00000000'
+</select>
+
+<!-- 사용자 입력 -->
+<insert id="insertUsrMgmt" parameterType="hashMap">
+	    INSERT
+	    INTO LETTNEMPLYRINFO
+	          ( 
+	              EMPLYR_ID
+	             ,ORGNZT_ID
+	             ,USER_NM
+	             <!--,PASSWORD-->
+                 ,OFFM_TELNO
+                 ,PSTINST_CODE
+                 ,EMPLYR_STTUS_CODE
+                 ,ESNTL_ID
+	             ,SBSCRB_DE 
+	             ,AGENCY_ID
+	           ) 
+	           VALUES 
+	           ( 
+	              #{EMPLYR_ID}
+	             ,#{ORGNZT_ID}
+	             ,#{USER_NM}
+	             <!--,'D/4avRoIIVNTwjPW4AlhPpXuxCU4Mqdhryj/N6xaFQw='-->
+               	 ,#{OFFM_TELNO}
+                 ,'00000000'
+                 ,#{EMPLYR_STTUS_CODE}
+	             ,(SELECT ESNTL_ID FROM (SELECT CONCAT('USRCNFRM_' , LPAD(MAX(CAST(SUBSTR(ESNTL_ID,10,11) AS INTEGER)+1), 11, 0)) as ESNTL_ID
+					FROM LETTNEMPLYRINFO WHERE ESNTL_ID LIKE 'USRCNFRM%') tmp)
+	             ,now() 
+	             ,'00000000'
+	           )
+</insert>
+
+<!-- 사용자 수정 -->
+<update id="updateUsrMgmt" parameterType="hashMap">
+ UPDATE LETTNEMPLYRINFO
+ SET
+      ORGNZT_ID = #{ORGNZT_ID}
+      ,USER_NM = #{USER_NM}
+      ,OFFM_TELNO = #{OFFM_TELNO}
+      ,EMPLYR_STTUS_CODE = #{EMPLYR_STTUS_CODE}
+ WHERE EMPLYR_ID = #{EMPLYR_ID}
+</update>
+
+<!-- 기관조회 -->
+<select id="getAgencyList" parameterType="hashMap" resultType="hashMap">
+	SELECT
+		AGENCY_ID,
+		AGENCY_NM
+	FROM TA_AGENCY
+	WHERE 1=1
+</select>
+
+</mapper>

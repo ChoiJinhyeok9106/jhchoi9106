@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.downloadcenter">
+
+	<select id="selectInstList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.INST_SEQ
+		     , A.INST_NM
+		     , A.PBLR_NM
+		     , B.FILE_PATH
+		     , B.FILE_NM
+		     , A.USE_YN
+		     , A.RMRK
+		     , A.INSERT_DTTM
+			 , A.INSERT_ID
+			 , A.INSERT_IP
+			 , A.INSERT_PGM
+			 , A.UPDATE_DTTM
+			 , A.UPDATE_ID
+			 , A.UPDATE_IP
+			 , A.UPDATE_PGM
+		  FROM SMN_INST_BASS A
+	      LEFT JOIN ( SELECT FILE_KEY
+		       	     , FILE_PATH
+		       	     , FILE_NM
+		  	      FROM SMN_FILE
+		  	     WHERE 1=1
+		  	       AND FILE_ID = 'SMN_LOGO'
+		  	   )B
+		   ON A.INST_SEQ = B.FILE_KEY
+		  <if test="pSearchArgv != null and pSearchArgv != ''">
+		   AND A.INST_NM LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci
+		  </if>
+		  <if test="pUseYn != null and pUseYn != ''">
+		   AND A.USE_YN = #{pUseYn}
+		  </if>	
+		 GROUP BY A.INST_SEQ
+	</select>
+	
+	<select id="selectInstSeq" parameterType="hashMap" resultType="hashMap">
+		SELECT COALESCE(MAX(INST_SEQ), 0) + 1	AS INST_SEQ
+ 	      FROM SMN_INST_BASS
+ 	</select>
+	
+	<insert id="insertInstList" parameterType="hashMap">
+    	<selectKey keyProperty="INST_SEQ" resultType="int" order="BEFORE">
+	     	SELECT COALESCE(MAX(INST_SEQ), 0) + 1
+	          FROM SMN_INST_BASS
+  		</selectKey>
+		INSERT INTO SMN_INST_BASS
+			(
+				  INST_SEQ
+				, INST_NM
+				, PBLR_NM
+				, LOGO
+				, USE_YN
+				, RMRK
+				, INSERT_DTTM
+				, INSERT_ID
+				, INSERT_IP
+				, INSERT_PGM
+				, UPDATE_DTTM
+				, UPDATE_ID
+				, UPDATE_IP
+				, UPDATE_PGM
+			)
+		VALUES
+		     (
+		         #{INST_SEQ}
+			   , #{INST_NM}
+			   , #{PBLR_NM}
+			   , #{LOGO}
+			   , #{USE_YN}
+			   , #{RMRK}
+			   , SYSDATE()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM}
+			   , SYSDATE()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM})
+	</insert>
+
+	<update id="updateInstList" parameterType="hashMap">
+		UPDATE SMN_INST_BASS
+		   SET INST_NM = #{INST_NM}
+		     , PBLR_NM = #{PBLR_NM}
+		     , USE_YN = #{USE_YN}
+		     , RMRK = #{RMRK}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+	</update>
+	
+	<update id="useInstList" parameterType="hashMap">
+		UPDATE SMN_INST_BASS
+		   SET USE_YN = #{USE_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+	</update>
+	
+	<delete id="delInstList" parameterType="hashMap">
+		DELETE FROM SMN_INST_BASS
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ};
+		   
+		DELETE FROM INST_FILE
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ};
+		
+		DELETE FROM INST_HWP_FILE
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ};
+		   
+		DELETE FROM SMN_FILE
+		 WHERE 1=1
+		   AND (FILE_ID = 'SMN_DOWNLOAD' || FILE_ID = 'SMN_HWP')
+		   AND FILE_KEY = #{INST_SEQ};
+	</delete>
+	
+	<select id="selectFileList" parameterType="hashMap" resultType="hashMap">
+	    SELECT A.INST_SEQ
+	    	 , A.VERSION
+	    	 , A.EXPOSURE_YN
+			 , B.FILE_KEY
+			 , B.FILE_HANGMOK
+			 , B.FILE_NO
+			 , B.FILE_NM
+			 , B.FILE_SIZE
+			 , B.FILE_PATH
+			 , B.FILE_TYPE
+			 , A.INSERT_DTTM
+			 , A.UPDATE_DTTM
+		  FROM INST_FILE A
+		  LEFT JOIN SMN_FILE B
+		    ON A.INST_SEQ = B.FILE_KEY
+		   AND A.VERSION = B.FILE_HANGMOK
+		 WHERE 1=1
+		   AND A.INST_SEQ = #{INST_SEQ}
+		   AND B.FILE_ID = 'SMN_DOWNLOAD'
+		 ORDER BY A.VERSION	DESC 
+	</select>
+	
+	<select id="selectFileVersion" parameterType="hashMap" resultType="hashMap">
+		SELECT IFNULL(MAX(A.VERSION), 0) AS MAX_VERSION
+		  FROM INST_FILE A
+		  LEFT JOIN SMN_FILE B
+		    ON A.INST_SEQ = B.FILE_KEY
+		   AND A.VERSION = B.FILE_HANGMOK
+		 WHERE 1=1
+		   AND A.INST_SEQ = #{INST_SEQ}
+		   AND B.FILE_ID = 'SMN_DOWNLOAD'
+	</select>
+	
+	<insert id="insertFileList" parameterType="hashMap">
+		INSERT INTO INST_FILE
+			(
+				  INST_SEQ
+				, VERSION
+				, EXPOSURE_YN
+				, INSERT_DTTM
+				, INSERT_ID
+				, INSERT_IP
+				, INSERT_PGM
+				, UPDATE_DTTM
+				, UPDATE_ID
+				, UPDATE_IP
+				, UPDATE_PGM
+			)
+		VALUES
+		     (
+		         #{INST_SEQ}
+		       , #{VERSION}
+		       , #{EXPOSURE_YN}
+			   , SYSDATE()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM}
+			   , SYSDATE()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM}
+			 );
+			 
+		UPDATE INST_FILE
+		   SET EXPOSURE_YN = '2'
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION != #{VERSION};
+	</insert>
+	
+	<update id="useFileList" parameterType="hashMap">
+		UPDATE INST_FILE
+		   SET EXPOSURE_YN = #{EXPOSURE_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION = #{VERSION};
+		   
+		 UPDATE INST_FILE
+		   SET EXPOSURE_YN = '2'
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION != #{VERSION}
+	</update>	
+	
+	<delete id="deleteFile" parameterType="hashMap">
+		DELETE FROM INST_FILE
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION = #{VERSION}
+	</delete>
+	
+	<select id="hwpFileList" parameterType="hashMap" resultType="hashMap">
+	    SELECT A.INST_SEQ
+	    	 , A.VERSION
+	    	 , A.EXPOSURE_YN
+			 , B.FILE_KEY
+			 , B.FILE_HANGMOK
+			 , B.FILE_NO
+			 , B.FILE_NM
+			 , B.FILE_SIZE
+			 , B.FILE_PATH
+			 , B.FILE_TYPE
+			 , A.INSERT_DTTM
+			 , A.UPDATE_DTTM
+		  FROM INST_HWP_FILE A
+		  LEFT JOIN SMN_FILE B
+		    ON A.INST_SEQ = B.FILE_KEY
+		   AND A.VERSION = B.FILE_HANGMOK
+		 WHERE 1=1
+		   AND A.INST_SEQ = #{INST_SEQ}
+		   AND B.FILE_ID = 'SMN_HWP'
+		 ORDER BY A.VERSION	DESC 
+	</select>
+	
+	<select id="hwpFileVersion" parameterType="hashMap" resultType="hashMap">
+		SELECT IFNULL(MAX(A.VERSION), 0) AS MAX_VERSION
+		  FROM INST_HWP_FILE A
+		  LEFT JOIN SMN_FILE B
+		    ON A.INST_SEQ = B.FILE_KEY
+		   AND A.VERSION = B.FILE_HANGMOK
+		 WHERE 1=1
+		   AND A.INST_SEQ = #{INST_SEQ}
+		   AND B.FILE_ID = 'SMN_HWP'
+	</select>
+	
+	<insert id="insertHwpFileList" parameterType="hashMap">
+		INSERT INTO INST_HWP_FILE
+			(
+				  INST_SEQ
+				, VERSION
+				, EXPOSURE_YN
+				, INSERT_DTTM
+				, INSERT_ID
+				, INSERT_IP
+				, INSERT_PGM
+				, UPDATE_DTTM
+				, UPDATE_ID
+				, UPDATE_IP
+				, UPDATE_PGM
+			)
+		VALUES
+		     (
+		         #{INST_SEQ}
+		       , #{VERSION}
+		       , #{EXPOSURE_YN}
+			   , SYSDATE()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM}
+			   , SYSDATE()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM}
+			 );
+			 
+		UPDATE INST_HWP_FILE
+		   SET EXPOSURE_YN = '2'
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION != #{VERSION};
+	</insert>
+	
+	<update id="useHwpFileList" parameterType="hashMap">
+		UPDATE INST_HWP_FILE
+		   SET EXPOSURE_YN = #{EXPOSURE_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION = #{VERSION};
+		   
+		 UPDATE INST_HWP_FILE
+		   SET EXPOSURE_YN = '2'
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION != #{VERSION}
+	</update>	
+	
+	<delete id="deleteHwpFile" parameterType="hashMap">
+		DELETE FROM INST_HWP_FILE
+		 WHERE 1=1
+		   AND INST_SEQ = #{INST_SEQ}
+		   AND VERSION = #{VERSION}
+	</delete>
+	
+</mapper>

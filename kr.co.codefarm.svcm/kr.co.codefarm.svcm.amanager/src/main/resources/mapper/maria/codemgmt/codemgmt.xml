@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.codemgmt">
+	<!-- 공통코드조회 -->
+ 	<select id="getCodeMgmtList" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			A_.* FROM (  
+				SELECT
+				   COUNT(*) OVER() TOTAL_CNT,
+				   <if test="pPageNo != null and pPageNo != ''.toString()">
+					ROW_NUMBER() OVER(ORDER BY A.CODE_ID) AS RNUM,
+					</if> 
+				   A.CODE_ID,
+			       A.CODE_ID_NM,
+			       A.CODE_ID_DC,
+			       A.USE_AT,
+			       A.CL_CODE,
+			       A.FRST_REGIST_PNTTM,
+			       A.FRST_REGISTER_ID,
+			       A.LAST_UPDT_PNTTM,
+			       A.LAST_UPDUSR_ID
+	  			FROM LETTCCMMNCODE A
+	  			WHERE 1=1
+				  AND A.CODE_ID NOT LIKE ( 'COM%')
+				  AND A.CODE_ID NOT IN ( 'CM0020', 'CM0030','CM0040','CM0040','CM0050','CM0055','CM0040','CM0300') 
+				  AND A.CODE_ID NOT IN ( 'CM0030', 'GM0010', 'GM0020', 'GM0030', 'GM0050', 'GM0060', 'GM0070', 'GM0080', 'GM0090', 'GM0100','GM0120','GM0601')
+				  AND A.AGENCY_ID = '00000000'
+               
+	           ) A_
+	           WHERE 1=1
+	           <if test="pPageNo != null and pPageNo != ''.toString()">
+      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    			</if>
+  				ORDER BY A_.CODE_ID ASC
+	</select>
+	
+	<!-- 공통코드상세조회 -->
+ 	<select id="getCodeMgmtListDetail" parameterType="hashMap" resultType="hashMap">
+		SELECT
+		A_.* FROM (  
+				SELECT
+				   COUNT(*) OVER() TOTAL_CNT,
+				  <if test="pPageNo != null and pPageNo != ''.toString()">
+					ROW_NUMBER() OVER(ORDER BY A.CODE) AS RNUM,
+					</if>
+				   A.CODE_ID,
+			       A.CODE,
+			       A.CODE_NM,
+			       A.CODE_DC,
+			       A.USE_AT,
+			       case when A.USE_AT = 'Y' then '사용' 
+			       		when A.USE_AT = 'N' then '미사용' 
+			       		end as USE_AT_NM,
+			       A.FRST_REGIST_PNTTM,
+			       A.FRST_REGISTER_ID,
+			       A.LAST_UPDT_PNTTM,
+			       A.LAST_UPDUSR_ID,
+			       A.ORDER_SEQ
+  				FROM LETTCCMMNDETAILCODE A
+  				WHERE 1=1
+				  	and CODE_ID = #{codeId}
+				AND A.AGENCY_ID = '00000000'
+			<!-- 	  	and USE_AT = 'Y' -->
+				<if test="pUseAt != null and pUseAt != ''.toString()">
+					<if test="pUseAt != 'ALL'">
+					AND USE_AT = #{pUseAt}
+					</if>
+				</if>
+		) A_
+		WHERE 1=1
+       <if test="pPageNo != null and pPageNo != ''.toString()">
+		AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		</if>
+		ORDER BY A_.CODE ASC  
+	</select>
+	
+	
+	<!-- 정렬순서 코드값 확인 -->
+ 	<select id="checkOrderSeq" parameterType="hashMap" resultType="hashMap">
+		SELECT
+		       COUNT(*) ORDER_SEQ_CHECK
+		  FROM 
+		       LETTCCMMNDETAILCODE A 
+		 WHERE 
+		       1=1 
+		       and CODE_ID = #{CODE_ID}
+		       and CODE != #{CODE}
+		        and AGENCY_ID = '00000000'
+ 		 	   and ORDER_SEQ = #{ORDER_SEQ}
+ 
+	</select>
+	
+	<!-- 상세코드 코드값 확인 -->
+ 	<select id="checkCodeList" parameterType="hashMap" resultType="hashMap">
+		SELECT
+		       COUNT(*) CODE_CHECK
+		  FROM 
+		       LETTCCMMNDETAILCODE A 
+		 WHERE 
+		       1=1 
+		       and CODE_ID = #{CODE_ID}
+ 		 	   and CODE like #{CODE_CD}
+ 		 	   and AGENCY_ID = '00000000'
+ 
+	</select>
+	
+	
+	<!-- 공통상세코드 추가  -->
+	 <insert id="insertCodeMgmtDetail" parameterType="hashMap">
+	INSERT
+	 INTO LETTCCMMNDETAILCODE 
+       ( 
+           CODE_ID,
+           CODE,
+           CODE_NM,
+           CODE_DC,
+           USE_AT,
+           ORDER_SEQ,
+           FRST_REGIST_PNTTM,
+           FRST_REGISTER_ID,
+           LAST_UPDT_PNTTM,
+           LAST_UPDUSR_ID,
+           AGENCY_ID
+
+       ) 
+       VALUES 
+       ( 
+           #{CODE_ID}, 
+           #{CODE},
+           #{CODE_NM},
+            #{CODE_DC},
+           'Y', 
+           #{ORDER_SEQ},
+           now(), 
+          #{SYSTEM_ID},
+           now(),
+          #{SYSTEM_ID},
+          '00000000'
+          )
+     </insert>
+          
+          
+     <!-- 공통상세코드 수정  -->
+     <update id="updateCodeMgmtDetail" parameterType="hashMap">
+          UPDATE
+          LETTCCMMNDETAILCODE 
+      		 SET
+     	 	 CODE_NM = #{CODE_NM}, 
+     	 	 CODE = #{CODE},
+    	 	 CODE_DC = #{CODE_DC}, 
+      		 LAST_UPDT_PNTTM = now(),
+      	 	USE_AT = #{USE_AT},
+      	 	ORDER_SEQ = #{ORDER_SEQ},
+      		 LAST_UPDUSR_ID = #{SYSTEM_ID} 
+      	 
+ 		 WHERE 1=1
+ 		 and CODE_ID = #{CODE_ID}
+ 		 and CODE = #{CODE}
+ 		 and AGENCY_ID = '00000000'
+     </update>
+</mapper>

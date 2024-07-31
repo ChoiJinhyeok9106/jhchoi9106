@@ -1,0 +1,92 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio2.css" />  
+
+<h2>포트폴리오 생성</h2>
+<section class="sub_cont_box portfolio-area type01">
+    <div class="portfolio-area-top type01">
+        <div class="pf-navi">        	
+            <span>포트폴리오홈</span><span>포트폴리오 생성</span>
+        </div>
+    </div>  
+         
+    <div class="box-type03 pf-make-box">
+        <div class="row form-row pf-bot">
+        	<div class="col s12 xl8">
+        		<div class="row form-row pf-bot">
+        			<div class="form-group col s12">
+        				<label for="pf-form01" class="label-type04 required">포트폴리오 제목</label>
+        				<input type="text" id="pf-form01" name="pf-form01" placeholder="제목을 입력하세요" class="size-l">
+        			</div>
+        		</div>
+        		<div class="row form-row pf-bot">
+        			<div class="form-group col s12">
+        				<label for="pf-form01" class="label-type04 required">URL</label>
+        				<div class="col-inline">
+        					<span class="pf-link-text">http://www.xcloud.com/user/myportfolio/</span> <input type="text" name="" id="" placeholder="url입력" class="size-l">.
+                        <span class="pf-link-text">.do</span> <input type="button" value="중복확인" class="btn type02 size-l"></div>
+        			</div>
+        		</div>
+        	</div>
+        	<div class="col s12 xl4">
+        		<div class="myinfo-box">
+        			<span class="photo-box"></span>
+        			<div class="btn-line">
+        				<div class="file_wrap">
+        					<span class="txt">사진등록</span> 
+        					<input type="file" name="cma_file" id="cma_file" accept="image/*" capture="camera" onchange="getThumbnailPrivew(this,$('#cma_image'))">
+        				</div>
+        				<a href="#!" class="btn-pf">개인정보변경</a>
+        				
+        			</div>
+        		</div>
+        	</div>
+        </div>
+        <div class="row form-row pf-bot">
+        	<div class="col s12">
+        		<label for="" class="label-type04">포트폴리오 타입</label>
+        		<div class="row form-row">
+        			<div class="form-group col s12 l4">
+        				<a href="#!" class="pf-type-box auto">
+        					<span class="tit">자동생성</span>
+        					<p class="txt">기본적인 목차구성에  맞춰 <br>
+							자동으로 포트폴리오를 생성해드립니다</p>
+        				</a>
+        			</div>
+        			<div class="form-group col s12 l4">
+        				<a href="#!" class="pf-type-box self">
+        					<span class="tit">직접생성</span>
+        					<p class="txt">목차구성부터 내용까지 자유롭게 <br>
+								포트폴리오를 생성하도록 제공</p>
+        				</a>
+        			</div>
+        		</div>
+        	</div>
+        </div>
+        <div class="row form-row">
+        	<div class="col s12">
+        		<label for="pf-form03" class="label-type04">학과선택</label>
+        		<div class="row form-row">
+        			<div class="form-group col s12 l4">
+        				<select id="pf-form03" name="pf-form03" class="size-l">
+        					<option value="01">간호학과</option> 
+        				</select>
+        			</div>
+        			<div class="form-group col s12 l4">
+        				<div class="radio size-l type02">
+				            <input type="radio" name="radio" id="radio01">
+				            <label for="radio01">다른학과 선택</label>
+				            <i class="radio-icon"></i>
+				        </div>
+        			</div>
+        		</div>
+        	</div>
+        </div>
+    </div>
+    
+    <div class="btn-line center">
+    	<a href="#!" class="btn type02 size-l">페이지 생성하기</a>
+    </div>
+                        
+</section>
+
+            
+

@@ -1,0 +1,767 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability2.css" />  
+
+<h2>실적성과관리</h2>
+<section class="sub_cont_box" id="app">
+    <form>
+        <div class="box-type03 row form-row">
+            <div class="form-group col s12">
+                <div class="col-inline left">
+                    <label class="label-type00 size-m icon-search">검색</label>
+                    <select name="" id="formGroupExampleInput2" class="size-m" style="width:200px;">
+	                    <option selected="">구분</option>
+	                </select>
+                    <input type="text" name="" id="" style="width:304px;" class="size-m" placeholder="입력하세요">
+                    <input type="button" value="검색" class="btn type01 size-m">
+                    <input type="button" value="보드추가" class="btn type02 size-m f-right" onclick="modal_open('modal1');return false;">
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <div class="form-group row form-row top-info-line">
+        <div class="col s12 l6">
+            <span class="board-info-txt size-m">총 <span>4</span>건의 보드가 있습니다. (<span>1</span> / 1)</span>
+        </div>
+        <div class="col s12 l6 right">
+        	<div class="note-main-util">
+	            <span class="note-list-sort">
+				    <input type="radio" name="sortType" value="최신순" checked="checked" id="sort-new"><label for="sort-new">최신순</label>
+				    <input type="radio" name="sortType" value="오래된순" id="sort-old"><label for="sort-old">오래된순</label>
+				    <input type="radio" name="sortType" value="북마크" id="sort-bookmark"><label for="sort-bookmark">북마크</label>
+				    <input type="radio" name="sortType" value="이름순" id="sort-name"><label for="sort-name">이름순</label>
+				</span>
+	            <a href="#!" onclick="modal_open('modal4');return false;" class="notemain-mail-btn icon-mail"><span class="new"></span></a>
+	    	</div>
+        </div>
+    </div>
+    
+    <div class="note-main-list">
+    	<div class="note-list theme03">
+    		<div class="bookmark">
+                <input type="checkbox" id="ex_chk1">
+                <label for="ex_chk1"></label>
+            </div>
+            <a href="#!" class="btn-menu"><span class="icon-grip1"></span></a>
+            <ul class="menu-layer">
+            	<li><a href="#!" onclick="modal_open('modal2');return false;">보드수정</a></li>
+            	<li><a href="#!">보드복제</a></li>
+            	<li><a href="#!" onclick="modal_open('modal3');return false;">참여자관리</a></li>
+            	<li><a href="#!">보드탈퇴</a></li>
+            </ul>
+            <div class="list-cont">
+            	<a href="#!">
+	            	<span class="cate">필수전공</span>
+	            	<span class="tit">응급간호학 개론</span>
+	            	<div class="etc-box">
+	            		<span class="etc icon-menu">3</span> 
+	            		<span class="etc icon-credit-card">7</span> 
+					</div>
+					<span class="user red"><span class="count">7</span><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span>
+				</a>
+            </div>
+    		<span class="bg-dark"></span>
+    	</div>
+    	<div class="note-list theme05">
+    		<div class="bookmark">
+                <input type="checkbox" id="ex_chk2">
+                <label for="ex_chk2"></label>
+            </div>
+            <a href="#!" class="btn-menu"><span class="icon-grip1"></span></a>
+            <ul class="menu-layer">
+            	<li><a href="#!">보드수정</a></li>
+            	<li><a href="#!">보드복제</a></li>
+            	<li><a href="#!">참여자관리</a></li>
+            	<li><a href="#!">보드탈퇴</a></li>
+            </ul>
+            <div class="list-cont">
+            	<a href="#!">
+	            	<span class="cate">비교과</span>
+	            	<span class="tit"><span class="icon-lock"></span>간호학과 실습</span>
+	            	<div class="etc-box">
+	            		<span class="etc icon-menu">3</span> 
+	            		<span class="etc icon-credit-card">7</span> 
+					</div>
+					<span class="user blue"><span class="count">7</span><img src="/service/design/images/talk/profile-img02.jpg" alt="" /></span>
+				</a>
+            </div>
+    		<span class="bg-dark"></span>
+    	</div>
+    	<div class="note-list theme02">
+    		<div class="bookmark">
+                <input type="checkbox" id="ex_chk3">
+                <label for="ex_chk3"></label>
+            </div>
+            <a href="#!" class="btn-menu"><span class="icon-grip1"></span></a>
+            <ul class="menu-layer">
+            	<li><a href="#!">보드수정</a></li>
+            	<li><a href="#!">보드복제</a></li>
+            	<li><a href="#!">참여자관리</a></li>
+            	<li><a href="#!">보드탈퇴</a></li>
+            </ul>
+            <div class="list-cont">
+            	<a href="#!">
+	            	<span class="cate">전공군</span>
+	            	<span class="tit"><span class="icon-lock"></span>법과 사회의 이해</span>
+	            	<div class="etc-box">
+	            		<span class="etc icon-menu">3</span> 
+	            		<span class="etc icon-credit-card">7</span> 
+					</div>
+					<span class="user red"><span class="count">7</span><img src="/service/design/images/talk/profile-img03.jpg" alt="" /></span>
+				</a>
+            </div>
+    		<span class="bg-dark"></span>
+    	</div>
+    	<div class="note-list">
+    		<div class="bookmark">
+                <input type="checkbox" id="ex_chk4">
+                <label for="ex_chk4"></label>
+            </div>
+            <a href="#!" class="btn-menu"><span class="icon-grip1"></span></a>
+            <ul class="menu-layer">
+            	<li><a href="#!">보드수정</a></li>
+            	<li><a href="#!">보드복제</a></li>
+            	<li><a href="#!">참여자관리</a></li>
+            	<li><a href="#!">보드탈퇴</a></li>
+            </ul>
+            <div class="list-cont">
+            	<a href="#!">
+	            	<span class="cate">전공군</span>
+	            	<span class="tit"><span class="icon-lock"></span>법과 사회의 상관관계에 대한</span>
+	            	<div class="etc-box">
+	            		<span class="etc icon-menu">3</span> 
+	            		<span class="etc icon-credit-card">7</span> 
+					</div>
+					<span class="user blue"><span class="count">7</span><img src="/service/design/images/mypage/noimage.png" alt="" /></span>
+				</a>
+            </div>
+    		<span class="bg-dark"></span>
+    	</div>
+    	
+    	<div class="note-list-no">
+    		<div class="list-no-box">
+    			<p class="text">생성된 보드가 없습니다<span class="big">새로운 보드를 만들어 보세요</span></p>
+    			<a href="#!" class="btn-link">GO</a>
+    		</div>
+    	</div>
+    </div>
+</section>
+
+<!-- modal layer popup -->
+<div class="modal-layer-wrap">        
+	<div id="modal1" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">보드추가</p>
+            </div>
+            <div class="modal-content">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput1" class="label-type01">구분</label>
+				            <select id="exampleFormControlInput1" class="size-m">
+								<option value="">교과</option>
+							</select>
+				        </div>
+				    </div>
+				   	<div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">제목</label>
+				            <input type="text" id="formGroupExampleInput2" placeholder="제목을 입력하세요" class="size-m">
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">라벨관리</label>
+				            <div class="note-label-setting">				            	
+				            	<div class="label-set-box">
+				            		<div class="label-list label-clr01">
+				            			<input type="text" placeholder="라벨명을 입력하세요" id="" />
+				            			<a href="#!" class="btn-delete"><span class="icon-checkmark"></span></a>
+				            		</div>
+				            		<div class="label-color">
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd01" name="color" value="label-clr01" checked> 
+				            				<label for="color_rd01" class="label-clr01"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd02" name="color" value="label-clr02"> 
+				            				<label for="color_rd02" class="label-clr02"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd03" name="color" value="label-clr03"> 
+				            				<label for="color_rd03" class="label-clr03"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd04" name="color" value="label-clr04"> 
+				            				<label for="color_rd04" class="label-clr04"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd05" name="color" value="label-clr05"> 
+				            				<label for="color_rd05" class="label-clr05"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd06" name="color" value="label-clr06"> 
+				            				<label for="color_rd06" class="label-clr06"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd07" name="color" value="label-clr07"> 
+				            				<label for="color_rd07" class="label-clr07"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd08" name="color" value="label-clr08"> 
+				            				<label for="color_rd08" class="label-clr08"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd09" name="color" value="label-clr09"> 
+				            				<label for="color_rd09" class="label-clr09"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd10" name="color" value="label-clr10"> 
+				            				<label for="color_rd10" class="label-clr10"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rd11" name="color" value="label-clr11"> 
+				            				<label for="color_rd11" class="label-clr11"></label>
+				            			</div>
+				            		</div>
+				            	</div>
+				            </div>
+				            <div class="btn-line center">
+                                <a href="#!" class="btn type03 size-s left-icon icon-plus">추가</a>
+                            </div>
+				        </div>				        
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">테마</label>
+				            <div class="note-theme-setting">
+				            	<div class="theme-sel">
+		            				<input type="radio" id="theme_rd01" name="theme" value="theme-sel01" checked=""> 
+		            				<label for="theme_rd01" class="theme-sel01"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd02" name="theme" value="theme-sel02"> 
+		            				<label for="theme_rd02" class="theme-sel02"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd03" name="theme" value="theme-sel03"> 
+		            				<label for="theme_rd03" class="theme-sel03"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd04" name="theme" value="theme-sel04"> 
+		            				<label for="theme_rd04" class="theme-sel04"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd05" name="theme" value="theme-sel05"> 
+		            				<label for="theme_rd05" class="theme-sel05"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd06" name="theme" value="theme-sel06"> 
+		            				<label for="theme_rd06" class="theme-sel06"></label>
+		            			</div>
+				            </div>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">공개여부</label>
+				            <div class="form-check">
+				            	<label class="toggle-switch">
+				            		<input type="checkbox" checked="" class="size-m"> 
+				            		<span class="slider round"></span>
+				            	</label>
+				            </div>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="modal2" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">보드수정</p>
+            </div>
+            <div class="modal-content">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput1" class="label-type01">구분</label>
+				            <select id="exampleFormControlInput1" class="size-m">
+								<option value="">교과</option>
+							</select>
+				        </div>
+				    </div>
+				   	<div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">제목</label>
+				            <input type="text" id="formGroupExampleInput2" placeholder="제목을 입력하세요" class="size-m">
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">라벨관리</label>
+				            <div class="note-label-setting">
+				            	<div class="label-list label-clr01">
+				            		<span class="txt">첫번째 라벨</span>
+				            		<a href="#!" class="btn-delete"><span class="icon-trashcan"></span></a>
+				            	</div>
+				            	<div class="label-list label-clr02">
+				            		<span class="txt">두번째 라벨</span>
+				            		<a href="#!" class="btn-delete"><span class="icon-trashcan"></span></a>
+				            	</div>
+				            	<div class="label-set-box">
+				            		<div class="label-list label-clr01">
+				            			<input type="text" placeholder="라벨명을 입력하세요" id="" />
+				            			<a href="#!" class="btn-delete"><span class="icon-checkmark"></span></a>
+				            		</div>
+				            		<div class="label-color">
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm01" name="color" value="label-clr01" checked> 
+				            				<label for="color_rdm01" class="label-clr01"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm02" name="color" value="label-clr02"> 
+				            				<label for="color_rdm02" class="label-clr02"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm03" name="color" value="label-clr03"> 
+				            				<label for="color_rdm03" class="label-clr03"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm04" name="color" value="label-clr04"> 
+				            				<label for="color_rdm04" class="label-clr04"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm05" name="color" value="label-clr05"> 
+				            				<label for="color_rdm05" class="label-clr05"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm06" name="color" value="label-clr06"> 
+				            				<label for="color_rdm06" class="label-clr06"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm07" name="color" value="label-clr07"> 
+				            				<label for="color_rdm07" class="label-clr07"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm08" name="color" value="label-clr08"> 
+				            				<label for="color_rdm08" class="label-clr08"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm09" name="color" value="label-clr09"> 
+				            				<label for="color_rdm09" class="label-clr09"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm10" name="color" value="label-clr10"> 
+				            				<label for="color_rdm10" class="label-clr10"></label>
+				            			</div>
+				            			<div class="color-sel">
+				            				<input type="radio" id="color_rdm11" name="color" value="label-clr11"> 
+				            				<label for="color_rdm11" class="label-clr11"></label>
+				            			</div>
+				            		</div>
+				            	</div>
+				            </div>
+				            <div class="btn-line center">
+                                <a href="#!" class="btn type03 size-s left-icon icon-plus">추가</a>
+                            </div>
+				        </div>				        
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">테마</label>
+				            <div class="note-theme-setting">
+				            	<div class="theme-sel">
+		            				<input type="radio" id="theme_rd01" name="theme" value="theme-sel01" checked=""> 
+		            				<label for="theme_rd01" class="theme-sel01"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd02" name="theme" value="theme-sel02"> 
+		            				<label for="theme_rd02" class="theme-sel02"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd03" name="theme" value="theme-sel03"> 
+		            				<label for="theme_rd03" class="theme-sel03"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd04" name="theme" value="theme-sel04"> 
+		            				<label for="theme_rd04" class="theme-sel04"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd05" name="theme" value="theme-sel05"> 
+		            				<label for="theme_rd05" class="theme-sel05"></label>
+		            			</div>
+		            			<div class="theme-sel">
+		            				<input type="radio" id="theme_rd06" name="theme" value="theme-sel06"> 
+		            				<label for="theme_rd06" class="theme-sel06"></label>
+		            			</div>
+				            </div>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">공개여부</label>
+				            <div class="form-check">
+				            	<label class="toggle-switch">
+				            		<input type="checkbox" checked="" class="size-m"> 
+				            		<span class="slider round"></span>
+				            	</label>
+				            </div>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="modal3" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">참여자관리</p>
+            </div>
+            <div class="modal-content">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <p class="label-type01">참여자목록</p>				        
+				            <p class="heading-txt2">현재인원을 조회하고 참여할 인원을 검색, 추가, 삭제할 수 있습니다.</p>
+				            <perfect-scrollbar class="group-list-box note-people-adm">
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check01">
+			                            <label for="write-check01"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check02">
+			                            <label for="write-check02"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check03">
+			                            <label for="write-check03"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check04">
+			                            <label for="write-check04"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check05">
+			                            <label for="write-check05"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                             </perfect-scrollbar>
+				        </div>
+				    </div>
+				   	<div class="row form-row">
+				        <div class="form-group col s12">
+				        	<div class="row form-row">
+                            	<div class="col s12">
+				            		<p class="label-type01">학생검색</p>	
+				            	</div>
+				            </div>	
+				            <form>
+                                <div class="box-type05">
+                                    <div class="row form-row">
+                                        <div class="form-group col s12">
+                                            <label for="formGroupExampleInput1" class="label-type01">학과</label>
+                                            <select id="exampleFormControlInput1" class="size-m">
+												<option value="">확과선택</option>
+											</select>
+                                        </div>
+                                    </div>
+                                    <div class="row form-row">
+                                        <div class="form-group col s12 l4">
+                                            <label for="formGroupExampleInput3" class="label-type01">학년</label>
+                                            <select id="exampleFormControlInput3" class="size-m">
+												<option value="">전체</option>
+											</select>
+                                        </div>
+                                        <div class="form-group col s12 l8">
+                                            <label for="formGroupExampleInput3" class="label-type01">이름</label>
+                                            <input type="text" id="formGroupExampleInput3" class="size-m">
+                                        </div>
+                                    </div>
+                                    <div class="btn-line right">
+                                    	<a href="#!" class="btn type01 size-m">검색</a>
+                                    </div>
+                                </div>
+                            </form>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="modal4" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">초대관리</p>
+            </div>
+            <div class="modal-content">
+                <div class="tab-type04 note-main-tab">
+			        <div rel="tab1"><a href="#!" class="active">받은초대</a></div>
+			        <div rel="tab2"><a href="#!" class="">보낸초대</a></div>
+			        <div rel="tab3"><a href="#!" class="">보낸초대</a></div>
+			    </div>
+			    <div class="tab-container">
+			        <div id="tab1" class="tab-content">
+			            <div class="note-invite-list">
+			            	<div class="invite-list">
+			            		<span class="cate">비교과</span>
+			            		<p class="tit">간호학과 실습</p>
+			            		<p class="cont">간호학과 실습 조별과제 A조 자료업로드 및 토론진행을 위한 보드에 초대합니다</p>
+			            		<span class="etc icon-user">김지원</span>
+			            		<span class="etc icon-realtime">2019 - 01 - 15</span>
+			            		<div class="btn-set">
+			            			<a href="#!" class="btn-ok icon-checkmark on">수락</a>
+			            			<a href="#!" class="btn-no icon-slash on">거절</a>
+			            		</div>
+			            	</div>
+			            	<div class="invite-list">
+			            		<span class="cate">비교과</span>
+			            		<p class="tit">간호학과 실습</p>
+			            		<p class="cont">간호학과 실습 조별과제 A조 자료업로드 및 토론진행을 위한 보드에 초대합니다</p>
+			            		<span class="etc icon-user">김지원</span>
+			            		<span class="etc icon-realtime">2019 - 01 - 15</span>
+			            		<div class="btn-set">
+				            		<a href="#!" class="btn-ok icon-checkmark on">수락</a>
+				            		<a href="#!" class="btn-no icon-slash on">거절</a>
+				            	</div>
+			            	</div>
+			            </div>
+			        </div>
+			        <div id="tab2" class="tab-content">
+			            <div class="note-invite-list">
+			            	<div class="invite-list">
+			            		<span class="cate">비교과</span>
+			            		<p class="tit">간호학과 실습</p>
+			            		<p class="cont">간호학과 실습 조별과제 A조 자료업로드 및 토론진행을 위한 보드에 초대합니다</p>
+			            		<span class="etc icon-user">김지원</span>
+			            		<span class="etc icon-realtime">2019 - 01 - 15</span>
+			            		<div class="btn-set">
+			            			<a href="#!" class="btn-ok icon-checkmark on">수락</a>
+			            			<a href="#!" class="btn-no icon-slash on">거절</a>
+			            		</div>
+			            	</div>
+			            	<div class="invite-list">
+			            		<span class="cate">비교과</span>
+			            		<p class="tit">간호학과 실습</p>
+			            		<p class="cont">간호학과 실습 조별과제 A조 자료업로드 및 토론진행을 위한 보드에 초대합니다</p>
+			            		<span class="etc icon-user">김지원</span>
+			            		<span class="etc icon-realtime">2019 - 01 - 15</span>
+			            		<div class="btn-set">
+				            		<a href="#!" class="btn-ok icon-checkmark on">수락</a>
+				            		<a href="#!" class="btn-no icon-slash on">거절</a>
+				            	</div>
+			            	</div>
+			            </div>
+			        </div>
+			        <div id="tab3" class="tab-content">
+			            <form>						    
+						   	<div class="row form-row">
+						        <div class="form-group col s12">
+						            <label for="formGroupExampleInput1" class="label-type01">보드명</label>
+						            <input type="text" id="formGroupExampleInput1" placeholder="보드명을 입력하세요" class="size-m">
+						        </div>
+						    </div>
+						    <div class="row form-row">
+						        <div class="form-group col s12">
+						            <label for="formGroupExampleInput2" class="label-type01">초대메세지</label>
+						            <textarea id="formGroupExampleInput2" rows="10" class="size-m"></textarea>
+						        </div>
+						    </div>
+						    <div class="row form-row">
+						        <div class="form-group col s12">
+						            <label for="formGroupExampleInput2" class="label-type01">보낼사람</label>
+						            <div class="row form-row">
+						            	<div class="col-inline left">
+						            		<label class="label-type00 size-m icon-search">검색</label> 
+						            		<input type="text" name="" id="" placeholder="입력하세요" class="size-m" style="width: 195px;">
+						            		<input type="button" value="검색" class="btn type01 size-m">
+						            	</div>
+						            </div>
+						        </div>
+						    </div>
+						</form>
+			        </div>
+			    </div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+//모달레이어팝업
+ function modal_open(el) {
+
+     var temp = $('#' + el); //레이어의 id를 temp변수에 저장
+     var bg = temp.prev().hasClass('bg'); //dimmed 레이어를 감지하기 위한 boolean 변수 
+
+     if (bg) {
+         $('.layer').fadeIn();
+     } else {
+         temp.fadeIn(); //bg 클래스가 없으면 일반레이어로 실행한다.
+     }
+
+     // 화면의 중앙에 레이어를 띄운다.
+
+     //if (temp.outerHeight() < $(document).height()) temp.css('margin-top', '-' + temp.outerHeight() / 2 + 'px');
+     //else temp.css('top', '0px');
+     if (temp.outerWidth() < $(document).width()) temp.css('margin-left', '-' + temp.outerWidth() / 2 + 'px');
+     else temp.css('left', '0px');
+
+     temp.find('a.cbtn, a.layer_close, .cbtn2').click(function(e) {
+         if (bg) {
+             $('.layer').fadeOut();
+         } else {
+             temp.fadeOut(); //'닫기'버튼을 클릭하면 레이어가 사라진다.
+         }
+         e.preventDefault();
+     });
+
+     $('.layer .bg').click(function(e) {
+         $('.layer').fadeOut();
+         e.preventDefault();
+     });
+
+     // Prevent mousewheel scroll
+     //$('html').on('wheel.modal mousewheel.modal', function () {
+     //	return false; 
+     //});
+     // Disable browser scrolling
+     $("html").css("overflow", "hidden");
+
+     //Show & hide dialog
+     $('.cbtn, .layer_close, .cbtn2').fadeIn().click(function() {
+         $(this).fadeOut()
+             // Enable scrollbars and mousewheel
+             //	$('html').off('wheel.modal mousewheel.modal');
+         $("html").css("overflow", "auto");
+         $('.modal-layer-wrap').removeClass('on');
+     });
+
+     //modal background dark
+     $('.modal-layer-wrap').find(temp).parent().addClass('on');
+
+ }
+	
+$(document).ready(function() {
+	//탭메뉴
+    $(".tab-content").hide();
+    $(".tab-content:first").show();
+    $(".tab-type04 div a").click(function() {
+        $(".tab-type04 div a").removeClass("active");
+        $(this).addClass("active");
+        $(".tab-content").hide()
+        var activeTab = $(this).parent().attr("rel");
+        $("#" + activeTab).fadeIn()
+    });
+    
+	// 노트 메인 리스트 정렬
+	$('.note-list-sort').click(function(e) {
+	  e.preventDefault();
+	  e.stopPropagation();
+	  $(this).toggleClass('expanded');
+	  $('#'+$(e.target).attr('for')).prop('checked',true);
+	});
+	$(document).click(function() {
+	  $('.note-list-sort').removeClass('expanded');
+	});
+	
+	//노트 메인 메뉴 레이어
+	$('.note-list .btn-menu').click(function(e) {
+		var $menu = $(this).siblings('.menu-layer');
+		if ($menu.hasClass('on')) {
+			$menu.removeClass('on');				
+		} else {
+			$(this).parent().siblings().children('.menu-layer').removeClass('on');
+			$menu.addClass('on');
+		}
+	});
+	$(document).mouseup(function(e){
+		var container = $(".note-main-list .note-list .btn-menu");
+		if(container.has(e.target).length === 0){
+			$(".note-list .menu-layer").removeClass('on');
+		}
+	});
+	
+	//노트 라벨 색상 선택
+	$('.color-sel label').on('click', function(){
+		var color = $(this).attr('class');
+		$('.label-set-box .label-list').attr('class','label-list');
+		$('.label-set-box .label-list').addClass(color);
+	});
+	
+	//초대관리
+	$('.invite-list a').on('click', function(){
+		$(this).siblings('a').removeClass('on');
+	})
+});	
+</script>
+
+

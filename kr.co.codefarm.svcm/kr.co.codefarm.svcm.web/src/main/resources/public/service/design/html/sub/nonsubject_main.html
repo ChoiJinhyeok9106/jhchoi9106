@@ -1,0 +1,420 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/circle.css" />
+  
+<section class="sub_cont_box nonsubject-main">
+	<div class="nonsubject-main-header">
+    	<ul class="statue-line">
+       		<li class="stat01">
+       			<p class="tit">2019학년도 운영 프로그램</p>
+       			<p class="count"><span class="big">47</span> / 123</p>
+       		</li>	
+       		<li class="stat02">
+       			<p class="tit">2019학년도 프로그램 참여 재학생</p>
+       			<p class="count"><span class="big">1547</span> / 10223</p>
+       		</li>	
+       	</ul> 
+       	<div class="graph-line">
+       		<div class="graph-box">
+       			<span class="tit">현재 진행중인 개설 프로그램</span>
+       			<span class="point"><span class="bold">47</span> / 123</span>
+       			<p class="graph">
+       				<span class="inner" style="width:43%"></span>
+       			</p>
+       		</div>
+       		<div class="graph-box">
+       			<span class="tit">현재 진행중인 개설 프로그램의 참여 재학생</span>
+       			<span class="point"><span class="bold">1547</span> / 10223</span>
+       			<p class="graph">
+       				<span class="inner" style="width:23%"></span>
+       			</p>
+       		</div>
+       		<div class="graph-box">
+       			<span class="tit">2019학년도 참여 학생 중 인당 비교과 수강 평균</span>
+       			<span class="point"><span class="bold">1547</span> 건</span>
+       			<p class="graph">
+       				<span class="inner" style="width:36%"></span>
+       			</p>
+       		</div>
+       	</div>       
+    </div>
+	
+	<section class="section-line">
+	    <h2 class="h2">역량별 평균점수</h2>
+	    <div class="box-type03 col-inline">
+	    	<label for="pSearch01" class="label-type00 size-m icon-search">검색</label> 
+	    	<select name="pSearch01" class="size-m" style="width: 180px;">
+	    		<option value="1">단과대학</option>
+	    		<option value="2">학과</option>
+	    		<option value="3">성별</option>
+	    	</select> 
+	    	<select name="pSearch02" class="size-m" style="width: 260px;">
+	    		<option value="1">T-PLUS 핵심역량</option>
+	    		<option value="2">SW중심대학 5대 역량</option>
+	    	</select>
+	    	<input type="button" value="검색" class="btn type01 size-m"> 
+	    </div>
+	    
+	    <h3 class="h3 center">단과대학 핵심역량</h3>
+	    <div class="graph">
+	    	<div class="graph-inner">
+            	<div id="chart1"></div>
+            </div>
+        </div>
+	</section>
+	
+	<section class="section-line">
+	    <h2 class="h2">교육체계별 핵심역량 평균점수</h2>
+   	    <div class="box-type03 col-inline">
+	    	<label for="pSearch01" class="label-type00 size-m icon-search">검색</label> 
+	    	<select name="pSearch02" class="size-m" style="width: 260px;">
+	    		<option value="1">T-PLUS 핵심역량</option>
+	    		<option value="2">SW중심대학 5대 역량</option>
+	    	</select>
+	    	<input type="button" value="검색" class="btn type01 size-m"> 
+	    </div>    
+	    <h3 class="h3 center">교육체계 평균점수</h3>
+	    <div class="graph">
+	    	<div class="graph-inner">
+            	<div id="chart2"></div>
+            </div>
+        </div>
+	</section>
+	
+	<section class="section-line">
+	    <h2 class="h2">프로그램 및 참여학생 비율</h2>
+	    <div class="box-type03 col-inline">
+	    	<label for="pSearch01" class="label-type00 size-m icon-search">검색</label> 
+	    	<select name="pSearch01" class="size-m" style="width: 180px;">
+	    		<option value="1">학습</option>
+	    		<option value="2">상담</option>
+	    		<option value="3">취업</option>
+	    		<option value="4">창업</option>
+	    		<option value="5">진로</option>
+	    	</select>	    	
+	    	<input type="button" value="검색" class="btn type01 size-m"> 
+	    </div>
+	    
+	    <h3 class="h3 center">프로그램 개수</h3>
+	    <div class="graph">
+            <div class="graph-inner">
+     			<div id="chart3"></div>
+            </div>
+        </div>
+	</section>
+    
+        
+</section>
+
+            
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.drawChart1();
+		this.drawChart2();
+		this.drawChart3();
+	},
+	//함수
+	methods: {
+		drawChart1 : function () {
+			var name = ['인성봉사', '글로컬', '창의융복합', '자기계발'];
+			var dept = ['공과대학', '소프트웨어융합대학', '경영대학', '건축·디자인대학', '인문사회대학', '미래융합대학'];
+			
+			var dataList = [];
+			for(var i = 0 ; i < dept.length ; i++) {
+				var list = [];
+				for(var j = 0 ; j < name.length ; j++) {
+					var weight = Number(Math.random() * 100).toFixed(2);
+					list.push(weight);
+				}
+				
+				var obj = {
+					'name' : dept[i],
+					'data' : list
+				};
+				dataList.push(obj);
+			}
+			
+			$("chart1").empty();
+			var container = document.getElementById('chart1');
+			var data = {
+			    categories: name,
+			    series: dataList
+			};
+			var options = {
+		        chart: {
+		            width: 1160,
+		            height: 600
+		        },
+		        series: {
+		            showDot: false,
+		            showArea: true,
+		            pointWidth: 1
+		        },
+		        plot: {
+		            type: 'spiderweb'
+		        },
+		        legend: {
+		        	 align: 'right'
+		        },
+		        chartExportMenu: {
+		            visible: false
+		        },
+			    tooltip: {
+			        suffix: '점'
+			    }
+			};
+			var theme = {
+			    series: {
+			    	dot: {
+			            fillColor: null,
+			            radius: 2,
+			            strokeWidth: 0,
+			            hover: {
+			              fillColor: null,
+			              radius: 4,
+			              strokeOpacity: 1,
+			              strokeWidth: 2
+			            }
+			        },
+			        colors: ['#855ef7', '#22b8d0', '#fbb005', '#fa5252', '#0d8596']
+			    },
+			    legend: {
+			    	label: {
+			            fontSize: 14,
+			            fontFamily: 'Noto sans KR',
+			            fontWeight: 'regular',
+			            color: '#000'
+			        }
+			    },
+			    plot: {
+			    	label: {
+			    		fontSize: 16,
+				    	fontFamily: 'Noto sans KR'
+			    	}
+			    }
+			};
+			
+			
+			tui.chart.registerTheme('radialTheme', theme);
+			options.theme = 'radialTheme';
+			tui.chart.radialChart(container, data, options);
+		},
+		drawChart2 : function () {
+			var name = ['인성봉사', '글로컬', '창의융복합', '자기계발'];
+			var dept = ['학습', '상담', '취업', '창업', '진로'];
+			
+			var dataList = [];
+			for(var i = 0 ; i < dept.length ; i++) {
+				var list = [];
+				for(var j = 0 ; j < name.length ; j++) {
+					var weight = Number(Math.random() * 100).toFixed(2);
+					list.push(weight);
+				}
+				
+				var obj = {
+					'name' : dept[i],
+					'data' : list
+				};
+				dataList.push(obj);
+			}
+			
+			$("chart2").empty();
+			var container = document.getElementById('chart2');
+			var data = {
+			    categories: name,
+			    series: dataList
+			};
+			var options = {
+		        chart: {
+		            width: 1160,
+		            height: 600
+		        },
+		        series: {
+		            showDot: false,
+		            showArea: true,
+		            pointWidth: 1
+		        },
+		        plot: {
+		            type: 'spiderweb'
+		        },
+		        legend: {
+		            align: 'right'
+		        },
+		        chartExportMenu: {
+		            visible: false
+		        },
+			    tooltip: {
+			        suffix: '점'
+			    }
+			};
+			var theme = {
+			    series: {
+			    	dot: {
+			            fillColor: null,
+			            radius: 2,
+			            strokeWidth: 0,
+			            hover: {
+			              fillColor: null,
+			              radius: 4,
+			              strokeOpacity: 1,
+			              strokeWidth: 2
+			            }
+			        },
+			        colors: ['#855ef7', '#22b8d0', '#fbb005', '#fa5252', '#0d8596']
+			    },
+			    legend: {
+		            align: 'right',
+			    	label: {
+			            fontSize: 14,
+			            fontFamily: 'Noto sans KR',
+			            fontWeight: 'regular',
+			            color: '#000'
+			        }
+			    },
+			    plot: {
+			    	label: {
+			    		fontSize: 16,
+				    	fontFamily: 'Noto sans KR'
+			    	}
+			    }
+			};
+			
+			
+			tui.chart.registerTheme('radialTheme', theme);
+			options.theme = 'radialTheme';
+			tui.chart.radialChart(container, data, options);
+		},
+		drawChart3 : function () {
+			var name = ['학습', '상담', '취업', '창업', '진로'];
+			var dept = ['참여학생', '프로그램'];
+			
+			var dataList = [];
+			for(var i = 0 ; i < dept.length ; i++) {
+				var list = [];
+				for(var j = 0 ; j < name.length ; j++) {
+					var weight = Number(Math.random() * 100).toFixed(2);
+					list.push(weight);
+				}
+				
+				var obj = {
+					'name' : dept[i],
+					'data' : list
+				};
+				dataList.push(obj);
+			}
+			
+			$("chart3").empty();
+			var container = document.getElementById('chart3');
+			var data = {
+			    categories: name,
+			    series: dataList
+			};
+			
+			var options = {
+			    chart: {
+		            width: 1160,
+		            height: 400,
+			        format: '1,000'
+			    },
+			    yAxis: {
+			    	labelInterval: 5
+			    },
+			    xAxis: {
+			        min: 0,
+//  			        max: 30,
+			    },
+			    series: {
+			        showLabel: true
+			    },
+			    chartExportMenu: {
+			        visible: false
+			    }
+			};
+			var theme = {
+			    series: {
+			    	dot: {
+			            fillColor: null,
+			            radius: 2,
+			            strokeWidth: 0,
+			            hover: {
+			              fillColor: null,
+			              radius: 4,
+			              strokeOpacity: 1,
+			              strokeWidth: 2
+			            }
+			        },
+			        line: {
+			        	pointWidth: 1
+			        },
+			    	colors: ['#855ef7', '#22b8d0', '#6079d4', '#f8be76', '#c09fee', '#6381f0']
+			    },
+			    xAxis: {
+			    	label: {
+			    		fontSize: 15,
+				    	fontFamily: 'Noto sans KR'
+			    	}
+			    },
+			    yAxis: {
+			    	label: {
+			    		fontSize: 16,
+				    	fontFamily: 'Noto sans KR'
+			    	}
+			    },
+			    legend: {
+			    	label: {
+			            fontSize: 15,
+			            fontFamily: 'Noto sans KR'
+			        }
+			    }
+			};
+			
+			tui.chart.registerTheme('barTheme', theme);
+			options.theme = 'barTheme';
+			
+			tui.chart.barChart(container, data, options);
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+ /*******************************************************************************************************************************************************************
+  * tui script start 
+  ********************************************************************************************************************************************************************/
+
+ /*******************************************************************************************************************************************************************
+  * tui script end 
+  ********************************************************************************************************************************************************************/
+  
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

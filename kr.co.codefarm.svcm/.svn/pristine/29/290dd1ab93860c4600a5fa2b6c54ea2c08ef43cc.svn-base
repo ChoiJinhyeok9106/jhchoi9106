@@ -1,0 +1,72 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+
+<h2>이력서관리</h2>
+<section class="sub_cont_box">                    
+    <div class="new-resume-header">
+        <div class="row form-row">
+            <div class="col s12">
+                <input type="text" id="exampleFormControlInput1" class="resume-tit" placeholder="제목을 입력하세요">
+            </div>
+            <div class="form-group col s12">
+                <div class="radio size-m">
+                    <input type="radio" name="radio" id="radio01" checked="">
+                    <label for="radio01">양식입력</label>
+                    <i class="radio-icon"></i>
+                </div>
+                <div class="radio size-m">
+                    <input type="radio" name="radio" id="radio02">
+                    <label for="radio02">파일첨부</label>
+                    <i class="radio-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="resume-step-box">
+        <div class="step-statue">
+            <span class="statue"><span class="num">1</span><span class="text">개인정보</span></span>
+            <span class="statue"><span class="num">2</span><span class="text">학력,병역,가족사항</span></span>
+            <span class="statue"><span class="num">3</span><span class="text">이력사항</span></span>
+            <span class="statue active"><span class="num">4</span><span class="text">자기소개서</span></span>
+        </div>
+        <a href="#!" onclick="contentsOpen('DSN', 'new_resume03');" class="btn-left"><span class="icon-chevron-left"></span></a>
+        <a href="#!" onclick="contentsOpen('DSN', 'new_resume04');" class="btn-right"><span class="icon-chevron-right"></span></a>
+    </div>
+
+    <section class="form-section">
+        <div class="row form-row resume-family">
+            <div class="col s12 l6">
+                <h2 class="h2">자기소개서</h2> 
+            </div> 
+            <div class="col s12 l6 right">
+                <a href="#!" class="btn-list-add">추가</a>
+            </div> 
+        </div> 
+        <div class="box-type03 resume-family">
+            <div class="form-group row form-row">                            
+                <div class="col s12 l2 col-label">
+                    <label for="formGroupExampleInput5" class="label-type01 size-m">제목</label>
+                </div>
+                <div class="col s12 l10">
+                     <input type="text" id="formGroupExampleInput5" class="size-m">
+                </div>
+            </div>     
+            <div class="form-group row form-row">                            
+                <div class="col s12 l2 col-label">
+                    <label for="formGroupExampleInput5" class="label-type01 size-m">내용</label>
+                </div>
+                <div class="col s12 l10">
+                     <textarea id="exampleFormControlInput3" class="size-m" rows="10"></textarea>
+                </div>
+            </div>                        
+        </div>
+        <a href="#!" class="btn-resume-family"><span class="icon icon-x-mark"></span><span class="txt">리스트 삭제</span></a>
+    </section>
+    
+    <div class="btn-line large center">
+        <a href="#!" class="btn type01 size-m">취소</a>
+        <a href="#!" class="btn type01 size-m">이전</a>
+        <a href="#!" class="btn type02 size-m">다음</a>
+    </div>
+</section>
+
+            

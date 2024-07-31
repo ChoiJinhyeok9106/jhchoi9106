@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>G-IDEA PLATFROM</title>
+  <link rel="stylesheet" type="text/css" href="/error/assets/css/reset.css" />
+  <link rel="stylesheet" type="text/css" href="/error/assets/css/error.css" />
+</head>
+<body>
+  <div class="error-con">
+    <img src="/images/error/error.png">
+  </div>
+  <div class="error-bottom">
+    <img src="/images/error/error_bottom.svg">
+  </div>
+</body>
+</html>

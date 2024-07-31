@@ -1,0 +1,213 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mileage.css" />  
+
+<h2>마일리지 스토어</h2>
+<section class="sub_cont_box">
+    <div class="mileage-store-top">
+        <div class="mileage-category">
+            <span class="title">카테고리<span class="eng">Category</span></span>
+            <ul class="category-list">
+                <li>
+                    <div>
+                    	<label for="cate-sel01" class="image"><img src="/service/design/images/mileage/mileage_cate01.jpg" alt="" /></label>
+                    	<input type="checkbox" name="cate_select" id="cate-sel01" class="out">
+                    	<span class="tit">장학금</span>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                    	<label for="cate-sel02" class="image"><img src="/service/design/images/mileage/mileage_cate02.jpg" alt="" /></label>
+                    	<input type="checkbox" name="cate_select" id="cate-sel02" class="out">
+                    	<span class="tit">학내서비스</span>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                    	<label for="cate-sel03" class="image"><img src="/service/design/images/mileage/mileage_cate03.jpg" alt="" /></label>
+                    	<input type="checkbox" name="cate_select" id="cate-sel03" class="out">
+                    	<span class="tit">학내상품</span>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                    	<label for="cate-sel04" class="image"><img src="/service/design/images/mileage/mileage_cate04.jpg" alt="" /></label>
+                    	<input type="checkbox" name="cate_select" id="cate-sel04" class="out">
+                    	<span class="tit">물건</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="mileage-search">
+            <div class="row form-row">
+                <div class="form-group col s12 l4">
+                    <input type="text" id="inlineFormInputName9" class="size-m" placeholder="상품명/상품코드">
+                </div>
+                <div class="form-group col s12 l3">
+                    <select name="pSearchType" id="pSearchType" class="size-m">
+                        <option value="">인정구분</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l3">
+                    <select name="pSearchType" id="pSearchType" class="size-m">
+                        <option value="">사용가능</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l2">
+                    <input type="button" value="확인" class="btn type02 size-m">   
+                </div>                                  
+            </div>
+        </div>
+    </div>
+
+    <div class="row form-row mileage-array">
+        <div class="form-group col s6">
+            <div class="array-list">
+                <a href="#!" class="active">전체보기</a>
+                <a href="#!">판매중</a>
+            </div>
+        </div>
+        <div class="form-group col s6 right">
+            <div class="array-list">
+                <a href="#!" class="active">등록순</a>
+                <a href="#!">인기순</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mileage-store-list">
+        <div class="list">
+            <div class="photo">
+                <span class="category col02">학생서비스</span>
+                <img src="/service/design/images/mileage/mileage_store01.jpg" alt="" />
+            </div>                            
+            <span class="cont-tit"><a href="#!" onclick="contentsOpen('DSN', 'mileage04');">식권 10장 + 1</a></span>
+            <span class="date"><span class="d-day">D-32</span>2019.02.28~2019.04.01</span>
+            <div class="etc">
+                <span class="code">[00101]</span>
+                <span class="point"><span class="num">4500</span></span>
+            </div>
+        </div>
+        <div class="list">
+            <div class="photo">
+                <span class="category col01">장학금</span>
+                <img src="/service/design/images/mileage/mileage_store02.jpg" alt="" />
+            </div>                            
+            <span class="cont-tit"><a href="#!" onclick="contentsOpen('DSN', 'mileage04');">도서상품권 1만원</a></span>
+            <span class="date"><span class="d-day">D-32</span>2019.02.28~2019.04.01</span>
+            <div class="etc">
+                <span class="code">[00101]</span>
+                <span class="point"><span class="num">1000</span></span>
+            </div>
+        </div>
+        <div class="list">
+            <div class="photo">
+                <span class="category col03">학내상품</span>
+                <img src="/service/design/images/mileage/mileage_store03.jpg" alt="" />
+            </div>                            
+            <span class="cont-tit"><a href="#!" onclick="contentsOpen('DSN', 'mileage04');">아메리카노</a></span>
+            <span class="date"><span class="d-day">D-32</span>2019.02.28~2019.04.01</span>
+            <div class="etc">
+                <span class="code">[00101]</span>
+                <span class="point"><span class="num">100</span></span>
+            </div>
+        </div>
+        <div class="list">
+            <div class="photo">
+                <span class="category col04">물건</span>
+                <img src="/service/design/images/mileage/mileage_store04.jpg" alt="" />
+            </div>                            
+            <span class="cont-tit"><a href="#!" onclick="contentsOpen('DSN', 'mileage04');">대학점퍼</a></span>
+            <span class="date"><span class="d-day">D-32</span>2019.02.28~2019.04.01</span>
+            <div class="etc">
+                <span class="code">[00101]</span>
+                <span class="point"><span class="num">2000</span></span>
+            </div>
+        </div>
+        <div class="list sold-out">
+            <div class="photo">
+                <div class="sold-out"><p class="text"><span class="bold">SOLD OUT</span>더 좋은 상품으로 찾아뵙겠습니다.</p></div>
+                <span class="category col04">물건</span>
+                <img src="/service/design/images/mileage/mileage_store04.jpg" alt="" />
+            </div>                            
+            <span class="cont-tit">대학점퍼</span>
+            <span class="date"><span class="d-day">D-0</span>2019.02.28~2019.04.01</span>
+            <div class="etc">
+                <span class="code">[00101]</span>
+                <span class="point"><span class="num">2000</span></span>
+            </div>
+        </div>
+        <div class="list sold-out">
+            <div class="photo">
+                <div class="sold-out"><p class="text"><span class="bold">SOLD OUT</span>더 좋은 상품으로 찾아뵙겠습니다.</p></div>
+                <span class="category col04">물건</span>
+                <img src="/service/design/images/mileage/mileage_store05.jpg" alt="" />
+            </div>                            
+            <span class="cont-tit">연구노트</span>
+            <span class="date"><span class="d-day">D-0</span>2019.02.28~2019.04.01</span>
+            <div class="etc">
+                <span class="code">[00101]</span>
+                <span class="point"><span class="num">600</span></span>
+            </div>
+        </div>
+        <div class="list notice">
+            <span class="division"><span class="tit">NOTICE</span></span>
+            <p class="title">첫구매 상품리뷰시<br/>
+            마일리지 100점 증정</p>
+            <p class="cont-text">마일리지상점을 오픈하였습니다.<br/>
+            첫 구매후 상품리뷰시 마일리지 100점</p>
+            <a href="#!" class="link">자세히보기</a>
+            <span class="date">2019.03.01</span>
+        </div>
+    </div>
+</section>
+
+            
+<script>
+    $(document).ready(function() {
+        // 마일리지 상세 펼치고, 닫침
+        $('.table-type05 tbody tr').not('.hidden-tr').on('click', function() {            
+            if ($(this).hasClass('active')) {
+                $(this).next('.hidden-tr').removeClass('on');
+                $(this).removeClass('active');
+                
+            } else {
+                $('.table-type05 tr').removeClass('active');
+               $('.table-type05 .hidden-tr').removeClass('on');
+                $(this).next('.hidden-tr').addClass('on');
+                $(this).not('.hidden-tr').addClass('active');
+            }
+        });
+
+        //탭메뉴
+        $(".tab-content").hide();
+        $(".tab-content:first").show();
+        $(".tab-type01 .tab-inner div a").click(function() {
+            $(".tab-type01 .tab-inner div a").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").hide()
+            var activeTab = $(this).parent().attr("rel");
+            $("#"+activeTab).fadeIn()
+        });
+        
+        /* 카테고리 선택 */
+        $('.category-list div input').on('click', function(){
+            if ($(this).is(':checked')) {
+                $(this).parent().addClass('active');
+            } else {
+            	$(this).parent().removeClass('active');
+            }
+        })
+    });    
+    // input file 이미지 미리보기
+    function getThumbnailPrivew(html, $target) {
+        if (html.files && html.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $target.css('display', 'block');
+                $target.html('<img src="' + e.target.result + '" border="0" alt="" />');
+            }
+            reader.readAsDataURL(html.files[0]);
+        }
+    }
+</script>
+
+</html>

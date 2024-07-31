@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.menu">
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                             앱 메뉴 관리                                                       -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="selectMenuList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+			 , A.MENU_CD
+			 , A.MENU_NM
+			 , A.UP_MENU_CD
+			 , A.MENU_LV
+			 , A.SERVICE_CD
+			 , A.PGM_ID
+			 , A.LINK_URL
+			 , A.MENU_GB
+			 , A.DAESANG_APP_ID
+			 , A.DAESANG_MENU_CD
+			 , A.PARAMETER
+			 , A.ORD
+			 , A.USE_YN
+			 , A.REMARK
+			 , A.MENU_CD AS CD
+			 , A.UP_MENU_CD AS UP_CD
+			 , A.MENU_LV AS LV
+			 , 'Y' AS OPEN_YN
+		  FROM SMN_APP_MENU A
+		 WHERE 1=1
+		 <if test="APP_ID != ''.toString() and APP_ID != null">AND A.APP_ID = #{APP_ID}</if>
+		 <if test="pUsePgm != ''.toString() and pUsePgm != null">AND A.PGM_ID IS NOT NULL</if>
+         <if test="pUseYn != ''.toString() and pUseYN != null">AND A.USE_YN = #{pUseYn}</if>
+         <if test="pSearchArgv != ''.toString() and pSearchArgv != null">AND A.MENU_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+         <if test="pMenuAuth != ''.toString() and pMenuAuth != null">
+         	AND EXISTS
+         	    (
+         	        SELECT 'X'
+         	          FROM SMN_APP_MENU_AUTH SA
+         	         WHERE 1=1
+         	           AND A.APP_ID = SA.APP_ID
+         	           AND A.MENU_CD = SA.MENU_CD
+         	           AND SA.AUTH_CD = #{pMenuAuth}
+         	    )
+         </if>
+         
+    </select>
+    
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                             사용자 메뉴                                                       -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="authMenuList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+             , (SELECT APP_NM FROM SMN_APP WHERE APP_ID = A.APP_ID)	AS APP_NM
+			 , A.MENU_CD
+			 , A.MENU_NM
+			 , A.UP_MENU_CD
+			 , SUB_A.MENU_NM AS UP_MENU_NM
+-- 			 , (SELECT MENU_NM FROM SMN_APP_MENU WHERE MENU_CD = A.UP_MENU_CD AND APP_ID = A.APP_ID)	AS UP_MENU_NM
+--           , (SELECT COUNT(*) FROM SMN_APP_MENU WHERE A.MENU_CD = UP_MENU_CD  AND APP_ID = A.APP_ID)	AS UP_MENU_CNT
+			 , A.MENU_LV
+			 , A.SERVICE_CD
+			 , A.PGM_ID
+			 , A.LINK_URL
+			 , A.MENU_GB
+			 , A.DAESANG_APP_ID
+			 , A.DAESANG_MENU_CD
+			 , A.PARAMETER
+			 , A.ORD
+			 , A.USE_YN
+			 , A.REMARK
+			 , A.MENU_CD AS CD
+			 , A.UP_MENU_CD AS UP_CD
+			 , A.MENU_LV AS LV
+			 , 'Y' AS OPEN_YN
+			 , COALESCE(B.AUTH_CNT,0) AS AUTH_CNT
+			 , C.GAEINJEONGBO_USE_YN
+			 , C.GAEINJEONGBO_ITEM
+			 , COALESCE(D.SUB_PGM_GAEINJEONGBO_USE_CNT, 0) SUB_PGM_GAEINJEONGBO_USE_CNT
+		  FROM SMN_APP_MENU A
+		  LEFT OUTER JOIN SMN_APP_MENU SUB_A 
+		    ON A.UP_MENU_CD = SUB_A.MENU_CD 
+		   AND A.APP_ID     = SUB_A.APP_ID 
+		  LEFT OUTER JOIN 
+		       (
+		           SELECT SA.APP_ID
+				        , SA.MENU_CD
+				        , COUNT(*) AS AUTH_CNT
+		             FROM SMN_APP_MENU_AUTH SA
+		            WHERE 1=1
+				    GROUP BY SA.APP_ID, SA.MENU_CD
+		       ) B
+		    ON A.APP_ID = B.APP_ID
+		   AND A.MENU_CD = B.MENU_CD
+		  LEFT OUTER JOIN SMN_PGM C
+		    ON A.SERVICE_CD = C.SERVICE_CD
+		   AND A.PGM_ID = C.PGM_ID
+		  LEFT OUTER JOIN
+		       (
+		           SELECT SA.APP_ID
+		                , SA.MENU_CD
+		                , COUNT(*) AS SUB_PGM_GAEINJEONGBO_USE_CNT
+		             FROM SMN_APP_MENU_SUBPGM SA
+		            INNER JOIN SMN_PGM SB
+		               ON SA.SERVICE_CD = SB.SERVICE_CD
+		              AND SA.PGM_ID = SB.PGM_ID
+		            WHERE 1=1
+		              AND COALESCE(SB.GAEINJEONGBO_USE_YN,'N') = 'Y'
+		            GROUP BY SA.APP_ID, SA.MENU_CD
+		       ) D
+		    ON A.APP_ID = D.APP_ID
+		   AND A.MENU_CD = D.MENU_CD
+		 WHERE 1=1
+		   AND A.APP_ID = #{APP_ID}
+		   AND A.USE_YN = 'Y'
+		   AND (
+		           COALESCE(B.AUTH_CNT,0) = 0 
+		           OR
+		           EXISTS
+		           (
+		               SELECT 'X'
+		                 FROM SMN_APP_MENU_AUTH SA
+		                WHERE 1=1
+		                  AND A.APP_ID = SA.APP_ID
+		                  AND A.MENU_CD = SA.MENU_CD
+		                  AND (
+		                          SA.AUTH_CD = #{DEFAULT_AUTH_CD}
+		                  	      OR		                      
+			                      EXISTS
+			                      (
+			                          SELECT 'X'
+			                            FROM SMN_USER_AUTH SSA
+			                           WHERE 1=1
+			                             AND SSA.USER_ID = #{SYSTEM_ID}
+			                             AND SSA.AUTH_CD = SA.AUTH_CD
+		    	       		           UNION ALL
+		    	       		          SELECT 'X'
+		    	       		            FROM SMN_CORP_USER SSC<!-- 기업권한추가 -->
+		    	       		            JOIN SMN_CORP_AUTH SSD
+		    	       		              ON SSC.CORP_ID = SSD.CORP_ID
+		    	       		           WHERE 1=1
+		    	       		             AND SA.AUTH_CD = SSD.CORP_AUTH_CD
+		    	       		             AND SSC.USER_ID = #{SYSTEM_ID}
+			                      )
+		                      )
+		           )
+		       )
+    </select>
+    
+    <insert id="insertMenu" parameterType="hashMap">
+    	<selectKey keyProperty="NEW_MENU_CD" resultType="String" order="BEFORE">
+	        SELECT RPAD(CONCAT(SUBSTR(#{UP_MENU_CD},1,#{MENU_LV}*2),A.NEW_KEY), 8, '0')
+	          FROM (
+	                    SELECT COALESCE(LPAD(CAST(MAX(SUBSTR(MENU_CD, 1+(#{MENU_LV}*2),2))+1 AS VARCHAR(2)),2,'0'),'01') AS NEW_KEY
+				          FROM SMN_APP_MENU
+				         WHERE APP_ID = #{APP_ID}
+				           AND UP_MENU_CD = #{UP_MENU_CD}
+	               ) A
+  		</selectKey>
+    	INSERT INTO SMN_APP_MENU
+		( 
+			 APP_ID
+		   , MENU_CD
+		   , MENU_NM
+		   , UP_MENU_CD
+		   , MENU_LV
+		   , SERVICE_CD
+		   , PGM_ID
+		   , LINK_URL
+		   , MENU_GB
+		   , DAESANG_APP_ID
+		   , DAESANG_MENU_CD
+		   , PARAMETER
+		   , ORD
+		   , USE_YN
+		   , REMARK
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM 
+		)
+     	VALUES
+		( 
+			 #{APP_ID}
+		   , #{NEW_MENU_CD}
+		   , #{MENU_NM}
+		   , #{UP_MENU_CD}
+		   , #{MENU_LV}
+		   , #{SERVICE_CD}
+		   , #{PGM_ID}
+		   , #{LINK_URL}
+		   , #{MENU_GB}
+		   , #{DAESANG_APP_ID}
+		   , #{DAESANG_MENU_CD}
+		   , #{PARAMETER}
+		   , #{ORD}
+		   , #{USE_YN}
+		   , #{REMARK}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM} 
+		)
+    </insert>
+    
+     <update id="updateMenu" parameterType="hashMap">
+    	UPDATE SMN_APP_MENU
+    	   SET MENU_NM = #{MENU_NM}
+		     , UP_MENU_CD = #{UP_MENU_CD}
+		     , MENU_LV = #{MENU_LV}
+		     , SERVICE_CD = #{SERVICE_CD}
+		     , PGM_ID = #{PGM_ID}
+		     , LINK_URL = #{LINK_URL}
+		     , MENU_GB = #{MENU_GB}
+		     , DAESANG_APP_ID = #{DAESANG_APP_ID}
+		     , DAESANG_MENU_CD = #{DAESANG_MENU_CD}
+		     , PARAMETER = #{PARAMETER}
+		     , ORD = #{ORD}
+		     , USE_YN = #{USE_YN}
+		     , REMARK = #{REMARK}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD}
+    </update>
+    
+    <delete id="deleteMenu" parameterType="hashMap">
+    
+    	DELETE FROM SMN_APP_MENU_SUBPGM
+		 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD};
+    
+    	DELETE FROM SMN_APP_MENU
+		 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD};
+
+        DELETE FROM SMN_APP_MENU_AUTH
+		 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD};
+		   
+		DELETE FROM SMN_APP_MENU_MANUAL
+		 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD};
+	
+    </delete>
+    
+    
+    
+    <!-- ***************************************************************************************************************************** -->
+	<!--                                                             앱 메뉴권한 관리                                                       -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="selectMenuAuthList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+			 , A.MENU_CD
+			 , A.AUTH_CD
+			 , B.AUTH_NM
+			 , B.AUTH_GB
+		  FROM SMN_APP_MENU_AUTH A
+		  LEFT OUTER JOIN SMN_AUTH B
+		    ON A.AUTH_CD = B.AUTH_CD
+		 WHERE 1=1 
+		   AND A.APP_ID = #{APP_ID}
+		 <if test="MENU_CD != ''.toString() and MENU_CD != null">AND A.MENU_CD = #{MENU_CD}</if>
+    </select>
+    
+    <insert id="insertMenuAuth" parameterType="hashMap">
+    	INSERT INTO SMN_APP_MENU_AUTH
+		( 
+			 APP_ID
+		   , MENU_CD
+		   , AUTH_CD
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM 
+		)
+     	VALUES
+		( 
+			 #{APP_ID}
+		   , #{MENU_CD}
+		   , #{AUTH_CD}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM} 
+		)
+    </insert>
+    
+     <update id="updateMenuAuth" parameterType="hashMap">
+    	UPDATE SMN_APP_MENU_AUTH
+    	   SET AUTH_CD = #{AUTH_CD}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD}
+    </update>
+    
+    <delete id="deleteMenuAuth" parameterType="hashMap">
+    	DELETE FROM SMN_APP_MENU_AUTH
+		 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD}
+		   AND AUTH_CD = #{AUTH_CD}
+    </delete>
+    
+    
+    
+    <!-- ***************************************************************************************************************************** -->
+	<!--                                              앱 메뉴 서브 프로그램 관리                                                       -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="selectSubPgmList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+			 , A.MENU_CD
+			 , A.SERVICE_CD
+			 , B.SERVICE_NM
+			 , A.PGM_ID
+			 , C.PGM_NM
+			 , A.USE_YN
+		  FROM SMN_APP_MENU_SUBPGM A
+		  LEFT OUTER JOIN SMN_SERVICE B
+		    ON A.SERVICE_CD = B.SERVICE_CD
+		  LEFT OUTER JOIN SMN_PGM C
+		    ON A.SERVICE_CD = C.SERVICE_CD
+		   AND A.PGM_ID = C.PGM_ID
+		 WHERE 1=1 
+		   AND A.APP_ID = #{APP_ID}
+		   AND A.MENU_CD = #{MENU_CD}
+    </select>
+    
+    <insert id="insertSubPgm" parameterType="hashMap">
+    	INSERT INTO SMN_APP_MENU_SUBPGM
+		( 
+			 APP_ID
+           , MENU_CD
+           , SERVICE_CD
+           , PGM_ID
+           , USE_YN
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM 
+		)
+     	VALUES
+		( 
+			 #{APP_ID}
+           , #{MENU_CD}
+           , #{SERVICE_CD}
+           , #{PGM_ID}
+           , #{USE_YN}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM} 
+		)
+    </insert>
+    
+     <update id="updateSubPgm" parameterType="hashMap">
+    	UPDATE SMN_APP_MENU_SUBPGM
+    	   SET USE_YN = #{USE_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD}
+		   AND SERVICE_CD = #{SERVICE_CD}
+		   AND PGM_ID = #{PGM_ID}
+    </update>
+    
+    <delete id="deleteSubPgm" parameterType="hashMap">
+    	DELETE FROM SMN_APP_MENU_SUBPGM
+		 WHERE APP_ID = #{APP_ID}
+		   AND MENU_CD = #{MENU_CD}
+		   AND SERVICE_CD = #{SERVICE_CD}
+		   AND PGM_ID = #{PGM_ID}
+    </delete>
+    
+    <!-- 선택한 메뉴의 매뉴얼 조회 -->
+    <select id="getAppMenuManualList" parameterType="hashMap" resultType="hashMap">
+	    SELECT APP_ID
+			 , MENU_CD
+			 , TEXT_GB
+			 , MANUAL_TEXT 
+		  FROM SMN_APP_MENU_MANUAL
+		 WHERE APP_ID 	= #{APP_ID} 
+		   AND MENU_CD 	= #{MENU_CD}
+    </select>
+    
+    <!-- 선택한 메뉴의 매뉴얼 저장 -->
+<!--     <insert id="saveAppMenuManual" parameterType="hashMap"> -->
+<!-- 	    MERGE INTO SMN_APP_MENU_MANUAL -->
+<!-- 			USING DUAL ON ( APP_ID = #{appId} AND MENU_CD = #{menuCd}) -->
+<!-- 			WHEN MATCHED 	 THEN UPDATE  -->
+<!-- 									 SET MANUAL_TEXT = #{manualText} -->
+<!-- 									   , TEXT_GB	 = #{textGb} -->
+<!-- 									   , UPDATE_DTTM = SYSDATE() -->
+<!-- 									   , UPDATE_ID   = #{SYSTEM_ID} -->
+<!-- 									   , UPDATE_IP   = #{SYSTEM_IP} -->
+<!-- 									   , UPDATE_PGM  = #{SYSTEM_PGM} -->
+<!-- 			WHEN NOT MATCHED THEN INSERT( APP_ID -->
+<!-- 										, MENU_CD -->
+<!-- 										, MANUAL_TEXT -->
+<!-- 										, TEXT_GB -->
+<!-- 										, INSERT_DTTM -->
+<!-- 									    , INSERT_ID -->
+<!-- 									    , INSERT_IP -->
+<!-- 									    , INSERT_PGM -->
+<!-- 										) VALUES(  -->
+<!-- 										  #{appId} -->
+<!-- 										, #{menuCd} -->
+<!-- 										, #{manualText} -->
+<!-- 										, #{textGb} -->
+<!-- 										, SYSDATE() -->
+<!-- 									    , #{SYSTEM_ID} -->
+<!-- 									    , #{SYSTEM_IP} -->
+<!-- 									    , #{SYSTEM_PGM} -->
+<!-- 									    ) -->
+<!--     </insert> -->
+    <insert id="insertAppMenuManual" parameterType="hashMap">
+		INSERT INTO SMN_APP_MENU_MANUAL ( APP_ID
+										, MENU_CD
+										, MANUAL_TEXT
+										, TEXT_GB
+										, INSERT_DTTM
+									    , INSERT_ID
+									    , INSERT_IP
+									    , INSERT_PGM
+										) VALUES( 
+										  #{appId}
+										, #{menuCd}
+										, #{manualText}
+										, #{textGb}
+										, SYSDATE()
+									    , #{SYSTEM_ID}
+									    , #{SYSTEM_IP}
+									    , #{SYSTEM_PGM}
+									    )
+    </insert>
+    
+    <update id="updateAppMenuManual" parameterType="hashMap">
+	    UPDATE SMN_APP_MENU_MANUAL
+		   SET MANUAL_TEXT = #{manualText}
+		     , TEXT_GB	 = #{textGb}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID   = #{SYSTEM_ID}
+		     , UPDATE_IP   = #{SYSTEM_IP}
+		     , UPDATE_PGM  = #{SYSTEM_PGM}
+	     WHERE APP_ID = #{appId} 
+	       AND MENU_CD = #{menuCd}
+    </update>
+    
+    <!-- 선택한 메뉴의 매뉴얼 삭제 -->
+    <delete id="deleteAppMenuManual" parameterType="hashMap">
+    	DELETE
+    	  FROM SMN_APP_MENU_MANUAL
+    	 WHERE APP_ID  = #{appId}
+    	   AND MENU_CD = #{menuCd}
+    </delete>
+
+	<insert id="insertMenuAuthBatch" parameterType="hashMap">
+		INSERT INTO SMN_APP_MENU_AUTH (
+		     APP_ID
+		   , MENU_CD
+		   , AUTH_CD
+		   , INSERT_DTTM
+		   , INSERT_ID
+		   , INSERT_IP
+		   , INSERT_PGM
+		   , UPDATE_DTTM
+		   , UPDATE_ID
+		   , UPDATE_IP
+		   , UPDATE_PGM
+		) SELECT APP_ID
+		       , MENU_CD
+		       , #{AUTH_CD} AS AUTH_CD
+		       , SYSDATE() AS INSERT_DTTM
+		       , #{SYSTEM_ID} AS INSERT_ID
+		       , #{SYSTEM_IP} AS INSERT_IP
+		       , #{SYSTEM_PGM} AS INSERT_PGM
+		       , SYSDATE() AS UPDATE_DTTM
+		       , #{SYSTEM_ID} AS UPDATE_ID
+		       , #{SYSTEM_IP} AS UPDATE_IP
+		       , #{SYSTEM_PGM} AS UPDATE_PGM
+			FROM SMN_APP_MENU
+		   WHERE APP_ID = #{APP_ID}
+    </insert>
+
+	<!-- 선택한 메뉴의 매뉴얼 삭제 -->
+	<delete id="deleteMenuAuthBatch" parameterType="hashMap">
+		DELETE
+		  FROM SMN_APP_MENU_AUTH
+		 WHERE APP_ID = #{APP_ID}
+		   AND AUTH_CD = #{AUTH_CD}
+    </delete>
+</mapper>

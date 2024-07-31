@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.commons.maria.sms">
+
+	<insert id="INSERT_SMS" parameterType="hashMap">
+	INSERT INTO SMS.DBO.SC_TRAN ( TR_SENDDATE, TR_SENDSTAT, TR_MSGTYPE, TR_PHONE, TR_CALLBACK, TR_MSG )
+	VALUES (
+	       NOW()
+	     , '0'
+	     , '0'
+	     , #{RECV_NUMBER}
+	     , #{SEND_NUMBER}
+	     , <![CDATA[REPLACE(#{SEND_MSG}, '<br>', CONCAT(CHAR(13),CHAR(10)))]]>
+	       )
+	</insert>
+
+</mapper>

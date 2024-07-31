@@ -1,0 +1,185 @@
+<h2>템플릿-CF Date Picker</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">CF Date Picker</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li></li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><date-picker :value="testDate" invalid="true"></date-picker></textarea>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">실행 결과</h3>
+        <div class="box-type04">
+        	<div class="row form-row">
+    			<div class="form-group col s12 l4">
+					<label for="appNm" class="label-type01">CF Date Picker Test1</label>
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+						<date-picker :value="testDate" @input="function(value){ testDate = value }" :invalid="errors.has('targetname')" :defaultyear="'1985'"></date-picker>
+						<input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testDate" v-validate="'required'">
+			            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+					</div>
+				</div>
+				<div class="form-group col s12 l8">
+					<label for="appNm" class="label-type01">CF Date Picker RealValue1</label>
+					<input v-model="testDate" type="text" class="size-m">
+				</div>
+			</div>
+        	<div class="row form-row">
+    			<div class="form-group col s12 l4">
+					<label for="appNm" class="label-type01">CF Date Picker Test2</label>
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+						<date-picker :value="testDate2" @input="function(value){ testDate2 = value }" :invalid="errors.has('targetname2')"></date-picker>
+						<input type="hidden" name="targetname2" data-vv-as="날짜 " v-model="testDate2" v-validate="'required'">
+			            <invalid-message :visible="true" :name="'targetname2'" :verror="errors"/>
+					</div>
+				</div>
+				<div class="form-group col s12 l8">
+					<label for="appNm" class="label-type01">CF Date Picker RealValue2</label>
+					<input v-model="testDate2" type="text" class="size-m">
+				</div>
+			</div>
+        	<div class="row form-row">
+    			<div class="form-group col s12 l4">
+					<label for="appNm" class="label-type01">CF Date Picker :disabled=true</label>
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+						<date-picker :value="testDate2" @input="function(value){ testDate2 = value }" :invalid="errors.has('targetname2')" :disabled="true"></date-picker>
+						<input type="hidden" name="targetname2" data-vv-as="날짜 " v-model="testDate2" v-validate="'required'">
+			            <invalid-message :visible="true" :name="'targetname2'" :verror="errors"/>
+					</div>
+				</div>
+				<div class="form-group col s12 l4">
+					<label for="appNm" class="label-type01">CF Date Picker :readonly=true</label>
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+						<date-picker :value="testDate2" @input="function(value){ testDate2 = value }" :invalid="errors.has('targetname2')" :readonly="true"></date-picker>
+						<input type="hidden" name="targetname2" data-vv-as="날짜 " v-model="testDate2" v-validate="'required'">
+			            <invalid-message :visible="true" :name="'targetname2'" :verror="errors"/>
+					</div>
+				</div>
+			</div>
+		</div>
+        <br/>
+        <textarea id="codeEditor2"><div class="row form-row">
+	<div class="form-group col s12 l4">
+		<label for="appNm" class="label-type01">CF Date Picker Test1</label>
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			<date-picker :value="testDate" @input="function(value){ testDate = value }" :invalid="errors.has('targetname')"></date-picker>
+			<input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testDate" v-validate="'required'">
+            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+		</div>
+	</div>
+	<div class="form-group col s12 l8">
+		<label for="appNm" class="label-type01">CF Date Picker Test RealValue1</label>
+		<input type="text" class="size-m" v-model.trim="testDate">
+	</div>
+</div>
+<div class="row form-row">
+	<div class="form-group col s12 l4">
+		<label for="appNm" class="label-type01">CF Date Picker Test2</label>
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			<date-picker :value="testDate2" @input="function(value){ testDate2 = value }" :invalid="errors.has('targetname2')"></date-picker>
+			<input type="hidden" name="targetname2" data-vv-as="날짜 " v-model="testDate2" v-validate="'required'">
+            <invalid-message :visible="true" :name="'targetname2'" :verror="errors"/>
+		</div>
+	</div>
+	<div class="form-group col s12 l8">
+		<label for="appNm" class="label-type01">CF Date Picker RealValue2</label>
+		<input v-model="testDate2" type="text" class="size-m">
+	</div>
+</div>
+<div class="row form-row">
+	<div class="form-group col s12 l4">
+		<label for="appNm" class="label-type01">CF Date Picker :disabled=true</label>
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			<date-picker :value="testDate2" @input="function(value){ testDate2 = value }" :invalid="errors.has('targetname2')" :disabled="true"></date-picker>
+			<input type="hidden" name="targetname2" data-vv-as="날짜 " v-model="testDate2" v-validate="'required'">
+	           <invalid-message :visible="true" :name="'targetname2'" :verror="errors"/>
+		</div>
+	</div>
+	<div class="form-group col s12 l4">
+		<label for="appNm" class="label-type01">CF Date Picker :readonly=true</label>
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			<date-picker :value="testDate2" @input="function(value){ testDate2 = value }" :invalid="errors.has('targetname2')" :readonly="true"></date-picker>
+			<input type="hidden" name="targetname2" data-vv-as="날짜 " v-model="testDate2" v-validate="'required'">
+            <invalid-message :visible="true" :name="'targetname2'" :verror="errors"/>
+		</div>
+	</div>
+</div>
+</textarea>
+   	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	testDate: null,
+    	testDate2: '20180101',
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	this.saveRow();
+    },
+    //함수
+    methods: {
+    	saveRow: function(){
+    		var validate = this.$validator.validateAll();
+            
+            validate.then(function(response) {
+            	if(response){
+            		
+            	}
+            });
+    	},
+    },
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 100);
+	editor('codeEditor2', 300);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

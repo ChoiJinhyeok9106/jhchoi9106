@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.additional.maria.calendar">
+
+	<select id="selectCalendarList" parameterType="hashMap" resultType="hashMap">
+	  SELECT USER_ID
+		   , CAL_SEQ
+		   , CAL_NM
+		   , CAL_COLOR
+		   , CAL_DESC
+		   , COALESCE(PYOSI_YN, 'N') AS PYOSI_YN
+		   , COALESCE(ALL_GONGYU_YN, 'N') AS ALL_GONGYU_YN
+		   , 'Y' AS BONIN_YN
+		FROM ADD_CAL
+		UNION ALL
+	   SELECT CAL.USER_ID
+			, CAL.CAL_SEQ
+			, CAL.CAL_NM
+			, CAL.CAL_COLOR
+			, CAL.CAL_DESC
+			, COALESCE(CAL.PYOSI_YN, 'N') AS PYOSI_YN
+			, COALESCE(CAL.ALL_GONGYU_YN, 'N') AS ALL_GONGYU_YN
+			, 'N' AS BONIN_YN
+		 FROM ADD_CAL CAL 
+		WHERE CAL.ALL_GONGYU_YN = 'Y'
+		  AND CAL.PYOSI_YN = 'Y'
+	</select>
+	
+	<insert id="insertCalendar" parameterType="hashMap">
+		<selectKey keyProperty="CAL_SEQ" resultType="int" order="BEFORE">
+		 	SELECT COALESCE(MAX(CAL_SEQ), 0) + 1
+			  FROM ADD_CAL
+			 WHERE 1=1
+			   AND USER_ID = #{USER_ID}
+  		</selectKey>
+		INSERT INTO ADD_CAL
+		(
+				 USER_ID
+			   , CAL_SEQ
+			   , CAL_NM
+			   , CAL_COLOR
+			   , CAL_DESC
+			   , PYOSI_YN
+			   , ALL_GONGYU_YN
+			   , INSERT_DTTM
+			   , INSERT_ID
+			   , INSERT_IP
+			   , INSERT_PGM
+			   , UPDATE_DTTM
+			   , UPDATE_ID
+			   , UPDATE_IP
+			   , UPDATE_PGM )
+		 VALUES
+			   ( #{USER_ID}
+			   , #{CAL_SEQ}
+			   , #{CAL_NM}
+			   , #{CAL_COLOR}
+			   , #{CAL_DESC}
+			   , #{PYOSI_YN}
+			   , #{ALL_GONGYU_YN}
+			   , NOW()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM}
+			   , NOW()
+			   , #{SYSTEM_ID}
+			   , #{SYSTEM_IP}
+			   , #{SYSTEM_PGM} )
+	</insert>
+	
+	 <update id="updateCalendar" parameterType="hashMap">
+		UPDATE ADD_CAL
+		   SET CAL_NM = #{CAL_NM}
+			 , CAL_COLOR = #{CAL_COLOR}
+			 , CAL_DESC = #{CAL_DESC}
+			 , PYOSI_YN = #{PYOSI_YN}
+			 , ALL_GONGYU_YN = #{ALL_GONGYU_YN}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND CAL_SEQ = #{CAL_SEQ}
+	</update>
+	
+	<delete id="deleteCalendar" parameterType="hashMap">
+		
+		DELETE FROM ADD_CAL
+		 WHERE USER_ID = #{USER_ID}
+		   AND CAL_SEQ = #{CAL_SEQ};
+
+		DELETE FROM ADD_CAL_EVENT
+		 WHERE USER_ID = #{USER_ID}
+		   AND CAL_SEQ = #{CAL_SEQ};
+		
+	</delete>
+	
+	<select id="selectCalEventList" parameterType="hashMap" resultType="hashMap">
+		   SELECT CALE.USER_ID
+				, CALE.ILJEONG_SEQ
+				, CALE.CAL_SEQ
+				, CALE.ILJEONG_NM
+				, CALE.FR_DTTM
+				, CALE.TO_DTTM
+				, COALESCE(CALE.ALLDAY_YN, 'N') AS ALLDAY_YN
+				, CALE.CAL_EVENT_DESC
+				, CALE.LOCATIOIN
+				, CALE.ALARM_GB
+				, CALE.ALARM_TM_GB
+				, COALESCE(CAL.ALL_GONGYU_YN, 'N') AS ALL_GONGYU_YN
+				, CALE.INSERT_ID
+			 FROM ADD_CAL_EVENT CALE
+			 JOIN ADD_CAL CAL
+			   ON CALE.USER_ID = CAL.USER_ID
+			  AND CALE.CAL_SEQ = CAL.CAL_SEQ
+			WHERE 1=1
+			UNION ALL
+		   SELECT CALE.USER_ID
+				, CALE.ILJEONG_SEQ
+				, CALE.CAL_SEQ
+				, CALE.ILJEONG_NM
+				, CALE.FR_DTTM
+				, CALE.TO_DTTM
+				, COALESCE(CALE.ALLDAY_YN, 'N') AS ALLDAY_YN
+				, CALE.CAL_EVENT_DESC
+				, CALE.LOCATIOIN
+				, CALE.ALARM_GB
+				, CALE.ALARM_TM_GB
+				, COALESCE(CAL.ALL_GONGYU_YN, 'N') AS ALL_GONGYU_YN
+				, CALE.INSERT_ID
+			 FROM ADD_CAL_EVENT CALE 
+			 JOIN ADD_CAL CAL 
+			   ON CALE.USER_ID = CAL.USER_ID
+			  AND CALE.CAL_SEQ = CAL.CAL_SEQ
+			WHERE CAL.ALL_GONGYU_YN = 'Y'
+			  AND CAL.PYOSI_YN = 'Y'
+	</select>
+	
+	<insert id="insertCalEvent" parameterType="hashMap">
+		<selectKey keyProperty="ILJEONG_SEQ" resultType="int" order="BEFORE">
+		 	SELECT COALESCE(MAX(ILJEONG_SEQ), 0) + 1
+			  FROM ADD_CAL_EVENT
+			 WHERE 1=1
+			   AND USER_ID = #{USER_ID}
+  		</selectKey>
+  		
+		INSERT INTO ADD_CAL_EVENT
+			(
+			  USER_ID
+			, ILJEONG_SEQ
+			, CAL_SEQ
+			, ILJEONG_NM
+			, FR_DTTM
+			, TO_DTTM
+			, ALLDAY_YN
+			, CAL_EVENT_DESC
+			, LOCATIOIN
+			, ALARM_GB
+			, ALARM_TM_GB
+			, INSERT_DTTM
+			, INSERT_ID
+			, INSERT_IP
+			, INSERT_PGM
+			, UPDATE_DTTM
+			, UPDATE_ID
+			, UPDATE_IP
+			, UPDATE_PGM )
+		VALUES
+			( #{USER_ID}
+			, #{ILJEONG_SEQ}
+			, #{CAL_SEQ}
+			, #{ILJEONG_NM}
+			, #{FR_DTTM}
+			, #{TO_DTTM}
+			, #{ALLDAY_YN}
+			, #{CAL_EVENT_DESC}
+			, #{LOCATIOIN}
+			, #{ALARM_GB}
+			, #{ALARM_TM_GB}		  
+			, NOW()
+			, #{SYSTEM_ID}
+			, #{SYSTEM_IP}
+			, #{SYSTEM_PGM}
+			, NOW()
+			, #{SYSTEM_ID}
+			, #{SYSTEM_IP}
+			, #{SYSTEM_PGM} )
+	</insert>
+	
+	 <update id="updateCalEvent" parameterType="hashMap">
+		UPDATE ADD_CAL_EVENT
+		   SET CAL_SEQ = #{CAL_SEQ}
+			 , ILJEONG_NM = #{ILJEONG_NM}
+			 , FR_DTTM = #{FR_DTTM}
+			 , TO_DTTM = #{TO_DTTM}
+			 , ALLDAY_YN = #{ALLDAY_YN}
+			 , CAL_EVENT_DESC = #{CAL_EVENT_DESC}
+			 , LOCATIOIN = #{LOCATIOIN}
+			 , ALARM_GB = #{ALARM_GB}
+			 , ALARM_TM_GB = #{ALARM_TM_GB}			
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND ILJEONG_SEQ = #{ILJEONG_SEQ}
+	</update>
+	
+	<delete id="deleteCalEvent" parameterType="hashMap">
+		DELETE FROM ADD_CAL_EVENT
+		 WHERE 1=1
+		 <if test="USER_ID != null">
+			AND USER_ID = #{USER_ID}
+		 </if>
+		 <if test="ILJEONG_SEQ != null">
+		 	AND ILJEONG_SEQ = #{ILJEONG_SEQ}
+		 </if>
+		 <if test="SYSTEM_ID != null">
+		 	AND INSERT_ID = #{SYSTEM_ID}
+		 </if>
+	</delete>
+
+	<select id="selectCalEnvList" parameterType="hashMap" resultType="hashMap">
+		SELECT USER_ID
+			 , CAL_THEMA_GB
+			 , DEFAULT_CAL_SEQ
+		 FROM ADD_CAL_ENV
+		WHERE 1=1
+		<if test="USER_ID != null"> 
+			AND USER_ID = #{USER_ID}
+		</if> 
+	</select>
+	
+	<insert id="insertCalEnv" parameterType="hashMap">
+	 INSERT INTO ADD_CAL_ENV
+		   (
+			 USER_ID
+		   , CAL_THEMA_GB
+		   , DEFAULT_CAL_SEQ
+		   , INSERT_DTTM
+		   , INSERT_ID
+		   , INSERT_IP
+		   , INSERT_PGM
+		   , UPDATE_DTTM
+		   , UPDATE_ID
+		   , UPDATE_IP
+		   , UPDATE_PGM )
+	 VALUES
+		   ( #{USER_ID}
+		   , #{CAL_THEMA_GB}
+		   , #{DEFAULT_CAL_SEQ}
+		   , NOW()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		   , NOW()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM} )
+	</insert>
+	
+	<update id="updateCalEnv" parameterType="hashMap">
+	   UPDATE ADD_CAL_ENV
+		  SET CAL_THEMA_GB = #{CAL_THEMA_GB}
+			, DEFAULT_CAL_SEQ = #{DEFAULT_CAL_SEQ}
+			, UPDATE_DTTM = NOW()
+			, UPDATE_ID = #{SYSTEM_ID}
+			, UPDATE_IP = #{SYSTEM_IP}
+			, UPDATE_PGM = #{SYSTEM_PGM}
+		WHERE USER_ID = #{USER_ID}
+	</update>
+	
+	<delete id="deleteCalEnv" parameterType="hashMap">
+		DELETE FROM ADD_CAL_ENV
+		 WHERE USER_ID = #{USER_ID}
+	</delete>
+
+</mapper>

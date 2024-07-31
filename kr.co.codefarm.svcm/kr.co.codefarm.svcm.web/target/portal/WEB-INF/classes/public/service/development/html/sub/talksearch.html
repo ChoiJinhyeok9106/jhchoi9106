@@ -1,0 +1,99 @@
+<h2>팝업-톡 작성 팝업</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">톡 작성 팝업</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>톡 작성 팝업 활용법</li>
+	        	<li>ref를 통한 오픈함수를 이용해 팝업을 오픈합니다.</br>ex) this.$refs.popuptalk.showTalkPopup();</li>
+	        	<li>'id'를 지정하여 사용합니다.</li>
+	        	<li>:recvids 에 '홍길동;20xxxxxxx,박길동;20xxxxxxx' 형태로 다건 및 이름, 학번/직원번호로 데이터를 전달 할 수 있습니다.</li>
+	        	<li>:sendid 에 전송할 사용자의 아이디를 입력할 수 있습니다. (default: 본인 아이디)</li>
+	        	<li>:fixedrecvids가 참일 경우 recvids를 팝업 창에서 수정하실 수 없습니다.</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><popup-talk ref="[popuptalk:String]" ></popup-talk>
+			var vm = new Vue({
+				el: '#app',
+			    data: {
+					returnMessage : ''
+			    },
+				methods: {
+					callback(message){
+						this.returnMessage = JSON.stringify(message);
+					}
+				}
+			});
+		</textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3">실행</h3>
+        <div class="row form-row">
+	  		<div class="form-group col s12 l12">
+				<label for="appNm" class="label-type01">톡 전송 팝업 테스트</label>
+				<input type="button" value="팝업 열기" class="btn type02 size-m" @click="openPopup">
+			</div>
+		</div>
+        <popup-talk id="talkpopoup1" ref="popuptalk" :recvids="'이함률;201622221,모혜표;30075,모표최;50083'" :sendid="'codefarm@codefarm.co.kr'" :modifiable="true" :fixedrecvids="true"></popup-talk>
+        <br/>
+        <textarea id="codeEditor2"><popup-talk id="talkpopoup1" ref="popuptalk" :recvids="'이함률;201622221,모혜표;30075,모표최;50083'" :sendid="'codefarm@codefarm.co.kr'" :modifiable="true" :fixedrecvids="true"></popup-talk></textarea>
+    </section>
+    
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     data: {
+         returnMessage : ''
+     },
+     methods: {
+    	 callback: function(message){
+         	this.returnMessage = JSON.stringify(message);
+         },
+         openPopup: function(){
+        	 this.$refs.popuptalk.showTalkPopup();	 
+         }
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+ $(document).ready(function(){
+	editor('codeEditor1', 300, 'javascript');
+	editor('codeEditor2', 80, 'javascript');
+});
+
+function editor(id, height, dataGb) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: dataGb,
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

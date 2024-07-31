@@ -1,0 +1,184 @@
+@charset "utf-8";
+
+.sms_contents {
+    position: relative;
+    background-color:#fff;
+    padding:20px 15px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+.sms_contents .take-wrap {
+    position: relative;
+}
+.sms_contents .take-wrap h2 {
+    position: relative;
+    float:left;
+    font-size:16px;
+    color:#000;
+    font-family:'noto sans kr';
+    padding-left:30px;
+    margin: 0px !important;
+}
+.sms_contents .take-wrap h2:before {
+    position: absolute;
+    content: '\e9fa';
+    left:5px;
+    top:-1px;
+    font-family: 'feather';
+    color:#424b8c;
+    font-size:20px;
+
+}
+.sms_contents .take-wrap .total {
+    float:right;
+    font-size:14px;
+    color:#000;
+    font-weight:300;
+    font-family:'noto sans kr';
+    padding-right:5px;
+}
+.sms_contents .take-wrap .take-people-box {
+    display: inline-block;
+    width:100%;
+    padding:8px;
+    background-color:#eceef7;
+    border-radius:8px;
+    margin-top:10px;
+}
+.sms_contents .take-wrap .take-people-box .take-people-inner {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height:100px;
+    font-size: 0;
+}
+.sms_contents .take-wrap .take-people-box .take-people-inner .sel-people {
+    position: relative;
+    display: block;
+    font-size:13px;
+    color:#364085;
+    padding:8px 5px 8px 20px;
+    border:1px solid #d7daf1;
+    border-radius:5em;
+    background-color:#fff;
+    margin:2px 2px;
+    font-family:'noto sans kr';
+}
+.sms_contents .take-wrap .take-people-box .take-people-inner .sel-people .tel {
+    display: inline-block;
+    color:#444;
+    margin-left:15px;
+}
+.sms_contents .take-wrap .take-people-box .take-people-inner .sel-people a {
+    position: absolute;
+    top:4px;
+    right:5px;
+    color:#9ea4d0;
+    font-size:20px;
+    margin-left:10px;
+}
+.sms_contents .message-wrap {
+    position: relative;
+    margin-top:20px;
+    text-align: right;
+}
+.sms_contents .message-wrap .byte {
+    font-size:12px;
+    color:#aaa;
+    font-weight: 300;
+    font-family:'noto sans kr';
+    padding-right:5px;
+}
+.sms_contents .message-wrap .byte span {
+    padding:0 3px;
+}
+.sms_contents .message-wrap .message-box {
+    display: inline-block;
+    width:100%;
+    padding:15px;
+    border:1px solid #9ea4d0;
+    border-radius:8px;
+    margin-top:5px;
+}
+.sms_contents .message-wrap .message-box .message-inner {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height:180px;
+    text-align: left;
+    border:0;
+    padding:0;
+}
+.sms_contents .message-wrap .message-box .message-inner:focus {
+    border:0;
+    box-shadow: none;
+}
+
+[contenteditable=true]:empty:before{
+  content: attr(placeholder);
+  display: block; /* For Firefox */
+}
+
+div[contenteditable=true] {
+  color : #888;
+  font-size: 13px;
+  width: 100%;
+  font-weight:300;
+  font-family:'noto sans kr';
+}
+
+.sms_contents .send-wrap {
+    position: relative;
+    display: inline-block;
+    width:100%;
+    margin-top:20px;
+    border-bottom:2px solid #666faf;
+}
+.sms_contents .send-wrap h2 {
+    position: relative;
+    float:left;
+    font-size:16px;
+    color:#000;
+    font-family:'noto sans kr';
+    padding-left:30px;
+    padding-top:10px;
+    margin: 0px !important;
+}
+.sms_contents .send-wrap h2:before {
+    position: absolute;
+    content: '\e9f6';
+    left:5px;
+    top:8px;
+    font-family: 'feather';
+    color:#424b8c;
+    font-size:20px;
+
+}
+.sms_contents .send-wrap input.send-tel {
+    float:right;
+    width:50%;
+    font-size:16px;
+    color:#000;
+    font-family:'noto sans kr';
+    text-align: right;
+    border:0;
+}
+.sms_contents .send-wrap input.send-tel:focus {
+    border:0;
+    box-shadow: none;
+}
+
+.sms_contents .btn-wrap {
+    position: relative;
+    display: inline-block;
+    width:100%;
+    padding:30px 0 0;
+    text-align: center;
+}
+.sms_contents .btn-wrap .btn-send {
+    display: inline-block;
+    padding:10px 30px 12px;
+    font-size:16px;
+    color:#fff;
+    font-family:'noto sans kr';
+    background-color:#364085;
+    border-radius:5em;
+}

@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.defaultinfo">
+		
+	<select id="getDefaultinfoList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.SITE_SEQ
+			 , A.SITE_NM
+			 , A.BIZNO
+			 , A.CORPNO
+			 , A.CO_NM
+			 , A.CO_ENM
+			 , A.ADDR1
+			 , A.ADDR2
+			 , A.ZIPNO
+			 , A.EOPTAE
+			 , A.JONGMOK
+			 , A.COPYRIGHT
+			 , A.HOEWON_JOIN_URL
+			 , A.PWD_FIND_URL
+			 , A.SEND_MAIL
+			 , A.SEND_NM
+			 , A.DEFAULT_MAIL_TITLE
+			 , A.SMS_USE_YN
+			 , A.SMS_SEND_NO
+			 , A.TEL_NO
+			 , A.FAX_NO
+			 , A.REMARK
+			 , A.USE_YN
+			 , A.DAEPYO_YN
+			 , A.AGREE_ITEM1_NM
+			 , A.AGREE_ITEM1_PILSU_YN
+			 , A.AGREE_ITEM1_USE_YN
+			 , A.AGREE_ITEM1_CONTENTS
+			 , A.AGREE_ITEM2_NM
+			 , A.AGREE_ITEM2_PILSU_YN
+			 , A.AGREE_ITEM2_USE_YN
+			 , A.AGREE_ITEM2_CONTENTS
+			 , A.AGREE_ITEM3_NM
+			 , A.AGREE_ITEM3_PILSU_YN
+			 , A.AGREE_ITEM3_USE_YN
+			 , A.AGREE_ITEM3_CONTENTS
+			 , A.AGREE_ITEM4_NM
+			 , A.AGREE_ITEM4_PILSU_YN
+			 , A.AGREE_ITEM4_USE_YN
+			 , A.AGREE_ITEM4_CONTENTS
+	         <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , A.CNT
+			 , A.RNUM
+			 </if>
+		  FROM ( 
+					 SELECT SA.SITE_SEQ
+						  , SA.SITE_NM
+						  , SA.BIZNO
+						  , SA.CORPNO
+						  , SA.CO_NM
+						  , SA.CO_ENM
+						  , SA.ADDR1
+						  , SA.ADDR2
+						  , SA.ZIPNO
+						  , SA.EOPTAE
+						  , SA.JONGMOK
+						  , SA.COPYRIGHT
+						  , SA.HOEWON_JOIN_URL
+						  , SA.PWD_FIND_URL
+						  , SA.SEND_MAIL
+						  , SA.SEND_NM
+						  , SA.DEFAULT_MAIL_TITLE
+						  , SA.SMS_USE_YN
+						  , SA.SMS_SEND_NO
+						  , SA.TEL_NO
+						  , SA.FAX_NO
+						  , SA.REMARK
+						  , SA.USE_YN
+						  , SA.DAEPYO_YN
+						  , SA.AGREE_ITEM1_NM
+						  , SA.AGREE_ITEM1_PILSU_YN
+						  , SA.AGREE_ITEM1_USE_YN
+						  , SA.AGREE_ITEM1_CONTENTS
+						  , SA.AGREE_ITEM2_NM
+						  , SA.AGREE_ITEM2_PILSU_YN
+						  , SA.AGREE_ITEM2_USE_YN
+						  , SA.AGREE_ITEM2_CONTENTS
+						  , SA.AGREE_ITEM3_NM
+						  , SA.AGREE_ITEM3_PILSU_YN
+						  , SA.AGREE_ITEM3_USE_YN
+						  , SA.AGREE_ITEM3_CONTENTS
+						  , SA.AGREE_ITEM4_NM
+						  , SA.AGREE_ITEM4_PILSU_YN
+						  , SA.AGREE_ITEM4_USE_YN
+						  , SA.AGREE_ITEM4_CONTENTS
+	                      <if test="pPageNo != null and pPageNo != ''.toString()">
+	                      , ROW_NUMBER() OVER(ORDER BY SA.SITE_SEQ DESC) AS RNUM
+	                      , COUNT(*) OVER() AS CNT
+	                      </if>
+					   FROM SMN_DEFAULTINFO SA
+					  WHERE 1=1
+					  <if test="pSearchType eq '1'.toString()">AND SA.SITE_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+	        		  <if test="pSearchType eq '2'.toString()">AND SA.CO_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			   ) A
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+           AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+         ORDER BY A.RNUM
+         </if>
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.SITE_SEQ DESC
+         </if>
+	</select>
+	
+	<select id="getRepresentative" parameterType="hashMap" resultType="hashMap">
+		SELECT A.SITE_SEQ
+             , A.SITE_NM
+             , A.BIZNO
+             , A.CORPNO
+             , A.CO_NM
+             , A.CO_ENM
+             , A.ADDR1
+             , A.ADDR2
+             , A.ZIPNO
+             , A.TEL_NO
+             , A.FAX_NO
+             , A.EOPTAE
+             , A.JONGMOK
+             , A.COPYRIGHT
+             , A.HOEWON_JOIN_URL
+             , A.PWD_FIND_URL
+             , A.SEND_MAIL
+             , A.SEND_NM
+             , A.DEFAULT_MAIL_TITLE
+             , A.SMS_USE_YN
+             , A.SMS_SEND_NO
+             , A.TEL_NO
+             , A.FAX_NO
+             , A.REMARK
+             , A.USE_YN
+             , A.DAEPYO_YN
+             , A.AGREE_ITEM1_NM
+             , A.AGREE_ITEM1_PILSU_YN
+             , A.AGREE_ITEM1_USE_YN
+             , A.AGREE_ITEM1_CONTENTS
+             , A.AGREE_ITEM2_NM
+             , A.AGREE_ITEM2_PILSU_YN
+             , A.AGREE_ITEM2_USE_YN
+             , A.AGREE_ITEM2_CONTENTS
+             , A.AGREE_ITEM3_NM
+             , A.AGREE_ITEM3_PILSU_YN
+             , A.AGREE_ITEM3_USE_YN
+             , A.AGREE_ITEM3_CONTENTS
+             , A.AGREE_ITEM4_NM
+             , A.AGREE_ITEM4_PILSU_YN
+             , A.AGREE_ITEM4_USE_YN
+             , A.AGREE_ITEM4_CONTENTS
+             , REPLACE(B.FILE_PATH,'\\','/') AS LOGO
+             , REPLACE(C.FILE_PATH,'\\','/') AS LOGO1
+             , REPLACE(D.FILE_PATH,'\\','/') AS LOGO2
+		     , REPLACE(E.FILE_PATH,'\\','/') AS BG
+             , C.FILE_PATH AS EMAIL_LOGO
+		  FROM SMN_DEFAULTINFO A
+          LEFT OUTER JOIN SMN_FILE B
+            ON B.FILE_ID = 'SMN_DEFAULTINFO'
+           AND B.FILE_KEY = A.SITE_SEQ
+           AND B.FILE_HANGMOK = 'logoImg1'
+	       AND NOT EXISTS
+	           (
+	               SELECT 'X'
+	                 FROM SMN_FILE SUB_A
+	                WHERE 1=1
+	                  AND B.FILE_ID = SUB_A.FILE_ID
+	                  AND B.FILE_KEY = SUB_A.FILE_KEY
+	                  AND B.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+	                  AND B.FILE_NO &lt; SUB_A.FILE_NO
+	           )
+          LEFT OUTER JOIN SMN_FILE C
+            ON C.FILE_ID = 'SMN_DEFAULTINFO'
+           AND C.FILE_KEY = A.SITE_SEQ
+           AND C.FILE_HANGMOK = 'logoImg2'
+	       AND NOT EXISTS
+	           (
+	               SELECT 'X'
+	                 FROM SMN_FILE SUB_A
+	                WHERE 1=1
+	                  AND C.FILE_ID = SUB_A.FILE_ID
+	                  AND C.FILE_KEY = SUB_A.FILE_KEY
+	                  AND C.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+	                  AND C.FILE_NO &lt; SUB_A.FILE_NO
+	           )
+          LEFT OUTER JOIN SMN_FILE D
+            ON D.FILE_ID = 'SMN_DEFAULTINFO'
+           AND D.FILE_KEY = A.SITE_SEQ
+           AND D.FILE_HANGMOK = 'logoImg3'
+	       AND NOT EXISTS
+	           (
+	               SELECT 'X'
+	                 FROM SMN_FILE SUB_A
+	                WHERE 1=1
+	                  AND D.FILE_ID = SUB_A.FILE_ID
+	                  AND D.FILE_KEY = SUB_A.FILE_KEY
+	                  AND D.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+	                  AND D.FILE_NO &lt; SUB_A.FILE_NO
+	           )
+          LEFT OUTER JOIN SMN_FILE E
+            ON E.FILE_ID = 'SMN_DEFAULTINFO'
+           AND E.FILE_KEY = A.SITE_SEQ
+           AND E.FILE_HANGMOK = 'bgImg'
+	       AND NOT EXISTS
+	           (
+	               SELECT 'X'
+	                 FROM SMN_FILE SUB_A
+	                WHERE 1=1
+	                  AND E.FILE_ID = SUB_A.FILE_ID
+	                  AND E.FILE_KEY = SUB_A.FILE_KEY
+	                  AND E.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+	                  AND E.FILE_NO &lt; SUB_A.FILE_NO
+	           )
+		 WHERE 1=1
+		   AND A.USE_YN = 'Y'
+		   AND A.DAEPYO_YN = 'Y' 
+		 <if test="SITE_SEQ != null and SITE_SEQ != ''.toString()">A.SITE_SEQ = #{SITE_SEQ}</if>
+	</select>
+		
+	<select id="getRepresentList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.SITE_SEQ
+		     , A.DAEPYOJA_GB
+		     , A.DAEPYOJA_SEQ
+		  FROM SMN_DAEPYOJA A
+		 WHERE 1=1
+		   AND A.SITE_SEQ = #{siteSeq}  
+	</select>
+	
+	<insert id="insertDefaultInfo" parameterType="hashMap">
+		<if test="DAEPYO_YN eq 'Y'.toString()">
+			UPDATE SMN_DEFAULTINFO
+			   SET DAEPYO_YN = 'N';	
+		</if>
+    	<selectKey keyProperty="SITE_SEQ" resultType="int" order="BEFORE">
+	     	SELECT COALESCE(MAX(SITE_SEQ),0)+1
+	     	  FROM SMN_DEFAULTINFO
+  		</selectKey>
+		
+		INSERT INTO SMN_DEFAULTINFO 
+		(  
+			SITE_SEQ
+	      , SITE_NM
+	      , BIZNO
+	      , CORPNO
+	      , CO_NM
+	      , CO_ENM
+	      , ADDR1
+	      , ADDR2
+	      , ZIPNO
+	      , EOPTAE
+	      , JONGMOK
+	      , COPYRIGHT
+	      , HOEWON_JOIN_URL
+	      , PWD_FIND_URL
+	      , SEND_MAIL
+	      , SEND_NM
+	      , DEFAULT_MAIL_TITLE
+	      , SMS_USE_YN
+	      , SMS_SEND_NO
+	      , TEL_NO
+	      , FAX_NO
+	      , REMARK
+	      , USE_YN
+	      , DAEPYO_YN
+	      , AGREE_ITEM1_NM
+	      , AGREE_ITEM1_PILSU_YN
+	      , AGREE_ITEM1_USE_YN
+	      , AGREE_ITEM1_CONTENTS
+	      , AGREE_ITEM2_NM
+	      , AGREE_ITEM2_PILSU_YN
+	      , AGREE_ITEM2_USE_YN
+	      , AGREE_ITEM2_CONTENTS
+	      , AGREE_ITEM3_NM
+	      , AGREE_ITEM3_PILSU_YN
+	      , AGREE_ITEM3_USE_YN
+	      , AGREE_ITEM3_CONTENTS
+	      , AGREE_ITEM4_NM
+	      , AGREE_ITEM4_PILSU_YN
+	      , AGREE_ITEM4_USE_YN
+	      , AGREE_ITEM4_CONTENTS
+	      , INSERT_DTTM
+	      , INSERT_ID
+	      , INSERT_IP
+	      , INSERT_PGM
+	      , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES 
+		(
+		    #{SITE_SEQ}
+		  , #{SITE_NM}
+		  , #{BIZNO}
+		  , #{CORPNO}
+		  , #{CO_NM}
+		  , #{CO_ENM}
+		  , #{ADDR1}
+		  , #{ADDR2}
+		  , #{ZIPNO}
+		  , #{EOPTAE}
+		  , #{JONGMOK}
+		  , #{COPYRIGHT}
+		  , #{HOEWON_JOIN_URL}
+		  , #{PWD_FIND_URL}
+		  , #{SEND_MAIL}
+		  , #{SEND_NM}
+		  , #{DEFAULT_MAIL_TITLE}
+		  , #{SMS_USE_YN}
+		  , #{SMS_SEND_NO}
+		  , #{TEL_NO}
+		  , #{FAX_NO}
+		  , #{REMARK}
+		  , #{USE_YN}
+		  , #{DAEPYO_YN}
+	      , #{AGREE_ITEM1_NM}
+	      , #{AGREE_ITEM1_PILSU_YN}
+	      , #{AGREE_ITEM1_USE_YN}
+	      , #{AGREE_ITEM1_CONTENTS}	
+	      , #{AGREE_ITEM2_NM}
+	      , #{AGREE_ITEM2_PILSU_YN}
+	      , #{AGREE_ITEM2_USE_YN}
+	      , #{AGREE_ITEM2_CONTENTS}	
+	      , #{AGREE_ITEM3_NM}
+	      , #{AGREE_ITEM3_PILSU_YN}
+	      , #{AGREE_ITEM3_USE_YN}
+	      , #{AGREE_ITEM3_CONTENTS}	
+	      , #{AGREE_ITEM4_NM}
+	      , #{AGREE_ITEM4_PILSU_YN}
+	      , #{AGREE_ITEM4_USE_YN}
+	      , #{AGREE_ITEM4_CONTENTS}	
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}				
+		);
+	
+   	</insert>
+   	
+   	<update id="updateDefaultInfo" parameterType="hashMap">
+   	
+   		<if test="DAEPYO_YN eq 'Y'.toString()">
+			UPDATE SMN_DEFAULTINFO
+			   SET DAEPYO_YN = 'N';	
+		</if>
+			
+		UPDATE SMN_DEFAULTINFO
+		   SET SITE_NM 		        = #{SITE_NM}
+			 , BIZNO		        = #{BIZNO}
+			 , CORPNO 		        = #{CORPNO}	
+			 , CO_NM 		        = #{CO_NM}
+			 , CO_ENM 		        = #{CO_ENM}	
+			 , ADDR1 		        = #{ADDR1}
+			 , ADDR2 		        = #{ADDR2}
+			 , ZIPNO 		        = #{ZIPNO}
+			 , EOPTAE 		        = #{EOPTAE}	
+			 , JONGMOK 		        = #{JONGMOK}
+			 , COPYRIGHT	        = #{COPYRIGHT}
+			 , HOEWON_JOIN_URL      = #{HOEWON_JOIN_URL}
+			 , PWD_FIND_URL         = #{PWD_FIND_URL}
+			 , SEND_MAIL			= #{SEND_MAIL}
+			 , SEND_NM				= #{SEND_NM}
+			 , DEFAULT_MAIL_TITLE	= #{DEFAULT_MAIL_TITLE}
+			 , SMS_USE_YN			= #{SMS_USE_YN}
+			 , SMS_SEND_NO			= #{SMS_SEND_NO}
+			 , TEL_NO				= #{TEL_NO}
+			 , FAX_NO				= #{FAX_NO}
+			 , REMARK 		        = #{REMARK}	
+			 , USE_YN 		        = #{USE_YN}	
+			 , DAEPYO_YN 	        = #{DAEPYO_YN}
+			 , AGREE_ITEM1_NM       = #{AGREE_ITEM1_NM}	
+			 , AGREE_ITEM1_PILSU_YN = #{AGREE_ITEM1_PILSU_YN}	
+			 , AGREE_ITEM1_USE_YN   = #{AGREE_ITEM1_USE_YN}	
+			 , AGREE_ITEM1_CONTENTS = #{AGREE_ITEM1_CONTENTS}	
+			 , AGREE_ITEM2_NM       = #{AGREE_ITEM2_NM}	
+			 , AGREE_ITEM2_PILSU_YN = #{AGREE_ITEM2_PILSU_YN}	
+			 , AGREE_ITEM2_USE_YN   = #{AGREE_ITEM2_USE_YN}	
+			 , AGREE_ITEM2_CONTENTS = #{AGREE_ITEM2_CONTENTS}	
+			 , AGREE_ITEM3_NM       = #{AGREE_ITEM3_NM}	
+			 , AGREE_ITEM3_PILSU_YN = #{AGREE_ITEM3_PILSU_YN}	
+			 , AGREE_ITEM3_USE_YN   = #{AGREE_ITEM3_USE_YN}	
+			 , AGREE_ITEM3_CONTENTS = #{AGREE_ITEM3_CONTENTS}	
+			 , AGREE_ITEM4_NM       = #{AGREE_ITEM4_NM}	
+			 , AGREE_ITEM4_PILSU_YN = #{AGREE_ITEM4_PILSU_YN}	
+			 , AGREE_ITEM4_USE_YN   = #{AGREE_ITEM4_USE_YN}	
+			 , AGREE_ITEM4_CONTENTS = #{AGREE_ITEM4_CONTENTS}	
+			 , UPDATE_DTTM          = SYSDATE()
+			 , UPDATE_ID            = #{SYSTEM_ID}
+			 , UPDATE_IP            = #{SYSTEM_IP}
+			 , UPDATE_PGM           = #{SYSTEM_PGM}
+		 WHERE SITE_SEQ 	        = #{SITE_SEQ};
+	
+	</update>
+     
+     <delete id="deleteDefaultInfo" parameterType="hashMap">
+     
+		DELETE FROM SMN_DEFAULTINFO
+    	 WHERE SITE_SEQ = #{siteSeq};
+    	 
+    	DELETE FROM SMN_DAEPYOJA
+         WHERE SITE_SEQ = #{siteSeq};
+	
+    </delete>
+    
+    <insert id="insertHistory" parameterType="hashMap">
+    	<selectKey keyProperty="POST_NO" resultType="string" order="BEFORE">
+      		SELECT COALESCE(MAX(POST_NO), 0) + 1
+              FROM ADD_BOARD_POST
+             WHERE 1=1
+  		</selectKey>
+
+    	INSERT INTO ADD_BOARD_POST
+		(
+		    POST_NO
+		  , BOARD_SEQ
+		  , LV
+		  , UP_POST_NO
+		  , GONGJI_YN
+		  , TITLE
+		  , JAKSEONGJA_ID
+		  , JAKSEONGJA_NM
+		  , CONTENTS
+          , INSERT_DTTM
+          , INSERT_ID
+          , INSERT_IP
+          , INSERT_PGM
+          , UPDATE_DTTM
+          , UPDATE_ID
+          , UPDATE_IP
+          , UPDATE_PGM
+		)
+     	VALUES
+		(
+            #{POST_NO}
+		  , #{BOARD_SEQ}
+		  , '0'
+		  , '-1'
+		  , 'Y'
+		  , #{TITLE}
+		  , #{USER_ID}
+		  , #{USER_NM}
+		  , #{CONTENTS}
+          , NOW()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}
+          , NOW()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}
+		)
+    </insert>
+    
+	<select id="getLastHistory" parameterType="hashMap" resultType="hashMap">
+		SELECT TITLE
+		  	 , CONTENTS
+		  FROM ADD_BOARD_POST
+		 WHERE BOARD_SEQ = #{BOARD_SEQ}
+		 ORDER BY INSERT_DTTM DESC
+		 LIMIT 1
+	</select>
+    
+</mapper>

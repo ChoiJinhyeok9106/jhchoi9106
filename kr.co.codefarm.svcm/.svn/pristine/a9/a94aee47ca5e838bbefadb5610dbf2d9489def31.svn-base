@@ -1,0 +1,514 @@
+<h2>대표자 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!defaultinfoList.currentRow">
+		<h2 class="h2">기본정보 리스트</h2>
+		<div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pSearchType" v-model="pSearchType" style="width:184px;" class="size-m">
+	            <option value="1">사이트명</option>
+	            <option value="2">회사명</option>
+            </select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	    </div>
+	    
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{defaultinfoListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{defaultinfoListPaging.getCurrentPage()}}</span> / {{defaultinfoListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="mainListLoading">
+					<caption>사이트 순번, 사이트 명, 주소</caption>
+					<colgroup>
+						<col />
+						<col width="40%" />
+						<col width="10%" />
+						<col width="10%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col" class="left">사이트 명</th>
+							<th scope="col" class="left">주소 </th>
+							<th scope="col">사용여부</th>
+							<th scope="col">대표여부</th>
+						</tr>
+					</thead>
+					<tbody v-if="defaultinfoList.getRowCount() > 0">
+						<tr v-for="(item, index) in defaultinfoList.data" v-if="defaultinfoList.getRowType(index) != 8">
+							<td class="left" data-header="사이트 명"><a href="#!" @click="rowClick(index)">{{item.SITE_NM}}</a></td>
+							<td class="left" data-header="주소"><a href="#!" @click="rowClick(index)">{{item.ADDR1}} {{item.ADDR2}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="대표여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.DAEPYO_YN == 'Y', 'btn-table-type01':item.DAEPYO_YN == 'N'}"><span :class="{'icon-checkmark':item.DAEPYO_YN == 'Y', 'icon-minus-circle':item.DAEPYO_YN == 'N'}"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="defaultinfoListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+		
+		
+	<section class="cont_box board-view-page nonsubject-info" v-if="defaultinfoList.currentRow">
+		<div class="row form-row head-box">
+   			<div class="form-group col s12 l8">
+	   			<p class="title">[{{defaultinfoList.currentRow.SITE_NM}}] {{defaultinfoList.currentRow.CO_NM}}</p>
+	        	<p class="description">{{defaultinfoList.currentRow.ADDR1}} {{defaultinfoList.currentRow.ADDR2}}</p>
+   			</div>
+    		<div class="form-group col s12 l4 right">
+	    		<a href="#!" class="btn type01 size-m left-icon icon-corner-left-up" @click="representativeList.selectRow(-1); defaultinfoList.selectRow(-1);">목록</a>
+	    		<input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+    		</div>
+   		</div>
+   		
+   		<div class="col s12 m12 xl12">
+			<table class="table-type01 response" summary="대표자구분,대표자 명, 대표자 직함, 시작일자, 종료일자" id="sub1ListLoading">
+				<caption>대표자 목록</caption>
+				<colgroup>
+					<col width="3%" />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="10%" />
+					<col width="3%" />					
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col">상태</th>
+						<th scope="col">대표자 구분</th>
+						<th scope="col">대표자 명 </th>
+						<th scope="col">대표자 직함</th>
+						<th scope="col">임기기간</th>	
+						<th scope="col">삭제</th>					
+					</tr>
+				</thead>
+				<tbody v-if="representativeList.getRowCount() > 0">
+					<tr v-for="(item, index) in representativeList.data" v-if="representativeList.getRowType(index) != 8">
+						<td :class="representativeList.getRowType(index, 'class')" data-header="상태"></td>
+						<td class="left" data-header="대표자구분"><a href="#!" @click="subRowClick(index)">{{item.DAEPYOJA_GB ? smnCommcode.getCommcodeNm('SMN','DAEPYOJA_GB',item.DAEPYOJA_GB,'CD_NM') : ''}}</a></td>
+						<td class="left" data-header="대표자명"><a href="#!" @click="subRowClick(index)">{{item.DAEPYOJA_NM}}</a></td>
+						<td class="left" data-header="대표자 직함"><a href="#!" @click="subRowClick(index)">{{item.DAEPYOJA_JIKHAM}}</a></td>
+						<td data-header="임기기간"><a href="#!" @click="subRowClick(index)">{{mask('YYYY-MM-DD',item.FR_DT)}} ~ {{mask('YYYY-MM-DD',item.TO_DT)}}</a></td>
+						<td data-header="삭제"><a href="#!" @click="messagePopup('ID_DELETE', index)"><span class="icon-trashcan"></span></a></td>
+					</tr>	
+				</tbody>
+				<tbody v-else>
+					<tr>
+						<td colspan="100">검색결과가 없습니다.</td>
+					</tr>
+				</tbody>
+			</table>
+			<paging :pagingset="representativeListPaging" :type="'normal'"></paging>
+		</div>
+		
+		<section class="cont_box" v-if="representativeList.currentRow">
+			<h2 class="h2">대표자 관리 상세</h2>
+			<div class="row form-row resume-basic">
+	            <div class="form-group col s12 l8">
+	                <div class="row form-row">
+						<div class="form-group col s12 m6 l6 xl6">
+				            <label class="label-type01 required" for="daepyojaGb">대표자 구분</label>
+				            <select class="size-m" id="daepyojaGb" name="daepyojaGb" data-vv-as="대표자구분 " v-model="representativeList.currentRow.DAEPYOJA_GB" :disabled="updateDisabled" v-validate="'required'" v-bind:class="{'invalid': errors.has('daepyojaGb')}">
+						          <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'DAEPYOJA_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+			        		</select>
+			        		<invalid-message :visible="representativeList.currentRow" :name="'daepyojaGb'" :verror="errors"/>
+				        </div>
+				        <div class="form-group col s12 m6 l6 xl6">
+				            <label class="label-type01 required" for="daepyojaNm">대표자 명</label>
+				            <input class="size-m" type="text" id="daepyojaNm"  name="daepyojaNm" placeholder="대표자 명" data-vv-as="대표자 명 " v-model="representativeList.currentRow.DAEPYOJA_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('daepyojaNm')}"/>
+				            <invalid-message :visible="representativeList.currentRow" :name="'daepyojaNm'" :verror="errors"/>
+				        </div>
+				    </div>
+					<div class="row form-row">
+				    	<div class="form-group col s12 m4 l4 xl4">
+				    		<label class="label-type01 required" for="daepyojaJikham">대표자 직함</label>
+				            <input class="size-m"  type="text" id="daepyojaJikham"  name="daepyojaJikham" placeholder="ex) 산학협력단장, CEO, 대표자.. " data-vv-as="대표자 직함" v-model="representativeList.currentRow.DAEPYOJA_JIKHAM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('daepyojaJikham')}"/>
+				            <invalid-message :visible="representativeList.currentRow" :name="'daepyojaJikham'" :verror="errors"/>
+						</div>
+				    	<div class="form-group col s12 m4 l4 xl4">
+				    		<label for="frDt" class="label-type01 required">시작일자</label>
+							<div class="date-form-wrap">
+								<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+								<date-picker :value="representativeList.currentRow.FR_DT" @input="function(value){ representativeList.currentRow ? representativeList.currentRow.FR_DT = value : ''}" :invalid="errors.has('frDt')"></date-picker>
+								<input type="hidden" id="frDt" name="frDt" v-model="representativeList.currentRow.FR_DT" data-vv-as="시작 일자 " v-validate="'required'">
+								<invalid-message :visible="representativeList.currentRow" :name="'frDt'" :verror="errors"/>
+                 			</div>
+				    	</div>
+				        <div class="form-group col s12 m4 l4 xl4">
+			            	<label for="toDt" class="label-type01 required">종료일자</label>
+							<div class="date-form-wrap">
+								<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+								<date-picker :value="representativeList.currentRow.TO_DT" @input="function(value){ representativeList.currentRow ? representativeList.currentRow.TO_DT = value : ''}" :invalid="errors.has('toDt')"></date-picker>
+								<input type="hidden" id="toDt" name="toDt" v-model="representativeList.currentRow.TO_DT" data-vv-as="종료 일자 " v-validate="'required'">
+								<invalid-message :visible="representativeList.currentRow" :name="'toDt'" :verror="errors"/>
+							</div>
+				        </div>
+					</div>
+					<div class="row form-row">
+				        <div class="form-group col s12 m12 l12 xl12">
+				            <label class="label-type01" for="hpNo">직인 파일</label>
+				            <single-file-uploader :fileset="userStampFile" :type="'file'" :fileid="'SMN_DAEPYOJA'" :filekey="representativeList.currentRow.DAEPYOJA_SEQ ? representativeList.currentRow.SITE_SEQ + '#' + representativeList.currentRow.DAEPYOJA_GB + '#' + representativeList.currentRow.DAEPYOJA_SEQ : ''" :filehangmok="'stamp'" :modify="true"></single-file-uploader>
+				        </div> 
+					</div>
+	            </div>
+	            <div class="form-group col s12 l4 center">                                
+	                <div class="box-type03 d-inline-block">
+						<single-file-uploader :fileset="userPicFile" :type="'img'" :fileid="'SMN_DAEPYOJA'" :filekey="representativeList.currentRow.DAEPYOJA_SEQ ? representativeList.currentRow.SITE_SEQ + '#' + representativeList.currentRow.DAEPYOJA_GB + '#' + representativeList.currentRow.DAEPYOJA_SEQ : ''" :filehangmok="'pic'" :modify="true"></single-file-uploader>
+	                </div>
+	            </div>
+	        </div>
+			<div class="col-inline btn-line right">
+				<div class="col-inline right">
+					<a href="#!" class="btn type01 size-m" @click="messagePopup('ID_DELETE', representativeList.rowposition)">삭제</a>
+					<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+				</div>
+			</div>    
+		</section>
+	</section>
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+* vue start 
+********************************************************************************************************************************************************************/
+var rowpos='';
+var date1;
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		defaultinfoList: new Dataset(),
+		defaultinfoListPaging: new PagingSet(5, 5),
+		representativeList : new Dataset(),
+		representativeListPaging: new PagingSet(5, 5),
+		pSearchType: '1',
+        pSearchArgv: '',
+		updateDisabled: true,
+		userPicFile: new SingleFileSet('SMN'),
+		userStampFile: new SingleFileSet('SMN'),
+		messageModal: new ModalSet('representative-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+		sub1ListLoading: {id:'sub1ListLoading', val:false},
+		errorBag: { 
+			name: '' 
+	  	}		  
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	created : function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		// defaultinfoList(기본정보관리) rowposition changed
+		'defaultinfoList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.defaultinfoList.enableevent && val > -1){
+					this.setRepresentativeList();						
+				}
+			}
+		},
+		'defaultinfoList.data': {
+			handler: function (val, oldVal) {
+				if(this.defaultinfoList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.defaultinfoList.beforeData[rowposition][colNm];
+				          	vm.defaultinfoList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.defaultinfoList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'representativeList.rowposition' :{
+	    	handler: function (val, oldVal) {
+				if(this.representativeList.enableevent && val > -1){
+					var changeYn = this.representativeList.dataCompare(oldVal);
+					var rowType = this.representativeList.getRowType(val);
+					var oldRowType = this.representativeList.getRowType(oldVal);
+					var self = this;
+					
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.representativeList.setDefaultRow(oldVal);
+					}
+					
+					if(val != -1){
+						var siteSeq = self.representativeList.getColumn(val, 'SITE_SEQ');
+						var daepyojaGb = self.representativeList.getColumn(val, 'DAEPYOJA_GB');
+						var daepyojaSeq = self.representativeList.getColumn(val, 'DAEPYOJA_SEQ');
+						
+						this.userPicFile.init();
+                    	this.userStampFile.init();
+						
+						if(rowType == this.ROWTYPE_NORMAL  || rowType == this.ROWTYPE_UPDATE){
+							this.updateDisabled = true;	
+						}else{
+							this.updateDisabled = false;
+						}
+						
+						if(rowType != this.ROWTYPE_INSERT){
+                        	this.userPicFile.getFiles('SMN_DAEPYOJA', siteSeq+'#'+daepyojaGb+'#'+daepyojaSeq, 'pic', null);
+                        	this.userStampFile.getFiles('SMN_DAEPYOJA', siteSeq+'#'+daepyojaGb+'#'+daepyojaSeq, 'stamp', null);
+                        }
+						this.$validator.reset();	
+					}
+				}
+			}
+	    },
+	 	'representativeList.data': {
+			handler: function (val, oldVal) {
+				if(this.representativeList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.representativeList.beforeData[rowposition][colNm];
+				          	vm.representativeList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.representativeList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'defaultinfoListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setDefaultinfoList();
+			}
+	    },
+	    'representativeListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.representativeList.pageChange(val, this.representativeListPaging.getRowCnt());
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'sub1ListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.sub1ListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setDefaultinfoList();
+	},
+	//함수
+	methods: {
+		 /* 검색 */
+        search: function(){
+        	var pageNo = this.defaultinfoListPaging.getCurrentPage();
+        	
+        	if(pageNo == 1){
+        		this.setDefaultinfoList();
+        	}else{
+        		this.defaultinfoListPaging.movePage(1);
+        	}  
+        },
+		/* 기본정보관리 리스트 조회 */
+		setDefaultinfoList: function(){
+			var self = this;
+			
+			if(isNull(this.pSearchArgv)) this.pSearchArgv = '';
+            if(isNull(this.pSearchType)){
+                this.pSearchType = '';
+                this.pSearchArgv = '';
+            }
+            
+            self.mainListLoading.val = true;
+			var returnVal = defaultinfoApi.service(this.pSearchType, this.pSearchArgv, this.defaultinfoListPaging.currentPage, this.defaultinfoListPaging.getRowCnt(), false);
+			
+			returnVal.then(function(response) {
+				self.defaultinfoList.setData(response.data);
+				
+				if(response.data.length > 0){
+					var totalCnt = self.defaultinfoList.data[0].CNT;
+					self.defaultinfoListPaging.setTotalCnt(totalCnt);
+				}else{
+					self.defaultinfoListPaging.setTotalCnt(0);
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		/*대표자 관리 리스트 조회 */
+		setRepresentativeList: function(){
+			var rowposition = this.defaultinfoList.rowposition;
+			var self = this;
+			
+			if(rowposition > -1){
+				var pSiteSeq = self.defaultinfoList.getColumn(rowposition,'SITE_SEQ');
+				
+				self.sub1ListLoading.val = true;
+				var returnVal = representativeApi.representativeService(pSiteSeq, false);
+				returnVal.then(function(response) {
+					self.representativeList.setRawData(response.data, self.representativeListPaging.getRowCnt());
+					
+					if(response.data.length > 0){
+						self.representativeListPaging.setTotalCnt(response.data.length);
+					}else{
+						self.representativeListPaging.setTotalCnt(0);
+					}
+				}).finally(function(){
+					self.sub1ListLoading.val = false;
+				});
+			}
+		},	
+		/*대표자 관리 신규*/
+		newRow: function(){
+			var addObj = {
+	                'SITE_SEQ': this.defaultinfoList.currentRow.SITE_SEQ,
+	                'DAEPYOJA_GB': '',
+	                'DAEPYOJA_SEQ': '',
+	                'DAEPYOJA_NM': '',
+	                'DAEPYOJA_JIKHAM': '',
+	                'FR_DT': moment().format('YYYYMMDD'),
+	                'TO_DT': moment().format('YYYYMMDD'),
+	                'PIC_URL': '',
+	            };
+			
+			var newRowPosition = this.representativeList.addRow(addObj);
+			this.representativeListPaging.setTotalCnt(parseInt(this.representativeListPaging.totalCnt,10)+1);
+		},
+		/* 대표자 관리  저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			if(this.errorBag.name == ''){
+				validate.then(function(response) {
+					if(response){
+						var defaultInfoRowpos = self.defaultinfoList.rowposition;
+						var rowposition = self.representativeList.rowposition;
+						var rowType = self.representativeList.getRowType(rowposition);
+						var returnVal = null;
+						
+						//신규
+						if(rowType == ROWTYPE_INSERT){
+							returnVal = representativeApi.representativeInsert(self.representativeList.currentRow, true);
+						}
+						//수정
+						else if(rowType == ROWTYPE_UPDATE){
+							returnVal = representativeApi.representativeUpdate(self.representativeList.currentRow, true);
+						}else{
+							notifySubmit('info', '대표자 정보 저장', '저장할 내역이 없습니다.', 'icon-message');
+						}
+						
+						if(!isNull(returnVal)){
+							returnVal.then(function(response) {
+								var data = response.data;
+								
+								if(parseInt(data,10) > 0 || parseInt(data._INSERT_ROW_CNT,10) > 0){
+									notifySubmit('success', '대표자 정보 저장', '저장이 완료되었습니다.', 'icon-save');
+									self.setRepresentativeList();
+								}else{
+									notifySubmit('warning', '대표자 정보 저장', '저장에 실패하였습니다.', 'icon-caution');
+								}
+							});
+						}
+					}
+				});
+			}else{
+				notifySubmit('warning', '대표자 정보 저장', '입력항목을 확인해주세요.', 'icon-caution');
+			}
+		},
+		/*대표자 관리 삭제*/
+		deleteRow: function(row){
+			var self = this;
+			var rowType = self.representativeList.getRowType(row); 
+			var returnVal = null;
+			var siteSeq = self.representativeList.getColumn(row, 'SITE_SEQ');
+			var daepyojaGb = self.representativeList.getColumn(row, 'DAEPYOJA_GB');
+			var daepyojaSeq = self.representativeList.getColumn(row, 'DAEPYOJA_SEQ');
+			
+			
+			self.representativeList.deleteRow(row);
+			self.representativeListPaging.setTotalCnt(parseInt(self.representativeListPaging.totalCnt,10)-1);
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = representativeApi.defaultinfoDelete(siteSeq, daepyojaGb, daepyojaSeq, true);
+			
+			 	returnVal.then(function(response) {
+					var data = response.data;
+					
+					self.userPicFile.delFiles('SMN_DAEPYOJA', siteSeq+'#'+daepyojaGb+'#'+daepyojaSeq, 'pic', null, null, false);
+					self.userStampFile.delFiles('SMN_DAEPYOJA', siteSeq+'#'+daepyojaGb+'#'+daepyojaSeq, 'stamp', null, null, false);
+					
+					self.setRepresentativeList();
+					notifySubmit('success', '대표자 정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+				}).catch(function(error) {
+					notifySubmit('warning', '대표자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});	
+			}else{
+				notifySubmit('success', '대표자 정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');	
+			}
+		},
+		rowClick: function(index){
+			this.defaultinfoList.selectRow(index)
+		},
+		subRowClick: function(index){
+			this.representativeList.selectRow(index)
+		},
+		/* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            var pGb = 'confirm';
+
+            switch(pId) {
+	    		case 'ID_DELETE':
+	    			title = '삭제';
+	    			cont = '선택 된 대표자를 삭제하시겠습니까?';
+                    break;
+	    	}
+
+	    	this.messageModal.openModal(pGb, title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'ID_DELETE':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+}); 
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+
+ </script>
+
+

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<project 
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+	xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>kr.co.codefarm.svcm</groupId>
+		<artifactId>kr.co.codefarm.svcm</artifactId>
+		<version>0.0.1</version>
+	</parent>
+	
+	<artifactId>kr.co.codefarm.svcm.additional</artifactId>
+	<name>Codefarm Portal - SVCM Additional</name>
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+	<dependencies>
+		<!-- svcm -->
+		<dependency>
+   			<groupId>kr.co.codefarm.svcm</groupId>
+			<artifactId>kr.co.codefarm.svcm.commons</artifactId>
+   		</dependency>
+   		<dependency>
+   			<groupId>kr.co.codefarm.svcm</groupId>
+			<artifactId>kr.co.codefarm.svcm.systemmanager</artifactId>
+   		</dependency>
+   		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId> 
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- 썸네일 제네레이터 20231101 jwson -->
+		<!-- MIT LICENSE https://github.com/coobird/thumbnailator -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.14</version>
+		</dependency>
+	</dependencies>
+</project>

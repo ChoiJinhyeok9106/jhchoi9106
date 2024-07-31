@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="/assets/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/jui/jui-ui.classic.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/iframe_layout.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/feather.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/xeicon.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/login.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/vue/vue-toast-notification.css" />
+    
+    <script src="/assets/js/vendor/rsa/jsbn.js"></script>
+    <script src="/assets/js/vendor/rsa/rsa.js"></script>
+    <script src="/assets/js/vendor/rsa/prng4.js"></script>
+    <script src="/assets/js/vendor/rsa/rng.js"></script>
+    
+	<script type="text/javascript" src="/assets/js/vendor/cryptojs/hmac-sha256.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/cryptojs/enc-base64-min.js"></script>
+
+	<script type="text/javascript" src="/assets/js/vendor/jquery-3.5.1.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/lodash.min.js"></script>
+</head>
+
+<body class="jui feather">
+    <div id="wrap" class="login_wrap signup terms">
+        <div class="login-inner login-findidpw" id="signup">
+          <div class="login-title-layout">
+            <a href="/info/index.html"><img class="login-logo2" src="/images/common/logo_idea.svg" ></a>
+            <!-- <a href="/info/index.html"><h2 id="login-title">G-IDEA <span>PLATFORM</span></h2></a> -->
+            <h3>비밀번호 분실</h3>
+          </div>
+
+<!--           <div id="findType" class="btn-group"> -->
+<!--               <button type="button" id="btnHp" class="btn search-phone" value="등록된 전화번호로 찾기"><i class="xi-mobile"></i>등록된 <em>전화번호로 찾기</em></button> -->
+<!--               <button type="button" id="btnEmail" class="btn search-mail" value="등록된 이메일로 찾기"><i class="xi-mail-o"></i>등록된 <em>이메일로 찾기</em></button> -->
+<!--           </div> -->
+          <div class="findidpw-form">
+            <div class="findidpw-layout" id="findFrm">
+<!--               <div class="cont-text" id="textHp"> -->
+<!--                 <i class="xi-mobile"></i> -->
+<!--                 <span>가입시 입력한 휴대폰번호</span>를 입력해주세요. -->
+<!--               </div> -->
+              <div class="cont-text" id="textEmail">
+                <i class="xi-mail-o"></i>
+                <span>가입시 입력한 이메일</span>을 입력해주세요.
+              </div>
+              <div class="form-gray">
+                <div class="form-group">
+                    <label for="userId">아이디(이메일)</label>
+                    <input type="text" id="userId" name="userId">
+                </div>
+<!--                 <div class="form-group" id="hpDiv" style="display:none;"> -->
+<!--                     <label for="userHp">휴대폰번호</label> -->
+<!--                     <input type="text" id="userHp" name="userHp"> -->
+<!--                 </div> -->
+                <div class="form-group" id="emailDiv">
+                    <label for="userNm">성명</label>
+                    <input type="text" id="userNm" name="userNm">
+                </div>
+              </div>
+            </div>
+
+            <div id="findResult" class="findidpw-layout" style="display: none;">
+              <div class="cont-text">
+                <i class="xi-lock-rotation"></i>
+                <p class="center" id="resultTitle"></p>
+              </div>
+              <div type="text" class="form-gray"  id="resultContent"></div>
+            </div>
+            <div class="btn-layout flex-end" id="findBtnGrp">
+                <button type="button" id="btnCancel" class="btn size-m btn-cancel" value="취소">취 소</button>
+                <button type="button" id="btnFindPw" class="btn size-m btn-signup"  value="확인">확 인</button>
+            </div>
+            <div class="btn-layout flex-center" id="confirmBtnGrp" style="display: none;">
+                <button type="button" id="btnRetry" class="btn size-m btn-cancel" value="다시찾기">다시찾기</button>
+                <button type="button" id="btnOk" class="btn size-m btn-signup" value="로그인">로그인</button>
+            </div>
+          </div>
+        </div>
+        <footer class="copyright">
+          <div >Copyright(C) IDEA IT. Co.,Ltd. All Rights Reserved.</div>
+        </footer>
+    </div>
+</body>
+<script type="text/javascript"> 
+function getHash(){
+	var charSet = [
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', 
+			'9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 
+			'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 
+			'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
+			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 
+			'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
+			'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '~',
+			'!', '@', '#', '$', '%', '^', '&', '*', ')',
+			'(', '+', '=', '-', '?'
+			];
+	
+	var pos = 0;
+	var returnVal = '';
+	
+	for (var idx = 0; idx < 12; idx++) {
+		pos = (charSet.length * Math.random());
+		returnVal += charSet[parseInt(pos)];
+	}
+	
+	return returnVal;
+}
+
+function sha256Enc(pwd) {
+	var hash = CryptoJS.SHA256(pwd);
+	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+
+	return hashInBase64;
+}
+
+$(document).ready(function(){
+	var searchType = 'EMAIL';
+	try{
+		$.ajax({
+			url: '/system-manager/default-info/representative',
+			success: function(data) {
+				if(data.BG)
+                	$('#wrap').css('background', 'url("/upload'+data.BG.replaceAll('\\','/')+'"), url("/images/login/login_bg.png") no-repeat')
+                else
+                	$('#wrap').css('background', 'rgb(186, 190, 223)')
+                	
+                $('#wrap').css('background-size', 'cover')
+                if(data.LOGO)
+					$('#logo').attr('src','/upload'+data.LOGO);
+                else
+					$('#logo').attr('src','/images/login/logo.svg');
+				$('#logo').attr('alt',data.SITE_NM);
+				document.title = data.SITE_NM;
+				$('.eng-tit').eq(0).text(data.CO_ENM);
+				$('#login_title').text(data.SITE_NM + ' 로그인');
+			}
+		});	
+	}catch(err){
+		return false;
+	}
+
+// 	$('#btnHp').click(function() {
+// 		searchType = 'HP';
+// 		$('#findFrm').show();
+// 		$('#findBtnGrp').show();
+// 		$('#hpDiv').show();
+// 		$('#btnHp').hide();
+// 		$('#btnEmail').hide();
+// 	    $('#findType').hide();
+// 	    $('#textEmail').hide();
+// 	});
+	
+// 	$('#btnEmail').click(function() {
+// 		searchType = 'EMAIL';
+// 		$('#findFrm').show();
+// 		$('#findBtnGrp').show();
+// 		$('#emailDiv').show();
+// 		$('#btnHp').hide();
+// 		$('#btnEmail').hide();
+// 	    $('#findType').hide();
+// 	    $('#textHp').hide();
+// 	});
+	
+	$('#userId, #userNm').keypress(function(evt) {
+		if (evt.keyCode == 13) {
+			if (evt.target.id == 'userId') {
+				$('#userNm').select();
+			} else {
+				$('#btnFindPw').click();
+			}
+		}
+	});
+
+	$('#btnRetry').click(function() {
+		$('#findFrm').show();
+		$('#findResult').hide();
+		$('#findBtnGrp').show();
+		$('#confirmBtnGrp').hide();
+	});
+	$('#btnCancel').click(function() {
+		document.location.href = '/html/main/login.html';
+	});
+	$('#btnOk').click(function() {
+		document.location.href = '/html/main/login.html';
+	});
+	$('#btnFindPw').click(function() {
+		if ($.trim($('#userId').val()) == '') {
+			alert('아이디를 입력해 주세요.');
+			$('#userId').select();
+			return;
+		}
+// 		if (searchType == 'HP' && $.trim($('#userHp').val()) == '') {
+// 			alert('등록된 휴대폰번호를 입력해 주세요.');
+// 			$('#userHp').select();
+// 			return;
+// 		}
+		
+		var email_pattern = /^[0-9a-zA-Z@]([-_.]?[0-9a-zA-Z@])*$/i; 
+		if (!email_pattern.test($.trim($('#userId').val()))) {
+			alert('아이디 형식이 맞지 않습니다.');
+			$('#userId').select();
+			return;
+		}
+		
+		$.ajax({
+			url: '/publickeys',
+			cache: false,
+			success: function(data) {
+				var rsa = new RSAKey();
+				rsa.setPublic(data.modulus, data.publicExponent);
+				var PWD = _.cloneDeep(getHash());
+				$.ajax({
+					url: '/api/system-manager/user/find/pw',
+					cache: false,
+					type: 'POST',
+					data: { "USER_ID": $('#userId').val(), "USER_NM": $('#userNm').val(), "PWD" :  rsa.encrypt(sha256Enc(PWD)), "SPWD" :  rsa.encrypt(PWD) },
+					success: function(data) {
+						$('#findFrm').hide();
+						$('#findResult').show();
+						$('#findBtnGrp').hide();
+						$('#confirmBtnGrp').show();
+
+						var titleStr   = '';
+						var contentStr = '';
+						
+						if (data) {
+
+							titleStr = '귀하의 비밀번호를 초기화하였습니다.';
+							contentStr += '비밀번호는 등록된 이메일주소 '+ $('#userId').val() +'로 전송했습니다.';
+						} else {
+							titleStr = '일치하는 사용자를 찾을 수 없습니다.';
+							contentStr += '작성하신 정보를 다시 확인하시고 시도 하시거나 관리자에게 문의 바랍니다.';
+						}
+						$('#resultTitle').text(titleStr);
+						$('#resultContent').text(contentStr);
+					},
+					error: function (jqXHR, exception) {
+				    }
+				});	
+			}
+		});
+	});
+});
+</script>
+</html>

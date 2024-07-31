@@ -1,0 +1,107 @@
+<h2>템플릿-멀티업로더</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">커스텀 엘리먼트</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>file-uploader 커스텀 엘리먼트는 한 번에 드래그앤 드롭 혹은 파일찾기 창에서 다건의 파일을 선택하여 업로드 가능하며 시각적인 요소가 포함 된 템플릿 입니다.</li>
+			    <li>fileset : new FileSet (필수) 입니다.</li>
+			    <li>type : String 데이터로 'list'와 'img'로 지정 가능합니다.</li>
+			    <li>fileid : 파일과 관련된 테이블 명입니다.</li>
+			    <li>filekey : 파일과 관련 된 테이블의 PK 데이터 정보(컬럼이 2개 이상일 경우 #을 구분자로 공백없이 제공)</li>
+			    <li>filehangmok : 등록하려는 파일의 종류 입니다. (String) -> 작성자가 임의로 지정 가능합니다.</li>
+			    <li>title : 파일 템플릿의 Title 명 입니다.</li>
+			    <li>modify : 등록 및 삭제가 가능한 상태인지의 여부 입니다.(Boolean)</li>
+			    <li>floatnone : float : none</li>
+			    <li>imgwidth : 이미지의 가로 사이즈</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><single-file-uploader :fileset="[Fileset:Fileset]" :type="'[list:String]'" :fileid="'[APP_APP:String]'" :filekey="[item.APP_ID:String]" :filehangmok="'[file:String]'" :title="'[항목명:String]'" :modify="[false:Boolean]"></single-file-uploader></textarea>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">테스트 데이터</h3>
+        <div class="form-group row form-row">        
+	        <ul class="list-type01">
+	        	<li>해당 파일 엘리먼트에 파일리스트를 가져오려할 경우 아래와 같이 사용해야 합니다.</li>
+	        	<li>this.FileSet.getFiles([테이블명:String], [해당테이블의 키값:String(구분자 #)], [파일의 종류:String], [파일시퀀스:Integer -> null일경우 다건 조회 됨]);</li>
+	        	<li>FileSet 선언 시 : new FileSet('ADD', 10) 형태로 서비스 명과 제한 카운터를 입력합니다.</li>
+	        	<li>FileSet 의 상세 내용은 Dataset > FileSet 을 참고 바랍니다.</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor2">file: new FileSet('SMN', 10) //Vue의 data영역에 FileSet선언
+//행 변경 이벤트에서 신규행이 아닐경우 파일정보를 가져옴
+if(rowType != ROWTYPE_INSERT){
+	this.file.getFiles('APP_APP', appId, 'file', null);  
+}
+</textarea>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">커스텀 엘리먼트 실행 결과</h3>
+        <textarea id="codeEditor3"><file-uploader :fileset="file" :type="'img'" :fileid="'TEMP_DATA'" :filekey="0" :filehangmok="'file'" :title="'스크린샷'" :modify="true"></file-uploader></textarea>
+        <br/>
+        <div class="box-type04">
+    		<h3 class="h4">리스트 형태(type)</h4>
+    		<file-uploader :fileset="file" :type="'list'" :fileid="'TEMP_DATA'" :filekey="1" :filehangmok="'file'" :title="'스크린샷'" :modify="true"></file-uploader>
+        	<h3 class="h4">이미지 형태(type)</h4>
+    		<file-uploader :fileset="file" :type="'img'" :fileid="'TEMP_DATA'" :filekey="1" :filehangmok="'file'" :title="'스크린샷'" :modify="true"></file-uploader>
+   		</div>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     //사용할 데이터
+     data: {
+    	 file: new FileSet('SMN', 10),
+     },
+     //마운트 된 시점수행
+     mounted: function(){
+    	 
+     },
+     //함수
+     methods: {
+    	 
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 50);
+	editor('codeEditor2', 100);
+	editor('codeEditor3', 40);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

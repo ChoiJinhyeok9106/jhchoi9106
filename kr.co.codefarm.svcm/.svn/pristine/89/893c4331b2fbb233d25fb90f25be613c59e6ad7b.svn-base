@@ -1,0 +1,354 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/banner.css" />  
+
+
+<h2>배너그룹 관리</h2>
+<section class="sub_cont_box" id="app">
+    <div class="banner-top row form-row">
+        <div class="col m12 l2">
+            <a href="#!" class="group-create" @click="newRow();"><i class="icon-grid"></i>그룹생성</a>
+        </div>
+        <div class="col m12 xl6 offset-xl4">
+            <div class="box-type03 col-inline">
+                <label class="label-type00 size-m icon-search">검색</label>
+                <select name="pSearchType" class="size-m" id="pSearchType">
+		            <option value="1">배너 그룹명</option>
+		            <option value="2">배너 설명</option>
+		        </select>
+                <input type="text" name="pSearchArgv" id="pSearchArgv" class="size-m" placeholder="입력하세요" v-on:keyup.13="search();">
+		        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+            </div>
+        </div>
+    </div>
+
+    <div class="app-list banner-group-list" v-if="bannerGroupList.getRowCount() > 0">
+	   <div v-for="(item, index) in bannerGroupList.data" v-show="bannerGroupList.getRowType(index) != 8" :key="index">
+			<div class="app-list-box" :class="{'active': index == bannerGroupList.rowposition}" @click="bannerGroupList.selectRow(index)">
+				<div data-header="제목" class="tit">
+					<div class="inner">
+						<span class="category green" v-if="item.BANNER_ALARM_GB=='01'">배너</span>
+						<span class="category blue" v-if="item.BANNER_ALARM_GB=='02'">팝업</span>
+						<span class="category red" v-if="item.BANNER_ALARM_GB=='03'">알림</span>
+						<a href="#!">{{item.BANNER_GROUP_NM}}</a>
+					</div>
+				</div>
+				<div data-header="내용" class="description">
+					<div class="inner">
+						{{item.BANNER_DESC}}
+					</div>
+				</div>
+<!--				<div data-header="레이아웃" class="state">-->
+<!--					<div class="inner">-->
+<!--						{{ usePrint(item.LAYOUT_USE_YN) }}-->
+<!--					</div>-->
+<!--				</div>-->
+				<div data-header="삭제" class="setting">
+					<div class="inner">
+						<a href="#!" @click="confirmOpen('delete')" v-if="bannerGroupList.getRowType(index) != 2"><span class="icon icon-trashcan"></span></a>
+					</div>
+				</div>
+			</div>
+			<transition name="slide">
+				<div class="app-info-layer" v-if="index == bannerGroupList.rowposition">
+					<div class="box-type03">
+						<input class="size-m" type="hidden" id="bannerGroupSeq"  name="bannerGroupSeq" v-model="bannerGroupList.currentRow.BANNER_GROUP_SEQ" disabled="true"/>
+						<div class="row form-row">
+							<div class="form-group col s12 l3">
+								<label for="bannerGroupNm" class="label-type01 required">배너 그룹명</label>
+								<input type="text" id="bannerGroupNm" name="bannerGroupNm" class="size-m" data-vv-as="배너 그룹명 " v-model="bannerGroupList.currentRow.BANNER_GROUP_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('bannerGroupNm')}">
+								<invalid-message :visible="bannerGroupList.currentRow" :name="'bannerGroupNm'" :verror="errors"/>
+							</div>
+							<div class="form-group col s12 l6">
+								<label for="bannerDesc" class="label-type01 required">배너 설명</label>
+								<input class="size-m" type="text" id="bannerDesc" name="bannerDesc" data-vv-as="배너 설명 " v-model="bannerGroupList.currentRow.BANNER_DESC" v-validate="'required'" v-bind:class="{'invalid': errors.has('bannerDesc')}"/>
+								<invalid-message :visible="bannerGroupList.currentRow" :name="'bannerDesc'" :verror="errors"/>
+							</div>
+							<div class="form-group col s12 l3">
+								<label for="bannerAlarmGb" class="label-type01 required">배너 알림 구분</label>
+								<select class="size-m" id="bannerAlarmGb" name="bannerAlarmGb" data-vv-as="배너 알림 구분 " v-model="bannerGroupList.currentRow.BANNER_ALARM_GB" v-validate="'required|max:10'" v-bind:class="{'invalid': errors.has('bannerAlarmGb')}"> 
+									<option v-for="(item, index) in addCommcode.getCommcode('ADD', 'BANNER_ALARM_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+								</select>
+								<invalid-message :visible="bannerGroupList.currentRow" :name="'bannerAlarmGb'" :verror="errors"/>
+							</div>
+						</div>
+						<div class="row form-row">
+							<div class="form-group col s12 l9">
+								<label for="remark" class="label-type01">비고</label>
+				            <input class="size-m" type="text" id="remark" name="remark" v-model="bannerGroupList.currentRow.REMARK"/>
+							</div>
+<!--							<div class="form-group col s12 l3">-->
+<!--								<label for="layoutUseYn" class="label-type01 required">레이아웃 사용 여부</label>-->
+<!--								<select class="size-m" id="layoutUseYn" name="layoutUseYn" v-model="bannerGroupList.currentRow.LAYOUT_USE_YN" v-bind:class="{'invalid': errors.has('layoutUseYn')}">-->
+<!--									<option value="">- 선택 -</option>-->
+<!--									<option value="Y">예</option>-->
+<!--									<option value="N">아니요</option>-->
+<!--								</select>-->
+<!--								<invalid-message :visible="bannerGroupList.currentRow" :name="'layoutUseYn'" :verror="errors"/>-->
+<!--							</div>-->
+						</div>
+						<div class="btn-line center">
+							<a href="#!" class="btn type02 size-m" @click="saveRow()">저장</a>
+						</div>
+					</div>
+				</div>
+			</transition>
+		</div>
+    </div>
+    <div class="app-list banner-list" v-else>
+	    <div class="no-cont">
+	    	검색결과가 없습니다.
+	    </div>
+	</div>
+    
+    <paging :pagingset="bannerGroupListPaging" :type="'normal'"></paging>
+    
+    <!-- 모달팝업 -->
+    <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		bannerGroupList: new Dataset(),
+		bannerGroupListPaging: new PagingSet(10, 5),
+		messageModal: new ModalSet('group-modal')	// confirm 모달
+// 		,
+// 		updateDisabled: false
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		'bannerGroupList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.bannerGroupList.enableevent){
+					var changeYn = this.bannerGroupList.dataCompare(oldVal);
+					var oldRowType = this.bannerGroupList.getRowType(oldVal);
+					
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.bannerGroupList.setDefaultRow(oldVal);
+					}
+					if(val != -1){
+						this.$validator.reset();
+					}
+				}
+			}
+		},		
+		'bannerGroupList.data': {
+			handler: function (val, oldVal) {
+				if(this.bannerGroupList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.bannerGroupList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.bannerGroupList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },		
+		'bannerGroupListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setBannerGroupList()
+			}
+	    }
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setBannerGroupList();
+	},
+	//함수
+	methods: {
+		/* 서비스 리스트 조회 */
+		setBannerGroupList: function(){
+			var pSearchType = $('#pSearchType option:selected').val();
+			var pSearchArgv = $('#pSearchArgv').val();
+
+			var pageNo = this.bannerGroupListPaging.getCurrentPage();
+			var pRowCnt = this.bannerGroupListPaging.getRowCnt();
+			
+			if(isNull(pSearchArgv)) pSearchArgv = '';
+			
+			if(isNull(pSearchType)){
+				pSearchType = '';
+				pSearchArgv = '';
+			}
+			
+			if(isNull(pageNo)) pageNo = 1;
+			
+			var returnVal = bannerApi.bannerGroup(pSearchType, pSearchArgv, pageNo, pRowCnt, true);
+			
+			var self = this;
+			
+			returnVal.then(function(response){
+				self.bannerGroupList.setData(response.data);
+
+				if(self.bannerGroupList.getRowCount() > 0){
+					var totalCnt = self.bannerGroupList.data[0].CNT;
+					self.bannerGroupListPaging.setTotalCnt(totalCnt);
+				}else{
+					self.bannerGroupListPaging.setTotalCnt(0);
+				}
+			});
+		},
+		search: function(){
+			var pageNo = this.bannerGroupListPaging.getCurrentPage();
+        	
+        	if(pageNo == 1){
+        		this.setBannerGroupList();
+        	}else{
+        		this.bannerGroupListPaging.movePage(1);
+        	}  
+		},
+		/* 서비스 리스트 신규행 추가 */
+		newRow: function(){
+			var addObj = {
+				BANNER_GROUP_SEQ : ''
+			  , BANNER_GROUP_NM : ''
+			  , BANNER_ALARM_GB : ''
+			  , BANNER_DESC : ''
+			  , REMARK : ''
+			  , ORD_GB : ''
+			  , LAYOUT_USE_YN : 'N'	
+			};
+			
+			this.bannerGroupList.addRow(addObj);
+		},
+		/* 서비스 리스트 저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			
+			var self = this;
+			
+			validate.then(function(response){
+				if(response){
+					var rowposition = self.bannerGroupList.rowposition;
+					var rowType = self.bannerGroupList.getRowType(rowposition); 
+					var returnVal = null;
+					
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = bannerApi.bannerGroupInsert(self.bannerGroupList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = bannerApi.bannerGroupUpdate(self.bannerGroupList.currentRow, true);
+					}else{
+						notifySubmit('info', '배너 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+					
+					if(!isNull(returnVal)){
+						returnVal.then(function(response){
+							var data = response.data;
+							
+							if(data == '1'){
+								self.search();
+								notifySubmit('success', '배너 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '배너 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						}).catch(function(error){
+							notifySubmit('warning', '배너 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}else{
+					notifySubmit('warning', '배너 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+   			});
+			
+
+		},
+		/* 서비스 리스트 삭제 */
+		deleteRow: function(row){
+			var rowType = this.bannerGroupList.getRowType(row); 
+			var returnVal = null;
+			var bannerGroupSeq = this.bannerGroupList.getColumn(row, 'BANNER_GROUP_SEQ');
+			this.bannerGroupList.deleteRow(row);
+			
+			var self = this;
+			
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = bannerApi.bannerGroupDelete(bannerGroupSeq, true);
+				returnVal.then(function(response){
+					var data = response.data;
+					
+// 					if(parseInt(data,10) > 0){
+						self.search();
+						notifySubmit('success', '배너 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+// 					}else{
+// 						notifySubmit('warning', '배너 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+// 					}
+				}).catch(function(error){
+					notifySubmit('warning', '배너 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});	
+			}
+		},
+		usePrint: function(bYn) {
+			return bYn=='Y'?'레이아웃 사용':'레이아웃 미사용';
+		},
+		confirmOpen : function(id){
+			if(id == 'save'){
+				var validate = this.$validator.validateAll();
+    			
+    			var self = this;
+    			
+    			validate.then(function(response){
+    				if(response){
+    					self.messageModal.openModal('confirm', '저장', '저장하시겠습니까?', 'small', 'save', '');	
+    				}else{
+   						notifySubmit('warning', '배너 저장', '입력항목을 확인해주세요.', 'icon-caution');
+   					}
+       			});
+			}else if(id == 'delete'){
+				this.messageModal.openModal('confirm', '삭제', '삭제하시면 해당 그룹에 게시된 모든 배너들이 <br>삭제되고 복구가 불가능합니다.<br>그래도 삭제하시겠습니까?', 'small', 'delete', '');
+			}
+    	},
+    	messagepoppupcallback : function(gb, currentId, customData){
+    	 	//alert('버튼 구분 : '+gb+'\n'+'ID : '+currentId+'\n'+'returnData : '+customData);
+    	 	if(gb == 'confirm' && currentId == 'save'){
+ 				this.saveRow();
+    	 	}else if(gb == 'confirm' && currentId == 'delete'){
+    	 		this.deleteRow(this.bannerGroupList.rowposition);
+    	 	}
+    	}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+
+</script>
+

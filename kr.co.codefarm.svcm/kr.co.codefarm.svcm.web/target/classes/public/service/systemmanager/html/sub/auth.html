@@ -1,0 +1,535 @@
+<h2>권한 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!authList.currentRow">
+		<h3 class="h2">권한 리스트</h3>
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+	        <select class="size-m" name="pAuthGb" id="pAuthGb" v-model="pAuthGb">
+				<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'AUTH_GB', 'all')" :value="item.CD">{{item.CD_NM}}</option>
+			</select>
+	        <select class="size-m" name="pSearchType" id="pSearchType" v-model="pSearchType">
+				<option value="1">권한코드</option>
+				<option value="2">권한명</option>
+			</select>
+   			<input type="text" name="pSearchArgv" class="size-m" id="pSearchArgv" v-model="pSearchArgv" @keyup.enter="search($event);" placeholder="검색어를 입력하세요.">
+<!--	        <select class="size-m" name="pUseYn" id="pUseYn" v-model="pUseYn">-->
+<!--				<option value="">-전체-</option>-->
+<!--				<option value="Y">예</option>-->
+<!--				<option value="N">아니오</option>-->
+<!--			</select>-->
+
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search">
+	        <div class="f-right">
+	            <input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+	        </div>
+	    </div>
+
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{authListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{authListPaging.getCurrentPage()}}</span> / {{authListPaging.getTotalPage()}})</span>
+		</div>
+
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" summary=""  id="mainListLoading">
+					<caption></caption>
+					<colgroup>
+						<!-- <col width="5%" /> -->
+						<col width="10%" />
+						<col width="10%" />
+						<col width="" />
+						<col width="7%" />
+						<col width="10%" />
+						<col width="13%" />
+						<col width="13%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<!-- <th scope="col">상태</th> -->
+							<th scope="col">권한구분</th>
+							<th scope="col">권한코드</th>
+							<th scope="col">권한명</th>
+							<th scope="col">순서</th>
+							<th scope="col">사용여부</th>
+							<th scope="col">개인정보 열람여부</th>
+							<th scope="col">회원가입 사용여부</th>
+						</tr>
+					</thead>
+					<tbody v-if="authList.getRowCount() > 0">
+						<tr v-for="(item, index) in authList.data" v-if="authList.getRowType(index) != '8'">
+							<!-- <td :class="authList.getRowType(index, 'class')" data-header="">&nbsp;</td> -->
+							<td data-header="권한구분"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</a></td>
+							<td data-header="권한코드"><a href="#!" @click="rowClick(index)">{{item.AUTH_CD}}</a></td>
+							<td class="left" data-header="권한명"><a href="#!" @click="rowClick(index)">{{item.AUTH_NM}}</a></td>
+							<td data-header="순서"><a href="#!" @click="rowClick(index)">{{item.ORD}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="개인정보 열람여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.GAEINJEONGBO_HIT_YN == 'Y', 'btn-table-type01':item.GAEINJEONGBO_HIT_YN == 'N'}"><span :class="{'icon-checkmark':item.GAEINJEONGBO_HIT_YN == 'Y', 'icon-minus-circle':item.GAEINJEONGBO_HIT_YN == 'N'}"></span></a></td>
+							<td data-header="회원가입 사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.SIGNUP_USE_YN == 'Y', 'btn-table-type01':item.SIGNUP_USE_YN == 'N'}"><span :class="{'icon-checkmark':item.SIGNUP_USE_YN == 'Y', 'icon-minus-circle':item.SIGNUP_USE_YN == 'N'}"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="authListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+
+	<section class="cont_box" v-if="authList.currentRow">
+		<h3 class="h3">권한 상세</h3>
+		<div class="style_set box-type01">
+			<form>
+				<div class="row form-row">
+					<div class="form-group col s12 l6">
+						<label class="label-type01 required" for="authGb">권한구분</label> <select :disabled="updateDisabled"
+							class="size-m" name="authGb" id="authGb" data-vv-as="권한구분 "
+							v-model="authList.currentRow.AUTH_GB" v-validate="'required'"
+							v-bind:class="{'invalid': errors.has('authGb')}" @change="getNewSeq(authList.currentRow.AUTH_GB)">
+							<option
+								v-for="(item, index) in smnCommcode.getCommcode('SMN', 'AUTH_GB', 'select')"
+								:value="item.CD">{{item.CD_NM}}</option>
+						</select>
+						<invalid-message :visible="authList.currentRow" :name="'authGb'"
+							:verror="errors" />
+					</div>
+					<div class="form-group col s12 l6">
+						<label class="label-type01 required" for="authCd">권한코드</label> <input
+							class="size-m" type="text" id="authCd" name="authCd"
+							data-vv-as="권한코드 " v-model="authList.currentRow.AUTH_CD"
+							v-validate="'required|max:50'" :disabled="updateDisabled"
+							placeholder="권한코드(필수)를 입력하세요."
+							v-bind:class="{'invalid': errors.has('authCd')}" />
+						<invalid-message :visible="authList.currentRow" :name="'authCd'"
+							:verror="errors" />
+					</div>
+				</div>
+				<div class="row form-row">
+					<div class="form-group col s12 l6">
+						<label class="label-type01 required" for="authNm">권한명</label> <input
+							class="size-m" type="text" id="authNm" name="authNm"
+							data-vv-as="권한명 " v-model="authList.currentRow.AUTH_NM"
+							v-validate="'required|max:300'" placeholder="권한명을 입력하세요."
+							v-bind:class="{'invalid': errors.has('authNm')}" />
+						<invalid-message :visible="authList.currentRow" :name="'authNm'"
+							:verror="errors" />
+					</div>
+					<div class="form-group col s12 l6">
+						<label class="label-type01" for="ord">순서</label> <input
+							class="size-m" type="text" id="ord" name="ord" data-vv-as="순서 "
+							v-model="authList.currentRow.ORD" v-validate="'numeric|max:10'"
+							placeholder="정렬 순서를 입력하세요."
+							v-bind:class="{'invalid': errors.has('ord')}" />
+						<invalid-message :visible="authList.currentRow" :name="'ord'"
+							:verror="errors" />
+					</div>
+				</div>
+				<div class="row form-row">
+					<div class="form-group col s12 l12">
+						<label class="label-type01" for="authDesc">권한설명</label>
+						<textarea rows="" cols="" class="size-m" id="authDesc"
+							name="authDesc" data-vv-as="내용 "
+							v-model="authList.currentRow.AUTH_DESC" v-validate="'max:500'"
+							placeholder="해당 권한에 대한 설명을 입력하세요."
+							v-bind:class="{'invalid': errors.has('authDesc')}"></textarea>
+						<invalid-message :visible="authList.currentRow" :name="'text'"
+							:verror="errors" />
+					</div>
+				</div>
+				<div class="row form-row">
+					<div class="form-group col s12 l12">
+						<label for="remark" class="label-type01">비고</label> <input
+							type="text" id="remark" class="size-m" name="remark"
+							data-vv-as="비고" v-model="authList.currentRow.REMARK"
+							v-validate="'max:500'" placeholder="비고 사항을 입력하세요."
+							v-bind:class="{'invalid': errors.has('remark')}" />
+						<invalid-message :visible="authList.currentRow" :name="'remark'"
+							:verror="errors" />
+					</div>
+				</div>
+				<div class="row form-row">
+					<div class="form-group col s12 l4">
+						<div class="row form-row">
+							<div class="col s8 m6 col-label">
+								<label for="useYn" class="label-type01 size-m">사용여부</label>
+							</div>
+							<div class="col s4 m6">
+								<label class="toggle-switch size-m"> <input
+									class="size-m" type="checkbox" id="useYn" name="useYn"
+									data-vv-as="사용여부" v-model="authList.currentRow.USE_YN"
+									true-value="Y" false-value="N"
+									v-bind:class="{'invalid': errors.has('useYn')}" /> <span
+									class="slider round"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group col s12 l4">
+						<div class="row form-row">
+							<div class="col s8 m6 col-label">
+								<label for="gaeinjeongboHitYn" class="label-type01 size-m">개인정보
+									열람여부</label>
+							</div>
+							<div class="col s4 m6">
+								<label class="toggle-switch size-m"> <input
+									class="size-m" type="checkbox" id="gaeinjeongboHitYn"
+									name="gaeinjeongboHitYn" data-vv-as="개인정보 열람여부 "
+									v-model="authList.currentRow.GAEINJEONGBO_HIT_YN" true-value="Y"
+									false-value="N"
+									v-bind:class="{'invalid': errors.has('gaeinjeongboHitYn')}" /> <span
+									class="slider round"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group col s12 l4">
+						<div class="row form-row">
+							<div class="col s8 m6 col-label">
+								<label for="gaeinjeongboHitYn" class="label-type01 size-m">회원가입
+									사용여부</label>
+							</div>
+							<div class="col s4 m6">
+								<label class="toggle-switch size-m"> <input class="size-m" type="checkbox" id="signupUseYn" name="signupUseYn" data-vv-as="개인정보 사용여부 " v-model="authList.currentRow.SIGNUP_USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('signupUseYn')}" />
+									<span class="slider round"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+		        <div class="row form-row">
+		            <div class="form-group col s12 l4">
+		                <label class="label-type01" for="dataGb">데이터 구분</label>
+		                <select name="dataGb" class="size-m" id="dataGb" v-model="authList.currentRow.DATA_GB">
+	                        <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'DATA_GB', 'all', 'CD_NM', 'N')" :value="item.CD">{{ item.CD_NM }}</option>
+	                    </select>
+		            </div>
+		            <div class="form-group col s12 l4">
+		                <label class="label-type01" for="cd1">회원가입 사용자 구분</label>
+	                    <input type="text" id="cd1" name="cd1" class="size-m" v-model="authList.currentRow.CD1"
+	                           data-vv-as="회원가입 사용자 구분 " v-validate="'max:50'" v-bind:class="{'invalid': errors.has('cd1')}">
+	                    <invalid-message :visible="authList.currentRow" :name="'cd1'" :verror="errors"/>
+		            </div>
+		            <div class="form-group col s12 l4">
+		                <label class="label-type01" for="cd2">상담사 사용 여부</label>
+	                    <input type="text" id="cd2" name="cd2" class="size-m" v-model="authList.currentRow.CD2"
+	                           data-vv-as="비교과관리센터 비교과 대상 여부" v-validate="'max:20'" v-bind:class="{'invalid': errors.has('cd2')}">
+	                    <invalid-message :visible="authList.currentRow" :name="'cd2'" :verror="errors"/>
+		            </div>
+		        </div>
+		        <div class="row form-row">
+		            <div class="form-group col s12 l4">
+		                <label class="label-type01" for="cd3">CD3</label>
+	                    <input type="text" id="cd3" name="cd3" class="size-m" v-model="authList.currentRow.CD3"
+	                           data-vv-as="CD3 " v-validate="'max:20'" v-bind:class="{'invalid': errors.has('cd3')}">
+	                    <invalid-message :visible="authList.currentRow" :name="'cd3'" :verror="errors"/>
+		            </div>
+		            <div class="form-group col s12 l4">
+		                <label class="label-type01" for="cd4">CD4</label>
+	                    <input type="text" id="cd4" name="cd4" class="size-m" v-model="authList.currentRow.CD4"
+	                           data-vv-as="CD4 " v-validate="'max:20'" v-bind:class="{'invalid': errors.has('cd4')}">
+	                    <invalid-message :visible="authList.currentRow" :name="'cd4'" :verror="errors"/>
+		            </div>
+		            <div class="form-group col s12 l4">
+		                <label class="label-type01" for="cd5">CD5</label>
+	                    <input type="text" id="cd5" name="cd5" class="size-m" v-model="authList.currentRow.CD5"
+	                           data-vv-as="CD5 " v-validate="'max:20'" v-bind:class="{'invalid': errors.has('cd5')}">
+	                    <invalid-message :visible="authList.currentRow" :name="'cd5'" :verror="errors"/>
+		            </div>
+		        </div>
+			</form>
+		</div>
+		<div class="form-group row form-row"></div>
+		<div class="form-group row form-row">
+			<div class="col-inline right">
+				<a href="#!" class="btn type01 size-m" @click="authList.selectRow(-1)">목록</a>
+				<a href="#!" class="btn type01 size-m" @click="messagePopup('ID_DELETE', authList.rowposition)">삭제</a>
+				<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+			</div>
+		</div>
+	</section>
+	<modal-message :modalset="messageModal"
+		v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	/* 사용할 데이터 */
+	data: {
+        authList: new Dataset(),				// 실적 목록(상하위 공용))
+        authListPaging: new PagingSet(5, 5),	// 페이징
+        updateDisabled : false,
+        messageModal: new ModalSet('auth-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+		pAuthGb: '01',
+		pSearchType: '2',
+		pSearchArgv: '',
+		pUseYn: 'Y',
+	},
+	/* 생성 될 때 */
+	beforeCreate: function(){
+	},
+	/* 계산된 속성 표현 시 */
+	computed: {
+	},
+	/* 데이터 감시 */
+	watch: {
+		'authList.rowposition': {
+			handler: function (val, oldVal) {
+
+				if(this.authList.enableevent){
+					var changeYn = this.authList.dataCompare(oldVal);
+					var rowType = this.authList.getRowType(val);
+
+					if(!changeYn){
+						this.authList.setDefaultRow(oldVal);
+					}
+
+					//if(this.authList.getRowType(oldVal)==ROWTYPE_INSERT) this.authList.deleteRow(oldVal);
+
+					//pk에 대한 able 설정
+					if(rowType == ROWTYPE_NORMAL  || rowType == ROWTYPE_UPDATE){
+						this.updateDisabled = true;
+					}else{
+						this.updateDisabled = false;
+					}
+
+					this.$validator.reset();
+                }
+
+			}
+		},
+		'authList.data': {
+			handler: function (val, oldVal) {
+				if(this.authList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data ).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.authList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.authList.beforeData[rowposition][colNm] = data[colNm];
+				          		vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+                }
+			},
+			deep: true
+	    },
+		'authListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setAuthList(null, val)
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	/* 마운트 된 시점수행 */
+	mounted: function(){
+		this.setAuthList();
+	},
+	/* 함수 */
+	methods: {
+		/* 서비스 리스트 조회 */
+		setAuthList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+                var self = this;
+				self.mainListLoading.val = true;
+				var returnVal = authApi.auth(this.pUseYn, this.pAuthGb, this.pSearchType, this.pSearchArgv, this.authListPaging.currentPage, this.authListPaging.getRowCnt(), false);
+
+				returnVal.then(function(response) {
+					self.authList.setData(response.data);
+
+					if(self.authList.getRowCount() > 0){
+                        var totalCnt = self.authList.data[0].CNT;
+						self.authListPaging.setTotalCnt(totalCnt);
+						//self.authList.selectRow(0);
+					}else{
+						self.authListPaging.setTotalCnt(0);
+					}
+				}).finally(function(){
+					self.mainListLoading.val = false;
+				});
+			}
+		},
+		/* 검색 */
+		search: function(e, pPageNo){
+		   var pageNo = this.authListPaging.getCurrentPage();
+
+		   if(pageNo == 1){
+		       this.setAuthList(e, pPageNo);
+		   }else{
+		       this.authListPaging.movePage(1);
+		   }
+		},
+		/* 서비스 리스트 신규행 추가, 초기값 설정 */
+		newRow: function(){
+			if(this.isListInInsertRow(this.authList)) return;
+
+			var addObj = {
+					'AUTH_CD' : null,
+					'AUTH_GB' : '',
+					'AUTH_NM' : '',
+					'ORD' : 0,
+					'GAEINJEONGBO_HIT_YN' : 'N',
+					'USE_YN' : 'Y',
+					'SIGNUP_USE_YN' : 'N',
+					'AUTH_DESC' : '',
+					'REMARK' : '',
+					'DATA_GB' : '',
+					'CD1' : '',
+					'CD2' : '',
+					'CD3' : '',
+					'CD4' : '',
+					'CD5' : '',
+				};
+			var newRowPosition = this.authList.addRow(addObj);
+		},
+		getNewSeq: function(pAuthGb){
+			var self = this;
+			var returnVal = authApi.getAuthSeq({'AUTH_GB':pAuthGb}, false);
+
+			returnVal.then(function(response) {
+				self.authList.setColumn(self.authList.rowposition, 'AUTH_CD', response.data.NEW_SEQ);
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		/* 서비스 리스트 저장, 수정 */
+		saveRow: function(){
+            var validate = this.$validator.validateAll();
+            var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.authList.rowposition;
+					var rowType = self.authList.getRowType(rowposition);
+					var returnVal = null;
+
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = authApi.authInsert(self.authList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = authApi.authUpdate(self.authList.currentRow, true);
+					}else{
+						notifySubmit('info', '권한정보 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							//alert(JSON.stringify(data));
+							if(data == '1'){
+								self.setAuthList();
+								notifySubmit('success', '권한정보 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '권한정보 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						});
+					}
+				}else{
+					notifySubmit('warning', '권한정보 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+        },
+        deleteRow: function(row) {
+            var rowType = this.authList.getRowType(row);
+			var returnVal = null;
+            var self = this;
+
+			if(rowType==ROWTYPE_INSERT) {
+				self.authList.deleteRow(row);
+				notifySubmit('success', '권한정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+			} else {
+                this.authList.selectRow(row);
+				returnVal = authApi.authDelete(self.authList.getRow(row), true);
+				returnVal.then(function(response) {
+					var data = response.data;
+
+					self.setAuthList();
+					notifySubmit('success', '권한정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+				}).catch(function(error) {
+					notifySubmit('warning', '권한정보 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});
+			}
+        },
+		/* 서비스 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+			var rowposition = this.authList.rowposition;
+			var rowType = this.authList.getRowType(rowposition);
+		},
+		vaildateCheck: function(pId) {
+            if(isNull(pId))
+                this.$validator.validateAll();
+            else
+                this.$validator.validate(pId);
+        },
+        usePrint: function(bYn) {		//그리트 테이블에서 사용/미사용 표시 (bYn : 'Y' or 'N')
+			return bYn=='Y'?'사용':'미사용';
+        },
+        isListInInsertRow: function(dataList) {
+			if(isNull(dataList)) return;
+
+			var findObj =_.filter(dataList.data, function(obj) {
+				  			return  obj.ROW_TYPE == ROWTYPE_INSERT;
+						});
+
+			try {
+				return findObj.length==0?false:true;
+			} catch (err) {
+				return '';
+			}
+		},
+		rowClick: function(index){
+			this.authList.selectRow(index);
+		},
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        /* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+
+            switch(pId) {
+	    		case 'ID_DELETE':
+	    			title = '삭제';
+                    cont = '선택한 권한을 삭제 하시겠습니까?<br /><span style="color:#c90000;">(앱 권한, 앱 메뉴권한, 사용자 권한 등 관련 된<br />모든 데이터가 삭제되며 복구가 불가능합니다.)</span>';
+                    break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+
+	    	switch(pId) {
+	    		case 'ID_DELETE':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    }
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>

@@ -1,0 +1,221 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />
+
+<h2>프로그램 결과</h2>
+<section class="sub_cont_box board-view-page nonsubject-info">
+    <div class="head-box">
+        <p class="sort">프로그램 구분</p>
+        <p class="title">비교과 프로그램 명</p>
+        <p class="description">프로그램 설명이 들어갑니다 프로그램 설명이 들어갑니다</p>
+        <span class="etc icon-gift">100점</span>
+        <span class="etc icon-report-build">만족도조사 실시</span>
+    </div>
+    <!-- 탭 -->
+    <div class="tab-type02">
+        <div class="tab">
+            <div rel="tab1"><a href="#!" class="active">대상자 결과</a></div>
+            <div rel="tab2"><a href="#!">결과 보고</a></div>
+            <div rel="tab2"><a href="#!">만족도</a></div>
+        </div>
+        <div class="tab-container">
+            <div id="tab1" class="tab-content">
+                <!-- 테이블 -->
+                <table class="table-type01 response">
+                    <caption>대상자리스트 게시판 학번, 성명, 학과, 동의서여부, 승인, 삭제 항목별 순서대로 안내하고 대상자를 승인 또는 삭제할 수 있는 표입니다</caption>
+                    <colgroup>
+                        <col width="17%" />
+                        <col width="10%" />
+                        <col width="17%" />
+                        <col width="10%" />
+                        <col width="10%" />
+                        <col width="11%" />
+                        <col width="11%" />
+                        <col width="11%" />
+                        <col width="12%" />
+                        <col width="12%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">학번</th>
+                            <th scope="col">성명</th>
+                            <th scope="col">학과</th>
+                            <th scope="col">점수</th>
+                            <th scope="col">P / NP</th>
+                            <th scope="col">만족도여부</th>
+                            <th scope="col">사전진단</th>
+                            <th scope="col">사후진단</th>
+                            <th scope="col">보고서</th>
+                            <th scope="col">수료증</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue02 icon-minus-circle"></span></td>
+                            <td data-header="사전진단"><span class="statue02 icon-minus-circle"></span></td>
+                            <td data-header="사후진단"><span class="statue02 icon-minus-circle"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="점수"></td>
+                            <td data-header="P / NP"></td>
+                            <td data-header="만족도여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사전진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="사후진단"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="보고서"><input type="button" value="다운로드" class="btn type02 size-s"></td>
+                            <td data-header="수료증"><input type="button" value="출력" class="btn type02 size-s"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- 페이징 -->
+                <div class="paginate">
+                    <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                    <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                    <span>
+                                <a href="#" class="active" title="1 페이지">1</a>
+                                <a href="#" title="2 페이지">2</a>
+                                <a href="#" title="3 페이지">3</a>
+                                <a href="#" title="4 페이지">4</a>
+                                <a href="#" title="5 페이지">5</a>
+                                <a href="#" title="6 페이지">6</a>
+                                <a href="#" title="7 페이지">7</a>
+                                <a href="#" title="8 페이지">8</a>
+                                <a href="#" title="9 페이지">9</a>
+                                <a href="#" title="10 페이지">10</a>
+                            </span>
+                    <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                    <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+                </div>
+            </div>
+            <div id="tab2" class="tab-content">
+
+            </div>
+            <div id="tab3" class="tab-content">
+
+            </div>
+        </div>
+    </div>
+    <!-- //탭 -->
+    <div class="btn-line center">
+        <a href="#!" class="btn type01 size-l">이전</a>
+        <a href="#!" class="btn type02 size-l">저장</a>
+    </div>
+</section>
+
+<script>
+    $(function() {
+        //탭메뉴
+        $(".tab-content").hide();
+        $(".tab-content:first").show();
+        $(".tab-type02 .tab div a").click(function() {
+            $(".tab-type02 .tab div a").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").hide()
+            var activeTab = $(this).parent().attr("rel");
+            $("#" + activeTab).fadeIn()
+        });
+    });
+</script>

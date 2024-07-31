@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.additional.maria.banner">
+
+	<select id="getBannerList" parameterType="hashMap" resultType="hashMap">
+		SELECT '' AS CHK
+			 , A.BANNER_SEQ
+			 , A.BANNER_TITLE
+			 , A.BANNER_TEXT
+			 , A.BANNER_GB
+			 , A.TEMPLATE_GB
+			 , A.LINK_URL
+			 , A.USE_YN
+			 , A.FILE_NM
+			 , A.FILE_PATH
+			 , A.ROW_NUM
+			 , COALESCE(A.CNT, 0) AS CNT
+			 , (SELECT COUNT(0) FROM ADD_BANNER_POST WHERE BANNER_SEQ = CAST(A.BANNER_SEQ AS BIGINT)) AS POST_CNT
+		  FROM (
+				   SELECT AB.BANNER_SEQ
+						, AB.BANNER_TITLE
+						, AB.BANNER_TEXT
+						, AB.BANNER_GB
+						, AB.TEMPLATE_GB
+						, AB.LINK_URL
+						, AB.USE_YN
+						, AB.INSERT_DTTM
+						, AFL.FILE_NM
+			 			, AFL.FILE_PATH
+						, ROW_NUMBER() OVER(ORDER BY AB.INSERT_DTTM DESC) AS ROW_NUM
+			 			, COUNT(*) OVER() AS CNT
+					 FROM ADD_BANNER AB 
+					 LEFT OUTER JOIN ADD_FILE AFL 
+					   ON AFL.FILE_ID = 'ADD_BANNER'
+					  AND CAST(AFL.FILE_KEY AS BIGINT) = AB.BANNER_SEQ
+				   	  AND AFL.FILE_HANGMOK = 'titleImg'
+					  AND AFL.FILE_NO = '1'
+					WHERE 1=1
+					<if test="mngYn != 'Y'.toString()">
+					  AND AB.USE_YN = 'Y'
+					</if>
+					<if test="pSearchType eq '1'.toString()">AND AB.BANNER_TITLE LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+					<if test="pSearchType eq '2'.toString()">AND AB.BANNER_TEXT LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			) A
+   		<if test="pPageNo != '' and pPageNo != ''.toString()">
+			WHERE A.ROW_NUM BETWEEN (CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1) * (CAST(#{pRowCount} AS BIGINT)) + 1 AND CAST(COALESCE(#{pPageNo},'1') AS BIGINT) * CAST(#{pRowCount} AS BIGINT)
+		</if>
+	</select>
+	
+	<select id="getBanner" parameterType="hashMap" resultType="hashMap">
+		SELECT A.BANNER_SEQ
+			 , A.BANNER_TITLE
+			 , A.BANNER_TEXT
+			 , A.BANNER_GB
+			 , A.TEMPLATE_GB
+			 , A.DAEPYO_IMG_FILE_NO
+			 , A.LINK_URL
+			 , A.USE_YN
+		  FROM ADD_BANNER A
+		 WHERE BANNER_SEQ = #{BANNER_SEQ}
+	</select>
+	
+	<insert id="insertBanner" parameterType="hashMap">
+		INSERT INTO ADD_BANNER
+	 	(
+	 		BANNER_SEQ
+		  , BANNER_TITLE
+		  , BANNER_TEXT
+		  , BANNER_GB
+		  , TEMPLATE_GB
+		  , LINK_URL
+		  , USE_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+	 	)VALUES 
+	 	(
+	 		(SELECT COALESCE(MAX(A.BANNER_SEQ), 0) + 1
+	 		   FROM ADD_BANNER A)
+		  , #{BANNER_TITLE}
+		  , #{BANNER_TEXT}
+		  , #{BANNER_GB}
+		  , #{TEMPLATE_GB}
+		  , #{LINK_URL}
+		  , #{USE_YN}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+   		)
+	</insert>
+	
+	<update id="updateBanner" parameterType="hashMap">
+		UPDATE ADD_BANNER
+		   SET BANNER_TITLE = #{BANNER_TITLE}
+			 , BANNER_TEXT = #{BANNER_TEXT}
+			 , BANNER_GB = #{BANNER_GB}
+			 , TEMPLATE_GB = #{TEMPLATE_GB}
+			 , DAEPYO_IMG_FILE_NO = #{DAEPYO_IMG_FILE_NO}
+			 , LINK_URL = #{LINK_URL}
+			 , USE_YN = #{USE_YN}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE BANNER_SEQ = #{BANNER_SEQ}
+	</update>
+	
+	<delete id="deleteBanner" parameterType="hashMap">
+		
+		DELETE FROM ADD_BANNER
+		 WHERE BANNER_SEQ = CAST(#{BANNER_SEQ} AS BIGINT);
+		DELETE FROM ADD_BANNER_POST
+		 WHERE BANNER_SEQ = CAST(#{BANNER_SEQ} AS BIGINT);
+		
+	</delete>
+	
+	<!-- 배너 그룹 -->
+	<select id="getBannerGroupList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.ROW_NUM
+			 , A.BANNER_GROUP_SEQ
+			 , A.BANNER_GROUP_NM
+			 , A.BANNER_ALARM_GB
+			 , A.BANNER_DESC
+			 , A.REMARK
+			 , A.LAYOUT_USE_YN
+			 , (SELECT COUNT(0) FROM ADD_BANNER_POST WHERE BANNER_GROUP_SEQ = A.BANNER_GROUP_SEQ) AS POST_CNT
+			 , COALESCE(A.CNT, 0) AS CNT
+		  FROM (
+				   SELECT ABG.BANNER_GROUP_SEQ
+						, ABG.BANNER_GROUP_NM
+						, ABG.BANNER_ALARM_GB
+						, ABG.BANNER_DESC
+						, ABG.REMARK
+						, ABG.LAYOUT_USE_YN
+						, ABG.INSERT_DTTM
+						, ROW_NUMBER() OVER(ORDER BY ABG.INSERT_DTTM DESC) AS ROW_NUM
+			 			, COUNT(*) OVER() AS CNT
+					 FROM ADD_BANNER_GROUP ABG
+					WHERE 1=1
+					<if test="pSearchType eq '1'.toString()">AND ABG.BANNER_GROUP_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+					<if test="pSearchType eq '2'.toString()">AND ABG.BANNER_DESC LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+					<if test="pMenuGb == 'POST'">AND AB.USE_YN = 'Y'</if>
+			   ) A
+		 <if test="pPageNo != null and !''.equals(pPageNo)">
+		  	 WHERE A.ROW_NUM BETWEEN (CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER)+1 AND COALESCE(CAST(#{pPageNo} AS INTEGER),'1')*CAST(#{pRowCount} AS INTEGER)
+		 </if>
+	</select>
+	
+	<select id="getBannerGroup" parameterType="hashMap" resultType="hashMap">
+		SELECT ABG.BANNER_GROUP_SEQ
+			 , ABG.BANNER_GROUP_NM
+			 , ABG.BANNER_ALARM_GB
+			 , ABG.BANNER_DESC
+			 , ABG.REMARK
+			 , ABG.LAYOUT_USE_YN
+		  FROM ADD_BANNER_GROUP ABG
+		 WHERE ABG.BANNER_GROUP_SEQ = #{BANNER_GROUP_SEQ}
+	</select>
+	
+	<insert id="insertBannerGroup" parameterType="hashMap">
+		INSERT INTO ADD_BANNER_GROUP
+	 	(
+	 		BANNER_GROUP_SEQ
+		  , BANNER_GROUP_NM
+		  , BANNER_ALARM_GB
+		  , BANNER_DESC
+		  , REMARK
+		  , LAYOUT_USE_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+	 	)VALUES 
+	 	(
+	 		(SELECT COALESCE(MAX(A.BANNER_GROUP_SEQ), 0) + 1
+	 		   FROM ADD_BANNER_GROUP A)
+		  , #{BANNER_GROUP_NM}
+		  , #{BANNER_ALARM_GB}
+		  , #{BANNER_DESC}
+		  , #{REMARK}
+		  , #{LAYOUT_USE_YN}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+   		)
+	</insert>
+	
+	<update id="updateBannerGroup" parameterType="hashMap">
+		UPDATE ADD_BANNER_GROUP
+		   SET BANNER_GROUP_NM = #{BANNER_GROUP_NM}
+			 , BANNER_ALARM_GB = #{BANNER_ALARM_GB}
+			 , BANNER_DESC = #{BANNER_DESC}
+			 , REMARK = #{REMARK}
+			 , LAYOUT_USE_YN = #{LAYOUT_USE_YN}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE BANNER_GROUP_SEQ = #{BANNER_GROUP_SEQ}
+	</update>
+	
+	<delete id="deleteBannerGroup" parameterType="hashMap">
+		
+		DELETE FROM ADD_BANNER_GROUP
+		 WHERE BANNER_GROUP_SEQ = CAST(#{BANNER_GROUP_SEQ} AS BIGINT);
+		DELETE FROM ADD_BANNER_POST
+		 WHERE BANNER_GROUP_SEQ = CAST(#{BANNER_GROUP_SEQ} AS BIGINT);
+		
+	</delete>
+	
+	<select id="getTotalBannerGroupList" resultType="hashMap">
+	   SELECT ABG.BANNER_GROUP_SEQ
+			, ABG.BANNER_GROUP_NM
+			, ABG.BANNER_ALARM_GB
+			, ABG.BANNER_DESC
+			, ABG.REMARK
+			, ABG.LAYOUT_USE_YN
+			, ABG.INSERT_DTTM
+		 FROM ADD_BANNER_GROUP ABG
+	</select>
+	
+	 <select id="getTotalBannerList" resultType="hashMap">
+		SELECT '' AS BANNER_GROUP_SEQ
+			 , AB.BANNER_SEQ
+			 , '' AS FR_DT
+			 , '' AS FR_TM
+			 , '' AS TO_DT
+			 , '' AS TO_TM
+			 , '' AS ORD
+			 , '' AS GESI_YN
+			 , AB.BANNER_TITLE
+			 , AB.BANNER_TEXT
+			 , AB.BANNER_GB
+			 , AB.TEMPLATE_GB
+			 , AB.DAEPYO_IMG_FILE_NO
+			 , AB.LINK_URL
+			 , AB.USE_YN
+			 , AB.INSERT_DTTM
+		 FROM ADD_BANNER AB
+	</select>
+	
+	<select id="getTotalBannerPostList" parameterType="hashMap" resultType="hashMap">
+		SELECT ABP.BANNER_GROUP_SEQ
+			 , ABP.BANNER_SEQ
+			 , AB.BANNER_TITLE
+			 , AB.BANNER_TEXT
+			 , AB.BANNER_GB
+			 , AB.TEMPLATE_GB
+			 , AB.LINK_URL
+			 , ABP.POST_SEQ
+			 , ABP.FR_DT
+			 , ABP.FR_TM
+			 , ABP.TO_DT
+			 , ABP.TO_TM
+			 , ABP.ORD
+			 , ABP.ORD_UPDATE_DTTM
+			 , ABP.GESI_YN
+			 , AFL.FILE_NM
+			 , AFL.FILE_PATH
+		 FROM ADD_BANNER_POST ABP
+		INNER JOIN ADD_BANNER AB
+		   ON ABP.BANNER_SEQ = AB.BANNER_SEQ
+		 LEFT OUTER JOIN ADD_FILE AFL
+		   ON AFL.FILE_ID = 'ADD_BANNER'
+		  AND CAST(AFL.FILE_KEY AS BIGINT) = AB.BANNER_SEQ
+	   	  AND AFL.FILE_HANGMOK = 'titleImg'
+		  AND AFL.FILE_NO = CAST('1' AS BIGINT)
+		WHERE ABP.BANNER_GROUP_SEQ = CAST(#{BANNER_GROUP_SEQ} AS BIGINT)
+		  AND AB.USE_YN = 'Y'
+		ORDER BY ORD, ORD_UPDATE_DTTM DESC
+	</select>   
+	
+	<insert id="insertBannerPost" parameterType="hashMap">
+	 INSERT INTO ADD_BANNER_POST
+		  ( BANNER_GROUP_SEQ
+		  , BANNER_SEQ
+		  , POST_SEQ
+		  , FR_DT
+		  , FR_TM
+		  , TO_DT
+		  , TO_TM
+		  , ORD
+		  , ORD_UPDATE_DTTM
+		  , GESI_YN
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM  )
+	 VALUES ( 
+			CAST(#{BANNER_GROUP_SEQ} AS INTEGER)
+		  , CAST(#{BANNER_SEQ} AS INTEGER)
+		  , (SELECT IFNULL(MAX(A.POST_SEQ), 0) + 1
+	 		   FROM ADD_BANNER_POST A)
+		  , DATE_FORMAT(SYSDATE(), '%Y%m%d')
+		  , DATE_FORMAT(SYSDATE(), '%H%i')
+		  , DATE_FORMAT(DATE_ADD(SYSDATE(), INTERVAL 30 DAY), '%Y%m%d')
+		  , DATE_FORMAT(SYSDATE(), '%H%i')
+		  , CAST(#{ORD} AS INTEGER)
+		  , SYSDATE()
+		  , 'Y'
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM})
+		 ON DUPLICATE KEY   
+	 UPDATE ORD = CAST(#{ORD} AS INTEGER)
+		  , ORD_UPDATE_DTTM = SYSDATE()
+		  , UPDATE_DTTM = SYSDATE()	
+		  , UPDATE_ID = #{SYSTEM_ID} 
+		  , UPDATE_IP = #{SYSTEM_IP} 
+	</insert>
+	
+	<update id="updateBannerPost" parameterType="hashMap">
+		UPDATE ADD_BANNER_POST
+		   SET FR_DT = REPLACE(#{FR_DT}, '-', '')
+			 , FR_TM = REPLACE(#{FR_TM}, ':', '')
+			 , TO_DT = REPLACE(#{TO_DT}, '-', '')
+			 , TO_TM = REPLACE(#{TO_TM}, ':', '')
+			 , GESI_YN = #{GESI_YN}
+		 WHERE BANNER_GROUP_SEQ = CAST(#{BANNER_GROUP_SEQ} AS BIGINT)
+		   AND BANNER_SEQ = CAST(#{BANNER_SEQ} AS BIGINT)
+		   AND POST_SEQ = CAST(#{POST_SEQ} AS BIGINT)
+	</update>
+	
+	<update id="updateOrdBannerPost" parameterType="hashMap">
+		UPDATE ADD_BANNER_POST
+		   SET ORD = CAST(#{ORD} AS INTEGER)
+			 , ORD_UPDATE_DTTM = NOW()
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE BANNER_GROUP_SEQ = CAST(#{BANNER_GROUP_SEQ} AS BIGINT)
+		   AND BANNER_SEQ = CAST(#{BANNER_SEQ} AS BIGINT)
+		   AND POST_SEQ = CAST(#{POST_SEQ} AS BIGINT)
+	</update>
+	
+	<delete id="deleteBannerPost" parameterType="hashMap">
+		DELETE FROM ADD_BANNER_POST
+		 WHERE BANNER_GROUP_SEQ = CAST(#{BANNER_GROUP_SEQ} AS BIGINT)
+		   AND BANNER_SEQ = CAST(#{BANNER_SEQ} AS BIGINT)
+	 	   AND POST_SEQ = CAST(#{POST_SEQ} AS BIGINT)
+	</delete>
+
+</mapper>

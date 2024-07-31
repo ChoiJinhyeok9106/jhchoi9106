@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.popupmanager">
+
+    <select id="searchPopup"  parameterType="hashMap" resultType="hashMap">
+    	SELECT A.POPUP_NO
+			 , A.POP_NM
+			 , A.POPUP_SIJAK_ILJA
+             , A.POPUP_SIJAK_SIGAN
+             , A.POPUP_JONGRYO_ILJA
+             , A.POPUP_JONGRYO_SIGAN
+             , A.POP_WIDTH
+             , A.POP_HEIGHT
+             , A.POP_X
+             , A.POP_Y
+    	     , A.LINK_URL
+    	     , A.USE_YN
+    	     , CASE WHEN CONCAT(A.POPUP_SIJAK_ILJA,A.POPUP_JONGRYO_ILJA) = '0000010199991231' THEN '상시'
+                    ELSE CONCAT(DATE_FORMAT(A.POPUP_SIJAK_ILJA,'%Y-%m-%d'),' ',CONCAT(SUBSTR(A.POPUP_SIJAK_SIGAN,1,2),':',SUBSTR(A.POPUP_SIJAK_SIGAN,3,2)),' ~ ',DATE_FORMAT(A.POPUP_JONGRYO_ILJA,'%Y-%m-%d'),' ',CONCAT(SUBSTR(A.POPUP_JONGRYO_SIGAN,1,2),':',SUBSTR(A.POPUP_JONGRYO_SIGAN,3,2))) END AS DATE_CONCAT
+    	     , B.FILE_KEY
+    	  FROM ADD_POPUP A
+    	  LEFT
+    	  JOIN ADD_FILE B
+    	    ON CONCAT('ADD_POPUP#',A.POPUP_NO) = B.FILE_KEY
+    	   AND B.FILE_ID = 'ADD_POPUP'
+		 WHERE 1=1
+           AND A.POP_NM LIKE CONCAT('%',#{pSearchArgv},'%')
+         ORDER BY A.POPUP_NO DESC
+    </select>
+
+    <insert id="popupInsert" parameterType="hashMap">
+        INSERT INTO ADD_POPUP
+             (
+               POP_NM
+             , POPUP_SIJAK_ILJA
+             , POPUP_SIJAK_SIGAN
+             , POPUP_JONGRYO_ILJA
+             , POPUP_JONGRYO_SIGAN
+             , POP_WIDTH
+             , POP_HEIGHT
+             , POP_X
+             , POP_Y
+             , USE_YN
+             , LINK_URL
+             )
+        VALUES
+             (
+               #{POP_NM}
+             , CASE WHEN #{POPUP_SIJAK_ILJA} != null or #{POPUP_SIJAK_ILJA} != '' THEN #{POPUP_SIJAK_ILJA} ELSE '00000101' END
+             , CASE WHEN #{POPUP_SIJAK_SIGAN} != null or #{POPUP_SIJAK_SIGAN} != '' THEN REPLACE(#{POPUP_SIJAK_SIGAN},':','') ELSE '0000' END
+             , CASE WHEN #{POPUP_JONGRYO_ILJA} != null or #{POPUP_JONGRYO_ILJA} != '' THEN #{POPUP_JONGRYO_ILJA} ELSE '99991231' END
+             , CASE WHEN #{POPUP_JONGRYO_SIGAN} != null or #{POPUP_JONGRYO_SIGAN} != '' THEN REPLACE(#{POPUP_JONGRYO_SIGAN},':','') ELSE '2359' END
+             , #{POP_WIDTH}
+             , #{POP_HEIGHT}
+             , #{POP_X}
+             , #{POP_Y}
+             , #{USE_YN}
+             , #{LINK_URL}
+             )
+    </insert>
+
+    <update id="popupUpdate" parameterType="hashMap">
+       UPDATE ADD_POPUP SET
+              POP_NM = #{POP_NM}
+            , POPUP_SIJAK_ILJA  = (CASE WHEN #{POPUP_SIJAK_ILJA} != null or #{POPUP_SIJAK_ILJA} != '' THEN #{POPUP_SIJAK_ILJA} ELSE '00000101' END)
+            , POPUP_SIJAK_SIGAN = (CASE WHEN #{POPUP_SIJAK_SIGAN} != null or #{POPUP_SIJAK_SIGAN} != '' THEN REPLACE(#{POPUP_SIJAK_SIGAN},':','') ELSE '0000' END)
+            , POPUP_JONGRYO_ILJA = (CASE WHEN #{POPUP_JONGRYO_ILJA} != null or #{POPUP_JONGRYO_ILJA} != '' THEN #{POPUP_JONGRYO_ILJA} ELSE '99991231' END)
+            , POPUP_JONGRYO_SIGAN = (CASE WHEN #{POPUP_JONGRYO_SIGAN} != null or #{POPUP_JONGRYO_SIGAN} != '' THEN REPLACE(#{POPUP_JONGRYO_SIGAN},':','') ELSE '2359' END)
+            , POP_WIDTH = #{POP_WIDTH}
+            , POP_HEIGHT = #{POP_HEIGHT}
+            , POP_X = #{POP_X}
+            , POP_Y = #{POP_Y}
+            , USE_YN = #{USE_YN}
+            , LINK_URL = #{LINK_URL}
+        WHERE 1=1
+          AND POPUP_NO = #{POPUP_NO}
+    </update>
+
+    <update id="useYnToggle" parameterType="hashMap">
+        UPDATE ADD_POPUP SET
+               USE_YN = #{USE_YN}
+        WHERE 1=1
+          AND POPUP_NO = #{POPUP_NO}
+    </update>
+
+    <delete id="popupDelete" parameterType="hashMap">
+        DELETE FROM ADD_POPUP
+         WHERE 1=1
+           AND POPUP_NO = #{popNo};
+    </delete>
+</mapper>

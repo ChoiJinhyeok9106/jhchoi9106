@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.corp">
+
+<!-- 	<select id="getAuthList" parameterType="hashMap" resultType="hashMap"> -->
+<!-- 		SELECT AUTH_CD -->
+<!-- 			 , AUTH_NM -->
+<!-- 		  FROM SMN_AUTH -->
+<!-- 		 WHERE AUTH_GB = '03' -->
+<!-- 		   AND USE_YN = 'Y' -->
+<!-- 		 ORDER BY ORD -->
+<!-- 	</select> -->
+	
+	<select id="getCorpList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.CORP_ID
+			 , A.CORP_NM
+			 , A.CORP_CEO_NM
+			 , A.CORP_TEL_NO
+			 , A.CORP_SECTORS
+			 , A.CORP_STATUS
+			 , A.CORP_BIZ_NO
+			 , A.STATUS_GB
+             <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             </if>
+		  FROM (SELECT SA.CORP_ID
+					 , SA.CORP_NM
+					 , SA.CORP_CEO_NM
+					 , SA.CORP_TEL_NO
+					 , SA.CORP_SECTORS
+					 , SA.CORP_STATUS
+					 , SA.CORP_BIZ_NO
+					 , SA.STATUS_GB
+				<if test="pPageNo != null and pPageNo != ''.toString()">
+		             , ROW_NUMBER() OVER(ORDER BY SA.CORP_NM) AS RNUM
+					 , COUNT(*) OVER() AS CNT
+				</if>
+				  FROM SMN_CORP SA
+			   ) A
+		 WHERE 1 = 1
+		<if test="pSearchType != null and pSerachType != ''.toString()">
+		   AND A.STATUS_GB = #{pSearchType}
+		</if>
+		<if test="pSearchArgv != null and pSerachArgv != ''.toString()">
+		   AND A.CORP_NM LIKE CONCAT('%', #{pSearchArgv}, '%')
+		</if>
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+         </if>
+		 ORDER BY A.CORP_NM
+	</select>
+	
+<!-- 	<select id="getCorpAuthList" parameterType="hashMap" resultType="hashMap"> -->
+	<select id="getAuthList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.AUTH_CD
+			 , A.AUTH_NM
+			 , CASE IFNULL(B.CORP_ID,'N') WHEN 'N' THEN 'N' ELSE 'Y' END AS AUTH_YN
+		  FROM SMN_AUTH A
+		  LEFT JOIN SMN_CORP_AUTH B
+		  	ON A.AUTH_CD = B.CORP_AUTH_CD
+		   AND B.CORP_ID = #{CORP_ID}
+		 WHERE A.AUTH_GB = '03'
+		   AND A.USE_YN = 'Y'
+		 ORDER BY A.ORD
+	</select>
+	
+	
+	<insert id="insertAuth" parameterType="hashMap">
+		INSERT INTO SMN_CORP_AUTH
+			 ( CORP_ID
+			 , CORP_AUTH_CD
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+		VALUES
+			 ( #{CORP_ID}
+			 , #{AUTH_CD}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 )
+	</insert>
+	
+	<delete id="deleteAuth" parameterType="hashMap">
+		DELETE FROM SMN_CORP_AUTH
+		 WHERE CORP_ID = #{CORP_ID}
+		   AND CORP_AUTH_CD = #{AUTH_CD}
+	</delete>
+</mapper>

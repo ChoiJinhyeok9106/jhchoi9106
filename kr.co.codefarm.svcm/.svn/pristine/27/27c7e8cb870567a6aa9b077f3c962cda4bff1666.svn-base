@@ -1,0 +1,175 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/circle.css" />  
+
+<h2>진로 검사 관리</h2>
+<section class="sub_cont_box">
+    <h2 class="h2">MBTI 결과보기</h2>
+    <div class="box-type02 mbti-result-box">
+        <div class="result-icon">
+            <span class="icon"><span>ENFJ</span></span>
+            <span class="text">한번 시작한 일은 끝까지 해내는 사람들</span>
+        </div>
+        <p class="info-txt">책임감이 강하며 , 현실적이다 매사에 철저한 유형<br/>
+            도시개발기술자 / 철강기술자 / 관리자(정부, 경찰, 공익, 회사중역) / 교정직 / 회계관련 / 컴퓨터 시스템 / 치과의사 / 교사(수학, 무역, 산업)
+        </p>
+    </div>
+
+    <h3 class="h3">MBTI 상세내용</h3>
+    <div class="box-type05 mbti-result-box">
+        <div class="mbti-graph-box">
+            <div class="graph-title">
+                <span class="icon icon-compass"></span>
+                <span class="tit">에너지 방향<span class="eng">Energy</span></span>
+            </div>
+            <div class="graph-box-wrap">
+                <div class="mbti-style col01">
+                    <div class="style-box">
+                        <span class="initial">E</span>
+                        <span class="txt">외향<span class="eng">(Extraversion)</span></span>                                        
+                    </div>
+                    <span class="info">외부 세계의 사람이나 사물에 대하여 에너지를 사용</span>
+                </div>
+                <div class="mbti-graph">
+                    <div class="left-graph col01" style="width:32%"><span class="percent">32%</span></div>
+                    <div class="right-graph col02" style="width:68%"><span class="percent">68%</span></div>
+                </div>
+                <div class="mbti-style col01">
+                    <div class="style-box right">                                        
+                        <span class="txt">외향<span class="eng">(Extraversion)</span></span>   
+                        <span class="initial">I</span>                                     
+                    </div>
+                    <span class="info">내부 세계의  개념이나 아이디어에 에너지를 사용</span>
+                </div>
+            </div>
+        </div>
+        <div class="mbti-graph-box">
+            <div class="graph-title">
+                <span class="icon icon-eye"></span>
+                <span class="tit">인식기능<span class="eng">Information</span></span>
+            </div>
+            <div class="graph-box-wrap">
+                <div class="mbti-style col02">
+                    <div class="style-box">
+                        <span class="initial">S</span>
+                        <span class="txt">감각<span class="eng">(Sensing)</span></span>                                        
+                    </div>
+                    <span class="info">오감을 통한 사실이나 사건을 더 잘 인식</span>
+                </div>
+                <div class="mbti-graph">
+                    <div class="left-graph col02" style="width:72%"><span class="percent">72%</span></div>
+                    <div class="right-graph col01" style="width:28%"><span class="percent">28%</span></div>
+                </div>
+                <div class="mbti-style col02">
+                    <div class="style-box right">                                        
+                        <span class="txt">직관<span class="eng">(INtition)</span></span>   
+                        <span class="initial">N</span>                                     
+                    </div>
+                    <span class="info">사실, 사건 이면의 의미나 관계, 가능성을 더 잘 인식</span>
+                </div>
+            </div>
+        </div>
+        <div class="mbti-graph-box">
+            <div class="graph-title">
+                <span class="icon icon-crosshair"></span>
+                <span class="tit">판단기능<span class="eng">Decision Making</span></span>
+            </div>
+            <div class="graph-box-wrap">
+                <div class="mbti-style col03">
+                    <div class="style-box">
+                        <span class="initial">T</span>
+                        <span class="txt">사고<span class="eng">(Thinking)</span></span>                                        
+                    </div>
+                    <span class="info">논리적, 분석적 근거를 바탕으로 판단</span>
+                </div>
+                <div class="mbti-graph">
+                    <div class="left-graph col02" style="width:32%"><span class="percent">32%</span></div>
+                    <div class="right-graph col01" style="width:68%"><span class="percent">68%</span></div>
+                </div>
+                <div class="mbti-style col03">
+                    <div class="style-box right">                                        
+                        <span class="txt">감정<span class="eng">(Feeling)</span></span>   
+                        <span class="initial">F</span>                                     
+                    </div>
+                    <span class="info">개인적, 사회적 가치를 바탕으로 판단</span>
+                </div>
+            </div>
+        </div>
+        <div class="mbti-graph-box">
+            <div class="graph-title">
+                <span class="icon icon-user"></span>
+                <span class="tit">생활양식<span class="eng">Life Style</span></span>
+            </div>
+            <div class="graph-box-wrap">
+                <div class="mbti-style col04">
+                    <div class="style-box">
+                        <span class="initial">J</span>
+                        <span class="txt">판단<span class="eng">(Judging)</span></span>                                        
+                    </div>
+                    <span class="info">외부 세계에 대하여 체계적이고 계획적으로 접근</span>
+                </div>
+                <div class="mbti-graph">
+                    <div class="left-graph col02" style="width:55%"><span class="percent">55%</span></div>
+                    <div class="right-graph col01" style="width:45%"><span class="percent">45%</span></div>
+                </div>
+                <div class="mbti-style col04">
+                    <div class="style-box right">                                        
+                        <span class="txt">인식<span class="eng">(Perceiving)</span></span>   
+                        <span class="initial">P</span>                                     
+                    </div>
+                    <span class="info">외부 세계에 대하여 개방적이고 융통성있게 접근</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mbti-detail">
+        <p class="label-type02">특성</p>
+        <div class="box-type03">
+            <p class="detail-txt">실질적이고 현실감각이 뛰어나며 일을 조직하고 계획하여 추진시키는 능력이 있다. 기계분야나 행정 분야에 재능을 지녔으며, 체계적으로 사업체나 조직체를 이끌어 나간다. 타고난 지도자로써 일의 목표를 설정하고, 지시하고 결정하고 이행하는 능력이 있다. 결과를 눈으로 볼 수 있는 일, 즉, 사업가, 행정관리, 생산건축 등의 분야에서 능력을 발휘할 수 있다. 속단 속결하는 경향과 지나치게 업무 위주로 사람들 대하는 경향이 있으므로 인간 중심의 가치와 타인의 감정을 충분히 고려해야 한다. 또 미래의 가능성보다 현재의 사실을 추구하기 때문에 현실적, 실용적인 면이 강하다.</p>
+        </div>
+        <p class="label-type02">장점</p>
+        <div class="box-type03">
+            <ol class="detail-list">
+                <li>실용적이고 성과 지향적이다.</li>
+                <li>초지일관 조직의 목표를 향해 나아간다.</li>
+                <li>타고난 조직가이며, 객관적 판단을 하는데 능하다.</li>
+                <li>의무를 성실하게 이행하며 필요한 경우 냉정해질 수 있다.</li>
+                <li>논리성, 일관성, 실용성, 효율성이 없는 일을 알아보는 능력이 뛰어나다.</li>
+            </ol>
+        </div>
+        <p class="label-type02">단점</p>
+        <div class="box-type03">
+            <ol class="detail-list">
+                <li>절차를 따르지 않거난 꼼꼼하지 못한 사람들을 못 참는다.</li>
+                <li>비능률적인 일, 지금 확인할 수 없는 앞으로의 가능성에 흥미를 갖지 못한다.</li>
+                <li>목표를 추구하는 과정에서 사람들을 희생시키는 경향이 있다.</li>
+                <li>반대 의견에 귀 기울이지 않고, 무뚝둑하고 무례해 보인다.</li>
+            </ol>
+        </div>
+        <p class="label-type02">극복방안</p>
+        <div class="box-type03">
+            <p class="detail-txt">"주어진 일"이나 "하도록 해야만 하는 일"이 상황의 변화에 따라 새로운 샹황에 맞지 않을 수도 있다는 것을 인식할 필요가 있습니다. 새로운 정보를 바탕으로 한 변화가 필요하며, 다른 사람들에게 조언을 구하고 자신의 말을 멈추고 그들의 의견을 귀 기울여 듣고 판단을 천천히 내릴 필요가 있습니다.</p>
+        </div>
+        <p class="label-type02">직업</p>
+        <div class="box-type03">
+            <ol class="detail-list">
+                <li>체계적으로 사람들을 조직하고, 논리적인 결과를 위해 시간과 자원을 효율적으로 쓰는 일</li>
+                <li>숙달된 기술을 사용하며, 추론 능력으로 목표가 분명한 직무를 담당하는 일</li>
+                <li>공정하고 논리적이며, 솔직하고 객관적인 기준으로 평가 받을 수 있는 일</li>
+                <li>부지런하고 양심적인 사람들과 친근한 환경에서 하는 일</li>
+                <li>현실적이고 구체적인 일. 실제로 응용이 가능하며 결과를 확인할 수 있는 일</li>
+                <li>기대치가 분명하고, 보고 체계가 확실한 일</li>
+                <li>생산적인 일. 단계와 자원을 조직하는 일. 절차와 시한이 정해져 있는 일</li>
+                <li>안정적이고 예측 가능한 상황에서, 활동적으로 다양한 사람들과 함께 하는 일</li>
+                <li>다른 사람들과 함께 일할 수 있고, 나와 그들에 대한 책임이 주어지는 일</li>
+                <li>결정권이 있고, 권한과 책임이 많은 일. 내 견해와 경험이 중요시 되는일</li>
+            </ol>
+        </div>
+    </div>
+    <div class="btn-line center">
+        <a href="#!" class="btn type01 size-l">메인으로</a>
+    </div>
+</section>
+            
+
+
+

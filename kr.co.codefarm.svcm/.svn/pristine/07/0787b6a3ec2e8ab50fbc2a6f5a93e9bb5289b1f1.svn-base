@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- 가이아운영반영시 주석 헤제 필수 -->
+<!-- 	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
+	<title>G-IDEA-PLATFORM</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+	
+	<link rel="stylesheet" type="text/css" href="/assets/css/common.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/reset.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/feather.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/xcloud-icon.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/login.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/jui/jui-ui.classic.css">
+	<link rel="stylesheet" type="text/css" href="/assets/css/slick.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/iframe_layout.css" />
+	<link rel="stylesheet" type="text/css" href="/service/design/assets/css/survey.css" />
+	<link rel="stylesheet" type="text/css" href="/service/design/assets/css/board.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/vue/vue2-perfect-scrollbar.min.css" />
+	<link rel="stylesheet" type="text/css" href="/assets/css/vue/vue-toast-notification.css" />
+	
+	<!-- 기본 -->
+	<script type="text/javascript" src="/assets/js/vendor/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="/assets/js/vendor/es6-promise.auto.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/lodash.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/slick.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/loadingoverlay.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/vue/vue2-perfect-scrollbar.umd.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/tui-tree.css"/>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/toastui-chart.min.css"/>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/tui-grid.min.css"/>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/toastui-editor-viewer.min.css"></link>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/toastui-editor.min.css"></link>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/toastui-editor-plugin-table-merged-cell.min.css"></link>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/codemirror.css"></link>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/github.min.css"></link>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/tui-color-picker.css"></link>
+	<link rel="stylesheet" type="text/css" href="/assets/css/tui/tui-date-picker.css">
+
+	<!-- tui(toast) -->
+	<script type="text/javascript" src="/assets/js/vendor/tui/tui-code-snippet.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/toastui-chart.min.js"></script>
+    <script type="text/javascript" src="/assets/js/vendor/tui/tui-chart-all.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/tui-color-picker.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/tui-date-picker.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/highlight.pack.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/markdown-it.js"></script>
+
+
+	<script src="https://uicdn.toast.com/tui-tree/latest/tui-tree.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.1/mustache.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/toastui-editor-viewer.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/toastui-editor-all.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/toastui-editor-plugin-color-syntax.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/toastui-editor-plugin-table-merged-cell.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/tui-grid.min.js"></script>
+
+	<script type="text/javascript" src="/assets/js/vendor/tui/plantuml-encoder.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/toastui-editor-plugin-uml.min.js"></script>
+
+	<script type="text/javascript" src="/assets/js/vendor/tui/raphael.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/tui/toastui-editor-plugin-chart.min.js"></script>
+	
+	<!-- vue 관련 -->
+	<script type="text/javascript" src="/assets/js/vendor/vue/vue.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/vue/axios.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/vue/vue-toast-notification.js"></script>
+	
+	<!-- CF-COMPONENT(Template) -->
+	<script type="text/javascript" src="/assets/js/cf_component/template/MessageModalTemplate.js"></script>
+	<script type="text/javascript" src="/assets/js/cf_component/template/PagingTemplate.js"></script>
+	<script type="text/javascript" src="/assets/js/cf_component/CommcodeSet.js"></script>
+	<script type="text/javascript" src="/assets/js/cf_component/CustomcodeSet.js"></script>
+	
+	<!-- 프로젝트 공통 -->
+	<script type="text/javascript" src="/assets/js/cdf_library.js"></script>
+	<script type="text/javascript" src="/assets/js/axios.common.js"></script>
+	<script type="text/javascript" src="/assets/js/common.js"></script>
+	<script type="text/javascript" src="/assets/js/cf_component/Dataset.js"></script>
+	<script type="text/javascript" src="/assets/js/cf_component/PagingSet.js"></script>
+	<script type="text/javascript" src="/assets/js/cf_component/ModalSet.js"></script>
+	<script type="text/javascript" src="/app-assets/js/api/systemmanager/defaultinfoApi.api.js"></script>
+
+</head>
+<body class="jui feather">
+	<div id="wrap">
+		<main id="content-wrap">
+			<div class="sub_cont_wrap" id="app">
+          		<a href="/info/index.html"><h2 id="login-title">G-IDEA <span>PLATFORM</span></h2></a>
+				<section class="sub_cont_box">
+					<h3 class="h2">개인정보처리방침</h3>
+					<div class="cont_box">
+						<div v-if="!boardPostList.currentRow">
+							<div class="col s12 l5">
+								<span class="board-info-txt size-m">총 <span>{{boardPostListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{boardPostListPaging.getCurrentPage()}}</span>/ {{boardPostListPaging.getTotalPage()}})
+								</span>
+							</div>
+						</div>
+
+						<div class="board-text-cont" v-if="!boardPostList.currentRow">
+							<div class="list" v-for="(item, index) in boardPostList.data">
+								<div class="num">
+									<span class="notice icon-info-message">공지</span>
+								</div>
+								<div class="list-content">
+									<span class="cont-tit">
+										<a href="javascript:void(0)" @click="rowClick(index)">{{ '[공지] ' + item.TITLE }}</a>
+									</span>
+									<span class="etc icon-realtime">{{item.INSERT_DTTM}}</span>
+									<span class="etc icon-pen">{{item.JAKSEONGJA_NM}}</span>
+									<span class="etc icon-eye">{{item.SEARCH_CNT}}</span>
+								</div>
+							</div>
+							<div class="app-list" v-if="boardPostList.data.length == 0">
+								<div class="no-cont">검색결과가 없습니다.</div>
+							</div>
+						</div>
+						<paging :pagingset="boardPostListPaging" :type="'normal'" id="board-post-page" v-if="!boardPostList.currentRow"></paging>
+
+						<div v-if="boardPostList.currentRow">
+							<div class="board-view-page">
+								<div class="head-box">
+									<div class="title center">{{boardPostList.currentRow.TITLE}}</div>
+									<span class="etc icon-realtime">{{boardPostList.currentRow.INSERT_DTTM}}</span> <span class="etc icon-pen">{{boardPostList.currentRow.JAKSEONGJA_NM}}</span> <span class="etc icon-eye">{{boardPostList.currentRow.SEARCH_CNT}}</span>
+								</div>
+
+								<div class="view-cont-box" id="viewerSection"></div>
+<!-- 								<div class="view-cont-box" style="white-space: pre-line;"></div> -->
+
+							</div>
+
+							<div class="col-inline btn-line right">
+								<a href="javascript:void(0)" class="btn type02 size-m" @click="boardPostList.selectRow(-1)">목록</a>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+			<div class="overlay"></div>
+		</main>
+	</div>
+</body>
+
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+/********************************************************************************************
+ * vue 객체에 Loading Overlay 함수 선언
+ ********************************************************************************************/
+Vue.prototype.LoadingOverlay = function(pTarget, TfVal) {
+	try {
+		$(pTarget).LoadingOverlay(TfVal ? "show" : "hide", TfVal);
+	} catch (err) {
+		return false;
+	}
+}
+
+var vm = new Vue({
+	el : '#app',
+	//사용할 데이터
+	data : {
+		webViewer: '',
+		boardPostList: new Dataset(),
+		boardPostListPaging: new PagingSet(10,10),
+	},
+	//생성 될 때
+	beforeCreate : function() {
+
+	},
+	//계산된 속성 표현 시
+	computed : {},
+	//데이터 감시
+	watch : {
+		'boardPostList.data': {
+			handler: function(val, oldVal) {
+				if(this.boardPostList.enableevent) {
+					var vm = this;
+					val.filter(function(data, rowposition) {
+						return Object.keys(data).some(function(colNm) {
+							var diff = data[colNm] !== vm.boardPostList.beforeData[rowposition][colNm];
+							if(diff) {
+								vm.boardPostList.beforeData[rowposition][colNm] = data[colNm];
+							}
+						});
+					});
+				}
+			},
+			deep: true
+		},
+		'boardPostListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.boardPostList.pageChange(val, this.boardPostListPaging.getRowCnt());
+			}
+		},                                                                                                                      
+	},
+	//마운트 된 시점수행
+	mounted : function() {
+		this.setBoardPostList();
+	},
+	//함수
+	methods : {
+		viewEditorInit: function(pContents){
+			var self = this;
+
+			const { tableMergedCell, uml } = toastui.Editor.plugin;
+
+			self.webViewer = new toastui.Editor.factory({
+	    	    el: document.querySelector('#viewerSection'),
+	    	    viewer: true,
+	    	    height: 'auto',
+	    	    initialValue: pContents,
+				plugins: [ tableMergedCell, uml]
+	        });
+		},
+		setBoardPostList: function(){
+			var returnVal =  defaultinfoApiApi.privacy();
+			var self = this;
+			self.boardPostListPaging.currentPage = 1;
+			
+			returnVal.then(function(response){
+				self.boardPostList.setRawData(response.data, self.boardPostListPaging.getRowCnt());
+				if(response.data.length > 0){
+					self.boardPostListPaging.setTotalCnt(response.data.length);
+				}else{
+					self.boardPostListPaging.setTotalCnt(0);
+				}
+			});
+		},
+		rowClick: function(rowposition){
+			var self = this;
+			self.boardPostList.selectRow(rowposition);
+
+	    	self.$nextTick(function(){
+	   			$('#viewerSection > div').remove();
+	
+	   			var pContents = self.boardPostList.currentRow.CONTENTS.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}');
+	
+	   			self.viewEditorInit(pContents);
+	
+			    $('#viewerSection').find('a').each(function(){
+			        $(this).attr('target','_blank');
+			    });
+	    	});
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function() {
+
+});
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>
+</html>

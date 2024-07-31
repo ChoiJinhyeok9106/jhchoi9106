@@ -1,0 +1,113 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+
+<h2>내 알림 설정</h2>
+<section class="sub_cont_box alarm-setting">
+    <div class="tit">
+        <h3 class="h3">전체 알림설정</h3>
+        <label class="toggle-switch size-m">
+            <input type="checkbox" id="" checked="">
+            <span class="slider round bg-red"></span>
+        </label>
+    </div>
+    <p class="desc">포탈에서 제공되는 공지, 뉴스, 정보 등 내 활동에 관련된 모든 알림을 설정할 수 있습니다.<br>전체 알림을 설정하시면 별도의 세부 설정 없이 모든 알림을 받을 수 있습니다.</p>
+    <ul class="alarm-setting-list">
+        <li>
+            <label for="" class="size-s">이메일 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">학교공지 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">수강신청 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">톡 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">학과공지 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">수업변동 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">일정 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">상담 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">설문 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">정보변경 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">마일리지 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">나의 포트폴리오 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">스마트 캠퍼스 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+        <li>
+            <label for="" class="size-s">취업 알림</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" id="" checked="">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+    </ul>
+</section>

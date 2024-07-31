@@ -1,0 +1,330 @@
+<h2>게시판 권한 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!boardList.currentRow"> 
+		<h2 class="h2">게시판 리스트</h2>
+		<div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pBoardGb" v-model="pBoardGb" style="width:184px;" class="size-m">
+		        <option v-for="(item, index) in addCommcode.getCommcode('ADD', 'BOARD_GB', 'all')" :value="item.CD">{{item.CD_NM}}</option>
+            </select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="게시판명을 입력하세요" v-on:keyup.13="search">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search">
+	    </div>
+	    
+	    <div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{boardListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{boardListPaging.getCurrentPage()}}</span> / {{boardListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+	        	<table class="table-type04 response" id="mainListLoading">
+					<caption></caption>
+					<colgroup>
+			            <col width="8%" />
+			            <col width="20%" />
+			            <col>
+			            <col width="10%" />
+					</colgroup>
+					<thead>
+						<tr>
+			                <th scope="col">번호</th>
+			                <th scope="col">게시판구분</th>
+			                <th scope="col">게시판명</th>
+			                <th scope="col">사용여부</th>
+						</tr>
+					</thead>
+					<tbody v-if="boardList.getRowCount() > 0">
+						<tr v-for="(item, index) in boardList.data" v-if="boardList.getRowType(index) != '8'">
+			                <td data-header="번호">{{item.BOARD_SEQ}}</td>
+			                <td data-header="구분" class="left"><span :class="item.BOARD_GB=='01'?'new-board-type type01 icon-profile'
+                                                    :(item.BOARD_GB=='02'?'new-board-type type02 icon-info-message'
+                                                    :(item.BOARD_GB=='03'?'new-board-type type03 icon-help'
+                                                    :(item.BOARD_GB=='04'?'new-board-type type04 icon-image'
+                                                    :(item.BOARD_GB=='05'?'new-board-type type05 icon-server'
+                                                    :(item.BOARD_GB=='06'?'new-board-type type06 icon-message-circle'
+                                                    :(item.BOARD_GB=='07'?'new-board-type type07 icon-paperclip'
+                                                    :'new-board-type type08 icon-meh'))))))"><em v-if="item.BOARD_GB=='06'">?</em>{{getBoardGbNm(item.BOARD_GB) }}</span></td>
+	                        <td class="left" data-header="게시판 명"><a href="javascript:void(0)" @click="rowClick(index)">{{ item.BOARD_NM }}</a></td>
+	                        <td data-header="사용여부"><span :class="item.USE_YN=='Y' ? 'statue01 icon-checkmark' : 'statue02 icon-minus-circle'"></span></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="boardListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+
+	<!-- 알림 대상 권한 -->
+	<section class="cont_box board-view-page nonsubject-info" v-if="boardList.currentRow">
+   		<div class="row form-row head-box">
+   			<div class="form-group col s12 l8">
+	   			<p class="title">[{{ getBoardGbNm(boardList.currentRow.BOARD_GB) }}] {{boardList.currentRow.BOARD_NM}}</p>
+<!-- 	   			<p class="description"></p> -->
+   			</div>
+    		<div class="form-group col s12 l4 right">
+	    		<a href="javascript:void(0)" class="btn type01 size-m left-icon icon-corner-left-up" @click="boardList.selectRow(-1);">목록</a>
+    		</div>
+   		</div>
+   		
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pBoardAuthGb" v-model="pBoardAuthGb" style="width:184px;" class="size-m" @change="setAuthList">
+			        <option v-for="(item, index) in addCommcode.getCommcode('ADD', 'BOARD_AUTH_GB', 'blank')" :value="item.CD">{{item.CD_NM}}</option>
+            </select>
+		</div>
+		
+   		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{authListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{authListPaging.getCurrentPage()}}</span> / {{authListPaging.getTotalPage()}})</span>
+		</div>
+        <div class="table-type04-wrap">
+            <table class="table-type04 response">
+                <caption></caption>
+                <colgroup>
+                    <col width="20%" />
+                 	<col width="20%" />
+                    <col width="45%" />
+                    <col width="15%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col">권한구분</th>
+                     	<th scope="col">권한코드</th>
+                        <th scope="col">권한명</th>
+                        <th scope="col">등록</th>
+                    </tr>
+                </thead>
+                <tbody v-if="authList.getRowCount() > 0">
+                    <tr v-for="(item, index) in authList.getData()" v-if="authList.getRowType(index) != '8'"> 
+                        <td data-header="권한구분">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</td>
+                        <td data-header="권한코드">{{item.AUTH_CD}}</td>
+                        <td class="left" data-header="권한명">{{item.AUTH_NM}}</td>
+                        <td data-header="등록">
+							<label class="toggle-switch size-m">
+								<input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.AUTH_YN" @change="regAuth(item.AUTH_CD, item.AUTH_YN)"/>
+                                <span class="slider bg-red round"></span>
+                            </label>
+                        </td>
+     				</tr>
+                </tbody>
+				<tbody v-else>
+					<tr>
+						<td colspan="100">검색결과가 없습니다.</td>
+					</tr>
+				</tbody>
+            </table>
+        </div>
+        <paging :pagingset="authListPaging" :type="'normal'"></paging>
+	</section>
+</section>
+    
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	/* 사용할 데이터 */
+	data: {
+		pBoardGb: '', 							// 검색조건 - 게시판 구분
+        pSearchArgv: '', 						// 검색조건 - 게시판 명
+		pBoardAuthGb: '01',						// 세부 검색조건 - 게시판 권한 구분
+        boardList: new Dataset(),				// 게시판 목록
+        boardListPaging: new PagingSet(10, 10),	// 게시판 페이징
+        authList: new Dataset(),				// 권한 목록
+        authListPaging: new PagingSet(10, 10),	// 권한 페이징
+	},
+	/* 생성 될 때 */ 
+	beforeCreate: function(){
+		
+	},
+	/* 계산된 속성 표현 시 */
+	computed: {
+		
+	},
+	/* 데이터 감시 */
+	watch: {
+		'boardList.rowposition': {
+			handler: function (val, oldVal) {
+			}
+		},		
+		'boardList.data': {
+			handler: function (val, oldVal) {                
+				if(this.boardList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data ).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.boardList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.boardList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+                }
+			},
+			deep: true
+	    },	
+		'boardListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setBoardList(null, val);
+			}
+        },
+        'authListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setAuthList(null, val);
+			}
+	    },	
+	},
+	/* 마운트 된 시점수행 */
+	mounted: function(){
+		this.setBoardList();
+	},
+	/* 함수 */
+	methods: {
+        /* 게시판 조회 */
+		search: function(e, pPageNo){
+			var pageNo = this.boardListPaging.getCurrentPage();
+
+			if(pageNo == 1){
+				this.setBoardList(e, pPageNo);
+			}else{
+				this.boardListPaging.movePage(1);
+			}  
+		},
+		/* 게시판 조회 */
+		setBoardList: function(e, pPageNo){
+            var self = this;
+			var param = {
+				BOARD_GB: this.pBoardGb, 
+				TITLE: this.pSearchArgv
+			}
+			var pPageNo 	= pPageNo;
+			var pRowCount 	= this.boardListPaging.getRowCnt();
+			
+            var returnVal = boardApi.boardAuth(param, pPageNo, pRowCount, false);
+            
+            returnVal.then(function(response) {
+				self.boardList.setData(response.data);
+                
+                if(self.boardList.getRowCount() > 0){
+                    self.boardListPaging.setTotalCnt(self.boardList.data[0].CNT);
+                }else{
+                    self.boardListPaging.setTotalCnt(0);
+                }
+			});
+		},
+		/* 게시판 권한의 권한 목록 조회 */
+		setAuthList: function(e, pPageNo){
+			var self = this;
+			var param = {
+					BOARD_SEQ: this.boardList.currentRow.BOARD_SEQ, 
+					BOARD_AUTH_GB: this.pBoardAuthGb
+				}
+			var pPageNo 	= pPageNo;
+			var pRowCount 	= this.authListPaging.getRowCnt();
+			
+			if(isNull(pPageNo)) pPageNo = 1;
+			
+            var returnVal = boardApi.boardAuthGb(param, pPageNo, pRowCount, false);
+           
+			returnVal.then(function(response) {
+				self.authList.setData(response.data);
+                
+                if(self.authList.getRowCount() > 0){
+                    self.authListPaging.setTotalCnt(self.authList.data[0].CNT);
+                }else{
+                    self.authListPaging.setTotalCnt(0);
+                }
+			}).finally(function(){
+				self.authListPaging.movePage(pPageNo);
+			});
+        },
+	    regAuth: function(pAuthCd, pAuthYn){
+            var dataObj = {
+            	pBoardSeq: 		this.boardList.currentRow.BOARD_SEQ, 
+            	pBoardAuthGb: 	this.pBoardAuthGb,
+				pAuthCd: 		pAuthCd
+            }
+			
+    		switch(pAuthYn) {
+                case 'Y':   //현재 상태가 'N'인 경우 등록(insert)
+                    this.insertAuthCd(dataObj);
+                    break;
+                case 'N':   //현재 상태가 'Y'인 경우 삭제(delete)
+                    this.deleteAuthCd(dataObj);
+                    break;
+                default:
+                    break;
+            }
+        },
+		insertAuthCd: function(pObj) {
+            var self = this;
+
+            var returnVal = boardApi.authCdInsert(pObj, true);
+                    
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+                    var data = response.data;    
+
+                    if(data == '1'){									
+                         notifySubmit('success', '게시판 권한 등록', '등록이 완료되었습니다.', 'icon-save');
+                    }else{
+                        notifySubmit('warning', '게시판 권한 등록', '등록에 실패하였습니다.', 'icon-caution');
+                    }
+				});
+			}
+        },
+        deleteAuthCd: function(pObj) {
+            var self = this;
+
+			var returnVal = boardApi.authCdDelete(pObj, true);
+						
+			if(!isNull(returnVal)){
+			    returnVal.then(function(response) {
+				    var data = response.data;
+					
+					if(data == '1'){									
+                        notifySubmit('success', '게시판 권한 해제', '해제가 완료되었습니다.', 'icon-save');
+					}else{
+						notifySubmit('warning', '게시판 권한 해제', '해제에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+        },
+		rowClick: function(index){
+			this.boardList.selectRow(index); 
+			this.setAuthList();
+		},
+		/* 게시판 구분 명칭 매핑 */
+		getBoardGbNm: function(pCd) {
+			if(isNull(pCd)) return;
+			var list = this.addCommcode.data;
+			var findObj =_.filter(list, function(uplist) {
+				  			return  uplist.UP_CD == 'BOARD_GB' && uplist.CD == pCd;
+						});	
+			try {
+				return isNull(findObj[0].CD_NM)?'':findObj[0].CD_NM;
+			} catch (err) {
+				return '';
+			}
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.service">
+
+    <select id="getServiceList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.SERVICE_CD
+             , A.SERVICE_ENM
+             , A.SERVICE_NM
+             , A.PROTOCOL_GB
+             , CASE WHEN A.PROTOCOL_GB = '01' THEN 'HTTP'
+             	    WHEN A.PROTOCOL_GB = '02' THEN 'HTTPS'
+                    ELSE '' END PROTOCOL_GBNM
+             , A.DOMAIN
+             , A.PORT
+             , A.CONTEXT
+             , A.COMMCODE_USE_YN
+             , CASE WHEN A.COMMCODE_USE_YN = 'Y' THEN '사용'
+             	    WHEN A.COMMCODE_USE_YN = 'N' THEN '미사용'
+                    ELSE '' END COMMCODE_USE_YNNM
+	     	 <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             , A.RNUM
+             </if>
+          FROM (
+                   SELECT SA.SERVICE_CD
+			            , SA.SERVICE_ENM
+			            , SA.SERVICE_NM
+			            , SA.PROTOCOL_GB
+			            , SA.DOMAIN
+			            , SA.PORT
+			            , SA.CONTEXT
+			            , SA.COMMCODE_USE_YN
+			            , SA.INSERT_DTTM
+	     				<if test="pPageNo != null and pPageNo != ''.toString()">
+			            , ROW_NUMBER() OVER(ORDER BY SA.SERVICE_NM DESC) AS RNUM
+			            , COUNT(*) OVER() AS CNT
+			            </if>
+                     FROM SMN_SERVICE SA
+                    WHERE 1=1
+			       	<if test="pSearchType eq '1'.toString()">AND SA.SERVICE_CD LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '2'.toString()">AND SA.SERVICE_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '3'.toString()">AND SA.SERVICE_ENM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+               ) A
+	     WHERE 1=1
+	     <if test="pPageNo != null and pPageNo != ''.toString()">
+	       AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+	     ORDER BY A.RNUM
+	     </if>
+	     <if test="pPageNo == null or pPageNo eq ''.toString()">
+	     ORDER BY A.SERVICE_NM DESC
+	     </if>
+    </select>
+    
+    <select id="getCommCodeUseList" parameterType="hashMap" resultType="hashMap">
+        SELECT SA.SERVICE_CD
+	         , SA.COMMCODE_USE_YN
+          FROM SMN_SERVICE SA
+         WHERE 1=1
+    </select>
+    
+    <select id="getServiceListForSystem" parameterType="hashMap" resultType="hashMap">
+        SELECT A.SERVICE_CD
+             , A.SERVICE_ENM
+             , A.SERVICE_NM
+             , A.PROTOCOL_GB
+             , A.DOMAIN
+             , A.PORT
+             , A.CONTEXT
+             , A.COMMCODE_USE_YN
+          FROM SMN_SERVICE A
+         WHERE 1=1
+         <if test="SERVICE_CD != null and SERVICE_CD != ''.toString()">AND A.SERVICE_CD = #{SERVICE_CD}</if>
+         <if test="SERVICE_NM != null and SERVICE_NM != ''.toString()">AND (A.SERVICE_NM LIKE CONCAT('%',#{SERVICE_NM},'%') OR A.SERVICE_CD LIKE CONCAT('%',#{SERVICE_NM},'%'))</if>
+         <if test="COMMCODE_USE_YN != null and COMMCODE_USE_YN != ''.toString()">AND A.COMMCODE_USE_YN = #{COMMCODE_USE_YN}</if>
+    </select>
+    
+    <select id="getService" parameterType="hashMap" resultType="hashMap">
+        SELECT A.SERVICE_CD
+             , A.SERVICE_ENM
+             , A.SERVICE_NM
+             , A.PROTOCOL_GB
+             , A.DOMAIN
+             , A.PORT
+             , A.CONTEXT
+             , A.COMMCODE_USE_YN
+          FROM SMN_SERVICE A
+         WHERE SERVICE_CD = #{SERVICE_CD}
+    </select>
+    
+    <insert id="insertService" parameterType="hashMap">
+    	INSERT INTO SMN_SERVICE
+     	(
+     		SERVICE_CD
+		  , SERVICE_ENM
+		  , SERVICE_NM
+		  , PROTOCOL_GB
+		  , DOMAIN
+		  , PORT
+		  , CONTEXT
+		  , COMMCODE_USE_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+     	)VALUES 
+     	(
+     		#{SERVICE_CD}
+		  , #{SERVICE_ENM}
+		  , #{SERVICE_NM}
+		  , #{PROTOCOL_GB}
+		  , #{DOMAIN}
+		  , #{PORT}
+		  , #{CONTEXT}
+		  , #{COMMCODE_USE_YN}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+   		)
+    </insert>
+    
+    <update id="updateService" parameterType="hashMap">
+    	UPDATE SMN_SERVICE
+    	   SET SERVICE_ENM = #{SERVICE_ENM}
+			 , SERVICE_NM = #{SERVICE_NM}
+			 , PROTOCOL_GB = #{PROTOCOL_GB}
+			 , DOMAIN = #{DOMAIN}
+			 , PORT = #{PORT}
+			 , CONTEXT = #{CONTEXT}
+			 , COMMCODE_USE_YN = #{COMMCODE_USE_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE SERVICE_CD = #{SERVICE_CD}
+    </update>
+    
+    <delete id="deleteService" parameterType="hashMap">
+    	DELETE FROM SMN_SERVICE
+    	 WHERE SERVICE_CD = #{serviceCd}
+    </delete>
+</mapper>

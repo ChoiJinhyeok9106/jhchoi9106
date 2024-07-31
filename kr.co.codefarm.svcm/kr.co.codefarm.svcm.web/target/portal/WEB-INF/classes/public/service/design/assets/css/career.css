@@ -1,0 +1,912 @@
+@charset "utf-8";
+.my-goal {
+    display: table;
+    width: 100%;
+    border: 2px solid #9ea4d0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.my-goal .left-area {
+    display: table-cell;
+    vertical-align: middle;
+    width: 30%;
+    text-align: center;
+    border-right: 1px solid #dcdff1;
+    border-top-left-radius:10px;
+    border-bottom-left-radius:10px;
+}
+
+.my-goal .left-area .my-info {
+    text-align: center;
+}
+
+.my-goal .left-area .logo {
+    display: inline-block;
+    width: 180px;
+    height: 40px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+
+.my-goal .left-area .logo>img {
+    width: 180px;
+    height: 40px;
+}
+
+.my-goal .left-area .my-info span {
+    display: inline-block;
+    height: 22px;
+    padding: 0 8px;
+    border: 1px solid #9ea4d0;
+    border-radius: 22px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #364085;
+    line-height: 20px;
+    background: #fff;
+    margin-right: 8px;
+}
+
+.my-goal .left-area .btn-line {
+    margin-bottom: 0;
+}
+
+.my-goal .left-area .btn-line a {
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    background: #59aaef;
+    color: #fff;
+    border: 0;
+    padding: 0 18px;
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.my-goal .left-area .btn-line a:last-child {
+    background: #666faf;
+    color: #d7daf1;
+}
+
+.my-goal .right-area {
+    display: table-cell;
+    width: 70%;
+}
+
+.my-goal .right-area .tit {
+    padding: 25px 35px;
+    border-bottom: 1px solid #dcdff1;
+}
+
+.my-goal .right-area .tit>p {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 28px;
+    color: #333;
+    word-break:break-all;
+    line-height:1.2em;
+}
+
+.my-goal .right-area .tit>p.description {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-top: 15px;
+}
+
+.my-goal .right-area .tit .recruit-info {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 35px;
+}
+
+.my-goal .right-area .tit .recruit-info label {
+    color: #e07b64;
+    line-height: 18px;
+    margin-bottom: 0;
+}
+
+.my-goal .right-area .tit .recruit-info label:before {
+    font-size: 18px;
+    margin-right: 4px;
+    vertical-align: bottom;
+}
+
+.my-goal .right-area .tit .recruit-info>span {
+    display: inline-block;
+    vertical-align: middle;
+    height: 26px;
+    line-height: 26px;
+    border-radius: 26px;
+    padding: 0 16px;
+    color: #fff;
+    font-weight: 500;
+    background: #f56464;
+    margin-left: 4px;
+}
+
+.my-goal .right-area .detail {
+    background: #f7f8fb;
+    padding: 30px 30px 10px 30px;
+}
+
+.my-goal .right-area .detail .row {
+    margin-bottom: 0;
+}
+
+.my-goal .right-area .detail dl dt {
+    font-weight: 500;
+    color: #666faf;
+}
+
+.my-goal .right-area .detail dl dd {
+    font-size: 14px;
+}
+
+.company-sch-list td.left a,
+.job-sch-list td.left a {
+    display: block;
+    font-size: 15px;
+    color: #354085;
+}
+
+.company-detail .my-goal .left-area {
+    width: 20%;
+}
+
+.company-detail .my-goal .right-area {
+    width: 80%;
+}
+
+.company-detail .my-goal .left-area i {
+    margin-bottom: 0;
+}
+
+.company-detail .tab-type04 {
+    margin: 40px 0;
+}
+
+.company-detail .tab-type04 div a .num {
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    line-height: 19px;
+    background: #f35a7e;
+    border-radius: 18px;
+    font-size: 10px;
+    font-weight: 500;
+    text-align: center;
+    color: #fff;
+    margin: -4px 0 0 3px;
+}
+
+.company-detail .tab-container h4 {
+    font-size: 17px;
+    color: #000;
+    font-weight: 600;
+    margin-bottom: 20px;
+    margin-top: 40px;
+}
+
+.company-detail .tab-container h4:first-child {
+    margin-top: 0;
+}
+
+.company-detail .tab-container .table-type05 tbody td {
+    text-align: left;
+}
+
+.company-detail .recruit-info .recruit-list {
+    margin-top: 20px;
+    border-top: 2px solid #7e84ae;
+}
+
+.company-detail .recruit-info .recruit-list li a {
+    display: block;
+    padding: 15px;
+    border-bottom: 1px solid #dcdff1;
+    font-size: 0;
+}
+
+.company-detail .recruit-info .recruit-list .job-head {
+    display: inline-block;
+    width: 17%;
+}
+
+.company-detail .recruit-info .recruit-list .job-head>span {
+    display: inline-block;
+    vertical-align: middle;
+    width: 70px;
+    height: 24px;
+    text-align: center;
+    line-height: 22px;
+    font-size: 13px;
+    color: #354085;
+    border-radius: 24px;
+    border: 1px solid #9ea4d0;
+    margin-right: 4px;
+}
+
+.company-detail .recruit-info .recruit-list .job-head>span.state {
+    border: 0;
+    background: #b0b0b0;
+    color: #fff;
+    line-height: 24px;
+}
+
+.company-detail .recruit-info .recruit-list .job-head>span.state.on {
+    background: #e85959;
+}
+
+.company-detail .recruit-info .recruit-list .tit {
+    display: inline-block;
+    vertical-align: middle;
+    width: 60%;
+    font-size: 16px;
+    color: #333;
+}
+
+.company-detail .recruit-info .recruit-list .tags {
+    display: inline-block;
+    vertical-align: middle;
+    width: 23%;
+    text-align: right;
+}
+
+.company-detail .recruit-info .recruit-list .tags span {
+    display: inline-block;
+    font-size: 13px;
+    color: #777;
+    border-right: 1px solid #e3e5ed;
+    padding: 0 12px;
+}
+
+.company-detail .recruit-info .recruit-list .tags span:last-child {
+    border-right: 0;
+}
+
+.job-detail table td small,
+.company-detail table td small {
+    font-size: 12px;
+    color: #999;
+    margin: 0 6px;
+}
+
+.job-detail .table-type01 td {
+    line-height: 1.5rem;
+}
+
+.job-detail .table-type01 td:first-child,
+.job-detail .table-type01 td:last-child {
+    font-weight: 600;
+}
+
+.job-detail .table-type06 {
+    min-height: 194px;
+}
+
+.job-detail .table-type05 td {
+    text-align: left;
+}
+
+.my-goal.job {
+    border: 0;
+}
+
+.my-goal.job .left-area {
+    background: #4f5685;
+    border: 0;
+}
+
+.my-goal.job .left-area .job-name {
+    font-size: 29px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.my-goal.job .left-area .my-info {
+    color: #fff;
+}
+
+.my-goal.job .left-area .my-info span {
+    border-color: #fff;
+    color: #364085;
+}
+
+.my-goal.job .right-area {
+    border: 1px solid #afb2cf;
+    border-left: 0;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+}
+
+.my-goal.job .right-area>div {
+    padding: 20px 30px;
+}
+
+.my-goal.job .right-area>div:first-child {
+    border-bottom: 1px solid #dcdff1;
+}
+
+.my-goal.job .right-area>div .label-type01 {
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.my-goal.job .right-area>div p {
+    line-height:1.4em;
+}
+
+.job-search {
+    border-radius: 15px;
+    border: 1px solid #666faf;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.job-search .steps:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.job-search .steps>div {
+    width: 33.33333%;
+    float: left;
+    border-right: 1px solid #d7daf1;
+}
+
+.job-search .steps>div:last-child {
+    border-right: 0;
+}
+
+.job-search .steps>div>p {
+    height: 38px;
+    text-align: center;
+    font-size: 15px;
+    color: #354085;
+    font-weight: 500;
+    line-height: 38px;
+    border-bottom: 1px solid #d7daf1;
+}
+
+.job-search .steps>div>.list.non-selected {
+    background: #f1f1f8;
+    color: #666faf;
+    font-size: 15px;
+    padding: 25px;
+}
+
+.job-search .steps>div>.list {
+    height: 220px;
+    padding: 20px;
+    border-bottom: 1px solid #d7daf1;
+}
+
+.job-search .steps>div>.list .inner {
+    height: 180px;
+    overflow: hidden;
+}
+
+.job-search .steps>div>.list .inner p {
+    font-size: 15px;
+    line-height: 30px;
+    color: #333;
+    padding-left: 10px;
+}
+
+.job-search .steps>div>.list .inner p.selected {
+    background: #feeded;
+}
+
+.job-search .search-area {
+    padding: 30px 20px;
+}
+
+.job-search .search-area label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #364085;
+    padding-left: 36px;
+    position: relative;
+}
+
+.job-search .search-area label:before {
+    font-size: 30px;
+    position: absolute;
+    top: 8px;
+    left: 0;
+}
+
+.job-search .search-area input {
+    width: 434px;
+}
+
+.job-info .job-tit {
+    height: 40px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.job-info .job-tit h3 {
+    font-size: 20px;
+    margin-bottom: 0;
+    padding-top: 10px;
+}
+
+.job-info .job-tit .icon-user:before {
+    margin-right: 4px;
+    color: #666faf;
+    font-weight: 500;
+}
+
+.job-info .job-tit .goto-list {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.job-info .tab-container {
+    margin-top: 40px;
+}
+
+.job-info .tab-content>article {
+    padding: 0 0.75rem;
+}
+
+.job-info .tab-content>article.row {
+    padding: 0;
+}
+
+.job-info .tab-content .label-type01 {
+    margin-bottom: 15px;
+    margin-top: 50px;
+}
+
+.job-info .tab-content div[class^=box-] {
+    line-height: 1.6em;
+}
+
+.job-info .tab-content>article .text {
+    padding-left: 15px;
+    line-height: 22px;
+    color: #555;
+}
+
+.job-info .tab-content .navy {
+    color: #364085;
+}
+
+.job-info .tab-content .red {
+    color: #ff515d;
+}
+
+.job-info .tab-content>article:nth-of-type(1) .label-type01 {
+    margin-top: 0;
+}
+
+.job-info .tab-content .box-type03>p {
+    color: #364085;
+}
+
+.job-info .tab-content .link-list li a {
+    display: block;
+    line-height: 34px;
+    color: #3a4cc9;
+}
+
+.job-info>.btn-line {
+    margin: 60px 0;
+}
+
+.job-info .tab-content .table-type01 td>a {
+    font-weight: 500;
+    color: #3a4cc9
+}
+
+.job-info .tab-content .reference-text {
+    color: #e07b64;
+    line-height: 24px;
+    margin-top: 1rem;
+}
+
+.job-info .tab-content .reference-text .date {
+    color: #555;
+}
+
+.job-info .tab-content .box-type05.c-black {
+    font-size: 15px;
+    color: #333;
+}
+
+.job-info .important-scale-wrap {
+    font-size: 0;
+}
+
+.job-info .important-scale-wrap .table-type02-wrap {
+	height:300px;
+	margin-top:10px;
+}
+
+.job-info .important-scale-wrap .table-type02-wrap .table-type02 {
+	margin-top:0;
+}
+
+.job-info .important-scale-wrap span,
+.job-info .important-scale-wrap div,
+.job-info .important-scale-wrap p,
+.job-info .important-scale-wrap i {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.job-info .important-scale-wrap>div {
+    display: block;
+    width: 100%;
+    position: relative;
+}
+
+.job-info .important-scale-wrap .label-type01 {
+    margin-bottom: 6px;
+}
+
+.job-info .important-scale-wrap .important-scale {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+}
+
+.job-info .important-scale-wrap .important-scale>span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #e07b64;
+    margin-right: 10px;
+}
+
+.job-info .important-scale-wrap .important-scale>div>span {
+    font-size: 13px;
+    color: #777;
+}
+
+.job-info .important-scale-wrap .important-scale .scale>span {
+    font-size: 12px;
+    color: #666faf;
+    font-weight: 600;
+    margin: 0 6px;
+}
+
+.job-info .important-scale-wrap .important-scale .scale>i {
+    width: 15px;
+    height: 15px;
+    background: #e9ebf8;
+}
+
+.job-info .important-scale-wrap .important-scale .scale>i:nth-of-type(2) {
+    background: #d7daf1;
+}
+
+.job-info .important-scale-wrap .important-scale .scale>i:nth-of-type(3) {
+    background: #9ea4d0;
+}
+
+.job-info .important-scale-wrap .important-scale .scale>i:nth-of-type(4) {
+    background: #666faf;
+}
+
+.job-info .important-scale-wrap .important-scale .scale>i:nth-of-type(5) {
+    background: #323d90;
+}
+
+.goal-achieve {
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.goal-achieve .achieve-rate {
+    float: left;
+    width: 13%;
+    height: 100px;
+    padding-top: 18px;
+    background: linear-gradient(135deg, #e3466c, #232e7a);
+}
+
+.goal-achieve .achieve-rate .tit {
+    font-size: 15px;
+    color: #fff;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.goal-achieve .achieve-rate .rate {
+    font-size: 45px;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+}
+
+.goal-achieve .achieve-rate .rate span {
+    font-size: 20px;
+}
+
+.goal-achieve ul {
+    float: left;
+    width: 87%;
+    overflow: hidden;
+}
+
+.goal-achieve ul li {
+    float: left;
+    width: 16.66666%;
+    height: 100px;
+    background: #364085;
+    border-left: 1px solid #2b3579;
+    padding-top: 15px;
+}
+
+.goal-achieve ul li .tit {
+    text-align: center;
+    color: #fff;
+}
+
+.goal-achieve ul li .my-score {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 10px 0;
+}
+
+.goal-achieve ul li .my-score.up {
+    color: #d5ff56;
+}
+
+.goal-achieve ul li .my-score.down {
+    color: #ff577f;
+}
+
+.goal-achieve ul li .target {
+    text-align: center;
+    font-weight: 500;
+    color: #d7daf1;
+}
+
+.goal-setting .h3 {
+    margin-top: 60px;
+}
+
+.achieve-result-wrap:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.achieve-result-wrap .result-graph,
+.achieve-result-wrap .result-table {
+    width: 50%;
+    float: left;
+}
+
+.achieve-result-wrap .result-graph .graph-inner {
+	overflow-x:auto;
+	height:410px;
+}
+
+.achieve-result-wrap .result-table .table-wrap {
+	overflow-x:auto;
+}
+
+
+.achieve-result-wrap .result-table th,
+.achieve-result-wrap .result-table td {
+    font-size: 12px;
+}
+
+.achieve-result-wrap .result-table td.navy {
+    font-size: 13px;
+    font-weight: 500;
+    color: #364085;
+}
+
+.goal-setting>.btn-line>.btn.size-l {
+    margin: 40px 0;
+}
+
+.table-type02 td.important100 {
+	background-color:#323d90;
+	color:#fff;
+}
+.table-type02 td.important80 {
+	background-color:#666faf;
+	color:#fff;
+}
+.table-type02 td.important60 {
+	background-color:#9ea4d0;
+	color:#fff;
+}
+.table-type02 td.important40 {
+	background-color:#d7daf1;
+	color:#364085;
+}
+.table-type02 td.important20 {
+	background-color:#e9ebf8;
+	color:#364085;
+}
+
+.career-mov-list {
+	position:relative;
+}
+.career-mov-list .box-type03 {
+	position:relative;
+	padding:26px 0;
+}
+.career-mov-list .box-type03 .icon-box {
+	display:inline-block;
+	width:48px;
+	height:48px;
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+	color:#fff;
+	font-size:24px;
+	text-align:center;
+	line-height:48px;
+}
+.career-mov-list .box-type03 .icon-box.type01 {
+	background-color:#666faf;
+}
+.career-mov-list .box-type03 .icon-box.type02 {
+	background-color:#9ea4d0;
+}
+.career-mov-list .box-type03 .cont {
+	display:inline-block;
+	margin-left:10px;
+	width:60%;
+	vertical-align:middle;
+}
+.career-mov-list .box-type03 .cont .time {
+	display:block;
+	font-size:14px;
+	color:#666faf;
+	margin-bottom:12px;
+	font-family:'noto sans kr';
+}
+.career-mov-list .box-type03 .cont .title {
+	display:block;
+	width:80%;
+	font-size:20px;
+	white-space: nowrap; 
+	overflow: hidden; 
+	text-overflow: ellipsis;
+}
+.career-mov-list .box-type03 .btn {
+	position:absolute;
+	right:30px;
+	top:50%;
+	transform:translateY(-50%);
+	min-width:134px;
+}
+
+
+
+@media only screen and (max-width: 480px) {
+    .job-info .btn-line .btn {
+        width:100%;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .job-info .important-scale-wrap>div {
+        padding-bottom: 30px;
+    }
+    .job-info .important-scale-wrap .important-scale {
+        right: auto;
+        left: 0;
+    }
+    .achieve-result-wrap .result-table .table-wrap table {
+		width:612px;
+	}
+	.career-mov-list .box-type03 .btn {
+		position:relative;
+		right:auto;
+		top:auto;
+		transform:none;
+		margin-top:10px !important;
+		margin-left:60px;
+	}
+	.career-mov-list .box-type03 .cont {
+		width:70%;
+	}
+	.career-mov-list .box-type03 .cont .title {
+		width:100%;
+	}
+}
+
+@media only screen and (max-width: 1000px) {
+	.job-search .search-area label {
+		display:none;
+	}
+}
+
+@media only screen and (max-width: 1280px) {
+    .my-goal .left-area,
+    .my-goal .right-area,
+    .company-detail .my-goal .left-area,
+    .company-detail .my-goal .right-area {
+        display: block;
+        width: 100%;
+    }
+    .my-goal .right-area .tit,
+    .my-goal .right-area .tit > p {
+    	text-align:center;
+    }    
+    .my-goal .left-area {
+        border-right: 0;
+        border-bottom: 1px solid #dcdff1;
+        padding: 25px 0;
+    }
+    .company-detail .my-goal .right-area .tit,
+    .company-detail .my-goal .right-area .description {
+        text-align: center;
+    }
+    .company-detail .my-goal .right-area .tit p{
+    	text-align:center;
+    }
+    .company-detail .recruit-info .recruit-list .job-head,
+    .company-detail .recruit-info .recruit-list .tit,
+    .company-detail .recruit-info .recruit-list .tags {
+        width: 100%;
+    }
+    .company-detail .recruit-info .recruit-list .tit {
+        margin: 15px 0 10px 0;
+        font-size: 18px;
+    }
+    .company-detail .recruit-info .recruit-list .tags {
+        text-align: left;
+    }
+    .company-detail .recruit-info .recruit-list .tags span:first-child {
+        padding-left: 0;
+    }
+    .my-goal.job .right-area {
+        border-left: 1px solid #afb2cf;
+        border-bottom-left-radius: 10px;
+        border-top-right-radius: 0;
+    }
+    .job-search .steps>div {
+        width: 100%;
+        float: none;
+        border-right: 0;
+        border-bottom: 1px solid #d7daf1;
+    }
+    .job-search .steps>div>.list {
+        border-bottom: 0;
+    }
+    .job-search .search-area label {
+        font-size: 0;
+        padding-left: 20px;
+    }
+    .job-search .search-area input {
+        width: 280px;
+    }
+    .goal-achieve .achieve-rate,
+    .goal-achieve ul,
+    .achieve-result-wrap .result-graph,
+    .achieve-result-wrap .result-table {
+        float: none;
+        width: 100%;
+    }
+    .achieve-result-wrap .result-table {
+        margin-top: 40px;
+    }
+    .goal-achieve ul li {
+        width: 33.33333%;
+        border-top: 1px solid #2b3579;
+    }
+    .goal-achieve ul li:first-child,
+    .goal-achieve ul li:nth-child(4) {
+        border-left: 0;
+    }
+}

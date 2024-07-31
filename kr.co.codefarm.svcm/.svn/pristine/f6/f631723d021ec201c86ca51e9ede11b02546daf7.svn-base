@@ -1,0 +1,2414 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability2.css" />  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css">
+<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.js"></script>
+
+<h2>팜보드 리스트</h2>
+<!-- 아래 result-manage 클래스 옆에 theme01~06까지 원하는 테마를 붙히면 화면이 바뀝니다. 테마를 안붙이면 기본 default -->
+<section id="app">
+<section :class="'sub_cont_box farmboard result-manage theme' + pFbThemeGb"> 
+    <div class="result-mng-top">
+        <div class="row form-row">
+            <div class="form-group col s12 m12 xl6">            
+                <span class="department">{{ addCommcode.getCommcodeNm('ADD','FB_GB',pFbGb,'CD_NM') }}</span>
+                <div class="title-wrap">
+                	<a href="javascript:void(0)" class="lock icon-lock" v-show="pUseYn == 'N'"></a>
+                	<h2 class="title">{{ pFbNm }}</h2>
+                </div>
+            </div>
+            <div class="form-group col s12 m12 xl6">                                     
+                <div class="mng-top-inner">
+                    <div class="btn-box">                               
+                        <a href="javascript:void(0)" class="btn-mng02" @click="addList" v-show="pListGwanriAuthYn == 'Y'"><span class="icon-file-plus"></span>리스트추가</a>
+                        <a href="javascript:void(0)" class="btn-mng01" @click="settingMenuOpen"><span class="icon-gear"></span></a>
+                        <ul class="menu-layer">
+			            	<li v-show="pChamyeojaYn == 'N'"><a href="javascript:void(0)" @click="modalOpen('modiFarmBoardPopup')">보드수정</a></li>
+<!-- 		            	<li><a href="javascript:void(0)" @click="menuOpenYn=false">보드복제</a></li> -->
+			            	<li v-show="pChamyeojaYn == 'N'"><a href="javascript:void(0)" @click="modalOpen('partiPopup')">참여자관리</a></li>
+			            	<li v-show="pChamyeojaYn == 'Y'"><a href="javascript:void(0)" @click="confirmOpen('secessionFarmBoard')">보드탈퇴</a></li>
+			            	<li v-show="pChamyeojaYn == 'N'"><a href="javascript:void(0)" @click="confirmOpen('deleteFarmBoard')">보드삭제</a></li>
+			            </ul>
+			            <a href="javascript:void(0)" class="btn-mng01" title="보드 메인으로" @click="goToHome"><span class="icon-home"></span></a>
+                    </div>                                     
+                </div>                                
+            </div>
+        </div>
+    </div>
+	<perfect-scrollbar class="result-mng-list" id="mainListLoading">
+    	<draggable v-model="farmBoardList.data" :options="{animation:300, handle:'.list-box', forceFallback: true}" @end="updateFarmBoardListOrd($event)">
+	        <div class="list-box" v-for="(item, index) in farmBoardList.data" :key="'farmboard-' + index" v-show="allSearchYn == true && farmBoardList.getRowType(index) != '8'">
+	            <p class="tit" @click="farmBoardList.selectRow(index)">
+	           		<span v-show="item.USE_YN == 'N'"class="icon-lock"></span>
+	            	<span class="user" v-show="item.LIST_CHAMYEOJA_CNT > 0"><span class="count">{{ item.LIST_CHAMYEOJA_CNT }}</span><img :src="modiImgAddr(item.USER_PIC,item.USER_PHOTO)" alt=""></span>
+	            	<!-- 비교과고 리스트 시퀀스가 1일 경우 수정버튼 나타나지 않음 -->
+	            	<input :id="'list-nm-'+index" :name="'list-nm-'+index" type="text" v-model="item.LIST_NM" @change="saveList" data-vv-as="리스트 명 " v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('list-nm-'+index)}" :disabled="(pListGwanriAuthYn == 'N' && pFbGb == '02' && item.LIST_SEQ == '1') || item.USE_YN == 'N'"/>
+		        	<invalid-message :visible="farmBoardList.currentRow" :name="'list-nm-'+index" :verror="errors"/>
+	            </p>            
+	            <a href="javascript:void(0)" class="btn-set" @focus="farmBoardList.selectRow(index);menuOpen(index)" @blur="menuClose(index)" v-show="pListGwanriAuthYn == 'Y' || item.INSERT_ID == session.USER_ID"><span class="icon-grip1"></span></a>
+	            <ul :id="'menu'+index" class="list-menu-layer">
+	            	<li v-show="farmBoardList.getRowType(index) != 2">
+						<div class="row form-row">
+							<div class="col s7 col-label">
+					            <label for="inlineFormInputName1" class="size-s">사용</label>
+					        </div>
+					        <div class="col s5 right">
+					            <label class="toggle-switch size-s">
+					                <input type="checkbox" true-value="Y" false-value="N" v-model="item.USE_YN" @change="saveList">
+					                <span class="slider round"></span>
+					            </label>
+					        </div>
+						</div>
+					</li>
+	            	<li><a href="javascript:void(0)" @click="farmBoardList.selectRow(index);modalOpen('listPartiPopup');" v-show="pListGwanriAuthYn == 'Y' || (farmBoardList.getRowType(index) != 2 && item.INSERT_ID == session.USER_ID)">참여자관리</a></li>
+	            	<li><a href="javascript:void(0)" @click="farmBoardList.selectRow(index);confirmOpen('deleteList')">삭제</a></li>
+	            </ul>
+	            <perfect-scrollbar :class="item.USE_YN == 'Y' ? 'inner-wrap' : 'inner-wrap lock'" v-if="item.CARD_LIST">                
+	                <draggable v-model="item.CARD_LIST.data" :options="{animation:300, handle:'.inner-box'}" @end="$forceUpdate();updateFarmBoardCardListOrd($event, item.CARD_LIST.data)">
+		                <div class="inner-box" v-for="(cdItem, cdIndex) in item.CARD_LIST.data" :key="'card-' + cdIndex" v-show="(cdItem.OWN_BOARD_CNT == 1 || cdItem.CARD_CHAMYEOJA_CNT == 0 || cdItem.OWN_CARD_AUTH_CNT == 1)">
+		                    <div class="inner-head">
+		                    	<div :id="'label-wrap-'+index+'-'+cdIndex" class="label-wrap" v-show="cdItem.CARD_LABEL_LIST.getRowCount() > 0" @click="openCardLabelNm(index,cdIndex)">
+		                    		<span :class="'label-list label-clr'+labelItem.LABEL_COLOR_GB" v-for="(labelItem, labelIndex) in cdItem.CARD_LABEL_LIST.data" :key="'card-label-' + cdIndex + '-' + labelIndex"><span>{{ labelItem.LABEL_NM }}</span></span>
+		                    	</div>
+		                    	<a href="javascript:void(0)" @click="farmBoardList.selectRow(index); farmBoardList.currentRow.CARD_LIST.selectRow(cdIndex); modalOpen('cardPopup');">
+			                        <span class="date">{{ getDateForm(cdItem.INSERT_DTTM) }}</span>
+			                        <span class="name" v-show="cdItem.INSERT_NM != ''">{{ cdItem.INSERT_NM }}</span>
+			                        <span class="title">{{ cdItem.CARD_TITLE }}</span>
+			                        <span class="cont" v-html="cdItem.CARD_DESC_HTML"></span>
+		                             
+		                		</a>
+		                    </div>
+			                <a href="javascript:void(0)" @click="farmBoardList.selectRow(index); farmBoardList.currentRow.CARD_LIST.selectRow(cdIndex); modalOpen('cardPopup');">
+			                    <div class="photo-box" v-if="cdItem.FILE_PATH != '' && cdItem.FILE_PATH != 'undefined' && cdItem.FILE_PATH != 'null'">
+			                    	<img v-if="'/upload'+cdItem.FILE_PATH != '/uploadundefined'" :src="'/upload'+cdItem.FILE_PATH" alt=""/> 
+			                    </div>
+			                    <div class="inner-foot">
+			                    	<div class="etc-box">
+				                        <span class="etc icon-image">{{ cdItem.CARD_IMG_CNT }}</span>
+				                        <span class="etc icon-paperclip">{{ cdItem.CARD_FIL_CNT }}</span>
+				                        <span class="etc icon-checkbox">{{ cdItem.CARD_CHK_CNT }}/{{ cdItem.CARD_CHK_TOT_CNT }}</span>
+				                        <span class="etc icon-message-circle">{{ cdItem.CARD_CMT_CNT }}</span>
+				                    </div>
+			                    </div>                  
+			                </a>
+		                </div>  
+	                </draggable>
+	            </perfect-scrollbar>
+	            <a href="javascript:void(0)" class="btn-add" v-show="farmBoardList.getRowType(index) != 2 && item.USE_YN == 'Y' && (item.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || item.CARD_GWANRI_AUTH_YN == 'Y') && item.INSERT_ID == session.USER_ID" @click="farmBoardList.selectRow(index); addCard();"><span class="icon-plus">카드추가</span></a>
+	        </div>
+    	</draggable>
+	</perfect-scrollbar>
+</section>
+<!-- modal layer popup -->
+<div class="modal-layer-wrap">
+    <div id="cardPopup" class="modal-layer modal-middle">
+        <div class="modal-container note-list-modal" v-show="cardPopup == true">
+            <div class="modal-header" :style="backgroundImage(cardListCurrentRow.REAL_FILE_PATH) ? 'background-image:url(/upload'+ cardListCurrentRow.REAL_FILE_PATH +');' : ''">
+                <p class="list-tit">{{ farmBoardListCurrentRow.LIST_NM }}</p>
+                <p class="card-tit" v-show="!modiCardTitleYn">{{ cardListCurrentRow.CARD_TITLE }}<a href="javascript:void(0)" class="btn-edit icon-edit" @click="modifyCardClick('pCardNm')" v-show="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')"></a></p>
+                <p class="card-tit" v-if="cardPopup && modiCardTitleYn">
+                	<input type="text" id="pCardNm" name="pCardNm" ref="pCardNm" v-model="cardListCurrentRow.CARD_TITLE" @blur="updateCard('pCardNm')" data-vv-as="카드 명 " v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('pCardNm')}"/>
+                	<invalid-message :visible="cardListCurrentRow" :name="'pCardNm'" :verror="errors"/>
+                </p>
+                <div class="row form-row label-member">
+			        <div class="col s12 l7">
+			            <div class="row form-row" v-if="cardPopup && cardListCurrentRow.CARD_LABEL_LIST.getRowCount() > 0">
+			            	<div class="form-group col s3 l2">
+			            		<span class="stit">Label</span>
+			            	</div>
+			            	<div class="form-group col s9 l10">
+			            		<div class="label-wrap">
+			            			<span :class="'label-list label-clr'+ labelItem.LABEL_COLOR_GB +' on'" v-for="(labelItem, labelIndex) in cardListCurrentRow.CARD_LABEL_LIST.data" :key="'card-label-' + labelIndex"><span>{{ labelItem.LABEL_NM }}</span></span>
+			            		</div>
+			            	</div>
+			            </div>
+			        </div>
+			    </div>
+                <div class="dark-bg"></div>
+            </div>
+            <div class="modal-content">
+                <div class="note-card-detail">                	
+                	<ul class="right-btn-box" v-show="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')">
+                		<li v-show="pListGwanriAuthYn == 'Y' || cardListCurrentRow.INSERT_ID == session.USER_ID || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y' || pChamyeojaYn == 'N'"><a href="javascript:void(0)" class="icon-users" @click="cardPartiPopup = true; setChamyeojaList()"><span>멤버관리</span></a></li>
+                		<li v-show="cardLabelList.getRowCount() > 0"><a href="javascript:void(0)" class="icon-tag" @click="setCardLabelList"><span>라벨관리</span></a></li>
+                		<li><a href="javascript:void(0)" class="icon-image" @click="addCardImg()"><span>사진등록</span></a></li>
+                		<li><a href="javascript:void(0)" class="icon-clip" @click="addCardFile()"><span>파일업로드</span></a></li>
+                		<li><a href="javascript:void(0)" class="icon-checkbox" @click="addCardChk()"><span>체크리스트</span></a></li>
+                		<li><a href="javascript:void(0)" class="icon-trashcan" @click="confirmOpen('deleteCard')"><span>삭제</span></a></li>
+                	</ul>
+                	<div class="inner-layer">
+                		<!-- 멤버관리 -->
+                		<div class="member-layer">
+                			<div class="inner-layer-top">
+                				<h2>멤버관리</h2>
+                			</div>
+                			<div class="inner-layer-middle">
+                				<div class="row form-row">
+							        <div class="form-group col s12">
+							            <p class="label-type01">카드 참여자 목록</p>				        
+							            <p class="heading-txt2">현재 카드 참여 인원을 조회하고 참여 인원을 삭제할 수 있습니다.</p>
+							            <perfect-scrollbar class="group-list-box note-people-adm">
+							            	<div v-for="(fcItem, fcIndex) in cardChamyeojaList.data" :key="'card-chamyeoja-' + fcIndex" @click="cardChamyeojaList.selectRow(fcIndex)">
+			                                   <div class="group-list" v-show="fcItem.USER_ID != fcItem.CHAMYEOJA_ID">
+			                                     <div><span class="name">{{ fcItem.USER_NM }}</span><span class="code-num">{{ fcItem.CHAMYEOJA_ID }}</span></div>
+			                                     <div><span class="major">{{ fcItem.DEPT_NM }}</span></div>
+                                     			 <a href="javascript:void(0)" class="btn-close" @click="confirmOpen('deleteCardChamyeoja')"><span class="icon-minus-circle"></span></a>
+			                                   </div>
+			                                </div>
+			                             </perfect-scrollbar>
+							        </div>
+							    </div>
+							    <div class="row form-row">
+							        <div class="form-group col s12">
+							            <p class="label-type01">리스트 참여자 목록</p>				        
+							            <p class="heading-txt2">현재 리스트 참여 인원을 조회하고 카드에 참여할 인원을 추가할 수 있습니다.</p>
+							            <perfect-scrollbar class="group-list-box note-people-adm">
+							               <div v-for="(fcItem, fcIndex) in listChamyeojaList.data" :key="'list-chamyeoja-' + fcIndex" @click="listChamyeojaList.selectRow(fcIndex)">
+			                                 <div class="group-list" v-show="fcItem.USER_ID != fcItem.CHAMYEOJA_ID">
+			                                     <div><span class="name">{{ fcItem.USER_NM }}</span><span class="code-num">{{ fcItem.CHAMYEOJA_ID }}</span></div>
+			                                     <div><span class="major">{{ fcItem.DEPT_NM }}</span></div>
+			                                     <a href="javascript:void(0)" class="btn-close" v-if="!listChamyeojaList.isFilterRow(fcIndex)" @click="listChamyeojaList.selectRow(fcIndex);addCardChamyeoja();"><span class="icon-more"></span></a>
+			                                	 <span class="btn-close" v-if="listChamyeojaList.isFilterRow(fcIndex)"><span class="icon-checkmark"></span></span>
+			                                 </div>
+			                               </div>
+			                             </perfect-scrollbar>
+							        </div>
+							    </div>
+                			</div>
+                			<a href="javascript:void(0)" class="btn-close icon-close" @click="chamyeojaList.clear();listChamyeojaList.clear();cardChamyeojaList.clear();cardPartiPopup=false;"></a>
+                		</div>
+                		
+                		<!-- 라벨관리 -->
+                		<div class="label-layer">
+                			<div class="inner-layer-top">
+                				<h2>라벨관리</h2>
+                			</div>
+                			<div class="inner-layer-middle">
+                				<div class="row form-row">
+                                    <div class="col s12">
+                                        <label for="formGroupExampleInput1" class="label-type01">라벨목록</label>
+                                        <ul class="label-list">
+                                    		<li :class="'list label-clr'+labelItem.LABEL_COLOR_GB" v-for="(labelItem, labelIndex) in cardLabelList.data" :key="'card-label-' + labelIndex" @click="cardLabelList.selectRow(labelIndex)">
+                                    			<span>{{ labelItem.LABEL_NM }}</span>
+                                    			<div class="sel-label">
+                                    				<input type="checkbox" :id="'sel-label'+labelIndex" true-value="Y" false-value="N" v-model="labelItem.CHK" @change="modiCardLabel"> 
+                                    				<label :for="'sel-label'+labelIndex"></label>
+                                    			</div>
+                                    		</li>                                  	
+                                        </ul>
+                                    </div>
+                                </div>
+                			</div>
+                			<a href="javascript:void(0)" class="btn-close icon-close"></a>
+                		</div>
+                		
+                		<!-- 사진등록 -->
+                		<div class="label-layer">
+                			<div class="inner-layer-top" v-show="pictureList.currentRow">
+                				<h2>사진관리</h2>
+				                <p class="heading-txt2">* 사진을 등록한 뒤 저장 버튼을 눌러주셔야 저장됩니다.</p>
+                			</div>
+                			<div class="inner-layer-middle" v-if="pictureList.currentRow">
+                				<div class="row form-row">                					
+                					<div class="form-group col s12 center"> 
+           								<div class="photo-add-wrap d-inline-block">
+          									<single-file-uploader :fileset="imgSingleFileSet" :type="'img'" :fileid="'ADD_FB_CARD_DETAIL'" :filekey="imgSingleFileKey" :filehangmok="'imgSingleFileSet'" :modify="true"></single-file-uploader>
+           								</div>          						
+                					</div>
+                				</div>
+                				<div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="insText" class="label-type01">내용</label>
+                                        <textarea id="insText" name="insText" rows="10" class="size-m" v-model="pictureList.currentRow.TEXT" data-vv-as="내용 " v-validate="'max:500'" v-bind:class="{'invalid': errors.has('insText')}" placeholder="입력하세요"></textarea>
+                                        <invalid-message :visible="pictureList.currentRow" :name="'insText'" :verror="errors"/>
+                                    </div>
+                                </div>
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="javascript:void(0)" class="btn type02 size-m" @click="saveCardImg()">저장</a>
+                			</div>
+                			<a href="javascript:void(0)" class="btn-close icon-close" @click="closePopup('img')"></a>
+                		</div>
+                		
+                		<!-- 파일관리 -->
+                		<div class="file-layer">
+                			<div class="inner-layer-top">
+                				<h2>파일관리</h2>
+				                <p class="heading-txt2">* 파일을 등록한 뒤 저장 버튼을 눌러주셔야 저장됩니다.</p>
+                			</div>
+                			<div class="inner-layer-middle" v-if="fileList.currentRow">
+                				<div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="fileTitle" class="label-type01">제목</label>
+                                        <input type="text" id="fileTitle" class="size-m" placeholder="입력하세요" v-model="fileList.currentRow.TITLE">
+                                    </div>
+                                </div>
+                				<div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="fileText" class="label-type01">내용</label>
+                                        <textarea id="fileText" name="fileText" rows="10" class="size-m" v-model="fileList.currentRow.TEXT" placeholder="입력하세요"></textarea>
+                                    </div>
+                                </div>
+	                            <div class="input-file-box">
+            						<single-file-uploader :fileset="fileSingleFileSet" :type="'file'" :fileid="'ADD_FB_CARD_DETAIL'" :filekey="fileSingleFileKey" :filehangmok="'fileSingleFileSet'" :modify="true"></single-file-uploader>
+                				</div>
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="javascript:void(0)" class="btn type02 size-m" @click="saveCardFile">저장</a>
+                			</div>
+                			<a href="javascript:void(0)" class="btn-close icon-close" @click="closePopup('file')"></a>
+                		</div>
+                		
+                		<!-- 체크리스트 -->
+                		<div class="checklist-layer">
+                			<div class="inner-layer-top">
+                				<h2>체크리스트</h2>
+                			</div>
+                			<div class="inner-layer-middle" v-if="chkList.currentRow">
+                				<div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="chkTitle" class="label-type01">제목</label>
+                                        <input type="text" id="chkTitle" class="size-m" placeholder="입력하세요" v-model="chkList.currentRow.TITLE">
+                                    </div>
+                                </div>
+                                <div class="form-group row form-row" v-for="(chkItem, chkIndex) in currChkItemList.data" :key="'curr-chk-item-' + chkIndex">
+                                    <div class="col s12">
+                                        <label :for="'item'+chkIndex" class="label-type01">항목 {{chkIndex + 1}}</label>
+                                        <div class="row form-row">
+                                    		<div class="form-group col s9">
+                                        		<input type="text" :id="'item'+chkIndex" :name="'item'+chkIndex" class="size-m" placeholder="입력하세요" v-model="chkItem.ITEM_NM"  :data-vv-as="'항목'+parseInt(chkIndex+1) " v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('item'+chkIndex)}">
+                                        		<invalid-message :visible="currChkItemList.currentRow" :name="'item'+chkIndex" :verror="errors"/>
+                                        	</div>
+                                        	<div class="form-group col s3">
+                                        		<a href="javascript:void(0)" class="btn-minus icon-minus-circle" @click="currChkItemList.selectRow(chkIndex); deleteChkItem(chkIndex);"></a><a href="javascript:void(0)" class="btn-plus icon-more" @click="currChkItemList.selectRow(chkIndex); addChkItem();"></a>
+                                        	</div>
+                                        </div>
+                                    </div>
+                                </div>
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="javascript:void(0)" class="btn type02 size-m" @click="saveCardChk">저장</a>
+                			</div>
+                			<a href="javascript:void(0)" class="btn-close icon-close" @click="closePopup('chk')"></a>
+                		</div>
+                	</div>
+			        <div class=tit-box><span class="icon-edit-3"></span><h3>설명</h3><a href="javascript:void(0)" class="btn-link" @click="modifyCardClick('pCardDesc')" v-show="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')">수정</a></div>
+			        <div class="cont-box" v-show="!modiCardDescYn" v-html="cardListCurrentRow.CARD_DESC_HTML"></div>
+			        <div class="cont-box" v-show="modiCardDescYn">
+			        	<textarea id="pCardDesc" ref="pCardDesc" rows="10" placeholder="내용을 작성하세요" class="size-m" v-model="cardListCurrentRow.CARD_DESC" @blur="updateCard('pCardDesc')"></textarea>
+			        </div>
+			        <div class=tit-box v-show="pictureList.getRowCount() > 0"><span class="icon-image"></span><h3>사진</h3></div>
+			        <div class="cont-box" v-show="pictureList.getRowCount() > 0">
+			        	<div class="image-list" v-for="(item, index) in pictureList.data" :key="'picture-list-' + index" v-show="pictureList.getRowType(index) != '2'">
+			        		<span class="image"><img :src="'/upload'+item.FILE_PATH" alt="" /></span>
+			        		<div class="right-cont">
+				        		<span class="file-name">{{item.FILE_NM}}<span class="file-size">{{item.FILE_SIZE}}kb</span></span>
+				        		<div class="text-box" v-html="$options.filters.toHTML(item.TEXT)">
+				        		</div>
+				        		<div class="btn-box" v-show="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')">
+				        			<a href="javascript:void(0)" class="btn-link" @click="pictureList.selectRow(index);updateDaePyoImg()">대표이미지설정</a><a href="javascript:void(0)" class="btn-link" @click="pictureList.selectRow(index);modifyCardImg()">수정</a><a href="javascript:void(0)" class="btn-link"  @click="pictureList.selectRow(index); confirmOpen('deleteCardImg');">삭제</a>
+				        		</div>
+				        	</div>
+			        	</div>
+			        </div>
+			        
+			        <div class=tit-box v-show="fileList.getRowCount() > 0">
+			        	<span class="icon-edit-3"></span><h3>파일</h3>			        	
+		        	</div>
+			        <perfect-scrollbar class="file-main-cont-box" v-show="fileList.getRowCount() > 0">
+						<div class="file-cont-box" v-for="(item, index) in fileList.data" :key="'file-' + index" v-show="fileList.getRowType(index) != '2'">
+							<div class="inner">
+								<div class="file-title-box">{{item.TITLE}}</div>
+								<div class="file-text-box">{{item.TEXT}}</div>
+								<span class="file-name">{{item.FILE_NM}}<span class="file-size">{{item.FILE_SIZE}}kb</span></span> 
+								<div class="row form-row">
+									<div class="col s12 l9">									
+										<span class="etc icon-edit">{{item.JAKSEONGJA_NM}}</span>
+										<span class="etc icon-time">{{getDateForm(item.INSERT_DTTM)}}</span>
+									</div>	
+									<div class="col s12 l3" v-show="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')">									
+										<a href="javascript:void(0)" class="btn-link" @click="fileList.selectRow(index); modifyCardFile()">수정</a><a href="javascript:void(0)" class="btn-link" @click="fileList.selectRow(index); confirmOpen('deleteCardFile')">삭제</a>
+									</div>																
+								</div>
+							</div>
+							<a href="javascript:void(0)" class="btn-file" @click="fileDownLoad(item.FILE_ID, item.FILE_KEY, item.FILE_HANGMOK, item.FILE_NO, item.FILE_NM, item.FILE_PATH)"><span class="icon-download"></span></a>
+							
+						</div>
+					</perfect-scrollbar>
+					
+					<div class=tit-box v-show="chkList.getRowCount() > 0"><span class="icon-checkbox"></span><h3>체크리스트</h3></div>
+					<div class="cont-box" v-show="chkList.getRowCount() > 0">
+						<div class="checklist-wrap" v-for="(item, index) in chkList.data" :key="'chk-list-' + index" v-show="chkList.getRowType(index) != '2'">
+							<div class="checklist-box">
+								<div class="row form-row">
+									<div class="col s10">
+										<span class="title">{{ item.TITLE }}</span>
+									</div>
+									<div class="col s2" v-show="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')">
+										<a href="javascript:void(0)" class="btn-link" @click="chkList.selectRow(index); modifyCardChk()">수정</a><a href="javascript:void(0)" class="btn-link" @click="chkList.selectRow(index); confirmOpen('deleteChk')">삭제</a>
+									</div>
+								</div> 
+								<div class="progress-line">
+									<span class="num col-txt01">{{ item.CHECK_LIST_PERCENTAGE }}%</span> 
+									<div class="progress-inner">
+										<div class="progress-bar">
+											<span class="inner" :style="{width: item.CHECK_LIST_PERCENTAGE + '%'}"></span>
+										</div>
+									</div>
+								</div>
+							</div> 
+							<div class="row form-row">
+								<div class="col s12" v-if="item.CHK_ITEM_LIST && item.CHK_ITEM_LIST.getRowCount() > 0">
+									<div class="row form-row">
+										<div class="form-group col s6" v-for="(chkItem, chkIndex) in item.CHK_ITEM_LIST.data" :key="'chk-item-list-' + chkIndex">
+											<div class="checkbox size-s">
+												<!-- 사용 권한이 있을 경우 -->
+												<input type="checkbox" :id="'checkbox' + index + '-' + chkIndex" true-value="Y" false-value="N" v-model="chkItem.WANRYO_YN" @click="chkList.selectRow(index); item.CHK_ITEM_LIST.selectRow(chkIndex)" @change="updateChk(item)" v-if="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')"> 
+												<!-- 사용 권한이 없을 경우 -->
+												<input type="checkbox" :id="'checkbox' + index + '-' + chkIndex" true-value="Y" false-value="N" v-model="chkItem.WANRYO_YN" v-else disabled=true> 
+												<label :for="'checkbox' + index + '-' + chkIndex">{{ chkItem.ITEM_NM }}</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div> 
+									</div>
+								</div> 
+							</div>
+						</div>
+					</div>
+					
+					<div class="comment-box-wrap">
+						<h4>Comment</h4> 
+						<div class="comment-write-box" v-show="farmBoardListCurrentRow.USE_YN == 'Y' && (farmBoardListCurrentRow.LIST_CHAMYEOJA_CNT == 0 || pChamyeojaYn == 'N' || farmBoardListCurrentRow.CARD_GWANRI_AUTH_YN == 'Y')">
+							<div class="photo-zone user-thumb-wrap">
+								<span class="user"><img :src="modiImgAddr(session.USER_PIC,session.USER_PHOTO)" alt=""></span>
+							</div> 
+							<div class="cont-zone">
+								<span class="name">{{session.USER_NM}}</span> 
+								<span class="link">@{{session.USER_ID}}</span> 
+								<div class="form-group row form-row">
+									<div class="col s12 l10">
+										<textarea id="comment" rows="10" placeholder="내용을 작성하세요" class="size-m" v-model="pComment"></textarea>
+									</div>
+									<div class="col s12 l2">
+										<a href="javascript:void(0)" class="btn type02 btn-comment" @click="addComment">등록</a>
+									</div>
+								</div>									
+							</div>
+						</div> 
+						<div class="last-update">Last Update {{lastUpdateComment}} <a href="javascript:void(0)" @click="setCommentList"><span class="icon-repeat"></span></a></div>
+						<div class="comment-list">
+							<div class="list" v-for="(listItem, listIndex) in cardCommentList.data" :key="'card-comment-' + listIndex" v-show="cardCommentList.getRowCount() > 0">
+								<div class="photo-zone user-thumb-wrap">
+									<span class="user"><img :src="modiImgAddr(listItem.USER_PIC,listItem.USER_PHOTO)" alt=""></span>
+								</div> 
+								<div class="cont-zone">
+									<span class="name">{{ listItem.JAKSEONGJA_NM }}</span> 
+									<span class="link">@{{ listItem.JAKSEONGJA_ID }}</span> 
+									<span class="date">{{ getDateForm(listItem.INSERT_DTTM) }}</span> 
+									<p class="cont-txt" v-show="!modiCommentYn" v-html="listItem.TEXT_HTML"></p>
+									<textarea v-show="modiCommentYn" id="pModiComment" ref="pModiComment" rows="10" placeholder="내용을 작성하세요" class="size-m" v-model="listItem.TEXT" @blur="modiComment"></textarea>
+									<p class="right" v-show="listItem.JAKSEONGJA_ID == session.USER_ID"><a href="javascript:void(0)" class="btn-link" @click="cardCommentList.selectRow(listIndex); modifyCommentClick();">수정</a><a href="javascript:void(0)" class="btn-link" @click="cardCommentList.selectRow(listIndex);confirmOpen('deleteComment')">삭제</a></p>
+								</div>
+							</div> 
+							<div class="list" v-show="cardCommentList.getRowCount() == 0">
+								<div class="no-cont center">등록된 코멘트가 없습니다.</div>
+							</div>
+						</div>
+					</div>
+                	
+                </div>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="cardPopup = false;"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="modiFarmBoardPopup" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">보드수정</p>
+            </div>
+            <div class="modal-content" v-show="modiFarmBoardPopup == true">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput1" class="label-type01">구분</label>
+				            <select id="exampleFormControlInput1" class="size-m" v-model="pFbGb" disabled>
+								<option v-for="(addFbGbItem, addFbGbIndex) in addCommcode.getCommcode('ADD', 'FB_GB', 'blank', 'CD_NM', 'N')" :key="addFbGbItem.CD" :value="addFbGbItem.CD">{{ addFbGbItem.CD_NM }}</option>
+							</select>
+				        </div>
+				    </div>
+				   	<div class="row form-row" v-if="modiFarmBoardPopup == true">
+				        <div class="form-group col s12">
+				            <label for="fbTitle" class="label-type01">제목</label>
+				            <input type="text" id="fbTitle" name="fbTitle" placeholder="제목을 입력하세요" class="size-m" v-model="pFbNm" data-vv-as="제목 " v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('fbTitle')}">
+				        	<invalid-message :visible="farmBoardList.currentRow" :name="'fbTitle'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">라벨관리</label>
+				            <div class="note-label-setting">				            	
+				            	<div class="label-set-box">
+				            		<div :class="'label-list label-clr' + labelListItem.LABEL_COLOR_GB" v-for="(labelListItem, labelListIndex) in labelList.data" :key="'label-list-' + labelListIndex" @click="labelList.selectRow(labelListIndex)" v-show="labelList.getRowType(labelListIndex) != 8">
+				            			<input type="text" placeholder="라벨명을 입력하세요" :id="'label'+labelListIndex" v-model="labelListItem.LABEL_NM"/>
+				            			<a href="javascript:void(0)" class="btn-delete" @click="labelList.selectRow(labelListIndex);confirmOpen('deleteLabel');"><span class="icon-trashcan"></span></a>
+				            		</div>
+				            		<div class="label-color">
+				            			<div v-for="(labelItem, labelIndex) in addCommcode.getCommcode('ADD', 'LABEL_COLOR_GB', 'blank', 'CD_NM', 'N')" :key="'label-color-' + labelItem.CD" class="color-sel">
+				            				<input type="radio" :id="'color_rd'+labelItem.CD" name="color" :value="labelItem.CD_NM" @click="changeLabelClr(labelItem.CD)"> 
+				            				<label :for="'color_rd'+labelItem.CD" :class="labelItem.CD_NM"></label>
+				            			</div>
+				            		</div>
+				            	</div>
+				            </div>
+				            <div class="btn-line center">
+                                <a href="javascript:void(0)" class="btn type03 size-s left-icon icon-plus" @click="addLabel()">추가</a>
+                            </div>
+				        </div>				        
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">테마</label>
+				            <div class="note-theme-setting">
+				            	<div v-for="(themeItem, themeIndex) in addCommcode.getCommcode('ADD', 'FB_THEME_GB', 'blank', 'CD_NM', 'N')" :key="'fb-theme-' + themeItem.CD" class="theme-sel">
+		            				<input type="radio" :id="'theme_rd' + themeItem.CD" name="theme" :value="themeItem.CD" v-model="pFbThemeGb"> 
+		            				<label :for="'theme_rd' + themeItem.CD" :class="'theme-sel' + themeItem.CD"></label>
+		            			</div>
+				            </div>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="useYn" class="label-type01">공개여부</label>
+				            <div class="form-check">
+				            	<label class="toggle-switch">
+				            		<input type="checkbox" class="size-m" v-model="pUseYn" true-value="Y" false-value="N"> 
+				            		<span class="slider round"></span>
+				            	</label>
+				            </div>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="modal-footer center">
+                <a href="javascript:void(0)" class="btn type02 size-m" @click="saveFarmBoard">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="modiFarmBoardPopup=false;"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="partiPopup" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">보드 참여자관리</p>
+            </div>
+            <div class="modal-content" v-show="partiPopup == true">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <p class="label-type01">보드 참여자 목록</p>				        
+				            <p class="heading-txt2">현재인원을 조회하고 리스트 관리 권한을 부여하고 참여 인원을 삭제할 수 있습니다.</p>
+				            <perfect-scrollbar class="group-list-box note-people-adm">
+				               <div v-for="(fcItem, fcIndex) in chamyeojaList.data" :key="'card-pop-chamyeoja-' + fcIndex" @click="chamyeojaList.selectRow(fcIndex)">
+                                 <div class="group-list" v-show="fcItem.USER_ID != fcItem.CHAMYEOJA_ID">
+                                     <div><span class="name">{{ fcItem.USER_NM }}</span><span class="code-num">{{ fcItem.CHAMYEOJA_ID }}</span></div>
+                                     <div><span class="major">{{ fcItem.DEPT_NM }}</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" :id="'write-check'+fcIndex" true-value="Y" false-value="N" v-model="fcItem.LIST_GWANRI_AUTH_YN" @change="updateChamyeoja">
+			                            <label :for="'write-check'+fcIndex"></label>
+			                         </div>
+                                     <a href="javascript:void(0)" class="btn-close" @click="confirmOpen('deleteChamyeoja')"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                               </div>
+                             </perfect-scrollbar>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="chamyeojaList.clear();partiPopup = false;"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="listPartiPopup" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">리스트 참여자 관리</p>
+            </div>
+            <div class="modal-content" v-show="listPartiPopup == true">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <p class="label-type01">리스트 참여자 목록</p>				        
+				            <p class="heading-txt2">현재인원을 조회하고 카드 관리 권한을 부여하고  참여 인원을 삭제할 수 있습니다.</p>
+				            <perfect-scrollbar class="group-list-box note-people-adm">
+				               <div v-for="(fcItem, fcIndex) in listChamyeojaList.data" :key="'list-chamyeoja-pop-' + fcIndex" @click="listChamyeojaList.selectRow(fcIndex)">
+                                 <div class="group-list" v-show="fcItem.USER_ID != fcItem.CHAMYEOJA_ID">
+                                     <div><span class="name">{{ fcItem.USER_NM }}</span><span class="code-num">{{ fcItem.CHAMYEOJA_ID }}</span></div>
+                                     <div><span class="major">{{ fcItem.DEPT_NM }}</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" :id="'card-write-check'+fcIndex" true-value="Y" false-value="N" v-model="fcItem.CARD_GWANRI_AUTH_YN" @change="updateListChamyeoja(fcItem)"> <!--  -->
+			                            <label :for="'card-write-check'+fcIndex"></label>
+			                         </div>
+                                     <a href="javascript:void(0)" class="btn-close" @click="confirmOpen('deleteListChamyeoja')"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                               </div>
+                            </perfect-scrollbar>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <p class="label-type01">보드 참여자 목록</p>				        
+				            <p class="heading-txt2">현재인원을 조회하고 리스트 참여할 인원을 추가할 수 있습니다.</p>
+				            <perfect-scrollbar class="group-list-box note-people-adm">
+				               <div v-for="(fcItem, fcIndex) in chamyeojaList.data" :key="'chamyeoja-pop-' + fcIndex" @click="chamyeojaList.selectRow(fcIndex)">
+                                 <div class="group-list" v-show="fcItem.USER_ID != fcItem.CHAMYEOJA_ID">
+                                     <div><span class="name">{{ fcItem.USER_NM }}</span><span class="code-num">{{ fcItem.CHAMYEOJA_ID }}</span></div>
+                                     <div><span class="major">{{ fcItem.DEPT_NM }}</span></div>
+                                     <a href="javascript:void(0)" class="btn-close" v-show="!chamyeojaList.isFilterRow(fcIndex)" @click="chamyeojaList.selectRow(fcIndex);addListChamyeoja();"><span class="icon-more"></span></a>
+                                	 <span class="btn-close" v-show="chamyeojaList.isFilterRow(fcIndex)"><span class="icon-checkmark"></span></span>
+                                 </div>
+                               </div>
+                            </perfect-scrollbar>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="chamyeojaList.clear();listChamyeojaList.clear();listPartiPopup = false;setFarmBoardList();"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 모달팝업 -->
+<modal-message :modalset="confirmMessageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+</section>
+
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	//보드 메인 화면에서 넘어온 변수
+    	pSearchArgv: globalParam.pSearchArgv,
+    	pSearchType: globalParam.pSearchType,
+    	pPageNo: globalParam.pPageNo,
+    	pRowCount: globalParam.pRowCount,
+		pFbSeq: globalParam.FB_SEQ,
+		pFbNm: globalParam.FB_NM,
+		pFbGb: globalParam.FB_GB,
+		pFbThemeGb: isNull(globalParam.FB_THEME_GB) ? '' : globalParam.FB_THEME_GB,
+	    pUseYn: globalParam.USE_YN,
+		pUserId: globalParam.USER_ID,
+		pChamyeojaYn: globalParam.CHAMYEOJA_YN,
+		pListGwanriAuthYn: globalParam.LIST_GWANRI_AUTH_YN,
+		//데이터셋
+		farmBoardList: new Dataset(),
+    	farmBoardCardList: new Dataset(),
+    	farmBoardCardLabelList: new Dataset(),
+    	cardCommentList: new Dataset(),
+    	//카드 내 데이터셋 모음
+    	pictureList: new Dataset(),
+    	fileList: new Dataset(),
+    	chkList: new Dataset(),
+    	chkItemList: new Dataset(),
+    	//참여자 카드
+    	labelList: new Dataset(),
+    	cardLabelList: new Dataset(),
+    	chamyeojaList: new Dataset(),
+    	threeChamyeojaList: new Dataset(),
+    	listChamyeojaList: new Dataset(),
+    	cardChamyeojaList: new Dataset(),
+    	threeCardChamyeojaList: new Dataset(),
+    	//loading
+		mainListLoading: {id:'mainListLoading', val:false},
+		//전체 조회가 완료된 상태
+		allSearchYn: false,
+    	//팝업 오픈 변수
+    	partiPopup: false,
+    	listPartiPopup: false,
+    	cardPartiPopup: false,
+    	cardPopup: false,
+    	modiFarmBoardPopup: false,
+    	//카드 관련 수정 버튼 클릭 여부
+    	modiCardTitleYn: false,
+    	modiCardDescYn: false,
+    	modiCommentYn: false,
+    	//카드 상세 순번을 담아 놓는 변수
+    	labelCardDetailSeq: '', 
+    	//코멘트 변수
+    	pComment: '',
+    	//메시지 모달
+		confirmMessageModal: new ModalSet('modal-message'),
+		lastUpdateComment: moment().format("HH:mm"),	// 코멘트 불러온 시간
+		imgSingleFileSet: new SingleFileSet("ADD", 10),	// 이미지
+		imgSingleFileKey:'',							// 이미지 파일 키
+		fileSingleFileSet: new SingleFileSet("ADD", 10),	// 파일
+		fileSingleFileKey: '', 								// 파일 키
+		
+		test : 'Y',
+    },
+    filters: { 
+        toHTML: function(value) { 
+            if (!value) return '' ;
+            return value.replace(/(?:\r\n|\r|\n)/g, '<br />'); 
+        } 
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	this.setFarmBoardList();
+    },
+    watch: {
+    	'farmBoardList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.farmBoardList.enableevent){
+					var rowType = this.farmBoardList.getRowType(val);
+					
+					if(rowType == this.ROWTYPE_INSERT){
+						setTimeout(function() {
+							$('#list-nm-' + val).focus();
+						}, 300);
+					}
+					if(val != -1){
+						this.$validator.reset();
+					}
+
+				}
+			}
+		},		
+		'farmBoardList.data': {
+			handler: function (val, oldVal) {
+				if(this.farmBoardList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.farmBoardList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.farmBoardList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			//Objects 내부의 중첩된 값 변경을 감지
+			deep: true
+	    },		
+    	'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    }
+    },
+    computed: {
+    	farmBoardListCurrentRow: function(){
+    		var param = {};
+    		if(this.cardPopup){
+    			param = this.farmBoardList.currentRow;
+    		}
+    		
+    		return param;
+    	},
+    	cardListCurrentRow: function(){
+    		var param = {};
+    		if(this.cardPopup){
+    			param = this.farmBoardList.currentRow.CARD_LIST.currentRow;
+    		}
+    		
+    		return param;
+    	},
+    	currChkItemList: function(){
+    		var param = this.chkList.currentRow.CHK_ITEM_LIST;
+    		
+    		return param;
+    	}
+    },
+    //함수
+    methods: {
+    	setFarmBoardList: function() {
+    		this.allSearchYn = false;
+    		var param = {
+    			"USER_ID": this.pUserId,
+    			"FB_SEQ": this.pFbSeq
+    		};
+    		
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardList(param, false);
+
+            self.mainListLoading.val = true;
+            
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.farmBoardList.setData(response.data);
+
+					if(response.data.length > 0) {
+						self.farmBoardList.selectRow(0);
+					}
+					
+					//팜보드 카드 리스트 조회
+			    	self.setFarmBoardCardList();
+				}else {
+					notifySubmit('warning', '팜보드 조회', '조회에 실패하였습니다.', 'icon-caution');
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+    	},
+    	saveFarmBoard: function() {
+    		var self = this;
+    		
+    		var validate = self.$validator.validateAll();
+    		
+    		var param = {
+       			"USER_ID": self.pUserId,
+       			"FB_SEQ": self.pFbSeq,
+       			"FB_NM": self.pFbNm,
+       			"FB_DESC": self.pFbDesc,
+       			"FB_GB": self.pFbGb,
+				"FB_THEME_GB": self.pFbThemeGb,       			
+       			"USE_YN": self.pUseYn
+       		};
+    		
+    		var saveData = {
+    			"FARMBOARD_LIST": param,
+    			"LABEL_LIST": self.labelList.data
+    		};
+			
+			validate.then(function(response) {
+				if(response){			
+					returnVal = farmboardApi.farmBoardUpdate(saveData, true);
+					
+					returnVal.then(function(response) {
+						if(response.status == '200') {
+							modal_close('modiFarmBoardPopup');
+							
+							self.modiFarmBoardPopup = false;
+							
+							notifySubmit('success', '팜보드 저장', '저장이 완료되었습니다.', 'icon-save');
+						}else {
+							notifySubmit('warning', '팜보드 저장', '저장에 실패하였습니다.', 'icon-caution');
+						}
+					}).catch(function(error) {
+						notifySubmit('warning', '팜보드 저장', '저장에 실패하였습니다.', 'icon-caution');
+					});
+				}else {
+					notifySubmit('warning', '팜보드 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+    	},
+    	deleteFarmBoard: function() {
+    		var self = this;
+    		
+    		var param  = {
+   				"USER_ID": self.pUserId,
+       			"FB_SEQ": self.pFbSeq
+    		};
+    		
+    		var returnVal = farmboardApi.farmBoardDelete(param, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					notifySubmit('success', '팜보드 삭제', '삭제가 완료되었습니다', 'icon-save');
+					
+					self.goToHome();
+				}else {
+					notifySubmit('warning', '팜보드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '팜보드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+    	},
+     	secessionFarmBoard: function() {
+			var self = this;
+    		
+    		var param  = {
+   				"CHAMYEOJA_ID": self.session.USER_ID,
+   				"FB_SEQ": self.pFbSeq
+    		};
+    		
+    		var returnVal = farmboardApi.farmBoardSecession(param, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					notifySubmit('success', '팜보드 탈퇴', '탈퇴에 성공하였습니다.', 'icon-save');
+					
+					self.goToHome();
+				}else {
+					notifySubmit('warning', '팜보드 탈퇴', '탈퇴에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '팜보드 탈퇴', '탈퇴에 실패하였습니다.', 'icon-caution');
+			});
+     	},
+    	addList: function() {
+    		var ord = isNull(this.farmBoardList.data[this.farmBoardList.data.length - 1]) ? 1 : isNull(this.farmBoardList.data[this.farmBoardList.data.length - 1]).ORD;
+    		
+			var addObj = {
+				"USER_ID": this.pUserId,
+				"FB_SEQ": this.pFbSeq,
+				"LIST_SEQ": ord,
+				"LIST_NM": '',
+				"USE_YN": "Y",
+				"LIST_CHAMYEOJA_CNT": 0,
+				"CARD_LIST": new Dataset(),
+				"INSERT_ID": this.pUserId,
+			};
+			
+			var rowposition = this.farmBoardList.addRow(addObj);
+			if(this.farmBoardList.getRowType(rowposition - 1) != '2') {
+				var cardList = this.farmBoardList.getColumn(rowposition, "CARD_LIST");
+				
+				cardList.addRow({"CARD_LABEL_LIST": new Dataset()});
+				
+				setTimeout(function() {
+					$('#list-nm-' + rowposition).focus();
+				}, 350);
+			}
+			//계속 신규를 누를 경우 막는 처리
+			else if(this.farmBoardList.getRowType(rowposition - 1) == '2') {
+				this.farmBoardList.deleteRow(rowposition);
+				
+				setTimeout(function() {
+					$('#list-nm-' + rowposition - 1).focus();
+				}, 350);
+			}
+    	},
+    	saveList: function() {
+			var self = this;
+    		
+    		var validate = self.$validator.validateAll();
+    		
+			validate.then(function(response) {
+				if(response){			
+					var rowposition = self.farmBoardList.rowposition;
+					var rowType = self.farmBoardList.getRowType(rowposition); 
+
+					var returnVal = '';
+					
+					//신규
+					if(rowType == ROWTYPE_INSERT) {
+						returnVal = farmboardApi.farmBoardListInsert(self.farmBoardList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE) {
+						returnVal = farmboardApi.farmBoardListUpdate(self.farmBoardList.currentRow, true);
+					}else{
+						notifySubmit('info', '팜보드 리스트 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+					
+					returnVal.then(function(response) {
+						if(response.status == '200') {
+							if(rowType == ROWTYPE_INSERT){
+								self.farmBoardList.currentRow.LIST_SEQ = response.data.LIST_SEQ;
+								self.farmBoardList.currentRow.ROW_TYPE = '1';
+							} 
+							notifySubmit('success', '팜보드 리스트 저장', '저장이 완료되었습니다.', 'icon-save');
+						}else {
+							notifySubmit('warning', '팜보드 리스트 저장', '저장에 실패하였습니다.', 'icon-caution');
+						}
+					}).catch(function(error) {
+						notifySubmit('warning', '팜보드 리스트 저장', '저장에 실패하였습니다.', 'icon-caution');
+					});
+				}else {
+					notifySubmit('warning', '팜보드 리스트 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+    	},
+    	setChamyeojaList: function() {
+    		var param = {
+    			"USER_ID": this.pUserId,
+    			"FB_SEQ": this.pFbSeq,
+				"GB" : "CHAMYEOJA",
+    		};
+    		
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaList(param, true);
+
+			returnVal.then(function(response) {
+				//참여자 3명이 들어있는 데이터셋 초기화
+// 				self.threeChamyeojaList.clear();
+				
+				if(response.status == '200') {
+// 					for(var i = 0; i < 3; i++){
+// 						if(i < response.data.length) {
+// 							//참여자 세명만 표시되도록 하는 부분
+// 							var param = {
+// 								"SHORT_USER_NM": response.data[i].SHORT_USER_NM,
+// 								"USER_PIC": response.data[i].USER_PIC
+// 							}
+							
+// 							self.threeChamyeojaList.addRow(param);
+// 						}					
+// 					}
+					
+					self.chamyeojaList.setData(response.data);
+					
+					if(self.listPartiPopup || self.cardPartiPopup) {
+						self.setListChamyeojaList();
+					}
+
+					self.allSearchYn = true;
+				}else {
+					notifySubmit('warning', '팜보드 참여자 조회', '조회에 실패하였습니다.', 'icon-caution');
+				}
+			});
+    	},
+    	updateChamyeoja: function(pItem) {
+			var self = this;
+			var returnVal = farmboardApi.farmBoardChamyeojaUpdate(self.chamyeojaList.currentRow, true);
+			
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					notifySubmit('success', '리스트 관리 권한', '권한 변경에 성공하였습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '리스트 관리 권한', '권한 변경에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '리스트 관리 권한', '권한 변경에 실패하였습니다.', 'icon-caution');
+			});
+		},
+		deleteChamyeoja: function() {
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaDelete(self.chamyeojaList.currentRow, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.setChamyeojaList();
+					
+					notifySubmit('success', '참여자 삭제', '삭제가 완료되었습니다', 'icon-save');
+				}else {
+					notifySubmit('warning', '참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+		},
+		setListChamyeojaList: function() {
+    		var param = {
+    			"USER_ID": this.pUserId,
+    			"FB_SEQ": this.pFbSeq,
+    			"LIST_SEQ": this.farmBoardList.currentRow.LIST_SEQ,
+    			"CHAMYEO_STATUS_GB": '02'
+    		};
+    		
+			var self = this;
+			
+			self.listChamyeojaList.clear();
+			
+			var returnVal = farmboardApi.farmBoardListChamyeoja(param, true);
+
+			returnVal.then(function(response) {
+				self.listChamyeojaList.setData(response.data);
+				if(response.status == '200') {
+					if(self.listPartiPopup == true) {
+						
+						_.forEach(response.data, function(obj, index) {
+							_.forEach(self.chamyeojaList.data, function(subObj, subIndex) {
+								subObj.FILTER_ROW = 'N';
+								
+								if(obj.CHAMYEOJA_ID == subObj.CHAMYEOJA_ID) {
+									subObj.FILTER_ROW = 'Y';
+								}
+							});
+						});
+						
+						//리스트 참여자가 없을 경우
+						if(response.data.length == 0) {
+							_.forEach(self.chamyeojaList.data, function(obj, index) {
+								obj.FILTER_ROW = 'N';
+							});
+						}
+						
+						self.$forceUpdate();
+					}else if(self.cardPartiPopup == true || self.cardPopup == true) {
+						self.setCardChamyeojaList();
+					}
+				}
+			});
+    	},
+    	addListChamyeoja: function() {
+			var self = this;
+			
+			var param = {
+				"USER_ID": self.chamyeojaList.currentRow.USER_ID,
+				"FB_SEQ": self.chamyeojaList.currentRow.FB_SEQ,
+				"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+				"CHAMYEOJA_ID": self.chamyeojaList.currentRow.CHAMYEOJA_ID,
+				"CARD_GWANRI_AUTH_YN": "N"
+			}
+    		
+			var returnVal = farmboardApi.farmBoardListChamyeojaInsert(param, true);
+			
+			returnVal.then(function(response) {
+				var data = response.data;
+		
+				if(response.status == '200') {
+					self.setListChamyeojaList();
+
+					notifySubmit('success', '리스트 참여자 추가', '저장이 완료되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '리스트 참여자 추가', '저장에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '리스트 참여자 추가', '저장에 실패하였습니다.', 'icon-caution');
+			});
+    	},
+    	updateListChamyeoja: function() {
+			var self = this;
+			var returnVal = farmboardApi.farmBoardListChamyeojaUpdate(self.listChamyeojaList.currentRow, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					
+					notifySubmit('success', '카드 관리 권한 변경', '변경에 완료되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '카드 관리 권한 변경', '변경에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '카드 관리 권한 변경', '변경에 실패하였습니다.', 'icon-caution');
+			});
+    	},
+    	deleteListChamyeoja: function() {
+			var self = this;
+
+			var param = {
+				"USER_ID": self.listChamyeojaList.currentRow.USER_ID,
+				"FB_SEQ": self.listChamyeojaList.currentRow.FB_SEQ,
+				"LIST_SEQ": self.listChamyeojaList.currentRow.LIST_SEQ,
+				"CHAMYEOJA_ID": self.listChamyeojaList.currentRow.CHAMYEOJA_ID
+			};
+			
+			var returnVal = farmboardApi.farmBoardListChamyeojaDelete(param, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.setListChamyeojaList();
+					
+					notifySubmit('success', '참여자 삭제', '삭제가 완료되었습니다', 'icon-save');
+				}else {
+					notifySubmit('warning', '참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+    	},
+    	deleteList: function() {
+    		var rowposition = this.farmBoardList.rowposition;
+			var rowType = this.farmBoardList.getRowType(rowposition); 
+			
+			if(rowType == ROWTYPE_INSERT) {
+				this.farmBoardList.deleteRow(rowposition);
+			}else {
+				var self = this;
+				
+				var param = {
+					"USER_ID": self.farmBoardList.currentRow.USER_ID,
+					"FB_SEQ": self.farmBoardList.currentRow.FB_SEQ,
+					"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ
+				};
+				
+				var returnVal = farmboardApi.farmBoardListDelete(param, true);
+			
+				returnVal.then(function(response) {
+					if(response.status == '200') {
+						self.farmBoardList.data.splice(self.farmBoardList.rowposition, 1);
+						notifySubmit('success', '팜보드 리스트 삭제', '삭제가 완료되었습니다', 'icon-save');
+					}else {
+						notifySubmit('warning', '팜보드 리스트 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+					}
+				}).catch(function(error) {
+					notifySubmit('warning', '팜보드 리스트 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});
+			}
+    	},
+    	setLabelList: function() {
+			var self = this;
+			
+    		var param = {
+    			"USER_ID": self.pUserId,
+    			"FB_SEQ": self.pFbSeq
+    		};
+			
+			var returnVal = farmboardApi.labelList(param, true);
+
+			returnVal.then(function(response) {
+				self.labelList.setData(response.data);
+				
+				if(response.data.length == 0) {
+					self.addLabel();
+				}
+				
+    			modal_open('modiFarmBoardPopup');
+
+				self.$forceUpdate();
+			});
+    	},
+    	addLabel: function() {
+    		var addObj = {
+        		'LABEL_COLOR_GB': '01',
+         		'LABEL_NM': ''
+         	};
+         		
+         	this.labelList.addRow(addObj);
+       	},
+       	deleteLabel: function() {
+       		var rowposition = this.labelList.rowposition;
+			this.labelList.deleteRow(rowposition);
+       	},
+       	setCardLabelList: function() {
+			var self = this;
+			
+    		var param = {
+    			"USER_ID": self.pUserId,
+    			"FB_SEQ": self.pFbSeq
+    		};
+			
+			var returnVal = farmboardApi.labelList(param, true);
+
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					_.forEach(response.data, function(obj, index) {
+						_.forEach(self.cardListCurrentRow.CARD_LABEL_LIST.data, function(subObj, subIndex) {
+							if(obj.LABEL_SEQ == subObj.LABEL_SEQ) {
+								obj.CHK = 'Y';
+							}
+						});
+					});
+					
+					self.cardLabelList.setData(response.data);
+				}else {
+					notifySubmit('warning', '팜보드 카드 라벨', '조회에 실패하였습니다.', 'icon-caution');
+				}
+			});
+       	},
+       	modiCardLabel: function() {
+       		var self = this;
+       		
+       		if(self.cardLabelList.currentRow.CHK == 'Y') {
+     	       	var param = {
+     	       		"USER_ID": self.pUserId,
+     	       		"FB_SEQ": self.pFbSeq,
+     	       		"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+     	            "CARD_SEQ": self.cardListCurrentRow.CARD_SEQ,
+     	       	    "CARD_DETAIL_GB": "01",
+     	       	    "LABEL_SEQ": self.cardLabelList.currentRow.LABEL_SEQ,
+     	       	    "DAEPYO_IMG_YN": "",
+     	       	    "JAKSEONGJA_ID": self.session.USER_ID,
+     	       	    "LINK_URL": "",
+     	       	    "TITLE": "",
+     	       	    "TEXT": ""
+     	       };
+     	            
+     			var returnVal = farmboardApi.farmBoardCardDetailInsert(param, true);
+       		}else {
+       			_.forEach(self.cardListCurrentRow.CARD_LABEL_LIST.data, function(obj, index) {
+       				if(obj.LABEL_SEQ == self.cardLabelList.currentRow.LABEL_SEQ) self.cardListCurrentRow.CARD_LABEL_LIST.selectRow(index);
+       			});
+        	    
+        	    var param = {
+        	       	"USER_ID": self.pUserId,
+        	       	"FB_SEQ": self.pFbSeq,
+        	       	"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+        	        "CARD_SEQ": self.cardListCurrentRow.CARD_SEQ,
+        	        "CARD_DETAIL_SEQ": self.cardListCurrentRow.CARD_LABEL_LIST.currentRow.CARD_DETAIL_SEQ,
+        	       	"CARD_DETAIL_GB": "01",
+        	       	"LABEL_SEQ": self.cardLabelList.currentRow.LABEL_SEQ,
+        	       	"DAEPYO_IMG_YN": "",
+        	       	"JAKSEONGJA_ID": self.session.USER_ID,
+        	       	"LINK_URL": "",
+        	       	"TITLE": "",
+        	       	"TEXT": ""
+        	    };
+         	            
+         		var returnVal = farmboardApi.farmBoardCardDetailDelete(param, true);
+       		}
+			
+			returnVal.then(function(response) {
+				//추가일때 카드 상세 순번을 받아서 변수에 담아둠
+				if(self.cardLabelList.currentRow.CHK == 'Y') {
+	       			var addObj = {
+	       			    "CARD_SEQ": self.cardListCurrentRow.CARD_SEQ,
+	       			    "CARD_DETAIL_SEQ": response.data.CARD_DETAIL_SEQ,
+	    	       		"LABEL_SEQ": self.cardLabelList.currentRow.LABEL_SEQ,
+	     	       		"LABEL_COLOR_GB": self.cardLabelList.currentRow.LABEL_COLOR_GB,
+	     	       		"LABEL_NM": self.cardLabelList.currentRow.LABEL_NM
+	     	       	};
+	     	       		
+	     	       	self.cardListCurrentRow.CARD_LABEL_LIST.addRow(addObj);
+	     	       	
+	     	       if(!isNull(response.data.CARD_DETAIL_SEQ) > 0) {
+						notifySubmit('success', '라벨 추가', '저장이 완료되었습니다.', 'icon-save');
+						
+						self.$forceUpdate();
+					}else {
+						notifySubmit('warning', '라벨 추가', '저장에 실패하였습니다.', 'icon-caution');
+					}
+				}else {
+					_.forEach(self.cardListCurrentRow.CARD_LABEL_LIST.data, function(obj, index) {
+						if(obj.LABEL_SEQ == self.cardLabelList.currentRow.LABEL_SEQ) self.cardListCurrentRow.CARD_LABEL_LIST.deleteRow(index);
+					});
+	       			
+	       			if(response.status == '200') {
+						notifySubmit('success', '라벨 삭제', '저장이 완료되었습니다.', 'icon-save');
+						
+						self.$forceUpdate();
+					}else{
+						notifySubmit('warning', '라벨 삭제', '저장에 실패하였습니다.', 'icon-caution');
+					}
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '라벨 변경', '저장에 실패하였습니다.', 'icon-caution');
+			});
+       	},
+       	changeLabelClr: function(pClr) {
+       		var rowposition = this.labelList.rowposition;
+       		
+       		this.labelList.setColumn(rowposition, "LABEL_COLOR_GB", pClr);
+       	},
+       	setFarmBoardCardList: function() {
+			var self = this;
+			
+    		var param = {
+    			"USER_ID": self.pUserId,
+    			"FB_SEQ": self.pFbSeq
+    		};
+			
+			var returnVal = farmboardApi.farmBoardCard(param, true);
+
+			returnVal.then(function(response) {
+				_.forEach(response.data, function(obj, index) {
+					if(!isNull(obj.CARD_DESC)) {
+						obj.CARD_DESC_HTML = obj.CARD_DESC.split('\n').join('<br/>');
+						obj.OLD_CARD_TITLE = obj.CARD_TITLE;
+						obj.OLD_CARD_DESC = obj.CARD_DESC;
+					}
+				});
+				
+				self.farmBoardCardList.setData(response.data);
+				
+				//팜보드 카드에 등록된 라벨 조회
+				self.setFarmBoardCardLabel();
+			});
+       	},
+       	setFarmBoardCardLabel: function() {
+			var self = this;
+			
+    		var param = {
+    			"USER_ID": self.pUserId,
+    			"FB_SEQ": self.pFbSeq
+    		};
+			
+			var returnVal = farmboardApi.farmBoardCardLabel(param, true);
+
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					_.forEach(self.farmBoardCardList.data, function(obj, index) {
+						obj.CARD_LABEL_LIST = new Dataset();
+						
+						_.forEach(response.data, function(subObj, subIndex) {
+							if(obj.LIST_SEQ == subObj.LIST_SEQ && obj.CARD_SEQ == subObj.CARD_SEQ) {
+								obj.CARD_LABEL_LIST.addRow(subObj);
+							}
+								
+						});
+					});
+					
+					_.forEach(self.farmBoardList.data, function(obj, index) {
+						obj.CARD_LIST = new Dataset();
+						
+						_.forEach(self.farmBoardCardList.data, function(subObj, subIndex) {
+							if(obj.LIST_SEQ == subObj.LIST_SEQ) {
+								obj.CARD_LIST.addRow(subObj);
+							}
+						});
+					});
+					
+					//팜보드 리스트 관련 조회가 모두 끝난 상태
+// 					self.setChamyeojaList();
+
+					self.allSearchYn = true;
+				}
+			});
+       	},
+       	addCard: function() {
+       		var self = this;
+
+		   self.setFarmBoardCardList();
+
+       		var param = {
+       			"USER_ID": self.pUserId,
+       			"FB_SEQ": self.pFbSeq,
+       			"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+       			"CARD_TITLE": "새 카드",
+       			"CARD_DESC": "",
+       			"INSERT_NM": self.session.USER_NM,
+       		};
+       		
+			var returnVal = farmboardApi.farmBoardCardInsert(param, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					response.data.INSERT_DTTM = moment();
+					response.data.OWN_BOARD_CNT = 1;
+					response.data.CARD_CHAMYEOJA_CNT = 0;
+					response.data.OWN_CARD_AUTH_CNT = 0;
+					response.data.CARD_CMT_CNT = 0;
+					response.data.CARD_FIL_CNT = 0;
+					response.data.CARD_IMG_CNT = 0;
+					response.data.CARD_CHK_CNT = 0;
+					response.data.CARD_CHK_TOT_CNT = 0;
+					self.farmBoardCardList.addRow(response.data);
+
+					_.forEach(self.farmBoardList.data, function(obj, index) {
+						obj.CARD_LIST = new Dataset();
+						
+						_.forEach(self.farmBoardCardList.data, function(subObj, subIndex) {
+							if(obj.LIST_SEQ == subObj.LIST_SEQ) {
+								subObj.CARD_LABEL_LIST = new Dataset();
+								obj.CARD_LIST.addRow(subObj);
+							}
+						});
+					});
+					
+					self.$forceUpdate();
+					notifySubmit('success', '카드 추가', '저장이 완료되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '카드 추가', '저장에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '카드 추가', '저장에 실패하였습니다.', 'icon-caution');
+			});
+       	},
+       	updateCard: function(pGb) {
+       		var self = this;
+
+       		if(pGb == 'pCardNm') {
+       			if(self.cardListCurrentRow.OLD_CARD_TITLE == self.cardListCurrentRow.CARD_TITLE) {
+       				self.modiCardTitleYn = false;
+    				self.modiCardDescYn = false;
+    				
+    				return;
+       			}
+       		}else if(pGb == 'pCardDesc') {
+       			if(self.cardListCurrentRow.OLD_CARD_DESC == self.cardListCurrentRow.CARD_DESC) {
+       				self.modiCardTitleYn = false;
+    				self.modiCardDescYn = false;
+    				
+    				return;
+       			}
+       		}
+       		
+			var validate = self.$validator.validateAll();
+			
+			validate.then(function(response) {
+       			if(response){
+					self.modiCardTitleYn = false;
+					self.modiCardDescYn = false;
+		       		
+		       		var param = {
+		       			"USER_ID": self.pUserId,
+		       			"FB_SEQ": self.pFbSeq,
+		       			"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+		       			"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ,
+		       			"CARD_TITLE": self.cardListCurrentRow.CARD_TITLE,
+		       			"CARD_DESC": self.cardListCurrentRow.CARD_DESC,
+		       			"ORD": self.cardListCurrentRow.ORD
+		       		};
+		       		
+					var returnVal = farmboardApi.farmBoardCardUpdate(param, true);
+					
+					returnVal.then(function(response) {
+						if(response.status == '200') {
+							self.cardListCurrentRow.OLD_CARD_TITLE = self.cardListCurrentRow.CARD_TITLE;
+							self.cardListCurrentRow.OLD_CARD_DESC = _.clone(self.cardListCurrentRow.CARD_DESC);
+							self.cardListCurrentRow.CARD_DESC_HTML = self.cardListCurrentRow.CARD_DESC.split('\n').join('<br/>');
+							
+							self.$forceUpdate();
+							
+							notifySubmit('success', '카드 수정', '수정이 완료되었습니다.', 'icon-save');
+						}else {
+							notifySubmit('warning', '카드 수정', '수정에 실패하였습니다.', 'icon-caution');
+						}
+					}).catch(function(error) {
+						notifySubmit('warning', '카드 수정', '수정에 실패하였습니다.', 'icon-caution');
+					});
+       			}else {
+					notifySubmit('warning', '팜보드 리스트 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+       	},
+       	deleteCard: function() {
+       		var self = this;
+
+       		var param = {
+       			"USER_ID": self.pUserId,
+       			"FB_SEQ": self.pFbSeq,
+       			"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+       			"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ
+       		};
+       		
+			var returnVal = farmboardApi.farmBoardCardDelete(param, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					//카드 관련 데이터셋 삭제
+					let pFindIndex = _.findIndex(self.farmBoardList.currentRow.CARD_LIST.data, {'CARD_SEQ': self.cardListCurrentRow.CARD_SEQ});
+					
+					if(pFindIndex != -1) self.farmBoardList.currentRow.CARD_LIST.data.splice(pFindIndex, 1);
+					
+					pFindIndex = _.findIndex(self.farmBoardCardList.data, {'LIST_SEQ': param.LIST_SEQ, 'CARD_SEQ': param.CARD_SEQ});
+					
+					if(pFindIndex != -1) self.farmBoardCardList.data.splice(pFindIndex, 1);
+					
+					modal_close('cardPopup');
+					
+					self.cardPopup = false;
+
+					notifySubmit('success', '카드 삭제', '삭제가 완료되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '카드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '카드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+       	},
+       	setCardChamyeojaList: function() {
+			var self = this;
+			
+			self.cardChamyeojaList.clear();
+       		
+       		var param = {
+       			"USER_ID": self.pUserId,
+       			"FB_SEQ": self.pFbSeq,
+       			"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+       			"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ
+       		};
+       		
+			var returnVal = farmboardApi.farmBoardCardChamyeoja(param, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					//참여자 3명이 들어있는 데이터셋 초기화
+// 					self.threeCardChamyeojaList.clear();
+					
+					if(response.data.length > 0) {
+// 						for(var i = 0; i < 3; i ++) {
+// 							if(i < response.data.length) {
+// 								var param = {
+// 									"SHORT_USER_NM": response.data[i].SHORT_USER_NM,
+// 									"USER_PIC": response.data[i].USER_PIC
+// 								}
+								
+// 								self.threeCardChamyeojaList.addRow(param);
+// 							}
+// 						}
+						
+						self.cardChamyeojaList.setData(response.data);
+						
+						_.forEach(self.listChamyeojaList.data, function(obj, index) {
+							_.forEach(response.data, function(subObj, subIndex) {
+								if(obj.CHAMYEOJA_ID == subObj.CHAMYEOJA_ID) {
+									self.listChamyeojaList.setFilter({CHAMYEOJA_ID: subObj.CHAMYEOJA_ID});
+								}
+							});
+						});
+					}
+
+					if(response.data.length == 0) {
+						self.cardListCurrentRow.CARD_CHAMYEOJA_CNT = 0;
+					}else if(response.data.length > 0) {
+						self.cardListCurrentRow.CARD_CHAMYEOJA_CNT = 1;
+					}
+					
+					//팝업일 경우
+// 					if(self.cardPopup == true) {
+// 						self.setCardDetailList();
+// 					}
+				}
+			});
+       	},
+    	addCardChamyeoja: function() {
+			var self = this;
+			
+			var param = {
+				"USER_ID": self.listChamyeojaList.currentRow.USER_ID,
+				"FB_SEQ": self.listChamyeojaList.currentRow.FB_SEQ,
+				"LIST_SEQ": self.listChamyeojaList.currentRow.LIST_SEQ,
+				"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ,
+				"CHAMYEOJA_ID": self.listChamyeojaList.currentRow.CHAMYEOJA_ID,
+				"USER_NM": self.listChamyeojaList.currentRow.USER_NM,
+				"SHORT_USER_NM": self.listChamyeojaList.currentRow.SHORT_USER_NM,
+				"DEPT_NM": self.listChamyeojaList.currentRow.DEPT_NM,
+			}
+    		
+			var returnVal = farmboardApi.farmBoardCardChamyeojaInsert(param, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.cardChamyeojaList.addRow(param);
+					self.listChamyeojaList.currentRow.FILTER_ROW = 'Y';
+
+					notifySubmit('success', '카드 참여자 추가', '저장이 완료되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '카드 참여자 추가', '저장에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '카드 참여자 추가', '저장에 실패하였습니다.', 'icon-caution');
+			});
+    	},
+       	deleteCardChamyeoja: function() {
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardCardChamyeojaDelete(self.cardChamyeojaList.currentRow, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					var findIndex = _.findIndex(self.listChamyeojaList.data, {CHAMYEOJA_ID: self.cardChamyeojaList.currentRow.CHAMYEOJA_ID});
+					self.listChamyeojaList.data[findIndex].FILTER_ROW = 'N';
+					self.cardChamyeojaList.data.splice(self.cardChamyeojaList.rowposition, 1);
+					
+					notifySubmit('success', '카드 참여자 삭제', '삭제가 완료되었습니다', 'icon-save');
+				}else {
+					notifySubmit('warning', '카드 참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '카드 참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+       	},
+       	setCardDetailItemList: function() {
+			var self = this;
+			
+    		var param = {
+         		"USER_ID": self.pUserId,
+          		"FB_SEQ": self.pFbSeq,
+          		"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+          		"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ
+    		};
+			
+			var returnVal = farmboardApi.farmBoardCardDetailItem(param, true);
+
+			returnVal.then(function(response) {
+				_.forEach(self.chkList.data, function(obj, index) {
+					var chkItem = _.filter(response.data, [ 'CARD_DETAIL_SEQ', obj.CARD_DETAIL_SEQ]);
+	       			self.cardListCurrentRow.CARD_CHK_TOT_CNT = response.data.length;
+					
+					self.chkList.setColumn(index, "CHK_ITEM_LIST", new Dataset());
+					self.chkList.defaultData[index].CHK_ITEM_LIST = new Dataset();
+					var chkItemList = self.chkList.getColumn(index, "CHK_ITEM_LIST");
+					
+					chkItemList.setData(chkItem);
+					self.chkList.defaultData[index].CHK_ITEM_LIST.setData(chkItem);
+				});
+				
+			});
+       	},
+       	setCardDetailList: function() {
+			var self = this;
+
+			var param = {
+         		"USER_ID": self.pUserId,
+          		"FB_SEQ": self.pFbSeq,
+          		"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+          		"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ
+    		};
+			
+			var returnVal = farmboardApi.farmBoardCardDetail(param, true);
+
+			returnVal.then(function(response) {
+				var chkListFiltedData = _.filter(response.data, { 'CARD_DETAIL_GB': '02'});
+				var fileListFiltedData = _.filter(response.data, { 'CARD_DETAIL_GB': '03'});
+				var pictureListFiltedData = _.filter(response.data, { 'CARD_DETAIL_GB': '04'});
+				var commentListFiltedData = _.filter(response.data, { 'CARD_DETAIL_GB': '05'});
+       			self.cardListCurrentRow.CARD_CMT_CNT = commentListFiltedData.length;
+       			self.cardListCurrentRow.CARD_FIL_CNT = fileListFiltedData.length;
+       			self.cardListCurrentRow.CARD_IMG_CNT = pictureListFiltedData.length;
+				
+				_.forEach(commentListFiltedData, function(obj, index) {
+					if(!isNull(obj.TEXT)) obj.TEXT_HTML = obj.TEXT.split('\n').join('<br/>');
+				});
+				
+				self.chkList.setData(chkListFiltedData);
+				self.fileList.setData(fileListFiltedData);
+				self.pictureList.setData(pictureListFiltedData);
+				self.cardCommentList.setData(commentListFiltedData);
+				
+				if(chkListFiltedData.length > 0){
+					self.setCardDetailItemList();
+				}
+				self.lastUpdateComment = moment().format("HH:mm");
+			});
+       	},
+       	setCommentList: function() {
+			var self = this;
+			
+    		var param = {
+         		"USER_ID": self.pUserId,
+          		"FB_SEQ": self.pFbSeq,
+          		"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+          		"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ,
+          		"CARD_DETAIL_GB": "05" 
+    		};
+			
+			var returnVal = farmboardApi.farmBoardCardDetail(param, true);
+
+			returnVal.then(function(response) {
+				_.forEach(response.data, function(obj, index) {
+					if(!isNull(obj.TEXT)) obj.TEXT_HTML = obj.TEXT.split('\n').join('<br/>');
+				});
+				
+				self.cardCommentList.setData(response.data);
+
+				self.lastUpdateComment = moment().format("HH:mm");
+			});
+       	},
+       	addComment: function() {
+			var self = this;
+       		if(!isNull(self.pComment)) {
+       			var param = {
+   	       			"USER_ID": self.pUserId,
+   	       			"FB_SEQ": self.pFbSeq,
+   	       			"LIST_SEQ": self.farmBoardList.currentRow.LIST_SEQ,
+   	          		"CARD_SEQ": self.cardListCurrentRow.CARD_SEQ,
+   	       			"CARD_DETAIL_GB": "05",
+   	       			"LABEL_SEQ": "",
+   	       			"DAEPYO_IMG_YN": "",
+   	       			"JAKSEONGJA_ID": self.session.USER_ID,
+   	       			"LINK_URL": "",
+   	       			"TITLE": "",
+   	       			"TEXT": self.pComment
+   	       		};
+     	       		
+   				var returnVal = farmboardApi.farmBoardCardDetailInsert(param, true);
+    				
+   				returnVal.then(function(response) {
+   					if(!isNull(response.data.CARD_DETAIL_SEQ)) {
+   						//코멘트 입력 변수 초기화
+   						self.pComment = '';
+   						
+   						self.setCommentList();
+   						
+   						self.cardListCurrentRow.CARD_CMT_CNT = self.cardListCurrentRow.CARD_CMT_CNT + 1;
+   						
+   						notifySubmit('success', '코멘트 등록', '저장이 완료되었습니다.', 'icon-save');
+   					}else{
+   						notifySubmit('warning', '코멘트 등록', '저장에 실패하였습니다.', 'icon-caution');
+   					}
+   				}).catch(function(error) {
+   					notifySubmit('warning', '코멘트 등록', '저장에 실패하였습니다.', 'icon-caution');
+   				});
+       		}else {
+				notifySubmit('warning', '코멘트 등록', '내용을 작성해주세요.', 'icon-caution');
+       		}
+       		
+       	},
+       	modiComment: function() {
+			var self = this;
+       		
+			if(self.cardCommentList.defaultData[self.cardCommentList.rowposition].TEXT != self.cardCommentList.currentRow.TEXT) {
+				var returnVal = farmboardApi.farmBoardCardDetailUpdate(self.cardCommentList.currentRow, true);
+				
+				returnVal.then(function(response) {
+					if(response.status == '200') {
+						self.setCommentList();
+
+						self.modiCommentYn = false;
+						notifySubmit('success', '코멘트 수정', '저장이 완료되었습니다.', 'icon-save');
+					}else {
+						notifySubmit('warning', '코멘트 수정', '저장에 실패하였습니다.', 'icon-caution');
+					}
+				}).catch(function(error) {
+					notifySubmit('warning', '코멘트 수정', '저장에 실패하였습니다.', 'icon-caution');
+				});
+			}else {
+				self.modiCommentYn = false;
+			}
+       	},
+       	deleteComment: function() {
+			var self = this;
+       		
+			var returnVal = farmboardApi.farmBoardCardDetailDelete(self.cardCommentList.currentRow, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.setCommentList();
+					
+					self.cardListCurrentRow.CARD_CMT_CNT = self.cardListCurrentRow.CARD_CMT_CNT - 1;
+
+					self.modiCommentYn = false;
+					notifySubmit('success', '코멘트 삭제', '삭제가 완료되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '코멘트 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				notifySubmit('warning', '코멘트 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+       	},
+       	openCardChamyeojaPopup: function() {
+       		$('.inner-layer > div').fadeOut();
+			$('.inner-layer > div').eq(0).fadeIn();
+       	},
+       	closePopup: function(pGb) {
+       		if(pGb == 'img') {
+    			if(this.pictureList.currentRow.ROW_TYPE == '2') {
+    				this.pictureList.data.splice(this.pictureList.rowposition, 1);
+    			}else {
+    				this.pictureList.setData(this.pictureList.defaultData);
+    			}
+       		}else if(pGb == 'file') {
+    			if(this.fileList.currentRow.ROW_TYPE == '2') {
+    				this.fileList.data.splice(this.fileList.rowposition, 1);
+    			}else {
+    				this.fileList.setData(this.fileList.defaultData);
+    			}  
+       		}else if(pGb == 'chk') {
+    			if(this.chkList.currentRow.ROW_TYPE == '2') {
+    				this.chkList.data.splice(this.chkList.rowposition, 1);
+    			}else {
+    				this.chkList.setData(this.chkList.defaultData);
+    			}
+       		}
+       	},
+       	addCardImg: function() {
+       		var sampleKey = "";
+			sampleKey += this.pUserId;
+			sampleKey += "#" + this.pFbSeq;
+			sampleKey += "#" + this.farmBoardList.currentRow.LIST_SEQ;
+			sampleKey += "#" + this.cardListCurrentRow.CARD_SEQ;
+			this.imgSingleFileSet.init();
+			this.imgSingleFileKey = sampleKey + "#tempKey";
+			
+       		var addObj = {
+  	       		"USER_ID": this.pUserId,
+  	       		"FB_SEQ": this.pFbSeq,
+  	       		"LIST_SEQ": this.farmBoardList.currentRow.LIST_SEQ,
+  	          	"CARD_SEQ": this.cardListCurrentRow.CARD_SEQ,
+  	       		"CARD_DETAIL_GB": "04",
+  	       		"LABEL_SEQ": "",
+  	       		"DAEPYO_IMG_YN": "N",
+  	       		"JAKSEONGJA_ID": this.session.USER_ID,
+  	       		"LINK_URL": "",
+  	       		"TITLE": "",
+  	       		"TEXT": "",
+  	       		"TEMP_KEY": this.imgSingleFileKey
+       		};
+       		
+       		var rowposition = this.pictureList.addRow(addObj);
+       		
+       		this.pictureList.selectRow(rowposition);
+       	},
+       	saveCardImg: function() {
+       		var self = this;
+
+       		var rowposition = self.pictureList.rowposition;
+       		
+       		var validate = self.$validator.validateAll();
+       		
+       		var returnVal = '';
+       		
+       		validate.then(function(response) {
+				if(response){
+					if(self.pictureList.getRowType(rowposition) == '2') {
+		           		returnVal = farmboardApi.farmBoardCardDetailInsert(self.pictureList.currentRow, true);
+		       		}else {
+		       			returnVal = farmboardApi.farmBoardCardDetailUpdate(self.pictureList.currentRow, true);
+		       		}
+		       		
+		       		returnVal.then(function(response) {
+						if(response.status == '200') {
+							notifySubmit('success', '사진 저장', '저장이 완료되었습니다.', 'icon-save');
+							$('.inner-layer div > .btn-close').parent().fadeOut();	
+							self.setCardDetailList();	// 재조회
+						}else {
+							notifySubmit('warning', '사진 저장', '저장에 실패하였습니다.', 'icon-caution');
+						}
+					});
+	       		}else {
+					notifySubmit('warning', '팜보드 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+       	},
+       	modifyCardImg: function() {
+       		var rowposition = this.pictureList.rowposition;
+       		
+			this.imgSingleFileKey = this.pictureList.getColumn(rowposition, "FILE_KEY");
+			
+			this.imgSingleFileSet.getFiles('ADD_FB_CARD_DETAIL', this.imgSingleFileKey, 'imgSingleFileSet', null);
+
+			$('.inner-layer > div').fadeOut();
+			$('.inner-layer > div').eq(2).fadeIn();
+       	},
+       	deleteCardImg: function() {
+       		var self = this;
+       		
+       		var returnVal = farmboardApi.farmBoardCardDetailDelete(self.pictureList.currentRow, true);
+       		
+       		returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.pictureList.data.splice(self.pictureList.rowposition, 1);
+					self.imgSingleFileSet.delFiles('ADD_FB_CARD_DETAIL', self.pictureList.currentRow.FILE_KEY, 'imgSingleFileSet', null);
+					
+					self.cardListCurrentRow.REAL_FILE_PATH = '';
+					self.cardListCurrentRow.FILE_PATH = '';
+	       			self.cardListCurrentRow.CARD_IMG_CNT = self.pictureList.data.length;
+	       			
+					notifySubmit('success', '사진 삭제', '삭제가 완료되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '사진 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			});
+       	},
+       	updateDaePyoImg: function() {
+       		this.pictureList.currentRow.DAEPYO_IMG_YN = 'Y';
+
+       		this.cardListCurrentRow.FILE_PATH = this.pictureList.currentRow.FILE_PATH;
+       		this.cardListCurrentRow.REAL_FILE_PATH = this.pictureList.currentRow.REAL_FILE_PATH;
+       		
+       		returnVal = farmboardApi.farmBoardCardDaePyoImgUpdate(this.pictureList.currentRow, true);
+   		
+	   		returnVal.then(function(response) {
+				if(response.status == '200') {
+					notifySubmit('success', '대표 이미지 설정', '대표 이미지로 설정되었습니다.', 'icon-save');
+				}else {
+					notifySubmit('warning', '대표 이미지 설정', '대표 이미지 설정에 실패하였습니다.', 'icon-caution');
+				}
+			});
+       	},
+       	addCardFile: function() {
+       		var sampleKey = "";
+			sampleKey += this.pUserId;
+			sampleKey += "#" + this.pFbSeq;
+			sampleKey += "#" + this.farmBoardList.currentRow.LIST_SEQ;
+			sampleKey += "#" + this.cardListCurrentRow.CARD_SEQ;
+			this.fileSingleFileSet.init();
+			this.fileSingleFileKey = sampleKey + "#tempKey";
+			
+       		var addObj = {
+  	       		"USER_ID": this.pUserId,
+  	       		"FB_SEQ": this.pFbSeq,
+  	       		"LIST_SEQ": this.farmBoardList.currentRow.LIST_SEQ,
+  	          	"CARD_SEQ": this.cardListCurrentRow.CARD_SEQ,
+  	       		"CARD_DETAIL_GB": "03",
+  	       		"LABEL_SEQ": "",
+  	       		"DAEPYO_IMG_YN": "N",
+  	       		"JAKSEONGJA_ID": this.session.USER_ID,
+  	       		"LINK_URL": "",
+  	       		"TITLE": "",
+  	       		"TEXT": "",
+  	       		"TEMP_KEY": this.fileSingleFileKey
+       		};
+       		
+       		var rowposition = this.fileList.addRow(addObj);
+       		
+       		this.fileList.selectRow(rowposition);
+       	},
+       	saveCardFile: function() {
+       		var self = this;
+
+       		var rowposition = self.fileList.rowposition;
+       		
+       		var returnVal = '';
+       		
+       		if(self.fileList.getRowType(rowposition) == '2') {
+           		returnVal = farmboardApi.farmBoardCardDetailInsert(self.fileList.currentRow, true);
+       		}else {
+       			returnVal = farmboardApi.farmBoardCardDetailUpdate(self.fileList.currentRow, true);
+       		}
+       		
+       		returnVal.then(function(response) {
+				if(response.status == '200') {
+					notifySubmit('success', '파일 저장', '저장이 완료되었습니다.', 'icon-save');
+					$('.inner-layer div > .btn-close').parent().fadeOut();
+					self.setCardDetailList();	// 재조회
+				}else {
+					notifySubmit('warning', '파일 저장', '저장에 실패하였습니다.', 'icon-caution');
+				}
+			});
+       	},
+       	modifyCardFile: function() {
+       		var rowposition = this.fileList.rowposition;
+       		
+			this.fileSingleFileKey = this.fileList.getColumn(rowposition, "FILE_KEY");
+			
+			this.fileSingleFileSet.getFiles('ADD_FB_CARD_DETAIL', this.fileSingleFileKey, 'fileSingleFileSet', null);
+
+			$('.inner-layer > div').fadeOut();
+			$('.inner-layer > div').eq(3).fadeIn();
+       	},
+       	deleteCardFile: function() {
+       		var self = this;
+       		
+       		var returnVal = farmboardApi.farmBoardCardDetailDelete(self.fileList.currentRow, true);
+       		
+       		returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.fileList.data.splice(self.fileList.rowposition, 1);
+					self.fileSingleFileSet.delFiles('ADD_FB_CARD_DETAIL', self.fileList.currentRow.FILE_KEY, 'fileSingleFileSet', null);
+					notifySubmit('success', '파일 삭제', '삭제가 완료되었습니다.', 'icon-save');
+					self.setCardDetailList();	// 재조회
+				}else {
+					notifySubmit('warning', '파일 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			});
+       	},
+       	addCardChk: function() {
+       		var addObj = {
+  	       		"USER_ID": this.pUserId,
+  	       		"FB_SEQ": this.pFbSeq,
+  	       		"LIST_SEQ": this.farmBoardList.currentRow.LIST_SEQ,
+  	          	"CARD_SEQ": this.cardListCurrentRow.CARD_SEQ,
+  	       		"CARD_DETAIL_GB": "02",
+  	       		"LABEL_SEQ": "",
+  	       		"DAEPYO_IMG_YN": "N",
+  	       		"JAKSEONGJA_ID": this.session.USER_ID,
+  	       		"LINK_URL": "",
+  	       		"TITLE": "",
+  	       		"TEXT": "",
+  	       		"CHK_ITEM_LIST": new Dataset()
+       		};
+       		
+       		var rowposition = this.chkList.addRow(addObj);
+       		
+       		var chkItemAddObj = {
+     	       	"USER_ID": this.pUserId,
+     	       	"FB_SEQ": this.pFbSeq,
+     	       	"LIST_SEQ": this.farmBoardList.currentRow.LIST_SEQ,
+     	        "CARD_SEQ": this.cardListCurrentRow.CARD_SEQ,
+     	        "CARD_DETAIL_SEQ": "",
+     	        "CARD_DETAIL_ITEM_SEQ": "",
+     	        "ITEM_NM" : "",
+     	        "WANRYO_YN": "N"
+       		};
+       		
+       		this.currChkItemList.addRow(chkItemAddObj);
+
+       		this.chkList.selectRow(rowposition);
+       	},
+       	saveCardChk: function() {
+       		var self = this;
+
+       		var validate = self.$validator.validateAll();
+       		
+       		var rowposition = self.chkList.rowposition;
+       		
+       		var returnVal = '';
+       		
+       		validate.then(function(response) {
+				if(response){
+		       		if(self.chkList.getRowType(rowposition) == '2') {
+		           		returnVal = farmboardApi.farmBoardCardChkListInsert(self.chkList.currentRow, true);
+		       		}else {
+		       			returnVal = farmboardApi.farmBoardCardChkListUpdate(self.chkList.currentRow, true);
+		       		}	
+		       		returnVal.then(function(response) {
+						if(response.status == '200') {
+							notifySubmit('success', '체크리스트 저장', '저장이 완료되었습니다.', 'icon-save');
+							self.setCardDetailList();	// 재조회
+							$('.inner-layer div > .btn-close').parent().fadeOut();	
+						}else {
+							notifySubmit('warning', '체크리스트 저장', '저장에 실패하였습니다.', 'icon-caution');
+						}
+					});
+	       		}else {
+					notifySubmit('warning', '체크리스트 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+       	},
+       	modifyCardChk: function() {
+			$('.inner-layer > div').fadeOut();
+			$('.inner-layer > div').eq(4).fadeIn();
+       	},
+       	addChkItem: function() {
+       		var chkItemAddObj = {
+        	    "USER_ID": this.pUserId,
+        	    "FB_SEQ": this.pFbSeq,
+        	    "LIST_SEQ": this.farmBoardList.currentRow.LIST_SEQ,
+        	    "CARD_SEQ": this.cardListCurrentRow.CARD_SEQ,
+        	    "CARD_DETAIL_SEQ": this.currChkItemList.getColumn(0, "CARD_DETAIL_SEQ"),
+        	    "CARD_DETAIL_ITEM_SEQ": "",
+        	    "ITEM_NM" : "",
+        	    "WANRYO_YN": "N"
+            };
+
+       		this.currChkItemList.addRow(chkItemAddObj);
+       		
+       		this.$forceUpdate();
+       	}, 
+       	deleteChkItem: function(pChkIndex) {
+       		var rowCount = this.currChkItemList.data.length;
+
+       		this.currChkItemList.data.splice(pChkIndex, 1);
+       		
+       		if(rowCount == 1) {
+           		this.addChkItem();
+       		}
+       		
+       		this.$forceUpdate();
+       	},
+       	//체크리스트 삭제
+       	deleteChk: function() {
+			var self = this;
+			
+			var param = {
+				"USER_ID": self.chkList.currentRow.USER_ID,
+				"FB_SEQ": self.chkList.currentRow.FB_SEQ,
+				"LIST_SEQ": self.chkList.currentRow.LIST_SEQ,
+				"CARD_SEQ": self.chkList.currentRow.CARD_SEQ,
+				"CARD_DETAIL_SEQ": self.chkList.currentRow.CARD_DETAIL_SEQ
+			};
+       		
+       		var returnVal = farmboardApi.farmBoardCardDetailDelete(param, true);
+       		
+       		returnVal.then(function(response) {
+				if(response.status == '200') {
+					self.chkList.data.splice(self.chkList.rowposition, 1);
+					notifySubmit('success', '체크리스트 삭제', '삭제가 완료되었습니다.', 'icon-save');
+
+	       			var totCnt = 0;
+	       			var chkCnt = 0;
+	       			
+	       			_.forEach(self.chkList.data, function(obj, index) {
+	       				_.forEach(obj.CHK_ITEM_LIST.data, function(subObj, subIndex) {
+							if(subObj.WANRYO_YN == 'Y') chkCnt += 1;
+	       				});
+	       				
+	       				totCnt += obj.CHK_ITEM_LIST.data.length;
+	       			});
+	       			
+	       			self.cardListCurrentRow.CARD_CHK_CNT = chkCnt;
+	       			self.cardListCurrentRow.CARD_CHK_TOT_CNT = totCnt;
+				}else {
+					notifySubmit('warning', '체크리스트 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			});
+       	},
+       	//항목 체크 시 update
+       	updateChk: function(pItem) {
+       		var self = this;
+       		var returnVal = farmboardApi.farmBoardCardDetailItemUpdate(self.currChkItemList.currentRow, true);
+       		
+       		returnVal.then(function(response) {
+       			if(response.status == '200') {
+           			var filtedData = _.filter(self.currChkItemList.data, {WANRYO_YN: 'Y'});
+           			
+           			var totCnt = 0;
+           			var chkCnt = 0;
+           			
+           			_.forEach(self.chkList.data, function(obj, index) {
+           				_.forEach(obj.CHK_ITEM_LIST.data, function(subObj, subIndex) {
+    						if(subObj.WANRYO_YN == 'Y') chkCnt += 1;
+           				});
+           				
+           				totCnt += obj.CHK_ITEM_LIST.data.length;
+           			});
+           			
+           			self.cardListCurrentRow.CARD_CHK_CNT = chkCnt;
+           			self.cardListCurrentRow.CARD_CHK_TOT_CNT = totCnt;
+    				
+    				pItem.CHECK_LIST_PERCENTAGE = ((filtedData.length / self.currChkItemList.data.length) * 100).toFixed(0);
+       			}
+			});
+       	},
+       	/* 첨부파일 다운로드 - 파일*/
+    	fileDownLoad: function(pFileId, pFileKey, pFileHangmok, pFileNo, pFilename, pFilePath) {
+    		this.fileSingleFileSet.download(pFileId, pFileKey, pFileHangmok, pFileNo, pFilename, pFilePath);	
+    	},
+       	settingMenuOpen: function() {
+    		if($('.menu-layer').hasClass('on') == true) {
+    			$('.menu-layer').removeClass('on');
+			}else{
+    			$('.menu-layer').addClass('on');
+			}    
+       	},
+    	menuOpen: function(pIndex) {
+    		var self = this;
+    		
+    		_.forEach(self.farmBoardList.data, function(obj, index){
+    			if(index != pIndex) $('#menu'+index).removeClass('on');
+    		});
+    		
+			$('#menu'+pIndex).addClass('on');
+    	},
+    	menuClose: function(pIndex) {
+    		setTimeout(function() { 
+    			// Code here 
+    			$('#menu'+pIndex).removeClass('on');
+    		}, 200);
+    	},
+    	popupChamyeojaMenuOpen: function() {
+    		$('.note-list-modal .user-thumb-list .btn-more').parent().next('.user-all-list').fadeToggle(300);
+    	},
+    	modalOpen: function(pPopupNm) {
+    		if(pPopupNm == 'partiPopup'){
+    			this.setChamyeojaList();
+    			this.partiPopup = true;
+
+    			modal_open(pPopupNm);
+    		}else if(pPopupNm == 'modiFarmBoardPopup') {
+    			this.modiFarmBoardPopup = true;
+    			
+    			//라벨 조회 (안에 모달 오픈하는 함수가 들어있음.)
+    			this.setLabelList(); 
+    		}else if(pPopupNm == 'listPartiPopup') {
+    			this.setChamyeojaList();
+    			
+    			this.listPartiPopup = true;
+
+    			modal_open(pPopupNm);
+    		}else if(pPopupNm == 'cardPopup') {
+    			$('.inner-layer > div').fadeOut();
+    			//카드 수정 권한 체크
+       			this.cardPopup = true;
+       			this.modiCardDescYn = false;
+       			this.modiCardTitleYn = false;
+       			//코멘트 입력 파라미터 초기화
+       			this.pComment = '';
+       			
+       			this.setCardDetailList();
+
+       			modal_open(pPopupNm);
+    		}
+    	},
+    	openCardLabelNm: function(pIndex, pCdIndex) {
+    		var $label = $('#label-wrap-'+pIndex+'-'+pCdIndex).children('.label-list');		
+    		if ($label.hasClass('on')) {
+    			$label.removeClass('on');
+    		}else {
+    			$label.addClass('on');
+    		}
+    	},
+    	confirmOpen: function(pParam) {
+    		if(pParam == 'deleteFarmBoard') {
+    			this.confirmMessageModal.openModal('confirm', '팜보드 삭제', '삭제하시면 해당 보드 관련 모든 내용이 삭제됩니다.<br>정말로 삭제하시겠습니까?', 'small', 'deleteFarmBoard', '');	
+    		}else if(pParam == 'secessionFarmBoard') {
+    			this.confirmMessageModal.openModal('confirm', '팜보드 탈퇴', '삭제하시면 보드에 작성한 모든 내용이 삭제됩니다.<br>정말로 탈퇴하시겠습니까?', 'small', 'secessionFarmBoard', '');
+    		}else if(pParam == 'deleteChamyeoja') {
+       			this.confirmMessageModal.openModal('confirm', '참여자 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteChamyeoja', '');
+    		}else if(pParam == 'deleteListChamyeoja') {
+       			this.confirmMessageModal.openModal('confirm', '리스트 참여자 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteListChamyeoja', '');
+    		}else if(pParam == 'deleteList') {
+       			this.confirmMessageModal.openModal('confirm', '리스트 삭제', '삭제하시면 해당 리스트 관련 모든 내용이 삭제됩니다.<br>정말로 삭제하시겠습니까?', 'small', 'deleteList', '');
+    		}else if(pParam == 'deleteCard') {
+       			this.confirmMessageModal.openModal('confirm', '카드 삭제', '삭제하시면 해당 카드 관련 모든 내용이 삭제됩니다.<br>정말로 삭제하시겠습니까?', 'small', 'deleteCard', '');
+    		}else if(pParam == 'deleteComment') {
+       			this.confirmMessageModal.openModal('confirm', '코멘트 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteComment', '');
+    		}else if(pParam == 'deleteCardChamyeoja') {
+       			this.confirmMessageModal.openModal('confirm', '카드 참여자 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteCardChamyeoja', '');
+    		}else if(pParam == 'deleteCardImg') {
+       			this.confirmMessageModal.openModal('confirm', '사진 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteCardImg', '');
+    		}else if(pParam == 'deleteCardFile') {
+       			this.confirmMessageModal.openModal('confirm', '파일 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteCardFile', '');
+    		}else if(pParam == 'deleteChk') {
+       			this.confirmMessageModal.openModal('confirm', '체크리스트 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteChk', '');
+    		}else if(pParam == 'deleteLabel') {
+    			if(this.labelList.currentRow.ROW_TYPE == ROWTYPE_INSERT) {
+    				this.deleteLabel();
+    			}else {
+        			this.confirmMessageModal.openModal('confirm', '라벨 삭제', '삭제하시면 보드에 사용된 해당 라벨이 모두 삭제됩니다.<br>정말로 삭제하시겠습니까?', 'small', 'deleteLabel', '');
+    			}
+    		}
+    	},
+    	messagepoppupcallback : function(gb, currentId, customData) {
+    	 	//alert('버튼 구분 : '+gb+'\n'+'ID : '+currentId+'\n'+'returnData : '+customData);
+    	 	if(gb == 'confirm' && currentId == 'deleteFarmBoard') {
+    	 		this.deleteFarmBoard();
+    	 	}else if(gb == 'confirm' && currentId == 'secessionFarmBoard') {
+    	 		this.secessionFarmBoard();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteChamyeoja') {
+    	 		this.deleteChamyeoja();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteListChamyeoja') {
+    	 		this.deleteListChamyeoja();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteList') {
+    	 		this.deleteList();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteCard') {
+    	 		this.deleteCard();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteComment') {
+    	 		this.deleteComment();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteCardChamyeoja') {
+    	 		this.deleteCardChamyeoja();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteCardImg') {
+    	 		this.deleteCardImg();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteCardFile') {
+    	 		this.deleteCardFile();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteChk') {
+    	 		this.deleteChk();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteLabel') {
+    	 		this.deleteLabel();
+    	 	}
+    	},
+	    getDateForm: function(pDate) {
+			var date = '';
+			
+			if(!isNull(pDate)) {
+				date = moment(pDate).format("YYYY-MM-DD");
+			}
+			
+			return date;
+		},
+		goToHome: function() {
+			var self = this;
+			
+			var param = {
+				"pSearchType": self.pSearchType,
+				"pSearchArgv": self.pSearchArgv,
+				"pPageNo": self.pPageNo,
+				"pRowCount": self.pRowCount,
+				"USER_ID": '',
+				"FB_SEQ": '',
+				"FB_NM": '',
+				"FB_GB": '',
+				"FB_THEME_GB": '',
+				"CHAMYEOJA_YN": '',
+				"LIST_GWANRI_AUTH_YN": '',
+				"USE_YN": ''
+			};
+
+			contentsOpen('ADD', 'farmboard', param);
+		},
+		modiImgAddr: function(pAddr1,pAddr2){
+
+			var modiAddr = '';
+			if(!isNull(pAddr1)){
+				modiAddr = pAddr1.replace(/\\/g, '/');
+
+				if(modiAddr.substring(1,4) == 'SMN'){
+
+					modiAddr = '/upload' + modiAddr;
+				}
+			}
+			else if(!isNull(pAddr2)){
+				modiAddr = pAddr2.replace(/\\/g, '/');
+
+				if(modiAddr.substring(1,4) == 'SMN'){
+					modiAddr = '/upload' + modiAddr;
+				}
+			}else{
+				modiAddr = '/service/design/images/mypage/noimage.png';
+			}
+			
+			return modiAddr;
+		},
+		updateFarmBoardListOrd: function(evt) {
+			if(evt.oldIndex != evt.newIndex) {
+				var self = this;
+				
+				_.forEach(self.farmBoardList.data, function(obj, index){
+					obj.ORD = index + 1;
+				});
+				
+				var returnVal = farmboardApi.farmBoardListOrdUpdate(self.farmBoardList.data, true);
+				
+				returnVal.then(function(response) {
+					if(response.status == '200') {
+						self.farmBoardList.selectRow(evt.newIndex);
+						notifySubmit('success', '팜보드 순서 변경', '순서 변경에 완료되었습니다.', 'icon-save');
+					}else {
+						self.setFarmBoardList();
+						notifySubmit('warning', '팜보드 순서 변경', '순서 변경에 실패하였습니다.', 'icon-caution');
+					}
+				}).catch(function(error) {
+					self.setFarmBoardList();
+					notifySubmit('warning', '팜보드 순서 변경', '순서 변경에 실패하였습니다.', 'icon-caution');
+				});
+			}
+		},
+		updateFarmBoardCardListOrd: function(evt, pData) {
+			var self = this;
+			
+			_.forEach(pData, function(obj, index) {
+				obj.ORD = index + 1;
+			});
+			
+			var returnVal = farmboardApi.farmBoardCardListOrdUpdate(pData, true);
+			
+			returnVal.then(function(response) {
+				if(response.status == '200') {
+					notifySubmit('success', '팜보드 순서 변경', '순서 변경에 완료되었습니다.', 'icon-save');
+				}else {
+					self.setFarmBoardCardList();
+					notifySubmit('warning', '팜보드 순서 변경', '순서 변경에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error) {
+				self.setFarmBoardCardList();
+				notifySubmit('warning', '팜보드 순서 변경', '순서 변경에 실패하였습니다.', 'icon-caution');
+			});
+		},
+		modifyCardClick: function(pGb) {
+			if(pGb == 'pCardNm') {
+				this.modiCardTitleYn = true;
+				this.$nextTick(function() {
+					this.$refs.pCardNm.focus();	
+				});
+			}else if(pGb == 'pCardDesc') {
+				this.modiCardDescYn = true;
+				this.$nextTick(function() {
+					this.$refs.pCardDesc.focus();
+				});
+			}
+		},
+		modifyCommentClick: function() {
+			this.modiCommentYn = true;
+			this.$nextTick(function() {
+				this.$refs.pModiComment[0].focus();
+			});
+		},
+		backgroundImage : function(pRealPath){
+			if(!isNull(pRealPath)){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+    }
+});
+
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function() {
+	$(document).mouseup(function(e){
+		var container = $(".mng-top-inner .btn-mng01");
+		if(container.has(e.target).length === 0){
+			$(".mng-top-inner .menu-layer").removeClass('on');
+		}
+	});
+	
+	// 참여자 레이어
+	$('.user-thumb-list .btn-more').on('click', function(){
+		$(this).parent().next('.user-all-list').fadeToggle(300);
+	});
+	$(document).mouseup(function(e){
+		var container3 = $(".user-thumb-list");
+		if(container3.has(e.target).length === 0){
+			$(".user-thumb-wrap .user-all-list").fadeOut(300);
+		}
+	});
+	
+	$(document).mouseup(function(e){
+		var container4 = $(".user-thumb-list.modal");
+		if(container4.has(e.target).length === 0){
+			$(".user-thumb-wrap .user-all-list.modal").fadeOut(300);
+		}
+	});
+	
+	//모달 안의 레이어
+	$('.right-btn-box li a').on('click', function(){
+		var idx =  $(this).parent().index();
+		$('.inner-layer > div').fadeOut();
+		$('.inner-layer > div').eq(idx).fadeIn();
+	});	
+	$('.inner-layer div > .btn-close').on('click', function(){
+		$(this).parent().fadeOut();		
+	});	
+// 	$('.cbtn, .layer_close, .cbtn2').fadeIn().click(function() {
+// 		$('.inner-layer > div').fadeOut();
+//     });
+});
+</script>

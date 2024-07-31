@@ -1,0 +1,639 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />
+
+<h2>비교과 개설 정보</h2>
+<section class="sub_cont_box board-view-page nonsubject-info">
+    <div class="head-box">
+        <p class="sort">프로그램 구분</p>
+        <p class="title">비교과 프로그램 명</p>
+        <p class="description">프로그램 설명이 들어갑니다 프로그램 설명이 들어갑니다</p>
+        <div class="btn-line">
+            <a href="#!" class="btn type02 size-m">출석체크 입력</a>
+            <a href="#!" class="btn type02 size-m">결과입력</a>
+        </div>
+        <div class="statue-line">
+        	<a href="#!" class="stat-tag ing">신청</a>
+        	<a href="#!" class="stat-tag">작성</a>
+        	<a href="#!" class="stat-tag">승인</a>
+        	<a href="#!" class="stat-tag">반려</a>
+        	<a href="#!" class="stat-tag">이의신청</a>
+        </div>
+    </div>
+    <!-- 입력폼 -->
+    <section class="nonsubject-form">
+        <div class="row form-row">
+            <div class="form-group col s6 l3">
+                <label for="InputForm01" class="label-type01">학년도</label>
+                <select id="InputForm01" class="size-m">
+                    <option value="">2019</option>
+                    <option value="">2019</option>
+                </select>
+            </div>
+            <div class="form-group col s6 l3">
+                <label for="InputForm02" class="label-type01">학기</label>
+                <select id="InputForm02" class="size-m">
+                    <option value="">1학기</option>
+                    <option value="">1학기</option>
+                </select>
+            </div>
+            <div class="form-group col s6 l3">
+                <label for="InputForm03" class="label-type01">마일리지</label>
+                <select id="InputForm03" class="size-m">
+                    <option value="">마일리지 코드</option>
+                    <option value="">마일리지 코드</option>
+                </select>
+            </div>
+            <div class="form-group col s6 l3">
+                <label for="InputForm04" class="label-type01">진행상태</label>
+                <select id="InputForm04" class="size-m">
+                    <option value="">신청</option>
+                    <option value="">신청</option>
+                </select>
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col s12 l6">
+                <label for="InputForm05" class="label-type01">교육인원</label>
+                <input type="text" id="InputForm05" placeholder="입력하세요" class="size-m">
+            </div>
+            <div class="form-group col s12 l6">
+                <label for="InputForm06" class="label-type01">교육장소</label>
+                <input type="text" id="InputForm06" placeholder="입력하세요" class="size-m">
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col s12 l6">
+                <label for="InputForm07" class="label-type01">교육기간</label>
+                <div class="form-row">
+                    <div class="form-group col s12 l6">
+                        <div class="date-form-wrap">
+                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                            <input type="text" id="InputForm07" class="size-m" style="width:90%"><span class="text" style="width:10%">~</span>
+                        </div>
+                    </div>
+                    <div class="form-group col s12 l6">
+                        <div class="date-form-wrap">
+                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                            <input type="text" id="InputForm07" class="size-m">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col s12 l6">
+                <label for="InputForm08" class="label-type01">신청기간</label>
+                <div class="form-row">
+                    <div class="form-group col s12 l6">
+                        <div class="date-form-wrap">
+                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                            <input type="text" id="InputForm08" class="size-m" style="width:90%"><span class="text" style="width:10%">~</span>
+                        </div>
+                    </div>
+                    <div class="form-group col s12 l6">
+                        <div class="date-form-wrap">
+                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                            <input type="text" id="InputForm08" class="size-m">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col s12 l6">
+                <label for="InputForm09" class="label-type01">수요조사지</label>
+                <div class="input-file-box">
+                    <div class="file-input-div">
+                        <a href="#!" class="btn type02 size-m"><span>찾아보기</span></a>
+                        <input type="file" class="file-input-hidden size-m" onchange="javascript: document.getElementById('fileName').value = this.value" title="파일명">
+                    </div>
+                    <input id="fileName" class="size-m" readonly="readonly" title="파일명">
+                </div>
+            </div>
+            <div class="form-group col s12 l6">
+                <label for="InputForm10" class="label-type01">계획서</label>
+                <div class="input-file-box">
+                    <div class="file-input-div">
+                        <a href="#!" class="btn type02 size-m"><span>찾아보기</span></a>
+                        <input type="file" class="file-input-hidden size-m" onchange="javascript: document.getElementById('fileName').value = this.value" title="파일명">
+                    </div>
+                    <input id="fileName" class="size-m" readonly="readonly" title="파일명">
+                </div>
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col s12 l6">
+                <label for="InputForm11" class="label-type01">주관부서</label>
+                <div class="btn-input">
+                    <a href="#!" class="btn type02 size-m center-icon"><span class="icon-search"></span></a>
+                    <input type="text" id="exampleFormControlInput1" class="size-m">
+                </div>
+            </div>
+            <div class="col s12 l6 form-row">
+                <div class="form-group col s4 form-row">
+                    <div class="col s12">
+                        <label for="InputForm12" class="label-type01">사전평가</label>
+                    </div>
+                    <div class="col s12">
+                        <label class="toggle-switch size-l">
+                            <input type="checkbox" checked="" id="InputForm12">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group col s4 form-row">
+                    <div class="col s12">
+                        <label for="InputForm13" class="label-type01">사전평가</label>
+                    </div>
+                    <div class="col s12">
+                        <label class="toggle-switch size-l">
+                            <input type="checkbox" checked="" id="InputForm13">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group col s4 form-row">
+                    <div class="col s12">
+                        <label for="InputForm14" class="label-type01">사전평가</label>
+                    </div>
+                    <div class="col s12">
+                        <label class="toggle-switch size-l">
+                            <input type="checkbox" checked="" id="InputForm14">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- //입력폼 -->
+    <!-- 탭 -->
+    <div class="tab-type02">
+        <div class="tab">
+            <div rel="tab1"><a href="#!" class="active">대상자</a></div>
+            <div rel="tab2"><a href="#!">역량</a></div>
+        </div>
+        <div class="tab-container">
+            <div id="tab1" class="tab-content">
+                <form>
+                    <div class="box-type03">
+                        <div class="row form-row">
+                            <div class="form-group col s12 l3">
+                                <label for="formGroupExampleInput1" class="label-type01">학과</label>
+                                <select id="formGroupExampleInput1" class="size-m">
+                                    <option value="">간호학과</option>
+                                    <option value="">간호학과</option>
+                                </select>
+                            </div>
+                            <div class="form-group col s12 l3">
+                                <label for="formGroupExampleInput2" class="label-type01">전공</label>
+                                <select id="formGroupExampleInput2" class="size-m">
+                                    <option value="">간호학과</option>
+                                    <option value="">간호학과</option>
+                                </select>
+                            </div>
+                            <div class="form-group col s12 l2">
+                                <label for="formGroupExampleInput3" class="label-type01">학년</label>
+                                <select id="formGroupExampleInput3" class="size-m">
+                                    <option value="">1학년</option>
+                                    <option value="">1학년</option>
+                                </select>
+                            </div>
+                            <div class="form-group col s12 l4">
+                                <label for="formGroupExampleInput4" class="label-type01">학번/성명</label>
+                                <input type="text" id="formGroupExampleInput4" class="size-m" placeholder="입력하세요">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-inline btn-line right">
+                        <a href="#!" class="btn type01 size-m">대상자 업로드</a>
+                        <a href="#!" class="btn type02 size-m">검색</a>
+                    </div>
+                </form>
+                <!-- 테이블 -->
+                <table class="table-type01 response">
+                    <caption>학생검색 게시판 학번, 성명, 학과, 추가 항목별 순서대로 안내하고 대상자로 추가할 수 있는 표입니다</caption>
+                    <colgroup>
+                        <col width="7%" />
+                        <col width="30%" />
+                        <col width="23%" />
+                        <col width="30%" />
+                        <col width="10%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox00">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </th>
+                            <th scope="col">학번</th>
+                            <th scope="col">성명</th>
+                            <th scope="col">학과</th>
+                            <th scope="col">추가</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="추가"><input type="button" value="추가" class="btn type03 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="추가"><input type="button" value="추가" class="btn type01 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="추가"><input type="button" value="추가" class="btn type01 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="추가"><input type="button" value="추가" class="btn type01 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="추가"><input type="button" value="추가" class="btn type01 size-s"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="btn-line left">
+                    <a href="#!" class="btn type03 size-s">일괄추가</a>
+                </div>
+                <!-- 페이징 -->
+                <div class="paginate">
+                    <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                    <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                    <span>
+                        <a href="#" class="active" title="1 페이지">1</a>
+                        <a href="#" title="2 페이지">2</a>
+                        <a href="#" title="3 페이지">3</a>
+                        <a href="#" title="4 페이지">4</a>
+                        <a href="#" title="5 페이지">5</a>
+                        <a href="#" title="6 페이지">6</a>
+                        <a href="#" title="7 페이지">7</a>
+                        <a href="#" title="8 페이지">8</a>
+                        <a href="#" title="9 페이지">9</a>
+                        <a href="#" title="10 페이지">10</a>
+                    </span>
+                    <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                    <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+                </div>
+
+                <p class="h2">대상자리스트</p>
+                <!-- 테이블 -->
+                <table class="table-type01 response">
+                    <caption>대상자리스트 게시판 학번, 성명, 학과, 동의서여부, 승인, 삭제 항목별 순서대로 안내하고 대상자를 승인 또는 삭제할 수 있는 표입니다</caption>
+                    <colgroup>
+                        <col width="7%" />
+                        <col width="25%" />
+                        <col width="13%" />
+                        <col width="25%" />
+                        <col width="10%" />
+                        <col width="10%" />
+                        <col width="10%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </th>
+                            <th scope="col">학번</th>
+                            <th scope="col">성명</th>
+                            <th scope="col">학과</th>
+                            <th scope="col">동의서여부</th>
+                            <th scope="col">승인</th>
+                            <th scope="col">삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="동의서여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="승인"><input type="button" value="승인" class="btn type02 size-s"></td>
+                            <td data-header="삭제"><input type="button" value="삭제" class="btn type01 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="동의서여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="승인"><input type="button" value="승인" class="btn type02 size-s"></td>
+                            <td data-header="삭제"><input type="button" value="삭제" class="btn type01 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="동의서여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="승인"><input type="button" value="승인" class="btn type02 size-s"></td>
+                            <td data-header="삭제"><input type="button" value="삭제" class="btn type01 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="동의서여부"><span class="statue01 icon-checkmark"></span></td>
+                            <td data-header="승인"><input type="button" value="승인" class="btn type02 size-s"></td>
+                            <td data-header="삭제"><input type="button" value="삭제" class="btn type01 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="학번">2018734071</td>
+                            <td data-header="성명">곽미향</td>
+                            <td data-header="학과">간호학과</td>
+                            <td data-header="동의서여부"><span class="statue02 icon-minus-circle"></span></td>
+                            <td data-header="승인"><input type="button" value="미승인" class="btn type01 size-s"></td>
+                            <td data-header="삭제"><input type="button" value="삭제" class="btn type01 size-s"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="btn-line left">
+                    <a href="#!" class="btn type03 size-s">일괄승인</a>
+                    <a href="#!" class="btn type03 size-s">일괄삭제</a>
+                </div>
+                <!-- 페이징 -->
+                <div class="paginate">
+                    <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                    <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                    <span>
+                            <a href="#" class="active" title="1 페이지">1</a>
+                            <a href="#" title="2 페이지">2</a>
+                            <a href="#" title="3 페이지">3</a>
+                            <a href="#" title="4 페이지">4</a>
+                            <a href="#" title="5 페이지">5</a>
+                            <a href="#" title="6 페이지">6</a>
+                            <a href="#" title="7 페이지">7</a>
+                            <a href="#" title="8 페이지">8</a>
+                            <a href="#" title="9 페이지">9</a>
+                            <a href="#" title="10 페이지">10</a>
+                        </span>
+                    <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                    <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+                </div>
+            </div>
+            <div id="tab2" class="tab-content">
+                <!-- 테이블 -->
+                <table class="table-type01 response">
+                    <caption>역량 게시판 역량코드, 역량명, 가중치, 사용여부 항목별 순서대로 안내하고 가중치를 설정, 사용여부를 선택하는 표입니다</caption>
+                    <colgroup>
+                        <col width="7%" />
+                        <col width="15%" />
+                        <col>
+                        <col width="20%" />
+                        <col width="10%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </th>
+                            <th scope="col">역량코드</th>
+                            <th scope="col">역량명</th>
+                            <th scope="col">가중치</th>
+                            <th scope="col">사용여부</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="사용" class="btn type02 size-s"></td>
+                        </tr>
+                        <tr>
+                            <td data-header="선택">
+                                <div class="checkbox size-xs single">
+                                    <input type="checkbox" id="checkbox01">
+                                    <i class="icon-check"></i>
+                                </div>
+                            </td>
+                            <td data-header="역량코드">541684</td>
+                            <td data-header="역량명" class="left">역량명</td>
+                            <td data-header="가중치"><input type="text" class="size-s center" placeholder="0000"></td>
+                            <td data-header="사용여부"><input type="button" value="미사용" class="btn type01 size-s"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="btn-line left">
+                    <a href="#!" class="btn type03 size-s">일괄미사용</a>
+                    <a href="#!" class="btn type03 size-s">일괄사용</a>
+                </div>
+                <!-- 페이징 -->
+                <div class="paginate">
+                    <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                    <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                    <span>
+                            <a href="#" class="active" title="1 페이지">1</a>
+                            <a href="#" title="2 페이지">2</a>
+                            <a href="#" title="3 페이지">3</a>
+                            <a href="#" title="4 페이지">4</a>
+                            <a href="#" title="5 페이지">5</a>
+                            <a href="#" title="6 페이지">6</a>
+                            <a href="#" title="7 페이지">7</a>
+                            <a href="#" title="8 페이지">8</a>
+                            <a href="#" title="9 페이지">9</a>
+                            <a href="#" title="10 페이지">10</a>
+                        </span>
+                    <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                    <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //탭 -->
+    <div class="btn-line center">
+        <a href="#!" class="btn type01 size-l">삭제</a>
+        <a href="#!" class="btn type02 size-l">저장</a>
+    </div>
+</section>
+<script>
+$(function() {
+    //탭메뉴
+    $(".tab-content").hide();
+    $(".tab-content:first").show();
+    $(".tab-type02 .tab div a").click(function() {
+        $(".tab-type02 .tab div a").removeClass("active");
+        $(this).addClass("active");
+        $(".tab-content").hide()
+        var activeTab = $(this).parent().attr("rel");
+        $("#" + activeTab).fadeIn()
+    });
+});
+</script>

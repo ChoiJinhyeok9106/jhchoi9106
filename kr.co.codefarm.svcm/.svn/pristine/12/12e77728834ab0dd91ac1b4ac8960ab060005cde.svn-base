@@ -1,0 +1,355 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/counseling.css" /> 
+
+
+<h2>상담현황</h2>
+<section class="sub_cont_box counseling">
+    <aside class="counseling-aside on">
+        <h3 class="h3">상담하기</h3>
+        <div class="row form-row">
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput1" class="label-type01">상담일</label>
+                <div class="date-form-wrap">
+					<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+					<input type="text" id="exampleFormControlInput1" class="size-m">
+				</div>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput1" class="label-type01">상담분류</label>
+                <select class="size-m" id="formGroupExampleInput1">
+                    <option value="">정기상담</option>
+                </select>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput2" class="label-type01">상담분야</label>
+                <select class="size-m" id="formGroupExampleInput2">
+                    <option value="">상담분야를 선택하세요</option>
+                </select>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput3" class="label-type01">제목</label>
+                <input type="text" id="formGroupExampleInput3" class="size-m">
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput4" class="label-type01">상담내용</label>
+                <textarea id="exampleFormControlInput4" rows="10" class="size-m"></textarea>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput5" class="label-type01">학생전달</label>
+                <textarea id="exampleFormControlInput5" rows="10" class="size-m"></textarea>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput6" class="label-type01">공개여부</label>
+                <select class="size-m" id="formGroupExampleInput6">
+                    <option value="">공개여부</option>
+                </select>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput7" class="label-type01">비공개메모</label>
+                <textarea id="exampleFormControlInput7" rows="10" class="size-m"></textarea>
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col s6">
+                <a href="#!" class="btn type01 size-m" style="width:100%;">신규입력</a>
+            </div>
+            <div class="form-group col s6">
+                <a href="#!" class="btn type02 size-m" style="width:100%;">저장</a>
+            </div>
+        </div>
+        <a href="#!" class="btn-close"><span class="icon-back"></span></a>
+    </aside>
+    <h2 class="h2">학생조회</h2>
+    <form>
+        <div class="box-type03">
+            <div class="row form-row">
+                <div class="form-group col s12 l6 xl2">
+                    <label for="formGroupExampleInput1" class="label-type01">학적</label>
+                    <select class="size-m" id="formGroupExampleInput1">
+                        <option value="">재학</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l6 xl5">
+                    <label for="formGroupExampleInput2" class="label-type01">소속/학과</label>
+                    <div class="col-inline">
+                        <select class="size-m" id="formGroupExampleInput2" style="width:30%;">
+                            <option value="">전체</option>
+                        </select>
+                        <select class="size-m" style="width:67%;">
+                            <option value="">학과선택</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col s12 l12 xl5">
+                    <label for="formGroupExampleInput3" class="label-type01">학년/반</label>
+                    <div class="col-inline">
+                        <select class="size-m" id="formGroupExampleInput3" style="width:67%;">
+                            <option value="">전체</option>
+                        </select>
+                        <select class="size-m" style="width:30%;">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-row">
+                <div class="form-group col s12 l6 xl4">
+                    <label for="formGroupExampleInput4" class="label-type01">그룹</label>
+                    <select class="size-m" id="formGroupExampleInput4">
+                        <option value="">그룹선택</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l6 xl2">
+                    <label for="formGroupExampleInput5" class="label-type01">성별</label>
+                    <select class="size-m" id="formGroupExampleInput5">
+                        <option value="">전체</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l6 xl3">
+                    <label for="formGroupExampleInput6" class="label-type01">이름</label>
+                    <input type="text" id="formGroupExampleInput6" class="size-m">
+                </div>
+                <div class="form-group col s12 l6 xl3">
+                    <label for="formGroupExampleInput7" class="label-type01">학번</label>
+                    <input type="text" id="formGroupExampleInput7" class="size-m">
+                </div>
+            </div>
+            <div class="row form-row">
+                <div class="form-group col s12">
+                    <label for="formGroupExampleInput8" class="label-type01">학생상태</label>
+                    <div class="col-inline">
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox01">
+                            <label for="checkbox01">상담조사실시</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox02">
+                            <label for="checkbox02">종합심리검사결과등록</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox03">
+                            <label for="checkbox03">이력서작성완료</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox03">
+                            <label for="checkbox03">미상담자</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox03">
+                            <label for="checkbox03">지도학생</label>
+                            <i class="icon-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-inline btn-line right">
+            <a href="#!" class="btn type02 size-m">검색</a>
+        </div>
+    </form>
+
+    <div class="form-group row form-row board" style="margin-top:50px;">
+        <div class="col s12 l6">
+            <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+        </div>
+        <div class="col s12 l6 col-inline right">
+            <a href="#!" class="btn type03 size-m">메세지</a>
+            <a href="#!" class="btn type03 size-m">그룹등록</a>
+        </div>
+    </div>
+    <!-- 테이블 -->
+    <table class="table-type02 response">
+        <caption>상담현황 테이블로 선택, 이름, 학과, 학년/반, 관심지도, 학번, 내 최근상담일, 내상담횟수, 총상담횟수, 관리 순서대로 안내하는 표입니다</caption>
+        <colgroup>
+            <col width="5%" />
+            <col width="7%" />
+            <col width="10%" />
+            <col width="8%" />
+            <col width="15%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col width="10%" />
+            <col />
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope="col">
+                    <div class="checkbox size-m">
+                        <input type="checkbox" id="checkbox01">
+                        <label for="checkbox01"></label>
+                        <i class="icon-check"></i>
+                    </div>
+                </th>
+                <th scope="col">이름</th>
+                <th scope="col">학과</th>
+                <th scope="col">학년/반</th>
+                <th scope="col">관심지도</th>
+                <th scope="col">학번</th>
+                <th scope="col">내 최근상담일</th>
+                <th scope="col">내상담횟수</th>
+                <th scope="col">총상담횟수</th>
+                <th scope="col">관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-header="선택">
+                    <div class="checkbox size-m">
+                        <input type="checkbox" id="checkbox01">
+                        <label for="checkbox01"></label>
+                        <i class="icon-check"></i>
+                    </div>
+                </td>
+                <td data-header="이름">강은아</td>
+                <td data-header="학과">간호학부</td>
+                <td data-header="학년/반">2학년/A반</td>
+                <td data-header="관심지도">
+                    <span class="icon-statue red">진로</span>
+                    <span class="icon-statue blue">이력</span>
+                    <span class="icon-statue yellow">취업</span>
+                </td>
+                <td data-header="학번">20182201</td>
+                <td data-header="내 최근상담일">2019-01-28</td>
+                <td data-header="내상담횟수">2회</td>
+                <td data-header="총삼담횟수">4회</td>
+                <td data-header="관리">
+                    <a href="#!" class="btn type01 size-s">조회</a><a href="#!" class="btn type02 size-s btn-counsel">상담</a>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="선택">
+                    <div class="checkbox size-m">
+                        <input type="checkbox" id="checkbox01">
+                        <label for="checkbox01"></label>
+                        <i class="icon-check"></i>
+                    </div>
+                </td>
+                <td data-header="이름">강은아</td>
+                <td data-header="학과">간호학부</td>
+                <td data-header="학년/반">2학년/A반</td>
+                <td data-header="관심지도">
+                    <span class="icon-statue red">진로</span>
+                    <span class="icon-statue blue">이력</span>
+                    <span class="icon-statue yellow">취업</span>
+                </td>
+                <td data-header="학번">20182201</td>
+                <td data-header="내 최근상담일">2019-01-28</td>
+                <td data-header="내상담횟수">2회</td>
+                <td data-header="총삼담횟수">4회</td>
+                <td data-header="관리">
+                    <a href="#!" class="btn type01 size-s">조회</a><a href="#!" class="btn type02 size-s">상담</a>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="선택">
+                    <div class="checkbox size-m">
+                        <input type="checkbox" id="checkbox01">
+                        <label for="checkbox01"></label>
+                        <i class="icon-check"></i>
+                    </div>
+                </td>
+                <td data-header="이름">강은아</td>
+                <td data-header="학과">간호학부</td>
+                <td data-header="학년/반">2학년/A반</td>
+                <td data-header="관심지도">
+                    <span class="icon-statue red">진로</span>
+                    <span class="icon-statue blue">이력</span>
+                    <span class="icon-statue yellow">취업</span>
+                </td>
+                <td data-header="학번">20182201</td>
+                <td data-header="내 최근상담일">2019-01-28</td>
+                <td data-header="내상담횟수">2회</td>
+                <td data-header="총삼담횟수">4회</td>
+                <td data-header="관리">
+                    <a href="#!" class="btn type01 size-s">조회</a><a href="#!" class="btn type02 size-s">상담</a>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="선택">
+                    <div class="checkbox size-m">
+                        <input type="checkbox" id="checkbox01">
+                        <label for="checkbox01"></label>
+                        <i class="icon-check"></i>
+                    </div>
+                </td>
+                <td data-header="이름">강은아</td>
+                <td data-header="학과">간호학부</td>
+                <td data-header="학년/반">2학년/A반</td>
+                <td data-header="관심지도">
+                    <span class="icon-statue red">진로</span>
+                    <span class="icon-statue blue">이력</span>
+                    <span class="icon-statue yellow">취업</span>
+                </td>
+                <td data-header="학번">20182201</td>
+                <td data-header="내 최근상담일">2019-01-28</td>
+                <td data-header="내상담횟수">2회</td>
+                <td data-header="총삼담횟수">4회</td>
+                <td data-header="관리">
+                    <a href="#!" class="btn type01 size-s">조회</a><a href="#!" class="btn type02 size-s">상담</a>
+                </td>
+            </tr>
+            <tr>
+                <td data-header="선택">
+                    <div class="checkbox size-m">
+                        <input type="checkbox" id="checkbox01">
+                        <label for="checkbox01"></label>
+                        <i class="icon-check"></i>
+                    </div>
+                </td>
+                <td data-header="이름">강은아</td>
+                <td data-header="학과">간호학부</td>
+                <td data-header="학년/반">2학년/A반</td>
+                <td data-header="관심지도">
+                    <span class="icon-statue red">진로</span>
+                    <span class="icon-statue blue">이력</span>
+                    <span class="icon-statue yellow">취업</span>
+                </td>
+                <td data-header="학번">20182201</td>
+                <td data-header="내 최근상담일">2019-01-28</td>
+                <td data-header="내상담횟수">2회</td>
+                <td data-header="총삼담횟수">4회</td>
+                <td data-header="관리">
+                    <a href="#!" class="btn type01 size-s">조회</a><a href="#!" class="btn type02 size-s">상담</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- 페이징 -->
+    <div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+            <a href="#" class="active" title="1 페이지">1</a>
+            <a href="#" title="2 페이지">2</a>
+            <a href="#" title="3 페이지">3</a>
+            <a href="#" title="4 페이지">4</a>
+            <a href="#" title="5 페이지">5</a>
+            <a href="#" title="6 페이지">6</a>
+            <a href="#" title="7 페이지">7</a>
+            <a href="#" title="8 페이지">8</a>
+            <a href="#" title="9 페이지">9</a>
+            <a href="#" title="10 페이지">10</a>
+        </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+    
+</section>
+
+<script>
+    $(document).ready(function() {
+    	//왼쪽 상담하기 레이어
+        $('.btn-counsel').on('click', function(){
+            $('.counseling-aside').addClass('on');
+            $('.counseling-aside').css({'transition':'.3s'});
+        });
+        $('.counseling-aside .btn-close').on('click', function(){
+            $('.counseling-aside').removeClass('on');
+            $('.counseling-aside').css({'transition':'.3s'});
+        })
+    });
+</script>

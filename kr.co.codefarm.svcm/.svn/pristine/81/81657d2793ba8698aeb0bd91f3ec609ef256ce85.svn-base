@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.representative">
+	<select id="getRepresentAtivList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.SITE_SEQ
+		     , A.DAEPYOJA_GB
+		     , A.DAEPYOJA_SEQ
+		     , A.DAEPYOJA_NM
+		     , A.DAEPYOJA_JIKHAM
+		     , A.FR_DT AS FR_DT
+			 , A.TO_DT AS TO_DT
+			 , B.FILE_PATH AS STAMP_URL
+			 , C.FILE_PATH AS PIC_URL
+		  FROM SMN_DAEPYOJA A
+          LEFT OUTER JOIN SMN_FILE B
+            ON B.FILE_ID = 'SMN_DAEPYOJA'
+           AND B.FILE_KEY = CONCAT(A.SITE_SEQ,'#',A.DAEPYOJA_GB,'#',A.DAEPYOJA_SEQ)
+           AND B.FILE_HANGMOK = 'stamp'
+          LEFT OUTER JOIN SMN_FILE C
+            ON C.FILE_ID = 'SMN_DAEPYOJA'
+           AND C.FILE_KEY = CONCAT(A.SITE_SEQ,'#',A.DAEPYOJA_GB,'#',A.DAEPYOJA_SEQ)
+           AND C.FILE_HANGMOK = 'pic'
+		 WHERE 1=1
+		   AND A.SITE_SEQ = #{pSiteSeq}  
+		   OR (
+		           B.FILE_NO = (SELECT MAX(FILE_NO) FROM SMN_FILE SA WHERE SA.FILE_ID = 'SMN_DAEPYOJA' AND SA.FILE_KEY = CONCAT(A.SITE_SEQ,'#',A.DAEPYOJA_GB,'#',A.DAEPYOJA_SEQ) AND SA.FILE_HANGMOK = 'stamp')
+		       AND C.FILE_NO = (SELECT MAX(FILE_NO) FROM SMN_FILE SA WHERE SA.FILE_ID = 'SMN_DAEPYOJA' AND SA.FILE_KEY = CONCAT(A.SITE_SEQ,'#',A.DAEPYOJA_GB,'#',A.DAEPYOJA_SEQ) AND SA.FILE_HANGMOK = 'pic')
+		       )
+	</select>
+	
+	<!-- 대표자 중복 체크 -->
+	<select id="getCount" parameterType="hashMap" resultType="hashMap">
+		SELECT A.SITE_SEQ
+			 , A.DAEPYOJA_GB
+			 , A.DAEPYOJA_SEQ
+			 , A.DAEPYOJA_NM
+			 , A.DAEPYOJA_JIKHAM
+			 , A.FR_DT
+			 , A.TO_DT
+			 , A.JIKIN_FILE_URL 
+		  FROM SMN_DAEPYOJA A
+		 WHERE 1=1
+		   AND A.SITE_SEQ = #{pSiteSeq} 
+		   AND A.DAEPYOJA_GB = #{pDaepyojaGb} 
+ 		   AND ((#{pFrdt} BETWEEN A.FR_DT AND A.TO_DT) OR (#{pTodt} BETWEEN A.FR_DT AND A.TO_DT))
+	</select>
+	
+	<insert id="insertRepresentAtiv" parameterType="hashMap">
+		INSERT INTO SMN_DAEPYOJA
+		(	
+			SITE_SEQ
+	      , DAEPYOJA_GB
+	      , DAEPYOJA_SEQ
+	      , DAEPYOJA_NM
+	      , DAEPYOJA_JIKHAM
+	      , FR_DT
+	      , TO_DT
+	      , INSERT_DTTM
+	      , INSERT_ID
+	      , INSERT_IP
+	      , INSERT_PGM
+	      , UPDATE_DTTM
+	      , UPDATE_ID
+	      , UPDATE_IP
+	      , UPDATE_PGM
+		)
+		VALUES
+		( 
+			#{SITE_SEQ}
+          , #{DAEPYOJA_GB}
+          , (SELECT COALESCE(MAX(DAEPYOJA_SEQ),0)+1 FROM SMN_DAEPYOJA SA WHERE SA.SITE_SEQ = #{SITE_SEQ} AND SA.DAEPYOJA_GB = #{DAEPYOJA_GB})
+          , #{DAEPYOJA_NM} 
+          , #{DAEPYOJA_JIKHAM}
+          , #{FR_DT}
+          , #{TO_DT}
+          , SYSDATE()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}
+          , SYSDATE()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}	
+		)
+	</insert>
+	
+	<update id="updateRepresentAtiv" parameterType="hashMap">
+		UPDATE SMN_DAEPYOJA
+		   SET DAEPYOJA_NM			= #{DAEPYOJA_NM}
+		      ,DAEPYOJA_JIKHAM	 	= #{DAEPYOJA_JIKHAM}
+		      ,FR_DT 				= #{FR_DT}
+		      ,TO_DT 				= #{TO_DT}
+		      ,UPDATE_DTTM			= SYSDATE()
+		      ,UPDATE_ID			= #{SYSTEM_ID}
+		      ,UPDATE_IP			= #{SYSTEM_IP}
+		      ,UPDATE_PGM 			= #{SYSTEM_PGM}
+		 WHERE SITE_SEQ 			= #{SITE_SEQ}
+		   AND DAEPYOJA_GB			= #{DAEPYOJA_GB}
+		   AND DAEPYOJA_SEQ			= #{DAEPYOJA_SEQ}
+	</update>
+	
+	<delete id="deleteRepresentAtiv" parameterType="hashMap">
+   		DELETE FROM SMN_DAEPYOJA
+   	 	 WHERE SITE_SEQ 	= #{SITE_SEQ}
+   	 	   AND DAEPYOJA_GB  = #{DAEPYOJA_GB}
+   	 	   AND DAEPYOJA_SEQ = #{DAEPYOJA_SEQ}
+   	</delete>
+</mapper>

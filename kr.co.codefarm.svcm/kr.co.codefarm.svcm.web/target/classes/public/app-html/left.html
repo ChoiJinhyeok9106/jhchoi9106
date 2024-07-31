@@ -1,0 +1,395 @@
+<!-- 해당 메뉴가 활성화 되어있을때 ul에 'display:block' li에 클래스 .on을 넣어준다 -->
+<div id="left-menu">
+	<ul class="snb_list">
+		<li v-for="(itemLv0, indexLv0) in appMenuList.treeData" :ref="itemLv0.MENU_CD" :id="itemLv0.MENU_CD">
+			<a href="javascript:void(0)" @click="selectMenu(itemLv0);">{{itemLv0.MENU_NM}}</a>
+			<ul v-if="itemLv0.children">
+				<li v-for="itemLv1, indexLv1) in itemLv0.children" :ref="itemLv1.MENU_CD" :id="itemLv1.MENU_CD">
+					<a href="javascript:void(0)" @click="selectMenu(itemLv1);">{{itemLv1.MENU_NM}}</a>
+					<ul v-if="itemLv1.children">
+						<li v-for="itemLv2, indexLv2) in itemLv1.children" :ref="itemLv2.MENU_CD" :id="itemLv2.MENU_CD">
+							<a href="javascript:void(0)" @click="selectMenu(itemLv2);">{{itemLv2.MENU_NM}}</a>
+							<ul v-if="itemLv2.children">
+								<li v-for="itemLv3, indexLv3) in itemLv2.children" :ref="itemLv3.MENU_CD" :id="itemLv3.MENU_CD">
+									<a href="javascript:void(0)" @click="selectMenu(itemLv3);">{{itemLv3.MENU_NM}}</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+/**********************************************************	*********************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var leftVm = new Vue({
+	el: '#left-menu',
+	//사용할 데이터
+    data: {
+        appMenuList: new Dataset(),
+        mainListLoading: {id:'mainListLoading', val:false},
+        serviceCd: getParameterByName('service', self == top ? location.href : parent.globalCurrentUrl),
+        menuCd: getParameterByName('menu', self == top ? location.href : parent.globalCurrentUrl),
+		appId: getParameterByName('app', self == top ? location.href : parent.globalCurrentUrl),
+        pgmId: getParameterByName('pgm', self == top ? location.href : parent.globalCurrentUrl),
+        postNo: globalPostNo,
+        currentMenuCd: '',
+        clipboard: '',
+    },
+ 	//데이터 감시
+    watch: {
+        'appMenuList.rowposition': {
+            handler: function (val, oldVal) {
+                if(this.appMenuList.enableevent){
+                    var changeYn = this.appMenuList.dataCompare(oldVal);
+                    var rowType = this.appMenuList.getRowType(val);
+					var oldRowType = this.appMenuList.getRowType(oldVal);
+                    
+                    if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+                        this.appMenuList.setDefaultRow(oldVal);
+                    }
+                    
+                    if(val != -1){
+                    	if(rowType == this.ROWTYPE_NORMAL || rowType == this.ROWTYPE_UPDATE){
+                            this.updateDisabled = true; 
+                        }else{
+                            this.updateDisabled = false;
+                        }
+                    	
+                        this.$forceUpdate();
+                        this.$validator.reset();	
+                    }
+                }
+            }
+        },      
+        'appMenuList.data': {
+            handler: function (val, oldVal) {
+                if(this.appMenuList.enableevent){
+                    var vm = this;
+                    val.filter( function( data, rowposition ) {
+                        return Object.keys(data ).some( function( colNm ) {
+                            var diff = data[colNm] !== vm.appMenuList.beforeData[rowposition][colNm];
+                            vm.appMenuList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+                            if(diff) {
+                                vm.appMenuList.beforeData[rowposition][colNm] = _.cloneDeep(data[colNm]);
+                                //vm.componentStateChange();
+                            }
+                        })
+                    });
+                }
+            },
+            deep: true
+        },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+        this.setAppMenuList();
+        this.currentMenuCd = this.menuCd;
+    },
+  //함수
+    methods: {
+    	/* 앱 메뉴 리스트 조회 */
+        setAppMenuList: function(){
+            var self = this;
+
+            self.mainListLoading.val = true;
+            var returnVal = menuApi.userAuthMenus({'APP_ID':this.appId}, false);
+            
+            returnVal.then(function(response) {
+            	self.appMenuList.setData(response.data, 'tree');
+            	
+            	self.$nextTick(function() {
+            		var findRow = 0;
+            		
+            		if(!isNull(self.menuCd)){
+            			findRow = _.findIndex(self.appMenuList.treeNormalData, {'MENU_CD':self.menuCd});
+            		}else{
+            			if(isNull(self.pgmId)){
+	        				findRow = _.findIndex(self.appMenuList.treeNormalData, {'MENU_GB':'02'});
+            			}else if(!isNull(self.serviceCd) && !isNull(self.appId) && !isNull(self.pgmId)){
+		        			findRow = _.findIndex(self.appMenuList.treeNormalData, {'SERVICE_CD':self.serviceCd,'APP_ID':self.appId,'PGM_ID':self.pgmId});
+		        		}
+            			if(findRow > -1) self.menuCd = self.appMenuList.treeNormalData[findRow].MENU_CD;
+            			else self.menuCd = '';
+	        		}
+	        		
+            		if(findRow > -1){
+            			self.selectMenu(self.appMenuList.treeNormalData[findRow]);
+            			self.menuCssModify();
+            			
+                    	self.$nextTick(function() {
+                    		menuScriptExec(self.appMenuList.data.length);	
+                    	});
+            		}else{
+            			$('div.sub_cont_wrap').html('');
+            		}
+            		
+            		$('body').LoadingOverlay("hide", true);
+        		}); 
+            }).catch(function(error) {
+            }).finally(function(){
+				self.mainListLoading.val = false;
+			});
+        },
+        selectMenu: function(item){
+        	var self = this;
+        	var param = '';
+        	var gaeinjeongboUseYn = item.GAEINJEONGBO_USE_YN;
+        	var gaeinjeongboItem = item.GAEINJEONGBO_ITEM;
+        	var subPgmGaeinjeongboUseCnt = item.SUB_PGM_GAEINJEONGBO_USE_CNT;
+        	self.currentMenuCd = item.MENU_CD;
+        	
+        	if(self == top){
+        		param = _.cloneDeep(staticVue.vueGlobalParam);
+        		staticVue.vueGlobalParam = '';
+        	}else{
+        		//appOpen을 popup(새 탭)으로 호출 하였을때 파라메터 전송
+        		if(window.opener){
+        			param = _.cloneDeep(window.opener.top.staticVue.vueGlobalParam);
+        			window.opener.top.staticVue.vueGlobalParam = '';
+        		}else{
+        			param = _.cloneDeep(parent.staticVue.vueGlobalParam);
+            		parent.staticVue.vueGlobalParam = '';	
+        		}
+        	}
+        	this.clipboard = item.PGM_ID ? item.PGM_ID + '.html' : '';
+        	
+        	//앱 링크 및 페이지 열기
+        	if(item.MENU_GB == '01'){
+        		appOpen(item.APP_ID, item.MENU_CD, _.merge(_.size(param) > 0 ? param : {}, _.size(self.changeJson(item.PARAMETER)) > 0 ? self.changeJson(item.PARAMETER) : {}));
+        		/* self.regPushSate(item.APP_ID, item.MENU_CD, param ? param : item.PARAMETER); */
+        	}else if(item.MENU_GB == '02'){
+        		param = this.changeJson(param);
+        		item.PARAMETER = this.changeJson(item.PARAMETER);
+        		
+        		if(this.postNo){
+        			if(param) param['POST_NO'] = this.postNo;
+        			else item.PARAMETER['POST_NO'] = this.postNo;
+        			globalPostNo = '';
+        			this.postNo = '';
+        		}
+        		
+        		contentsOpen(item.SERVICE_CD, item.PGM_ID, _.merge(_.size(param) > 0 ? param : {}, _.size(item.PARAMETER) > 0 ? item.PARAMETER : {}), null);
+        		self.regPushSate(item.APP_ID, item.MENU_CD, _.merge(_.size(param) > 0 ? param : {}, _.size(item.PARAMETER) > 0 ? item.PARAMETER : {}));
+        	}else if(item.MENU_GB == '03'){
+        		window.open(item.LINK_URL, '_blank');
+        	}
+        	        	
+        	var pParam = {
+   				'APP_ID' : item.APP_ID,
+   				'MENU_CD' : item.MENU_CD,
+   				'MENU_NM' : item.MENU_NM,
+   				'MENU_NM' : item.MENU_NM,
+   				'PGM_ID' : item.PGM_ID,
+   				'UP_MENU_CD' : item.UP_MENU_CD,
+   				'MENU_LV' : item.MENU_LV,
+   				'SERVICE_CD' : item.SERVICE_CD,
+   				'PGM_ID' : item.PGM_ID,
+   				'GAEINJEONGBO_USE_YN' : item.GAEINJEONGBO_USE_YN,
+   				'GAEINJEONGBO_ITEM' : item.GAEINJEONGBO_ITEM,
+   				'SUB_PGM_GAEINJEONGBO_USE_CNT' : item.SUB_PGM_GAEINJEONGBO_USE_CNT,
+       		}
+        	
+        	systemApi.setMenuLog(pParam, false);        	
+        	
+        	if(gaeinjeongboUseYn == 'Y' || parseInt(subPgmGaeinjeongboUseCnt,10) > 0){        		
+        		systemApi.setSystemLog(pParam, false);
+        	}
+        },
+        clickMenu: function(pMenuCd){
+        	var self = this;
+        	var findRow = _.findIndex(self.appMenuList.treeNormalData, {'MENU_CD':pMenuCd});
+
+    		if(findRow > -1){
+    			this.selectMenu(self.appMenuList.treeNormalData[findRow]);
+    			self.menuCssModify();
+    		}
+        },
+        regPushSate: function(pApp, pMenu, pParam){
+        	if(pParam == undefined || (pParam != undefined && !pParam.isPush)){
+        		var url = parent.globalPushStateUrl + "?app="+pApp+"&menu="+pMenu;
+            	parent.window.history.pushState({'url':url}, null, url);
+        	}
+        	/* if(self != top){
+        		var url = parent.globalPushStateUrl + "?app="+pApp+"&menu="+pMenu;
+        		var appUrl = parent.globalAppEndpoint + "?app="+pApp+"&menu="+pMenu;
+        		
+        		setPushSate('parent', {'url':url}, null, url);
+        		setPushSate('self', {'url':appUrl}, null, appUrl);
+        	}else{
+    			var appUrl = window.location.protocol + "//" + window.location.host + window.location.pathname+"?app="+pApp+"&menu="+pMenu+"&param="+pParam;
+    			
+        		setPushSate('self', {'url':appUrl}, null, appUrl);
+        		window.history.pushState({'url':appUrl}, null, appUrl);
+        	} */	
+        },
+        menuCssModify: function(){
+        	var self = this;
+        	
+        	$('#'+self.menuCd).parents('ul').each(function(){
+				$(this).show();
+			});
+			
+			$('#'+self.menuCd).parents('li').each(function(){
+				if(isNull($(this).attr('class'))){
+					$(this).addClass('on');
+				}
+			});
+        },
+        doCopy: function(){
+			this.$copyText(this.clipboard).then(function (e) {
+				if(document.location.href.indexOf('localhost:8080')>0) notifySubmit('success', '클립보드 복사', '프로그램 아이디가 클립보드에 복사되었습니다.', 'icon-save');
+           	}, function (e) {
+           		if(document.location.href.indexOf('localhost:8080')>0) notifySubmit('error', '클립보드 복사', '프로그램 아이디 복사에 실패하였습니다.', 'icon-save');
+           	});
+		},
+		changeJson: function(pData) {
+			try{
+				var data = _.cloneDeep(pData.replaceAll('\'','\"'))
+				var parseData = JSON.parse(data);
+		        return parseData;
+		    }catch(err){
+		        return pData;
+		    }
+		}
+    },
+});
+
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	var isShift = false; //16
+	var isCtrl = false; //17  
+	var isAlt = false; //18
+	
+	document.onkeyup=function(e){  
+	    if(e.which == 18) isAlt=false;  
+	}  
+	
+	document.onkeydown=function(e){
+	    if(e.which == 18) isAlt = true;
+	    
+	 	if(e.which == 88 && isAlt == true) {
+	 		leftVm.doCopy();
+	    }  
+	}
+});
+
+function menuScriptExec(pMenuLength){
+	try{
+		//왼쪽 서브 메뉴
+	    var snbUI = {
+	        click: function(target, speed) {
+	        	var _self = this,
+	                $target = $(target);
+	            _self.speed = speed || 300;
+	            $target.each(function() {
+	                if (findChildren($(this))) {
+	                    return;
+	                }
+	                $(this).addClass('noDepth');
+	            });
+	
+	            function findChildren(obj) {
+	                return obj.find('> ul').length > 0;
+	            }
+	            
+	            $target.on('click', 'a', function(e) {
+	                e.stopPropagation();
+	                var $this = $(this),
+	                    $depthTarget = $this.next(),
+	                    $siblings = $this.parent().siblings();
+	
+	                $this.parent('li').find('ul li').removeClass('on');
+	                $siblings.removeClass('on');
+	                $siblings.find('ul').slideUp(250);
+	
+	                if ($depthTarget.css('display') == 'none') {
+	                    _self.activeOn($this);
+	                    $depthTarget.slideDown(_self.speed);
+	                } else {
+	                    $depthTarget.slideUp(_self.speed);
+	                    _self.activeOff($this);
+	                }
+	                $(this).parent().siblings().children().removeClass('on');
+					$(this).addClass('on');
+	            })
+	        },
+	        activeOff: function($target) {
+	            $target.parent().removeClass('on');
+	        },
+	        activeOn: function($target) {
+	            $target.parent().addClass('on');
+	        }
+	    };
+
+	    // Call snbUI
+	    $(function() {
+	        snbUI.click('#snb li', 300);
+	    });
+
+	    if(pMenuLength > 1){
+	    	//왼쪽 메뉴 반응형 사이즈에서 사라짐
+		    var wwidth = $(window).width();
+	    	
+	    	if (wwidth <= 1651) {
+	    		$('#snb').removeClass('on');
+		        $('.sub_content').removeClass('on');	
+		    }
+		    if (wwidth >= 1650) {
+		    	$('#snb').css({'transition':'.0s'});
+		        $('#snb').addClass('on');
+		        $('.sub_content').css({'transition':'.0s'});
+		        $('.sub_content').addClass('on');
+		    }
+
+		    $(window).resize(function() {
+		        var wwidth = $(window).width();
+		        if (wwidth <= 1651) {
+		            $('#snb').removeClass('on');
+		            $('.sub_content').removeClass('on');
+		        }
+		        if (wwidth >= 1650) {
+		            $('#snb').addClass('on');
+		            $('.sub_content').addClass('on');
+		        }
+		    })
+		    
+		    //왼쪽 메뉴 열고 닫기
+			$('#sub_header .btn_menu').off('click');
+		    $('#sub_header .btn_menu').on('click', function() {
+		    	$('#snb').css({'transition':'.4s'});
+				$('.sub_content').css({'transition':'.4s'});
+		        $('#snb').toggleClass('on');
+		        $('.sub_content').toggleClass('on');
+		        if ($(window).width() <= 1651) {
+		            $('.sub_content').removeClass('on');
+		        }
+		    });
+	    }else{
+	    	$('#sub_header > a > span').hide();
+	    }
+	}catch(err){
+		return false;
+	}
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

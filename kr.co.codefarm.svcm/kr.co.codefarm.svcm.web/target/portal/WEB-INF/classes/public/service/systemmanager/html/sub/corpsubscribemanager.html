@@ -1,0 +1,207 @@
+<script type="text/javascript" src="/app-assets/js/api/systemmanager/subscribe.api.js"></script>
+
+
+<h2>구독 승인</h2>
+<section class="sub_cont_box" id="corp">
+	<h3 class="h2">구독 승인</h3>
+	<section class="cont_box" v-if="!subscribeList.currentRow">
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+			<input type="text" name="pSearchArgv" class="size-m" id="pSearchArgv" v-model="pSearchArgv" placeholder="기업 / 기관 명" @keyup.13="setCorpList" data-vv-as="기업 / 기관 명" v-bind:class="{'invalid':errors.has('pSearchArgv')}">
+			<input type="button" value="검색" class="btn type01 size-m" @click="setSubscriptionList">
+		</div>
+		<div class="col s12 l12">
+			<span class="board-info-txt size-m ml-30">총 <span>{{subscribeListPaging.totalCnt}}</span>건의 내용이 있습니다. (<span>{{subscribeListPaging.getCurrentPage()}}</span> / {{subscribeListPaging.getTotalPage()}})
+			</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="subscribeListLoading">
+					<colgroup>
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">기관명</th>
+							<th scope="col">권한코드</th>
+							<th scope="col">권한명</th>
+							<th scope="col">승인 | 반려</th>
+						</tr>
+					</thead>
+					<tbody v-if="subscribeList.data.length > 0">
+						<tr v-for="(item, index) in subscribeList.data">
+							<td data-header="기관명">{{item.CORP_NM}}</td>
+							<td data-header="권한코드">{{item.CORP_AUTH_CD}}</td>
+							<td data-header="권한명">{{item.AUTH_NM}}</td>
+							<td data-header="승인|반려"><input type="button" class="btn type02 size-s" value="승인" @click="messagePopup('accept', item)"/><input type="button" class="btn type07 size-s" value="반려" @click="messagePopup('reject', item)"/></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+				<paging :pagingset="subscribeListPaging" :type="'normal'"></paging>
+			</div>
+		</div>
+	</section>
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#corp',
+	//사용할 데이터
+	data: {
+		pSearchType : '',
+		pSearchArgv : '',
+		subscribeList : new Dataset(),
+		subscribeListPaging : new PagingSet(10,10),
+        subscribeListLoading: {id:'subscribeListLoading', val:false},
+        messageModal: new ModalSet('modal'),    // confirm 모달
+	},
+	filters: {
+	},
+	//데이터 감시
+	watch: {    
+        'subscribeList.data': {
+            handler: function (val, oldVal) {
+                if(this.subscribeList.enableevent){
+                    var vm = this;
+                    val.filter( function( data, rowposition ) {
+                        return Object.keys(data ).some( function( colNm ) {
+                            var diff = data[colNm] !== vm.subscribeList.beforeData[rowposition][colNm];
+                            vm.subscribeList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+                            if(diff) {
+                                vm.subscribeList.beforeData[rowposition][colNm] = _.cloneDeep(data[colNm]);
+                                vm.componentStateChange();
+                            }
+                        })
+                    });
+                }
+            },
+            deep: true
+        },
+        'subscribeListPaging.currentPage': {
+            handler: function (val, oldVal) {
+                this.setCorpList();
+            }
+        },
+	    'subscribeListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.subscribeListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setSubscriptionList();
+	},
+	//함수
+	methods: {
+		setSubscriptionList: function(){
+			var self = this;
+			var params = {
+				pSearchType : self.pSerachType,
+				pSearchArgv : self.pSearchArgv,
+			};
+
+			self.subscribeListLoading.val = true;
+			var returnVal = subscribeApi.getSubscriptionList(params, false);
+			returnVal.then(function (response){
+				self.subscribeList.setData(response.data);
+				if(self.subscribeList.getRowCount() > 0){
+                    self.subscribeListPaging.setTotalCnt(response.data.length);
+                }else{
+                	self.subscribeListPaging.setTotalCnt(0);
+                }
+            }).catch(function(error) {
+                console.error('error:', error);
+            }).finally(function(){
+				self.subscribeListLoading.val = false;
+			});
+		},
+		acceptService: function(item){
+			var self = this;
+			var params = {
+				CORP_ID : item.CORP_ID,
+				CORP_AUTH_CD : item.CORP_AUTH_CD,
+			}
+			var returnVal = subscribeApi.acceptService(params, false);
+			
+			returnVal.then(function(response) {
+				if(response.data > 0){
+					notifySubmit('success', '서비스 구독', '서비스 구독 신청 승인이 완료되었습니다.', 'icon-save');
+				}else{
+                	notifySubmit('warning', '서비스 구독', '서비스 구독 신청 승인에 실패하였습니다.', 'icon-caution');
+				}
+			}).finally(function (){
+				self.setSubscriptionList();
+			});
+		},
+		rejectService: function(item){
+			var self = this;
+			var params = {
+				CORP_ID : item.CORP_ID,
+				CORP_AUTH_CD : item.CORP_AUTH_CD,
+			}
+			var returnVal = subscribeApi.rejectService(params, false);
+
+			returnVal.then(function(response) {
+				if(response.data > 0){
+					notifySubmit('success', '서비스 구독', '서비스 구독 신청 반려가 완료되었습니다.', 'icon-save');
+				}else{
+                	notifySubmit('warning', '서비스 구독', '서비스 구독 신청 반려에 실패하였습니다.', 'icon-caution');
+				}
+			}).finally(function (){
+				self.setSubscriptionList();
+			});
+		},
+    	messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+
+            switch(pId) {
+	    		case 'accept':
+                    title = '승인';
+                    cont = '해당 서비스구독 신청을 승인하시겠습니까?';
+	    			break;
+	    		case 'reject':
+                    title = '반려';
+                    cont = '해당 서비스구독 신청을 반려하시겠습니까?';
+	    			break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'accept':
+	    			this.acceptService(pData);
+	    			break;
+	    		case 'reject':
+	    			this.rejectService(pData);
+	    			break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

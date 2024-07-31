@@ -1,0 +1,455 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/banner.css" />
+
+<h2>배너게시 관리</h2>
+<section class="sub_cont_box" id="app">
+    <div class="banner-reg-top">
+        <label for=""><span class="icon-info"></span>그룹선택</label>
+        <select name="pBannerGroupSeq" id="pBannerGroupSeq" class="size-m" @change="setBannerPostTotalList()" v-model="pBannerGroupSeq">
+            <option v-for="(item, index) in bannerTotalGroupList.data" :value="item.BANNER_GROUP_SEQ">{{item.BANNER_GROUP_NM}}</option>
+        </select>
+    </div>
+
+    <div class="banner-reg-wrap">
+        <div class="registered-list box-type01">
+            <h3>게시리스트</h3>
+            <!-- <div class="drag-area no-list">
+                <div class="inner">
+                    <i><img src="/app/design/images/banner/banner-drag-here.jpg" alt=""></i>
+                    <p>게시할 배너를 두번 클릭 또는 마우스로 드래그 하여 등록</p>
+                </div>
+            </div> -->
+            <div class="app-list banner-list">
+				<draggable v-model="bannerTotalPostList.data" :options="{group:'bannerPost', handle:'.handle'}" @add="addBannerPost('1', $event)" @end="updateBannerPostOrd($event)" style="min-height: 800px;" >
+					<div v-for="(item, index) in bannerTotalPostList.data" @click="bannerTotalPostList.selectRow(index)">
+						<div class="app-list-box" :class="{'active': index == bannerTotalPostList.rowposition}">
+							<div data-header="선택" class="select drag-handle handle">
+								<div class="inner">
+									<i class="icon-more-vertical"></i>
+									<i class="icon-more-vertical"></i>
+								</div>
+							</div>
+							<div data-header="제목" class="tit">
+								<div class="inner">
+									<p v-if="item.FILE_PATH != null && item.FILE_PATH != ''" class="banner-img"><img :src="'/upload'+item.FILE_PATH" alt="" /></p>
+									<p v-if="item.FILE_PATH == null || item.FILE_PATH == ''" class="banner-img no-img"><span class="icon-image"></span></p>
+									<div class="txt">
+										<a href="#!">{{item.BANNER_TITLE}}</a>
+										<p class="date"><span class="icon-realtime"></span>{{getDateForm(item.FR_DT)}} {{getTimeForm(item.FR_TM)}} ~ {{getDateForm(item.TO_DT)}} {{getTimeForm(item.TO_TM)}}</p>
+									</div>
+								</div>
+							</div>
+							<div data-header="세팅" class="setting">
+								<div class="inner">
+									<a href="#!" class="icon-trashcan" @click="confirmOpen('delete')"></a>
+								</div>
+							</div>
+						</div>
+						<transition name="slide">
+							<div class="app-info-layer" v-show="index == bannerTotalPostList.rowposition">
+								<div class="box-type03">
+									<div class="row form-row">
+										<div class="form-group col s12">
+											<label for="frDt" class="label-type01 required">시작 일자</label>
+											<div class="date-form-wrap">
+												<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+												<date-picker :value="item.FR_DT" @input="function(value){ bannerTotalPostList.currentRow ? item.FR_DT = value : ''}" :invalid="errors.has('frDt')"></date-picker>
+												<input type="hidden" id="frDt" name="frDt" v-model="item.FR_DT" data-vv-as="시작 일자 " v-validate="'required'">
+												<invalid-message :visible="index == bannerTotalPostList.currentRow" :name="'frDt'" :verror="errors"/>
+											</div>
+										</div>
+										<div class="form-group col s12">
+											<label for="ftTm" class="label-type01 required">시작 시간</label>
+											<div class="date-form-wrap">
+												<a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+												<time-picker name="ftTm" v-model="item.FR_TM"></time-picker>
+												<input type="hidden" name="ftTm" data-vv-as="시작 시간 " v-model="item.FR_TM" v-validate="'required'" v-bind:class="{'invalid': errors.has('ftTm')}">
+												<invalid-message :visible="index == bannerTotalPostList.rowposition" :name="'ftTm'" :verror="errors"/>
+											</div>
+										</div>
+										<div class="form-group col s12">
+											<label for="toDt" class="label-type01 required">종료 일자</label>
+											<div class="date-form-wrap">
+												<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+												<date-picker :value="item.TO_DT" @input="function(value){ bannerTotalPostList.currentRow ? item.TO_DT = value : ''}" :invalid="errors.has('toDt')"></date-picker>
+												<input type="hidden" id="toDt" name="toDt" v-model="item.TO_DT" data-vv-as="시작 일자 " v-validate="'required'">
+												<invalid-message :visible="index == bannerTotalPostList.currentRow" :name="'toDt'" :verror="errors"/>
+											</div>
+										</div>
+										<div class="form-group col s12">
+											<label for="toTm" class="label-type01 required">종료 시간</label>
+											<div class="date-form-wrap">
+												<a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+												<time-picker name="toTm" v-model="item.TO_TM"></time-picker>
+												<input type="hidden" name="toTm" data-vv-as="종료 시간 " v-model="item.TO_TM" v-validate="'required'" v-bind:class="{'invalid': errors.has('toTm')}">
+												<invalid-message :visible="index == bannerTotalPostList.rowposition" :name="'toTm'" :verror="errors"/>
+											</div>
+										</div>
+										<div class="form-group col s12 form-row">
+											<div class="col s12">
+												<label for="gesiYn" class="label-type01 required">게시 여부</label>
+											</div>
+											<div class="col s12">
+												<label class="toggle-switch size-l">
+												<input type="checkbox" id="gesiYn" name="gesiYn" data-vv-as="익명 여부 " v-model="item.GESI_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('gesiYn')}">
+												<span class="slider round"></span>
+												<invalid-message :visible="index == bannerTotalPostList.rowposition" :name="'gesiYn'" :verror="errors"/>
+											    </label>
+											</div>
+										</div>
+									</div>
+									<div class="btn-line right">
+										<a href="#!" class="btn type02 size-m" @click="saveRow()">저장</a>
+									</div>
+								</div>
+							</div>	
+						</transition>
+					</div>
+				</draggable>
+            </div>
+        </div>
+
+        <div class="app-list banner-list banner-reg-list">
+            <div class="box-type03 col-inline">
+               <label class="label-type00 size-m icon-search">검색</label>
+               <input type="text" name="bannerTitle" id="bannerTitle" class="size-m" style="width:380px" placeholder="배너명을 입력하세요" v-model="pBannerTitle" v-on:keyup.13="search()">
+               <input type="button" value="검색" class="btn type01 size-m" @click="search">
+            </div>
+			<draggable v-model="bannerTotalList.data" @start="bannerTotalList.selectRow(($event).oldIndex)" :options="{handle:'.handle', group:{ name:'bannerPost',  pull:'clone', put:false }}">
+				<div v-for="(item, index) in bannerTotalList.data" @click="bannerTotalList.selectRow(index)" @dblclick="addBannerPost('2')" v-if="bannerTotalList.getRowCount() > 0">
+					<div class="app-list-box" :class="{'active': index == bannerTotalList.rowposition}">
+						<div data-header="선택" class="select handle">
+							<div class="inner">
+								<i class="icon-more-vertical"></i>
+								<i class="icon-more-vertical"></i>
+							</div>
+						</div>
+						<div data-header="제목" class="tit">
+							<div class="inner">
+								<p v-if="item.FILE_PATH != null && item.FILE_PATH != ''" class="banner-img"><img :src="'/upload'+item.FILE_PATH" alt="" /></p>
+								<p v-if="item.FILE_PATH == null || item.FILE_PATH == ''" class="banner-img no-img"><span class="icon-image"></span></p>
+								<a href="#!">{{item.BANNER_TITLE}}</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="app-list banner-list"  v-if="bannerTotalList.getRowCount() == 0">
+				    <div class="no-cont">
+				    	검색결과가 없습니다.
+				    </div>
+				</div>
+		    </draggable>
+            
+            <paging :pagingset="bannerTotalListPaging" :type="'mobile'"></paging>
+        </div>
+    </div>
+    
+    <!-- 모달팝업 -->
+    <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		bannerTotalGroupList: new Dataset(),
+		bannerTotalPostList: new Dataset(),
+		bannerTotalList: new Dataset(),
+		addDs: new Dataset(),
+		bannerTotalListPaging: new PagingSet(10, 5),
+		messageModal: new ModalSet('banner-modal'),	// confirm 모달
+		pBannerGroupSeq: '',
+		pBannerTitle: ''
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		'bannerGroupSet.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.bannerTotalGroupList.enableevent){
+				}
+			}
+		},		
+		'bannerTotalListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setBannerTotalList();
+			}
+	    }
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setBannerGroupTotalList();
+	},
+	//함수
+	methods: {
+		/* 서비스 리스트 조회 */
+		search: function(){
+			var pageNo = this.bannerTotalListPaging.getCurrentPage();
+        	
+        	if(pageNo == 1){
+        		this.setBannerTotalList();
+        	}else{
+        		this.bannerTotalListPaging.movePage(1);
+        	}  
+		},
+		setBannerGroupTotalList: function(){
+			var returnVal = bannerApi.bannerTotalGroup(true);
+			
+			var self = this;
+			
+			returnVal.then(function(response){
+				self.bannerTotalGroupList.setData(response.data);
+				self.pBannerGroupSeq = self.bannerTotalGroupList.getColumn(0, "BANNER_GROUP_SEQ");
+				
+				self.setBannerPostTotalList();
+			});
+		},
+		setBannerPostTotalList: function(){
+			var returnVal = bannerApi.bannerTotalPost(this.pBannerGroupSeq ,true);
+			
+			var self = this;
+			
+			returnVal.then(function(response){
+				self.bannerTotalPostList.setData(response.data);
+
+				self.setBannerTotalList();
+			});
+		},
+		setBannerTotalList: function(){
+			var pageNo = this.bannerTotalListPaging.getCurrentPage();
+			var pRowCnt = this.bannerTotalListPaging.getRowCnt();
+			
+			if(isNull(pageNo)) pageNo = 1;
+			
+			var returnVal = bannerApi.banner('1', this.pBannerTitle, pageNo, pRowCnt, 'POST',true);
+			
+			var self = this;
+			
+			returnVal.then(function(response){
+				self.bannerTotalList.setData(response.data);
+				
+				if(response.data.length > 0){
+					var totalCnt = self.bannerTotalList.data[0].CNT;
+					self.bannerTotalListPaging.setTotalCnt(totalCnt);
+				}else{
+					self.bannerTotalListPaging.setTotalCnt(0);
+				}
+			});
+			
+		},
+		addBannerPost: function(clickCnt, evt){
+			var self = this;
+
+			self.addDs.clear();
+			
+			if(self.pBannerGroupSeq != ''){
+				if(clickCnt == '1'){
+					for(var i = 0; i < self.bannerTotalPostList.getRowCount(); i ++){
+						self.bannerTotalPostList.setColumn(i, "ORD", i + 1);
+
+						if(isNull(self.bannerTotalPostList.getColumn(i, "BANNER_GROUP_SEQ"))){
+							var addObj = {
+								'BANNER_GROUP_SEQ': self.pBannerGroupSeq,
+								'BANNER_SEQ': self.bannerTotalList.currentRow.BANNER_SEQ,
+								'ORD' : i + 1
+							};
+							self.addDs.addRow(addObj);
+						}
+					}
+				}else{
+					var addObj = {
+						'BANNER_GROUP_SEQ': self.pBannerGroupSeq,
+						'BANNER_SEQ': self.bannerTotalList.currentRow.BANNER_SEQ,
+						'ORD' : self.bannerTotalPostList.getRowCount() + 1
+					};
+					
+					self.addDs.addRow(addObj);
+				}
+				
+				returnVal = bannerApi.bannerPostInsert(self.addDs.data, true);
+				
+				if(!isNull(returnVal)){	
+					returnVal.then(function(response){
+						var data = response.data;
+					
+						if(data > 0){
+							self.setBannerPostTotalList();
+							notifySubmit('success', '배너 게시 저장', '저장이 완료되었습니다.', 'icon-save');
+						}else{
+							notifySubmit('warning', '배너 게시 저장', '저장에 실패하였습니다.', 'icon-caution');
+						}
+					}).catch(function(error){
+						notifySubmit('warning', '배너 게시 저장', '저장에 실패하였습니다.', 'icon-caution');
+					});
+				}
+			}else{
+				notifySubmit('warning', '배너 그룹', '배너 그룹을 선택해주세요.', 'icon-caution');
+			}
+		},
+		updateBannerPostOrd: function(evt){
+ 			var self = this;
+ 			
+ 			for(var i = 0; i < self.bannerTotalPostList.getRowCount(); i ++){
+				self.bannerTotalPostList.setColumn(i, "ORD", i + 1);
+			}
+
+ 			returnVal = bannerApi.bannerPostOrdUpdate(self.bannerTotalPostList.data, true);
+			
+			var self = this;
+			
+			if(!isNull(returnVal)){	
+				returnVal.then(function(response){
+					var data = response.data;
+				
+					if(data == '1'){
+						notifySubmit('success', '순서 변경', '순서가 변경되었습니다.', 'icon-save');
+					}else{
+						notifySubmit('warning', '순서 변경', '순서 변경에 실패하였습니다.', 'icon-caution');
+					}
+				}).catch(function(error){
+					notifySubmit('warning', '순서 변경', '순서 변경에 실패하였습니다.', 'icon-caution');
+				});
+			}
+		},
+		/* 서비스 리스트 삭제 */
+		deleteRow: function(row){
+			var rowType = this.bannerTotalPostList.getRowType(row); 
+			var returnVal = null;
+			var bannerGroupSeq = this.bannerTotalPostList.getColumn(row, 'BANNER_GROUP_SEQ');
+			var bannerSeq = this.bannerTotalPostList.getColumn(row, 'BANNER_SEQ');
+			var postSeq = this.bannerTotalPostList.getColumn(row, "POST_SEQ");
+			
+			this.bannerTotalPostList.deleteRow(row);
+			
+			var self = this;
+			
+			returnVal = bannerApi.bannerPostDelete(bannerGroupSeq, bannerSeq, postSeq, true);
+			returnVal.then(function(response){
+				var data = response.data;
+				
+				if(parseInt(data,10) > 0){
+					self.setBannerPostTotalList(bannerGroupSeq);
+					notifySubmit('success', '배너 게시 삭제', '삭제가 완료되었습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '배너 게시 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '배너 게시 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});	
+			
+		},
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			
+			var self = this;
+			
+			validate.then(function(response){
+				if(response){
+					var rowposition = self.bannerTotalPostList.rowposition;
+					var rowType = self.bannerTotalPostList.getRowType(rowposition); 
+					var returnVal = null;
+					
+					if(rowType == ROWTYPE_UPDATE){
+						returnVal = bannerApi.bannerPostUpdate(self.bannerTotalPostList.currentRow, true);
+					}else{
+						notifySubmit('info', '배너 게시 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+					
+					if(!isNull(returnVal)){
+						returnVal.then(function(response){
+							var data = response.data;
+							
+							if(data == '1'){
+								self.setBannerPostTotalList();
+								notifySubmit('success', '배너 게시 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '배너 게시 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						}).catch(function(error){
+							notifySubmit('warning', '배너 게시 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}else{
+					notifySubmit('warning', '배너 게시 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+   			});
+			
+		},
+		confirmOpen : function(id){
+			if(id == 'save'){
+				var validate = this.$validator.validateAll();
+    			
+    			var self = this;
+    			
+    			validate.then(function(response){
+    				if(response){
+    					self.messageModal.openModal('confirm', '저장', '저장하시겠습니까?', 'small', 'save', '');	
+    				}else{
+    					notifySubmit('warning', '배너 게시 저장', '입력항목을 확인해주세요.', 'icon-caution');
+   					}
+       			});
+			}else if(id == 'delete'){
+				this.messageModal.openModal('confirm', '삭제', '삭제하시겠습니까?', 'small', 'delete', '');
+			}
+    	},
+    	messagepoppupcallback : function(gb, currentId, customData){
+    	 	//alert('버튼 구분 : '+gb+'\n'+'ID : '+currentId+'\n'+'returnData : '+customData);
+    	 	if(gb == 'confirm' && currentId == 'save'){
+ 				this.saveRow();
+    	 	}else if(gb == 'confirm' && currentId == 'delete'){
+    	 		this.deleteRow(this.bannerTotalPostList.rowposition);
+    	 	}
+    	},
+    	getDateForm: function(pDate){
+			var date = '';
+			if(!isNull(pDate)){
+				date = pDate.substring(0,4) + '-' + pDate.substring(4,6) + '-' + pDate.substring(6,8);
+			}
+			return date;
+		},
+		getTimeForm: function(pTime){
+			var time = '';
+			if(!isNull(pTime)){
+				time = pTime.substring(0,2) + ':' + pTime.substring(2,4);
+			}
+			return time;
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+
+</script>
+

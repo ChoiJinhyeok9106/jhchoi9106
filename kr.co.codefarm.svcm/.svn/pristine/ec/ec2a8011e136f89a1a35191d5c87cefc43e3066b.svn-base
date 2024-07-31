@@ -1,0 +1,424 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mileage.css" />  
+
+<h2>마일리지 관리</h2>
+<section class="sub_cont_box mileage-stu new">
+	<div class="tab-outter">
+        <div class="tab-type01">
+            <div class="tab-inner">
+                <div rel="tab21"><a href="#!" class="active">장학 마일리지</a></div>
+                <div rel="tab22"><a href="#!">졸업인증 마일리지</a></div>             
+            </div>
+        </div>
+    </div>
+    <div class="tab-container2">
+    	<div id="tab21" class="tab-content2">
+		    <div class="mileage-stu-top">
+		        <div class="row form-row">
+		            <div class="form-group col s12 l12 xl6">            
+		                <div class="user-info-box">
+		                    <div class="photo-line">
+		                        <span class="photo"><!-- <img src="/service/design/images/mileage/counsel_main_photo04.jpg" alt=""> --></span>
+		                    </div>
+		                    <span class="name">강수민</span>
+		                    <span class="mileage"><span class="initial">M</span><span class="num">15,000</span>포인트</span>
+		                </div>
+		            </div>
+		            <div class="form-group col s12 l12 xl6">                                     
+		                <div class="user-info-box f-right">
+		                    <ul class="info-list">
+		                        <li>codefarm@codefarm.co.kr</li>
+		                        <li>수라임</li>
+		                        <li>코드팜</li>
+		                    </ul>
+		                    <!-- <div class="btn-line">
+		                        <a href="#!" class="btn-myinfo">개인정보관리</a>
+		                    </div> --->
+		                </div>                              
+		            </div>
+		        </div>
+		    </div>
+		    <div class="tab-outter">
+		    	<div class="tab-type04">
+		    		<div class="tab-inner">
+		    			<div rel="tab1">
+		    				<a href="#!" class="active">마일리지 내역</a>
+		    			</div> 
+		    			<div rel="tab2">
+		    				<a href="#!" class="">상품신청 내역</a>
+		    			</div>
+		    		</div>
+		    	</div>
+		    </div>
+		    <div class="tab-container">
+		    	<div id="tab1" class="tab-content">
+		    		<div class="box-type03">
+		    			<div class="row form-row">
+		    				<div class="form-group col s12 l6 xl2">
+		    					<label for="pSearchGb" class="label-type01 required">검색기간 구분</label> 
+		    					<select id="pSearchGb" name="pSearchGb" class="size-m">
+		    						<option value="1">년도</option> 
+		    						<option value="2">기간</option>
+		    					</select>
+		    				</div> 
+		    				<div class="form-group col s12 xl2" style="">
+		    					<label for="pCheoriYear" class="label-type01">마일리지 처리 년도</label> 
+		    					<input type="text" id="pCheoriYear" name="pCheoriYear" class="size-m">
+		    				</div> 
+		    				<div class="form-group col s12 xl4" style="display: none;">
+		    					<label for="pCheoriFrdt" class="label-type01 required">마일리지 처리 일자</label> 
+		    					<div class="row form-row">
+		    						<div class="form-group col s12 l6">
+				    					<div class="date-form-wrap">
+				    						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    						<div class="date-form-wrap date-picker-root">
+				    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    							<input type="text" class="size-m"> <!---->
+				    						</div> 
+				    						<input type="hidden" id="pCheoriFrdt" name="pCheoriFrdt" value="20200101">
+				    					</div>
+		    						</div> 
+				    				<div class="form-group col s12 l6">
+				    					<div class="date-form-wrap">
+				    						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    						<div class="date-form-wrap date-picker-root">
+				    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    							<input type="text" class="size-m"> <!---->
+				    						</div> 
+				    						<input type="hidden" id="pCheoriTodt" name="pCheoriTodt" value="20201231">
+				    					</div>
+				    				</div>
+		    					</div>
+		    				</div> 
+		    				<div class="form-group col s12 l6 xl2">
+		    					<label for="pMileageStatusGb" class="label-type01">마일리지 상태 구분</label> 
+		    					<select id="pMileageStatusGb" name="pMileageStatusGb" class="size-m">
+			    					<option value="">- 전체 -</option>
+			    					<option value="01">적립</option>
+			    					<option value="03">적립취소</option>
+			    					<option value="04">차감</option>
+			    					<option value="05">차감취소</option>
+		    						<option value="06">미지급 정산</option>
+		    					</select>
+		    				</div> 
+		    				<div class="form-group col s12 l6 xl4">
+		    					<label for="pMileageGoodsNm" class="label-type01">마일리지/상품 명</label> 
+		    					<input type="text" id="pMileageGoodsNm" name="pMileageGoodsNm" class="size-m">
+		    				</div>
+		    			</div>
+		    		</div> 
+		    		<div class="row form-row">
+		    			<div class="form-group col s12 l5">
+		    				<span class="board-info-txt size-m">총 <span>0</span>건의 마일리지 내역이 있습니다.(<span>0</span> / 0)</span>
+		    			</div> 
+		    			<div class="form-group col s12 l7 col-inline right">
+		    				<a href="#!" class="btn type01 size-m">검색</a>
+		    			</div>
+		    		</div> 
+		    		<table id="tab1Loading" class="table-type05 response">
+		    			<caption>마일리지 내역의 내역, 처리일자, 마일리지 포인트, 상태를 안내하는 표 입니다.</caption> 
+			    		<colgroup>
+			    			<col> 
+			    			<col width="15%"> 
+			    			<col width="15%"> 
+			    			<col width="15%"> 
+			    			<col width="8%">
+			    		</colgroup>  
+			    		<tbody>
+			    			<tr>
+			    				<td colspan="100" data-header="검색결과 없음">검색결과가 없습니다.</td>
+			    			</tr>
+			    		</tbody>
+			    	</table> <!---->
+			    </div> 
+			    <div id="tab2" class="tab-content" style="display: none;">
+			    	<div class="box-type03">
+			    		<div class="row form-row">
+			    			<div class="form-group col s12 l6 xl2">
+			    				<label for="pSearchGb" class="label-type01 required">검색기간 구분</label> 
+			    				<select id="pSearchGb" name="pSearchGb" class="size-m">
+			    					<option value="1">년도</option> 
+			    					<option value="2">기간</option>
+			    				</select>
+			    			</div> 
+			    			<div class="form-group col s12 xl2" style="">
+			    				<label for="pCheoriYear" class="label-type01">마일리지 처리 년도</label> 
+			    				<input type="text" id="pCheoriYear" name="pCheoriYear" class="size-m">
+			    			</div> 
+			    			<div class="form-group col s12 xl4" style="display: none;">
+			    				<label for="pCheoriFrdt" class="label-type01 required">마일리지 처리 일자</label> 
+			    				<div class="row form-row">
+			    					<div class="form-group col s12 l6">
+			    						<div class="date-form-wrap">
+			    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    							<div class="date-form-wrap date-picker-root">
+			    								<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    								<input type="text" class="size-m"> <!---->
+			    							</div> 
+			    							<input type="hidden" id="pCheoriFrdt" name="pCheoriFrdt" value="20200101">
+			    						</div>
+			    					</div> 
+			    					<div class="form-group col s12 l6">
+			    						<div class="date-form-wrap">
+			    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    							<div class="date-form-wrap date-picker-root">
+			    								<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    								<input type="text" class="size-m"> <!---->
+			    							</div> 
+			    							<input type="hidden" id="pCheoriTodt" name="pCheoriTodt" value="20201231">
+			    						</div>
+			    					</div>
+			    				</div>
+			    			</div> 
+			    			<div class="form-group col s12 l6 xl2">
+			    				<label for="pSincheongStatusGb" class="label-type01">신청 상태 구분</label> 
+			    				<select id="pSincheongStatusGb" name="pSincheongStatusGb" class="size-m">
+			    					<option value="">- 전체 -</option>
+			    					<option value="10">신청</option>
+			    					<option value="21">승인 취소</option>
+			    					<option value="20">승인</option>
+			    					<option value="30">반려</option>
+			    					<option value="40">지급</option>
+			    				</select>
+			    			</div> 
+			    			<div class="form-group col s12 l6 xl4">
+			    				<label for="pGoodsNm" class="label-type01">상품 명</label> 
+			    				<input type="text" id="pGoodsNm" name="pGoodsNm" class="size-m">
+			    			</div>
+			    		</div>
+			    	</div> 
+			    	<div class="row form-row">
+			    		<div class="form-group col s12 l5">
+			    			<span class="board-info-txt size-m">총 <span>0</span>건의 상품신청 내역이 있습니다. (<span>0</span> / 0)</span>
+			    		</div> 
+			    		<div class="form-group col s12 l7 col-inline right">
+			    			<a href="#!" class="btn type01 size-m">검색</a>
+			    		</div>
+			    	</div> 
+			    	<table id="tab2Loading" class="table-type05 response">
+			    		<caption>상품신청 내역의 내역, 신청일자, 마일리지 포인트, 상태를 안내하는 표 입니다.</caption> 
+			    		<colgroup>
+			    			<col> 
+			    			<col width="30%"> 
+			    			<col width="13%"> 
+			    			<col width="15%"> 
+			    			<col width="8%">
+			    		</colgroup>  
+			    		<tbody>
+			    			<tr>
+			    				<td colspan="100" data-header="검색결과 없음">검색결과가 없습니다.</td>
+			    			</tr>
+			    		</tbody>
+			    	</table> <!---->
+			    </div>
+			</div>
+		</div>
+		
+		<div id="tab22" class="tab-content2" style="display:none;">
+		    <div class="mileage-stu-top">
+		        <div class="row form-row">
+		            <div class="form-group col s12 l12 xl6">            
+		                <div class="user-info-box">
+		                    <div class="photo-line">
+		                        <span class="photo"><!-- <img src="/service/design/images/mileage/counsel_main_photo04.jpg" alt=""> --></span>
+		                    </div>
+		                    <span class="name">강수민</span>
+		                    <span class="mileage"><span class="initial">M</span><span class="num">15,000</span>포인트</span>
+		                </div>
+		            </div>
+		            <div class="form-group col s12 l12 xl6">                                     
+		                <div class="user-info-box f-right">
+		                    <ul class="info-list">
+		                        <li>codefarm@codefarm.co.kr</li>
+		                        <li>수라임</li>
+		                        <li>코드팜</li>
+		                    </ul>
+		                    <!-- <div class="btn-line">
+		                        <a href="#!" class="btn-myinfo">개인정보관리</a>
+		                    </div> --->
+		                </div>                              
+		            </div>
+		        </div>
+		    </div>
+		    <div class="tab-outter">
+		    	<div class="tab-type04">
+		    		<div class="tab-inner">
+		    			<div rel="tab1">
+		    				<a href="#!" class="active">마일리지 내역</a>
+		    			</div> 
+		    			<div rel="tab2">
+		    				<a href="#!" class="">상품신청 내역</a>
+		    			</div>
+		    		</div>
+		    	</div>
+		    </div>
+		    <div class="tab-container">
+		    	<div id="tab1" class="tab-content">
+		    		<div class="box-type03">
+		    			<div class="row form-row">
+		    				<div class="form-group col s12 l6 xl2">
+		    					<label for="pSearchGb" class="label-type01 required">검색기간 구분</label> 
+		    					<select id="pSearchGb" name="pSearchGb" class="size-m">
+		    						<option value="1">년도</option> 
+		    						<option value="2">기간</option>
+		    					</select>
+		    				</div> 
+		    				<div class="form-group col s12 xl2" style="">
+		    					<label for="pCheoriYear" class="label-type01">마일리지 처리 년도</label> 
+		    					<input type="text" id="pCheoriYear" name="pCheoriYear" class="size-m">
+		    				</div> 
+		    				<div class="form-group col s12 xl4" style="display: none;">
+		    					<label for="pCheoriFrdt" class="label-type01 required">마일리지 처리 일자</label> 
+		    					<div class="row form-row">
+		    						<div class="form-group col s12 l6">
+				    					<div class="date-form-wrap">
+				    						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    						<div class="date-form-wrap date-picker-root">
+				    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    							<input type="text" class="size-m"> <!---->
+				    						</div> 
+				    						<input type="hidden" id="pCheoriFrdt" name="pCheoriFrdt" value="20200101">
+				    					</div>
+		    						</div> 
+				    				<div class="form-group col s12 l6">
+				    					<div class="date-form-wrap">
+				    						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    						<div class="date-form-wrap date-picker-root">
+				    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+				    							<input type="text" class="size-m"> <!---->
+				    						</div> 
+				    						<input type="hidden" id="pCheoriTodt" name="pCheoriTodt" value="20201231">
+				    					</div>
+				    				</div>
+		    					</div>
+		    				</div> 
+		    				<div class="form-group col s12 l6 xl2">
+		    					<label for="pMileageStatusGb" class="label-type01">마일리지 상태 구분</label> 
+		    					<select id="pMileageStatusGb" name="pMileageStatusGb" class="size-m">
+			    					<option value="">- 전체 -</option>
+			    					<option value="01">적립</option>
+			    					<option value="03">적립취소</option>
+			    					<option value="04">차감</option>
+			    					<option value="05">차감취소</option>
+		    						<option value="06">미지급 정산</option>
+		    					</select>
+		    				</div> 
+		    				<div class="form-group col s12 l6 xl4">
+		    					<label for="pMileageGoodsNm" class="label-type01">마일리지/상품 명</label> 
+		    					<input type="text" id="pMileageGoodsNm" name="pMileageGoodsNm" class="size-m">
+		    				</div>
+		    			</div>
+		    		</div> 
+		    		<div class="row form-row">
+		    			<div class="form-group col s12 l5">
+		    				<span class="board-info-txt size-m">총 <span>0</span>건의 마일리지 내역이 있습니다.(<span>0</span> / 0)</span>
+		    			</div> 
+		    			<div class="form-group col s12 l7 col-inline right">
+		    				<a href="#!" class="btn type01 size-m">검색</a>
+		    			</div>
+		    		</div> 
+		    		<table id="tab1Loading" class="table-type05 response">
+		    			<caption>마일리지 내역의 내역, 처리일자, 마일리지 포인트, 상태를 안내하는 표 입니다.</caption> 
+			    		<colgroup>
+			    			<col> 
+			    			<col width="15%"> 
+			    			<col width="15%"> 
+			    			<col width="15%"> 
+			    			<col width="8%">
+			    		</colgroup>  
+			    		<tbody>
+			    			<tr>
+			    				<td colspan="100" data-header="검색결과 없음">검색결과가 없습니다.</td>
+			    			</tr>
+			    		</tbody>
+			    	</table> <!---->
+			    </div> 
+			    <div id="tab2" class="tab-content">
+			    	<div class="box-type03">
+			    		<div class="row form-row">
+			    			<div class="form-group col s12 l6 xl2">
+			    				<label for="pSearchGb" class="label-type01 required">검색기간 구분</label> 
+			    				<select id="pSearchGb" name="pSearchGb" class="size-m">
+			    					<option value="1">년도</option> 
+			    					<option value="2">기간</option>
+			    				</select>
+			    			</div> 
+			    			<div class="form-group col s12 xl2" style="">
+			    				<label for="pCheoriYear" class="label-type01">마일리지 처리 년도</label> 
+			    				<input type="text" id="pCheoriYear" name="pCheoriYear" class="size-m">
+			    			</div> 
+			    			<div class="form-group col s12 xl4" style="display: none;">
+			    				<label for="pCheoriFrdt" class="label-type01 required">마일리지 처리 일자</label> 
+			    				<div class="row form-row">
+			    					<div class="form-group col s12 l6">
+			    						<div class="date-form-wrap">
+			    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    							<div class="date-form-wrap date-picker-root">
+			    								<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    								<input type="text" class="size-m"> <!---->
+			    							</div> 
+			    							<input type="hidden" id="pCheoriFrdt" name="pCheoriFrdt" value="20200101">
+			    						</div>
+			    					</div> 
+			    					<div class="form-group col s12 l6">
+			    						<div class="date-form-wrap">
+			    							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    							<div class="date-form-wrap date-picker-root">
+			    								<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> 
+			    								<input type="text" class="size-m"> <!---->
+			    							</div> 
+			    							<input type="hidden" id="pCheoriTodt" name="pCheoriTodt" value="20201231">
+			    						</div>
+			    					</div>
+			    				</div>
+			    			</div> 
+			    			<div class="form-group col s12 l6 xl2">
+			    				<label for="pSincheongStatusGb" class="label-type01">신청 상태 구분</label> 
+			    				<select id="pSincheongStatusGb" name="pSincheongStatusGb" class="size-m">
+			    					<option value="">- 전체 -</option>
+			    					<option value="10">신청</option>
+			    					<option value="21">승인 취소</option>
+			    					<option value="20">승인</option>
+			    					<option value="30">반려</option>
+			    					<option value="40">지급</option>
+			    				</select>
+			    			</div> 
+			    			<div class="form-group col s12 l6 xl4">
+			    				<label for="pGoodsNm" class="label-type01">상품 명</label> 
+			    				<input type="text" id="pGoodsNm" name="pGoodsNm" class="size-m">
+			    			</div>
+			    		</div>
+			    	</div> 
+			    	<div class="row form-row">
+			    		<div class="form-group col s12 l5">
+			    			<span class="board-info-txt size-m">총 <span>0</span>건의 상품신청 내역이 있습니다. (<span>0</span> / 0)</span>
+			    		</div> 
+			    		<div class="form-group col s12 l7 col-inline right">
+			    			<a href="#!" class="btn type01 size-m">검색</a>
+			    		</div>
+			    	</div> 
+			    	<table id="tab2Loading" class="table-type05 response">
+			    		<caption>상품신청 내역의 내역, 신청일자, 마일리지 포인트, 상태를 안내하는 표 입니다.</caption> 
+			    		<colgroup>
+			    			<col> 
+			    			<col width="30%"> 
+			    			<col width="13%"> 
+			    			<col width="15%"> 
+			    			<col width="8%">
+			    		</colgroup>  
+			    		<tbody>
+			    			<tr>
+			    				<td colspan="100" data-header="검색결과 없음">검색결과가 없습니다.</td>
+			    			</tr>
+			    		</tbody>
+			    	</table> <!---->
+			    </div>
+			</div>
+		</div>
+	</div>
+    
+</section>
+
+<script>
+    
+</script>
+            

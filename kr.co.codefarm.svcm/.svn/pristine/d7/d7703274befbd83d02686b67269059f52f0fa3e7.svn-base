@@ -1,0 +1,918 @@
+<script type="text/javascript" src="/app-assets/js/api/amanager/codemgmt.api.js"></script>
+<script type="text/javascript" src="/app-assets/js/api/amanager/commonsearch.api.js"></script>
+
+
+<h3 style="margin-top:-20px;">자산관리 설정 > 설정 > 내부시스템관리 > <strong>공통코드관리</strong></h3>
+<section class="sub_cont_box" id="app" style="margin-top:10px;">
+	<section class="cont_box" v-if="!mainList1.currentRow && !mainList2.currentRow">
+			<!-- 테이블 영역 -->
+			<section class="row">
+				
+				<!-- 공통코드 테이블 -->
+				<div class="form-group col s12 l5">
+					<div class="box-type03">
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1; min-height: 74px; display: flex; align-items: center;">
+								<span class="board-info-txt size-s">총 <span>{{mainListPaging1.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging1.getCurrentPage()}}</span> / {{mainListPaging1.getTotalPage()}})</span>
+							</div>
+						</div>
+						<perfect-scrollbar style="max-height: 700px;">
+						<table class="table-type01 response" id="datas-reponsive">
+							<caption></caption>
+							<thead class="thead-fixed">
+								<tr>
+									<th><input type="checkbox" v-model="selectAll1" @change="toggleSelectAll1"/></th>
+									<th scope="col">No</th>
+									<th scope="col" @click="sort('CODE_ID')" class="sortable"><span :class="sortIcon('CODE_ID')"></span>공통코드</th>
+									<th scope="col" @click="sort('CODE_ID_NM')" class="sortable"><span :class="sortIcon('CODE_ID_NM')"></span>공통코드명</th>
+								</tr>
+							</thead>
+							<tbody v-if="sortedData1.length > 0">
+								<tr v-for="(item, index) in sortedData1" v-if="mainList1.getRowType(index) != 8" :key="index">
+									<td><input type="checkbox" v-model="selectedRows1[index]"/></td>
+									<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)">{{ index + 1 }}</a></td>
+									<td data-header="공통코드" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)">{{ item.CODE_ID }}</a></td>
+									<td data-header="공통코드명" style="text-align: left;"><a href="#!" @click="toggleCheckbox1(index)">{{ item.CODE_ID_NM }}</a></td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						</perfect-scrollbar>
+						<!-- 페이지당 Row 선택 드랍다운 메뉴 -->
+						<div class="col s12 l12" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 10px;">
+							<div class="col s2" style="margin-top: -2px;">
+								<select class="size-s" v-model="pageSize1" @change="changePageSize(1)" name="pageSize1" id="pageSize1">
+									<option v-for="sizeOption in pageSizes" :value="sizeOption">{{ sizeOption }} 건</option>
+								</select>
+							</div>
+							<span style="margin-left: 10px; margin-bottom: 0;">/ 페이지당</span>
+						</div>
+						<paging :pagingset="mainListPaging1" :type="'normal'"></paging>
+					</div>
+				</div>
+				
+				<!-- 공통코드 상세 테이블 -->
+				<div class="form-group col s12 l5">
+					<div class="box-type03">
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1;">
+								<span class="board-info-txt size-s">총 <span>{{mainListPaging2.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging2.getCurrentPage()}}</span> / {{mainListPaging2.getTotalPage()}})</span>
+							</div>
+							<div class="col-inline btn-line right">
+								<label class="label-type01 size-s" for="pUseAt">사용여부</label>
+								<select class="size-s" name="pUseAt" id="pUseAt" v-model="pUseAt" @change="setmainList2">
+									<option value="ALL">-전체-</option>
+									<option value="Y">사용</option>
+									<option value="N">미사용</option>
+								</select>
+								<a href="#!" class="btn type04 size-s left-icon icon-more" @click="newRow2" style="margin-right: 5px;">입력</a>
+								<a href="#!" class="btn type04 size-s left-icon icon-edit" @click="rowCheckClick2()" style="margin-right: 5px;">수정</a>
+							</div>
+						</div>
+						<perfect-scrollbar style="max-height: 700px;">
+						<table class="table-type01 response" id="datas-reponsive">
+							<caption></caption>
+							<thead class="thead-fixed">
+								<tr>
+									<th><input type="checkbox" v-model="selectAll2" @change="toggleSelectAll2"/></th>
+									<th scope="col">No</th>
+									<th scope="col" @click="sort('CODE')" class="sortable"><span :class="sortIcon('CODE')"></span>상세코드</th>
+									<th scope="col" @click="sort('CODE_NM')" class="sortable"><span :class="sortIcon('CODE_NM')"></span>상세코드명</th>
+									<th scope="col" @click="sort('CODE_DC')" class="sortable"><span :class="sortIcon('CODE_DC')"></span>상세코드설명</th>
+									<th scope="col" @click="sort('USE_AT_NM')" class="sortable"><span :class="sortIcon('USE_AT_NM')"></span>사용여부</th>
+									<th scope="col" @click="sort('ORDER_SEQ')" class="sortable"><span :class="sortIcon('ORDER_SEQ')"></span>정렬순번</th>
+									<th scope="col" @click="sort('FRST_REGIST_PNTTM')" class="sortable"><span :class="sortIcon('FRST_REGIST_PNTTM')"></span>등록일자</th>
+								</tr>
+							</thead>
+							<tbody v-if="sortedData2.length > 0">
+								<tr v-for="(item, index) in sortedData2" v-if="mainList2.getRowType(index) != 8" :key="index">
+									<td><input type="checkbox" v-model="selectedRows2[index]"/></td>
+									<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ index + 1 }}</a></td>
+									<td data-header="상세코드" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.CODE }}</a></td>
+									<td data-header="상세코드명" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.CODE_NM }}</a></td>
+									<td data-header="상세코드설명" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.CODE_DC }}</a></td>
+									<td data-header="사용여부" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.USE_AT_NM }}</a></td>
+									<td data-header="정렬순번" style="text-align: left;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.ORDER_SEQ }}</a></td>
+									<td data-header="등록일자" style="text-align: left;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.FRST_REGIST_PNTTM ? formatTimestamp(item.FRST_REGIST_PNTTM) : '' }}</a></td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						</perfect-scrollbar>
+						<!-- 페이지당 Row 선택 드랍다운 메뉴 -->
+						<div class="col s12 l12" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 10px;">
+							<div class="col s2" style="margin-top: -2px;">
+								<select class="size-s" v-model="pageSize2" @change="changePageSize(2)" name="pageSize2" id="pageSize2">
+									<option v-for="sizeOption in pageSizes" :value="sizeOption">{{ sizeOption }} 건</option>
+								</select>
+							</div>
+							<span style="margin-left: 10px; margin-bottom: 0;">/ 페이지당</span>
+						</div>
+						<paging :pagingset="mainListPaging2" :type="'normal'"></paging>
+					</div>
+				</div>
+			</section>
+		</section>
+		
+		
+		<!-- 공통코드관리 상세 입력/수정 화면 -->
+		<section class="cont_box" v-if="mainList2.currentRow && mainList2.rowposition !== null">
+			<h3 class="h3" v-if="mainList2.getRowType(mainList2.rowposition) == ROWTYPE_INSERT">공통코드관리(입력)</h3>
+			<h3 class="h3" v-if="mainList2.getRowType(mainList2.rowposition) == ROWTYPE_NORMAL || mainList2.getRowType(mainList2.rowposition) == ROWTYPE_UPDATE">공통코드관리(수정)</h3>
+			<div class="box-type04">
+				<div class="form-group row">
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="codeCd">상세코드</label>
+						<input type="text" class="size-m" id="codeCd" name="codeCd" data-vv-as="상세코드" v-model="mainList2.currentRow.CODE" :disabled="mainList2.getRowType(mainList2.rowposition) !== ROWTYPE_INSERT">
+					</div>
+					
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="codeNm">상세코드명</label>
+						<input type="text" class="size-m" id="codeNm" name="codeNm" data-vv-as="상세코드명" v-model="mainList2.currentRow.CODE_NM">
+					</div>
+
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="orderSeq">정렬순번</label>
+						<input type="text" class="size-m" id="orderSeq" name="orderSeq" data-vv-as="정렬순번" v-model="mainList2.currentRow.ORDER_SEQ">
+					</div>
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="useAt">사용여부</label>
+						<select class="size-s" name="useAt" id="useAt" v-model="mainList2.currentRow.USE_AT">
+							<option value="Y">사용</option>
+							<option value="N">미사용</option>
+						</select>
+					</div>
+					<div class="col s12 m12 l2">
+						<label class="label-type01 size-m" for="codeDc">상세코드설명</label>
+						<input type="text" class="size-m" id="codeDc" name="codeDc" data-vv-as="상세코드설명" v-model="mainList2.currentRow.CODE_DC">
+					</div>
+				</div>
+			</div>
+			
+			<div class="btn-line right">
+				<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow2">저장</a>
+				<a href="#!" class="btn type01 size-m left-icon icon-close" @click="closeMainList2">닫기</a>
+			</div>
+		</section>
+		
+	
+		<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+	
+</section>
+		
+<script type="text/javascript">
+
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+ 	el: '#app',
+ 	
+ 	/* 사용할 데이터 */
+ 	data: function() {
+ 		return {
+		mainList1: new Dataset(),
+		mainList2: new Dataset(),
+		initialState: {
+			pUseAt: 'ALL',
+		},
+		pUseAt: 'ALL',
+		sortKey: '',
+		sortOrders: {
+			CODE_ID: 'ASC',
+			CODE_ID_NM: 0,
+			CODE: 'ASC',
+			CODE_NM: 0,
+			CODE_DC: 0,
+			USE_AT_NM: 0,
+			ORDER_SEQ: 0,
+			FRST_REGIST_PNTTM: 0,
+		},
+		messageModal: new ModalSet('acqmgmt-modal'),
+		mainListPaging1: new PagingSet(10,100),
+		mainListPaging2: new PagingSet(10,100),
+		pageSizes: [100, 300, 500, 1000, 5000],
+		pageSize1: 100,
+		pageSize2: 100,
+		size: 100,
+		selectAll1: false,
+		selectedRows1: [],
+		currentSelectedIndex1: null,
+		selectAll2: false,
+		selectedRows2: [],
+		currentSelectedIndex2: null,
+		};
+	},
+	
+	/* 생성 될 때 */
+	beforeCreate: function(){
+	},
+	
+	/* 계산된 속성 포현 시 */
+	computed: {
+		formattedFrstRegistPnttm: {
+			get() {
+				return this.mainList2.currentRow && this.mainList2.currentRow.FRST_REGIST_PNTTM
+					? this.formatTimestamp(this.mainList2.currentRow.FRST_REGIST_PNTTM)
+					: '';
+			},
+			set(value) {
+				if (this.mainList2.currentRow) {
+					this.mainList2.currentRow.FRST_REGIST_PNTTM = value.replace(/-/g, '');
+				}
+			}
+		},
+	
+		/* 테이블 정렬 추적 */
+		sortedData1() {
+			if (this.sortKey) {
+				return this.mainList1.data.slice().sort((a, b) => {
+					let result = 0;
+					if (a[this.sortKey] > b[this.sortKey]) {
+						result = 1;
+					} else if (a[this.sortKey] < b[this.sortKey]) {
+						result = -1;
+					}
+					return result * (this.sortOrders[this.sortKey] === 'ASC' ? 1 : -1);
+				});
+			} else {
+				return this.mainList1.data;
+			}
+		},
+		
+		sortedData2() {
+			if (this.sortKey) {
+				return this.mainList2.data.slice().sort((a, b) => {
+					let result = 0;
+					if (a[this.sortKey] > b[this.sortKey]) {
+						result = 1;
+					} else if (a[this.sortKey] < b[this.sortKey]) {
+						result = -1;
+					}
+					return result * (this.sortOrders[this.sortKey] === 'ASC' ? 1 : -1);
+				});
+			} else {
+				return this.mainList2.data;
+			}
+		},
+	},
+	
+	filters: {
+		dateFormatter: function (value) {
+			if (!value) return '';
+			return value.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+		}
+	},
+	
+	/* 데이터 감시 */
+	watch: {
+		'mainList1.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList1.enableevent){
+					var changeYn = this.mainList1.dataCompare(oldVal);
+					var rowType = this.mainList1.getRowType(val);
+
+					if(!changeYn){
+						this.mainList1.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList1.data': {
+			handler: function (val, oldVal) {
+				if (this.mainList1.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.mainList1.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.mainList1.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+		
+		'mainListPaging1.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList1(null, val)
+			}
+		},
+		
+		'mainList2.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList2.enableevent){
+					var changeYn = this.mainList2.dataCompare(oldVal);
+					var rowType = this.mainList2.getRowType(val);
+
+					if(!changeYn){
+						this.mainList2.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList2.data': {
+			handler: function (val, oldVal) {
+				if (this.mainList2.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.mainList2.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.mainList2.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+		
+		'mainListPaging2.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList2(null, val)
+			}
+		},
+
+	},
+	
+	/* 마운트 된 시험수행 */
+	mounted: function(){
+		this.setmainList1();
+		document.addEventListener('keydown', this.handleEscKey);
+
+	},
+	
+	beforeDestroy() {
+		document.removeEventListener('keydown', this.handleEscKey);	
+		
+	},
+	
+	/* 함수 */
+	methods: {
+		setmainList1: function (e, pPageNo, index) {
+			if (isNull(e) || e.keyCode == 13 || e.type == 'click') {
+
+				var pageNo = pPageNo;
+				var rowCount = this.mainListPaging1.getRowCnt();
+
+				if (isNull(pageNo)) pageNo = 1;
+				if (isNull(rowCount)) rowCount = 50;
+
+				var param = {
+					'pPageNo': pageNo,
+					'pRowCount': rowCount
+				};
+
+				var self = this;
+
+				var returnVal = codeMgmtApi.getCodeMgmtList(param, true);
+
+				returnVal.then(function (response) {
+					self.mainList1.setData(response.data);
+
+					if (self.mainList1.getRowCount() > 0) {
+						var totalCnt = self.mainList1.data[0].TOTAL_CNT;
+						self.mainListPaging1.setTotalCnt(totalCnt);
+					} else {
+						self.mainListPaging1.setTotalCnt(0);
+					}
+
+				});
+			}
+		},
+
+		setmainList2: function (e, pPageNo) {
+			var index = this.currentSelectedIndex1;
+			var codeId = this.mainList1.data[index].CODE_ID;
+			var pUseAt = this.pUseAt;
+			var pageNo = pPageNo;
+			var rowCount = this.mainListPaging2.getRowCnt();
+
+			if (isNull(codeId)) codeId = '';
+			if (isNull(pUseAt)) pUseAt = '';
+			if (isNull(pageNo)) pageNo = 1;
+			if (isNull(rowCount)) rowCount = 50;
+
+			var param = {
+				'codeId': codeId,
+				'pUseAt': pUseAt,
+				'pPageNo': pageNo,
+				'pRowCount': rowCount
+			};
+
+			var self = this;
+			var returnVal = codeMgmtApi.getCodeMgmtListDetail(param, true);
+
+			returnVal.then(function (response) {
+				self.mainList2.setData(response.data);
+
+				if (self.mainList2.getRowCount() > 0) {
+					var totalCnt = self.mainList2.data[0].TOTAL_CNT;
+					self.mainListPaging2.setTotalCnt(totalCnt);
+				} else {
+					self.mainListPaging2.setTotalCnt(0);
+				}
+			});
+		},
+
+		/* 입력/수정 페이지 닫기 버튼 클릭시 */
+		closeMainList2() {
+			// 이전에 선택된 인덱스 저장
+			const previousSelectedIndex = this.currentSelectedIndex2;
+			this.mainList2.currentRow = null;
+			this.mainList2.rowposition = null;
+			if (this.currentSelectedIndex1 !== null) {
+				this.setmainList2(null, this.mainListPaging2.currentPage);  // 현재 페이지 유지
+			} else {
+				this.setmainList2(null, 1);  // 선택된 행이 없을 경우 첫 페이지로 검색
+			}
+			if (previousSelectedIndex !== null) {
+				this.$set(this.selectedRows2, previousSelectedIndex, true);  // 이전에 선택된 행을 다시 선택
+			}
+		},
+
+
+		/* 공통코드 상세 리스트 신규행 추가 */
+		newRow2: function () {
+			var checkedIndex = this.selectedRows1.findIndex(row => row === true);
+			if (checkedIndex === -1) {
+				this.messageModal.openModal('message', '선택된 코드 없음', '공통코드를 선택해주세요.', 'small', '', '');
+				return;
+			}
+
+			const selectedRow = this.mainList1.data[checkedIndex];
+			if (selectedRow) {
+				var addObj = {
+					'CODE_ID': selectedRow.CODE_ID,
+					'CODE': '',
+					'CODE_NM': '',
+					'CODE_DC': '',
+					'USE_AT': 'Y',
+					'ORDER_SEQ': '',
+					'FRST_REGIST_PNTTM': '',
+					'FRST_REGISTER_ID': '',
+					'LAST_UPDT_PNTTM': '',
+					'LAST_UPDUSR_ID': '',
+					'AGENCY_ID': '',
+				};
+
+				var newRowPosition = this.mainList2.addRow(addObj);
+				this.currentSelectedIndex1 = checkedIndex;  // 현재 선택된 인덱스를 저장
+			} else {
+				this.messageModal.openModal('message', '선택된 코드 없음', '공통코드를 선택해주세요.', 'small', '', '');
+			}
+		},
+
+		/* 공통코드 상세 리스트 저장,수정 */
+		saveRow2: function () {
+			// 필수 입력 항목 검증
+			if (!this.mainList2.currentRow.CODE) {
+				this.messageModal.openModal('message', '상세코드 미입력', '상세코드(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+			if (!this.mainList2.currentRow.CODE_NM) {
+				this.messageModal.openModal('message', '상세코드명 미입력', '상세코드명(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+			if (!this.mainList2.currentRow.ORDER_SEQ) {
+				this.messageModal.openModal('message', '정렬순번 미입력', '정렬순번(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function (response) {
+				if (response) {
+					const OrderSeqRequestData = {
+						CODE_ID: self.mainList2.currentRow.CODE_ID,
+						CODE: self.mainList2.currentRow.CODE,
+						ORDER_SEQ: self.mainList2.currentRow.ORDER_SEQ,
+					};
+
+					// 정렬순번 중복 체크
+					codeMgmtApi.checkOrderSeq(OrderSeqRequestData)
+						.then(function (response) {
+							var data = response.data;
+
+							if (data && data.length > 0 && data[0].ORDER_SEQ_CHECK > 0) {
+								self.messageModal.openModal('message', '저장 오류', '사용중인 정렬순번입니다.', 'middle', '', '');
+								return;
+							}
+
+							// ROWTYPE_INSERT 인 경우
+							if (self.mainList2.getRowType(self.mainList2.rowposition) !== ROWTYPE_UPDATE) {
+								const codeListRequestData = {
+									CODE_ID: self.mainList2.currentRow.CODE_ID,
+									CODE_CD: self.mainList2.currentRow.CODE,
+								};
+
+								// 상세코드 중복 체크
+								codeMgmtApi.checkCodeList(codeListRequestData)
+									.then(function (response) {
+										var data = response.data;
+
+										if (data && data.length > 0 && data[0].CODE_CHECK > 0) {
+											self.messageModal.openModal('message', '저장 오류', '사용중인 상세코드입니다.', 'middle', '', '');
+											return;
+										}
+
+										// 중복 체크 통과 후 저장 로직 실행
+										proceedSaving();
+									})
+									.catch(function (error) {
+										console.error('중복 체크 또는 저장 절차 중 오류 발생:', error);
+										self.messageModal.openModal('message', '오류 발생', '중복 체크를 수행하는 도중 오류가 발생했습니다.', 'middle', '', '');
+									});
+							} else {
+								// 중복 체크 통과 후 저장 로직 실행
+								proceedSaving();
+							}
+						})
+						.catch(function (error) {
+							console.error('중복 체크 API 호출 중 오류 발생:', error);
+							self.messageModal.openModal('message', '오류 발생', '중복 체크를 수행하는 도중 오류가 발생했습니다.', 'middle', '', '');
+						});
+				} else {
+					notifySubmit('warning', 'CODEMGMT 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+			self.resetSelectedRows2();
+
+			function proceedSaving() {
+				const flags = {
+					USE_AT: 'USE_AT'
+				};
+
+				Object.keys(flags).forEach(flag => {
+					self.mainList2.currentRow[flag] = (self.mainList2.currentRow[flag] === 'Y' || self.mainList2.currentRow[flag] === true) ? 'Y' : 'N';
+				});
+
+				var rowposition = self.mainList2.rowposition;
+				var checkedIndex = self.selectedRows2.findIndex(row => row === true);
+				const selectedRow = self.mainList2.data[checkedIndex];
+				var rowType1 = self.mainList2.getRowType(rowposition);
+				var rowType2 = self.mainList2.getRowType(checkedIndex);
+				var returnVal = null;
+
+				if (rowType1 === ROWTYPE_INSERT || rowType2 === ROWTYPE_INSERT) {
+					returnVal = codeMgmtApi.insertCodeMgmtDetail(self.mainList2.currentRow, false);
+				} else if (rowType1 === ROWTYPE_UPDATE || rowType2 === ROWTYPE_UPDATE) {
+					returnVal = codeMgmtApi.updateCodeMgmtDetail(self.mainList2.currentRow, false);
+				} else {
+					notifySubmit('info', 'CODEMGMT 저장', '저장할 내역이 없습니다.', 'icon-message');
+				}
+
+				if (!isNull(returnVal)) {
+					returnVal.then(function (response) {
+						var data = response.data;
+						notifySubmit('success', 'CODEMGMT 저장', '저장이 완료되었습니다.', 'icon-save');
+						// 저장 후 인덱스를 전달
+						self.setmainList2(self.currentSelectedIndex1, self.mainListPaging2.currentPage, 0);
+
+						// 체크박스 해제
+						self.selectedRows1 = self.mainList1.data.map(() => false);
+						self.selectedRows2 = self.mainList2.data.map(() => false);
+					}).catch(function (error) {
+						notifySubmit('warning', 'CODEMGMT 저장', '저장에 실패하였습니다.', 'icon-caution');
+						console.error('저장실패:', error);
+					});
+				}
+			}
+		},
+		
+		/*  페이지 당 Row 선택 */
+		changePageSize: function(num) {
+			if(num==1){
+				this.mainListPaging1.setRowCnt(this.pageSize1);
+				this.setmainList1(null, 1);
+			} else if(num==2) {
+				this.mainListPaging2.setRowCnt(this.pageSize2);
+				this.setmainList2(null, 1);
+			}
+
+		},
+
+		/* 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+		},
+		
+		/* 수정버튼 클릭시 체크박스 선택 상태 확인 */
+		rowCheckClick2() {
+			const checkedIndex = this.selectedRows2.findIndex(row => row === true);
+			if (checkedIndex !== -1) {
+				const selectedRow = this.mainList2.data[checkedIndex];
+
+				this.mainList2.setRowType(checkedIndex, this.ROWTYPE_UPDATE);
+				this.mainList2.rowposition = checkedIndex;
+				this.mainList2.currentRow = this.mainList2.data[checkedIndex];
+			} else {
+				this.messageModal.openModal('message', '선택된 물품 없음', '수정할 물품규격번호를 선택 해주세요.', 'middle', '', '');
+			}
+		},
+		
+		
+		/* 특정 Row 더블클릭시 수정창 [index값 기준] open */
+		rowDbClick2: function(index){
+			var nRowType = this.mainList2.setRowType(0, this.ROWTYPE_UPDATE);
+			const selectedRow = this.mainList2.data[index];
+
+			if (!selectedRow) {
+				console.error("선택된 행이 유효하지 않습니다.");
+				return;
+			}
+			this.mainList2.selectRow(index);
+		},
+		
+		/* 메세지창 띄우기 */
+		messagePopup: function (pId, pData) {
+			console.log('messagePopup 호출됨', pId, pData); // 디버깅용 로그
+			let title = '확인';
+			let cont = '해당 작업을 수행하시겠습니까?';
+			const pGb = 'confirm';
+
+			switch (pId) {
+				case 'ROW_DELETE_CL':
+					title = '선택 및 적용';
+					cont = '선택된 물품코드를 삭제하시겠습니까?';
+					break;
+
+				case 'ROW_DELETE_STND':
+					title = '선택 및 적용';
+					cont = '선택된 규격명코드를 삭제하시겠습니까?';
+					break;
+			}
+			this.messageModal.openModal(pGb, title, cont, 'middle', pId, pData);
+		},
+		
+		/* 메시지 콜백 */
+		messagePopupCallback: function (pGb, pId, pData) {
+			if (pGb != 'confirm') return;
+
+			switch (pId) {
+				case 'ROW_DELETE_CL':
+					this.deleteRow1(pData);
+					break;
+				case 'ROW_DELETE_STND':
+					this.deleteRow2(pData);
+					break;
+			}
+		},
+		
+		/* 검색조건 초기화 */
+		resetFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialState)));
+		},
+
+		resetModalFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialModalState)));
+		},
+
+		/* 모달 레이어 팝업 Close */
+		closeModal(event) {
+			if (!this.mainList1.currentRow) {
+				modal_close('assetSearchModal');
+				this.search(event);
+			} else {
+				modal_close('assetSearchModal');
+			}
+		},
+
+		/* 체크박스 선택시 데이터 저장*/
+		toggleRowSelection1(index) {
+			if (this.selectedRows1.includes(index)) {
+				this.selectedRows1 = this.selectedRows1.filter(i => i !== index);
+				this.mainList1.deselectRow(index);
+			} else {
+				this.selectedRows1.push(index);
+				this.mainList1.selectRow(index);
+			}
+		},
+
+		toggleRowSelection2(index) {
+			if (this.selectedRows2.includes(index)) {
+				this.selectedRows2 = this.selectedRows2.filter(i => i !== index);
+				this.mainList2.deselectRow(index);
+			} else {
+				this.selectedRows2.push(index);
+				this.mainList2.selectRow(index);
+			}
+		},
+
+		/* 프로세스 적용 후 체크 선택 해제 */
+		resetSelectedRows1() {
+			this.selectedRows1 = [];
+			this.selectAll1 = false;
+		},
+		resetSelectedRows2() {
+			this.selectedRows2 = [];
+			this.selectAll2 = false;
+			this.currentSelectedIndex2 = null;  // 오른쪽 테이블의 선택된 인덱스 초기화
+		},
+
+		/* 행 클릭시 */
+		toggleCheckbox1(index) {
+			// 현재 선택되어있는 행이 존재할 시
+			if (this.currentSelectedIndex1 !== null && this.currentSelectedIndex1 !== index) {
+				// 이전에 선택된 행의 체크를 해제
+				this.$set(this.selectedRows1, this.currentSelectedIndex1, false);
+			}
+
+			this.$set(this.selectedRows1, index, !this.selectedRows1[index]);
+			this.currentSelectedIndex1 = index;  // 현재 선택된 인덱스를 업데이트
+
+			//const selectedRow = this.mainList1.data[index];
+			this.setmainList2(null, 1, this.currentSelectedIndex1)
+
+			// 오른쪽 테이블의 체크박스를 해제
+			this.resetSelectedRows2();
+		},
+
+		toggleCheckbox2(index) {
+			if (this.currentSelectedIndex2 !== null && this.currentSelectedIndex2 !== index) {
+				// 이전에 선택된 행의 체크를 해제
+				this.$set(this.selectedRows2, this.currentSelectedIndex2, false);
+			}
+
+			this.$set(this.selectedRows2, index, !this.selectedRows2[index]);
+			this.currentSelectedIndex2 = index;  // 현재 선택된 인덱스를 업데이트
+		},
+
+		/* 모든 체크박스 토글  */
+		toggleSelectAll1() {
+			this.selectedRows1 = this.mainList1.data.map(() => this.selectAll1);
+		},
+
+		toggleSelectAll2() {
+			this.selectedRows2 = this.mainList2.data.map(() => this.selectAll2);
+		},
+
+		/* ESC 버튼 다운시 핸들러 */
+		handleEscKey(event) {
+			if (event.key === 'Escape' || event.key === 'Esc') {
+				this.closeModal(event);
+			}
+		},
+		
+		formatTimestamp(timestamp) {
+			const date = new Date(timestamp);
+			const year = date.getFullYear();
+			const month = ('0' + (date.getMonth() + 1)).slice(-2);
+			const day = ('0' + date.getDate()).slice(-2);
+			const hours = ('0' + date.getHours()).slice(-2);
+			const minutes = ('0' + date.getMinutes()).slice(-2);
+			const seconds = ('0' + date.getSeconds()).slice(-2);
+			return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+		},
+
+		/* 테이블 정렬 상태값 적용 */
+		sort(key) {
+			if (this.sortKey === key) {
+				this.sortOrders[key] = this.sortOrders[key] === 'ASC' ? 'DESC' : 'ASC';
+			} else {
+				this.sortKey = key;
+				this.sortOrders = {
+					CODE_ID: 0,
+					CODE_ID_NM: 0,
+					CODE: 0,
+					CODE_NM: 0,
+					CODE_DC: 0,
+					USE_AT_NM: 0,
+					ORDER_SEQ: 0,
+					FRST_REGIST_PNTTM: 0,
+				};
+				this.sortOrders[key] = 'ASC';
+			}
+		},
+
+		/* 테이블 정렬 아이콘 */
+		sortIcon(key) {
+			if (this.sortOrders[key] === 'ASC') {
+				return 'icon-arrow3'; // 오름차순 아이콘
+			} else if (this.sortOrders[key] === 'DESC') {
+				return 'icon-arrow1'; // 내림차순 아이콘
+			} else {
+				return ''; // 초기 정렬 상태 아이콘
+			}
+		}
+
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+
+function handleNullValues(row) {
+	Object.keys(row).forEach(function (key) {
+		if (row[key] === '') {
+			row[key] = null;
+		}
+	});
+	return row;
+}
+
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+	
+</script>
+
+<!--*******************************************************************************************************************************************************************
+ * style start
+ *******************************************************************************************************************************************************************-->
+<style>
+	.thead-fixed {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background-color: #FFF;
+	}
+
+	.sub_cont_wrap {
+		width: 97%;
+		margin: 0 auto;
+		margin-top: 40px;
+		margin-bottom: 60px;
+	}
+
+	.sub_cont_wrap .sub_cont_box {
+		padding: 20px;
+		margin-bottom: 0px;
+	}
+
+	.row .col.l2 {
+		width: 20%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l4 {
+		width: 40%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l5 {
+		width: 50%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l6 {
+		width: 60%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	th,
+	td {
+		white-space: nowrap;
+		/* 텍스트 줄바꿈 방지 */
+		overflow: hidden;
+		/* 넘치는 텍스트 숨김 */
+		text-overflow: ellipsis;
+		/* 넘치는 텍스트에 "..." 표시 */
+	}
+
+	.sortable {
+		cursor: pointer;
+		transition: background-color 0.3s, color 0.3s;
+	}
+
+	.sortable:hover {
+		background-color: rgb(204, 204, 204);
+		color: #333;
+	}
+</style>
+
+<!--*******************************************************************************************************************************************************************
+ * style end
+ *******************************************************************************************************************************************************************-->

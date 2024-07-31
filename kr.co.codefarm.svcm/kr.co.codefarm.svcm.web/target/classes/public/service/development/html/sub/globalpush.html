@@ -1,0 +1,182 @@
+<link rel="stylesheet" type="text/css" href="/app/design/assets/css/ability.css" />
+<script type="text/javascript" src="/app-assets/js/api/sns/talk.api.js"></script>
+
+<h2>웹 소켓</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">전역 Push 테스트</h3>
+        <form>
+		<div class="box-type02">
+		    <div class="form-group row form-row">
+				<div class="form-group col s12 l6">
+		            <label for="sendId" class="label-type01">전송자 ID(푸시 수신 및 채팅명)</label>
+		            <input type="text" id="sendId" class="size-m" v-model="sendId" placeholder="전송자의  ID를 입력하세요.">
+		        </div>
+		        <div class="form-group col s12 l6">
+		            <label for="recvId" class="label-type01">수신자 ID(푸시 수신 및 채팅명)</label>
+		            <input type="text" id="recvId" class="size-m" v-model="recvId" placeholder="수신자의  ID를 입력하세요.">
+		        </div>
+		        <div class="form-group row form-row">
+				<div class="col s12 l12">
+					<label class="label-type01" for="jsonData">Push Data 입력(json타입)</label>
+				    <textarea rows="" cols="" class="size-m" id="jsonData"  name="jsonData" v-model="sendData" data-vv-as="전송데이터 " placeholder="전송할 데이터를 입력하세요.(JSON)"></textarea>					
+				</div>
+            </div>
+            <div class="form-group row form-row">
+				<div class="col s12 l12">
+					<div class="right">
+						<a href="#!" @click="pushData('normal')" class="btn type02 size-m">전송 - this.sendPushData('수신자ID','json Data')</a>
+						<a href="#!" @click="pushData('rest')" class="btn type02 size-m">전송(REST API[POST] /push-msg/{id} ) - talkApi.push('수신자ID','json Data')</a>
+					</div>					
+				</div>      
+            </div>
+         </div>
+		<perfect-scrollbar class="table-type01-wrap">
+	            <table id="result" class="table-type01 response">
+	     			<thead>
+		                <tr>
+		                    <th><div>Push 수신 리스트 - this.pushEvents (type : Array)</div></th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		            	<tr v-for="(item, index) in pushList">
+		            		<td>{{item}}</td>
+		            	</tr>
+		            </tbody>
+	            </table>
+	    </perfect-scrollbar>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     //사용할 데이터
+     data: {
+    	 sendId: null,
+    	 recvId: null,
+    	 sendData : '',
+    	 pushList: null
+     },
+     //마운트 된 시점수행
+     mounted: function(){
+    	 this.pushList = this.pushEvents;
+    	 this.sendId = this.session.USER_ID;
+    	 this.recvId = this.session.USER_ID;
+    	 this.setSampleData();
+     },
+     created: function(){
+    	 this.$nextTick(function() {
+    	
+    	    }); 
+     },
+     watch: {
+    	'pushList': {
+    		handler: function (val, oldVal) {
+
+    		}
+    	}
+     },
+     //함수
+     methods: {
+    	 pushData: function(pType) {
+    		 if(isNull(this.sendId) || isNull(this.recvId)) {
+    			 alert('전송 및 수신 ID를 입력해주세요!');
+    			 return;
+    		 }
+    		 
+    		 if(isNull(this.sendData)) {
+    			 alert('전송할 데이터를 입력해주세요! (json타입)');
+    			 return;
+    		 }
+    		 
+    		 var obj = JSON.parse(this.sendData);
+    		 var srvDttm = this.getSrvTime();		//테스트용
+    		 
+    		 obj['openYn'] = 'N';
+    		 obj['sendDttm'] = srvDttm;
+    		 obj['sendId'] = this.sendId;
+    		 
+    		 //console.log(obj);
+    		 
+    		 switch(pType) {
+	    		 case 'normal':
+	    			 this.sendPushData(this.recvId, obj);			//Push - JS function Send
+	    			 break;
+	    		 case 'rest':
+	    			 talkApi.push(this.recvId, obj);				//Push - REST API(POST Method) Send Test
+	    			 break;
+    		 }
+    	 },
+    	 setSampleData: function() {
+    		 this.sendData = 
+    			 JSON.stringify({ targetGb: "01", alarmGb: "04", title: "(제목)테스트 알림이 왔습니다!!!", contents: "(내용)테스트 알림이 왔습니다!!!!!!!!!!!!!!!!!!", 
+    				 				data01: "data01", data02: "data02", data03: "data03", data04: "data04", data05: "data05"});
+    	 },
+    	 
+    	 getSrvTime: function() {
+    		 var xmlHttp;
+    		 try {
+    	           //FF, Opera, Safari, Chrome
+    	           xmlHttp = new XMLHttpRequest();
+    	     }
+    	     catch (err1) {
+    	           //IE
+    	     	try {
+    	        	xmlHttp = new ActiveXObject('Msxml2.XMLHTTP');
+    	     	}
+    	        catch (err2) {
+    	        	try {
+    	            	xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+    	            }
+    	            catch (eerr3) {
+    	            	//AJAX not supported, use CPU time.
+    	            	alert("AJAX not supported");
+    	            }
+    	        }
+    	     }
+    	     xmlHttp.open('HEAD', window.location.href.toString(), false);
+    	     xmlHttp.setRequestHeader("Content-Type", "text/html");
+    	     xmlHttp.send('');
+    	     return xmlHttp.getResponseHeader("Date");
+    	 }
+     },
+     setPad: function(n, width) {
+   	 	n = n + '';
+   	 	return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+   	 }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+	/* $(function () {
+	    $("form").on('submit', function (e) {
+	        e.preventDefault();
+	    });
+	}); */
+
+});
+
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

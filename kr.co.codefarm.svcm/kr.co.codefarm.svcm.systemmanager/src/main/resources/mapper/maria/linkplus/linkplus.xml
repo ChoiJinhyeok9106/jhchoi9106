@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.linkplus">
+		
+	<select id="getLinkplusList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.LINK_SEQ
+             , A.LINK_NM
+             , A.LINK_URL
+             , A.USE_YN
+             , A.ORD
+	         <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , A.CNT
+			 </if>
+		  FROM ( 
+					 SELECT SA.LINK_SEQ
+                          , SA.LINK_NM
+                          , SA.LINK_URL
+                          , SA.USE_YN
+                          , SA.ORD
+	                      <if test="pPageNo != null and pPageNo != ''.toString()">
+	                      , ROW_NUMBER() OVER(ORDER BY SA.LINK_SEQ DESC) AS RNUM
+	                      , COUNT(*) OVER() AS CNT
+	                      </if>
+					   FROM SMN_LINK_PLUS SA
+					  WHERE 1=1
+					  <if test="pSearchArgv != null and pSearchArgv != ''.toString()">AND SA.LINK_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			   ) A
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+           AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+         ORDER BY A.RNUM
+         </if>
+         <if test="(pPageNo == null or pPageNo eq ''.toString()) and (ord == null or ord eq ''.toString())">
+         ORDER BY A.LINK_SEQ DESC
+         </if>
+         <if test="ord != null and ord != ''.toString()">
+         ORDER BY A.ORD
+         </if>
+	</select>
+	
+	<insert id="insertLinkplus" parameterType="hashMap">
+		<selectKey resultType="int" keyProperty="MAKE_LINK_SEQ" order="BEFORE">
+	        SELECT COALESCE(MAX(LINK_SEQ), 0) + 1 AS MAKE_LINK_SEQ
+	          FROM SMN_LINK_PLUS
+	         WHERE 1=1
+	    </selectKey>
+	    
+		INSERT INTO SMN_LINK_PLUS 
+		(  
+			LINK_SEQ
+          , LINK_NM
+          , LINK_URL
+          , USE_YN
+          , ORD
+	      , INSERT_DTTM
+	      , INSERT_ID
+	      , INSERT_IP
+	      , INSERT_PGM
+	      , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES 
+		(
+		    #{MAKE_LINK_SEQ}
+		  , #{LINK_NM}
+          , #{LINK_URL}
+          , #{USE_YN}
+          , #{ORD}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}				
+		)
+   	</insert>
+   	
+   	<update id="updateLinkplus" parameterType="hashMap">
+		UPDATE SMN_LINK_PLUS
+		   SET LINK_NM = #{LINK_NM}
+	         , LINK_URL = #{LINK_URL}
+	         , USE_YN = #{USE_YN}
+	         , ORD = #{ORD}
+			 , UPDATE_DTTM = SYSDATE()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE LINK_SEQ = #{LINK_SEQ}
+	</update>
+     
+     <delete id="deleteLinkplus" parameterType="hashMap">
+		DELETE FROM SMN_LINK_PLUS
+    	 WHERE LINK_SEQ = #{LINK_SEQ}
+    </delete>
+    
+    
+</mapper>

@@ -1,0 +1,261 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/stu_total.css" />    
+
+<h2>사전진단평가</h2>
+<section class="sub_cont_box">                    
+    <h2 class="h2" style="margin-bottom:5px">선택과목</h2>
+    <p class="heading-txt" style="margin-bottom:15px;">평가할 과목을 선택하세요. </p>
+    <div class="table-type04-wrap">
+        <table class="table-type04 response">    
+            <caption>사전진단평가 테이블로 번호, 이수구분, 과목코드, 개설코드, 과목명, 주야, 학점, 교수명, 평가여부 항목별 순서대로 안내하는 표입니다</caption>
+            <colgroup>
+                <col width="7%" />
+                <col width="12%" />
+                <col width="12%" />
+                <col width="10%" />
+                <col>
+                <col width="8%" />
+                <col width="8%" />
+                <col width="10%" />
+                <col width="8%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">이수구분</th>
+                    <th scope="col">과목코드</th>
+                    <th scope="col">개설코드</th>
+                    <th scope="col">과목명</th>
+                    <th scope="col">주야</th>
+                    <th scope="col">학점</th>
+                    <th scope="col">교수명</th>
+                    <th scope="col">평가여부</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-header="No">5</td>
+                    <td data-header="이수구분">교양선택</td>
+                    <td data-header="과목코드">000123</td>
+                    <td data-header="개설코드">102</td>
+                    <td data-header="과목명" class="left">사회복지학개론</td>
+                    <td data-header="주야">주간</td>
+                    <td data-header="학점">2.0</td>
+                    <td data-header="교수명">이범신</td>
+                    <td data-header="평가여부"><span class="statue01 icon-checkmark"></span></td>
+                </tr>
+                <tr>
+                    <td data-header="No">5</td>
+                    <td data-header="이수구분">교양선택</td>
+                    <td data-header="과목코드">000123</td>
+                    <td data-header="개설코드">102</td>
+                    <td data-header="과목명" class="left">사회복지학개론</td>
+                    <td data-header="주야">주간</td>
+                    <td data-header="학점">2.0</td>
+                    <td data-header="교수명">이범신</td>
+                    <td data-header="평가여부"><span class="statue01 icon-checkmark"></span></td>
+                </tr>
+                <tr>
+                    <td data-header="No">5</td>
+                    <td data-header="이수구분">교양선택</td>
+                    <td data-header="과목코드">000123</td>
+                    <td data-header="개설코드">102</td>
+                    <td data-header="과목명" class="left">사회복지학개론</td>
+                    <td data-header="주야">주간</td>
+                    <td data-header="학점">2.0</td>
+                    <td data-header="교수명">이범신</td>
+                    <td data-header="평가여부"><span class="statue02 icon-minus-circle"></span></td>
+                </tr>
+                <tr>
+                    <td data-header="No">5</td>
+                    <td data-header="이수구분">교양선택</td>
+                    <td data-header="과목코드">000123</td>
+                    <td data-header="개설코드">102</td>
+                    <td data-header="과목명" class="left">사회복지학개론</td>
+                    <td data-header="주야">주간</td>
+                    <td data-header="학점">2.0</td>
+                    <td data-header="교수명">이범신</td>
+                    <td data-header="평가여부"><span class="statue01 icon-checkmark"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h2 class="h2" style="margin:40px 5px 0;">사전진단평가서</h2>
+    <div class="stu-report-wrap">
+        <div>
+            <div class="stu-report-infobox">
+                <div class="header-line">
+                    <span class="number">12</span><span class="text">사회복지학개론</span>
+                </div>
+                <div class="mid-area">
+                    <div class="list-label">
+                        <dl class="row">
+                            <dt class="col s12 l4 label-type01">담당교수</dt>
+                            <dd class="col s12 l8">조재원</dd>
+                            <dt class="col s12 l4 label-type01">이름</dt>
+                            <dd class="col s12 l8">수라임</dd> 
+                            <dt class="col s12 l4 label-type01">학번</dt>
+                            <dd class="col s12 l8">201500000</dd>
+                            <dt class="col s12 l4 label-type01">평가일</dt>
+                            <dd class="col s12 l8">2019-02-03</dd>   
+                            <dt class="col s12 l4 label-type01">능력단위명</dt>
+                            <dd class="col s12 l8">능력단위명, 능력단위명, 능력단위명, 능력단위명, 능력단위명 </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <table class="table-type01 response">
+                <caption>사전진단평가서 테이블로 영역(능력단위요소), 진단문항, 우수, 보통, 미흡  항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="20%" />
+                    <col>
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col">영역(능력단위요소)</th>
+                        <th scope="col">진단문항</th>
+                        <th scope="col">우수</th>
+                        <th scope="col">보통</th>
+                        <th scope="col">미흡</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-header="영역(능력단위요소)"></td>
+                        <td data-header="진단문항"></td>
+                        <td data-header="우수">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio01">
+                                <label for="radio01" class="hidden">우수</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="보통">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio02">
+                                <label for="radio02" class="hidden">보통</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="미흡">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio03">
+                                <label for="radio03" class="hidden">미흡</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="영역(능력단위요소)"></td>
+                        <td data-header="진단문항"></td>
+                        <td data-header="우수">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio01">
+                                <label for="radio01" class="hidden">우수</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="보통">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio02">
+                                <label for="radio02" class="hidden">보통</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="미흡">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio03">
+                                <label for="radio03" class="hidden">미흡</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="영역(능력단위요소)"></td>
+                        <td data-header="진단문항"></td>
+                        <td data-header="우수">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio01">
+                                <label for="radio01" class="hidden">우수</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="보통">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio02">
+                                <label for="radio02" class="hidden">보통</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="미흡">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio03">
+                                <label for="radio03" class="hidden">미흡</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="영역(능력단위요소)"></td>
+                        <td data-header="진단문항"></td>
+                        <td data-header="우수">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio01">
+                                <label for="radio01" class="hidden">우수</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="보통">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio02">
+                                <label for="radio02" class="hidden">보통</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="미흡">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio03">
+                                <label for="radio03" class="hidden">미흡</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="영역(능력단위요소)"></td>
+                        <td data-header="진단문항"></td>
+                        <td data-header="우수">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio01">
+                                <label for="radio01" class="hidden">우수</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="보통">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio02">
+                                <label for="radio02" class="hidden">보통</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                        <td data-header="미흡">
+                            <div class="radio">
+                                <input type="radio" name="radio" id="radio03">
+                                <label for="radio03" class="hidden">미흡</label>
+                                <i class="radio-icon"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="btn-line right">
+                <a href="#!" class="btn type02 size-m">등록</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+            

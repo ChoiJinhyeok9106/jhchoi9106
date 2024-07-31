@@ -1,0 +1,240 @@
+<h2>취득관리</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box" v-if="!mainList.currentRow">
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">자산명</label>
+			<input type="text" name="pSearchArgv" class="size-m" id="pSearchArgv" placeholder="자산명" data-vv-as="기업 / 기관 명">
+			<input type="button" value="검색" class="btn type01 size-m">
+		</div>
+		
+		<div class="btn-line right">
+			<input type="button" class="btn type01 size-m" value="신규" @click="newRow">
+		</div>
+		
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response">
+					<caption></caption>
+<!-- 					<colgroup> -->
+<!-- 						<col width="10%" /> -->
+<!-- 						<col width="10%" /> -->
+<!-- 						<col width="" /> -->
+<!-- 						<col width="7%" /> -->
+<!-- 						<col width="10%" /> -->
+<!-- 						<col width="13%" /> -->
+<!-- 						<col width="13%" /> -->
+<!-- 					</colgroup> -->
+					<thead>
+						<tr>
+<!-- 							<th scope="col">No</th> -->
+<!-- 							<th scope="col">선택</th> -->
+							<th scope="col">RFID</th>
+							<th scope="col">기관자산번호</th>
+							<th scope="col">물품명</th>
+							<th scope="col">규격명</th>
+							<th scope="col">구입일자</th>
+							<th scope="col">구입단가</th>
+							<th scope="col">보유부서</th>
+							<th scope="col">위치</th>
+							<th scope="col">상태</th>
+							<th scope="col">수량</th>
+						</tr>
+					</thead>
+					<tbody v-if="mainList.data.length > 0">
+						<tr v-for="(item, index) in mainList.data">
+							<td>{{ item.a }}</td>
+							<td>{{ item.b }}</td>
+							<td>{{ item.c }}</td>
+							<td>{{ item.d }}</td>
+							<td>{{ item.e | dateFormatter }}</td>
+							<td>{{ item.f }}</td>
+							<td>{{ item.g }}</td>
+							<td>{{ item.h }}</td>
+							<td>{{ item.i }}</td>
+							<td>{{ item.j }}</td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="mainListPaging" :type="'normal'"></paging>
+		</div>
+    </section>
+    
+    <section class="cont_box" v-else>    	
+		<div class="box-type04">
+			<div class="form-group row">
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">RFID</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.a">
+				</div>
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">기관자산번호</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.b">
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">물품명</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.c">
+				</div>
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">규격명</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.d">
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">구입일자</label>
+					<date-picker :value="mainList.currentRow.e" @input="function(e){ mainList.currentRow.e = e;}" />
+<!-- 					<input type="text" class="size-m" v-model="mainList.currentRow.e"> -->
+				</div>
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">구입단가</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.f">
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">보유부서</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.g">
+				</div>
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">위치</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.h">
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">수량</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.i">
+				</div>
+				<div class="col s6 m6 l6">
+					<label class="label-type01 size-m">상태</label>
+					<input type="text" class="size-m" v-model="mainList.currentRow.j">
+				</div>
+			</div>
+		</div>
+		<div class="btn-line right">
+			<input type="button" class="btn type01 size-m" value="저장" @click="mainList.selectRow(-1)">
+		</div>
+    </section>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		mainList: new Dataset(),
+		mainListPaging: new PagingSet(10,10)
+		
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	filters: {
+		dateFormatter: function(value) {
+			if(!value) return '';
+			return value.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+		}
+	},
+	//데이터 감시
+	watch: {
+		'mainList.data': {
+			handler: function (val, oldVal) {
+				if(this.mainList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.mainList.beforeData[rowposition][colNm];
+				          	vm.mainList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.mainList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'mainListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.mainList.pageChange(val, this.mainListPaging.getRowCnt());
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		var params = new Array(11)
+		for(var i = 0 ; i < 11 ; i++){
+			 params[i]= {
+				a : i+1,
+				b : i+1,
+				c : i+1,
+				d : i+1,
+				e : '20240529',	
+				f : i+1,
+				g : i+1,
+				h : i+1,
+				i : i+1,
+				j : i+1,
+			}
+		}
+
+		this.mainList.setRawData(params, this.mainListPaging.getRowCnt());
+		this.mainList.selectRow(-1);
+		this.mainListPaging.setTotalCnt(11);
+
+	},
+	//함수
+	methods: {
+		setMainList: function(){
+			var self = this;
+		},
+		newRow: function(){
+			var self = this;
+			
+			var params = {
+				a : '',
+				b : '',
+				c : '',
+				d : '',
+				e : '',	
+				f : '',
+				g : '',
+				h : '',
+				i : '',
+				j : '',
+			}
+			self.mainList.addRow(params);
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

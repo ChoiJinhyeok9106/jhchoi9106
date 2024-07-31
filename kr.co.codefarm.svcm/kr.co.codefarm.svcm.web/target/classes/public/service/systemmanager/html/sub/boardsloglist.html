@@ -1,0 +1,248 @@
+<h2>게시판 이용자</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l4">
+					<label for="pAppId" class="label-type01 required">앱</label> 
+			        <select class="size-m" name="pAppId" id="pAppId" v-model="pSearchInfo.appId" data-vv-as="앱 " v-validate="'required'" v-bind:class="{'invalid': errors.has('pAppId')}">
+			        	<option value="">- 선택 -</option>
+						<option v-for="(item, index) in appCodeSet.data" v-bind:value="item.APP_ID" v-if="item.APP_ID != 'codefarmdesign' && item.APP_ID != 'design' && item.APP_ID != 'developertest' && item.APP_ID != 'helpdesk' && item.APP_ID != 'layout' && item.APP_ID != 'sessionChange'">{{item.APP_NM}}</option>
+					</select>
+					<invalid-message :visible="true" :name="'pAppId'" :verror="errors"/>
+				</div>
+				<div class="form-group col s12 l4">
+					<label for="frdt" class="label-type01">검색 기간</label>
+					<div class="row form-row">
+						<div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="pSearchInfo.strDate" @input="function(value){ pSearchInfo.strDate = value }" ></date-picker>
+	                            <input id="pStartDt" type="hidden" name="pStartDt" data-vv-as="날짜 " v-model="pSearchInfo.strDate">
+	                        </div>
+	                    </div>
+	                    <div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="pSearchInfo.endDate" @input="function(value){ pSearchInfo.endDate = value }"></date-picker>
+	                            <input id="pEndDt" type="hidden" name="pEndDt" data-vv-as="날짜 " v-model="pSearchInfo.endDate">
+	                        </div>
+	                    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group col s12 l12 col-inline right">
+			<a href="#!" @click="excelCountCheck()">
+	    		<download-excel class="btn type02 size-m" :data="excelData" :name="getFileName()">엑셀 다운로드</download-excel>
+	    	</a>
+			<a href="#!" class="btn type01 size-m" @click="search();">검색</a>
+		</div>
+		<div id="grid"></div>
+		<br>
+		<div id="chart-area" style="display: inline-block;"></div>
+	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		pSearchInfo: {
+			'appId': '',
+			'strDate': moment().format('YYYY') + '0101',
+			'endDate': moment().format('YYYY') + '1231',
+		},
+	    appCodeSet: new CustomcodeSet('/system-manager/app',{pUseYn: 'Y'}),
+	    excelData: new Array(),
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+	},
+	//계산된 속성 표현 시
+	computed: {
+	},
+	//데이터 감시
+	watch: {
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.drawGrid();
+// 		this.setLogList();
+	},
+	//함수
+	methods: {
+		/* 검색 */
+		search: function(){
+			this.setLogList();
+		},
+		/* 로그 목록 조회 */
+		setLogList: function(){
+			var self = this;
+			var validate = self.$validator.validateAll();
+			validate.then(function(response){
+				if(response){
+					var returnVal = loglistApi.getBoardsLogList(self.pSearchInfo, false);	
+					
+					returnVal.then(function(response) {
+						if(response.status == '200') {
+							self.excelData = new Array();
+							
+							_.forEach(response.data, function(obj, index) {
+								let pObj = {
+									'메뉴': obj.MENU_NM,
+									'이용자 수': obj.DIT_CNT,
+									'이용건수': obj.CNT,
+									'이용비율': obj.TOT_AVG,
+								}
+								
+								self.excelData.push(pObj);	
+							});
+							
+							self.grid.resetData(response.data);
+							self.drawChart(response.data);
+						}
+					});
+				}else {
+					notifySubmit('warning', '게시판 이용자', '검색조건을 확인해주세요', 'icon-caution');
+				}
+			});
+			var self = this;
+			
+			
+		},
+		drawGrid: function() {
+    		var self = this;
+			$('#grid').empty();
+    		
+			self.grid = new tui.Grid({
+       		    el: document.getElementById('grid'),
+       			scrollX: true,
+       		 	bodyHeight: 230,
+       		    columns: [
+       		    	{
+       		    		header:'메뉴',
+       		    		name:'MENU_NM',
+       			     	minWidth: 80,
+  	       			    whiteSpace: 'normal',
+	   			        sortable: true,
+ 	  	       			align: 'center'
+       		    	},
+       		    	{
+       		    		header:'이용자 수', 
+       		    		name:'DIT_CNT',
+  	       			    whiteSpace: 'normal',
+       			     	minWidth: 60,
+	   			        sortable: true,
+ 	  	       			align: 'center'
+  	       			},
+       		    	{
+  	       				header:'이용 건수', 
+  	       				name:'CNT',
+  	       			    whiteSpace: 'normal',
+       			     	minWidth: 60,
+	   			        sortable: true,
+ 	  	       			align: 'center'
+  	       			},
+       		    	{
+  	       				header:'이용비율', 
+  	       				name:'TOT_AVG',
+       			     	minWidth: 60,
+	   			        sortable: true,
+  	       			    whiteSpace: 'normal',
+ 	  	       			align: 'center'
+  	       			},
+       		    ]
+    		});
+    	},
+    	drawChart: function(pData) {
+			$('#chart-area').empty();
+			
+    		if(pData.length > 0) {
+        		var container = document.getElementById('chart-area');
+        		
+        		let categoriesList = new Array();
+        		let ditDataList = new Array();
+        		let cntDataList = new Array();
+        		
+        		_.forEach(pData, function(obj, index) {
+        			categoriesList.push(obj.MENU_NM);
+        			ditDataList.push(obj.DIT_CNT);
+        			cntDataList.push(obj.CNT);
+        		});
+        		
+        		var data = {
+        		    categories: categoriesList,
+        		    series: [
+        		        {
+        		            name: '이용자 수',
+        		            data: ditDataList
+        		        },
+        		        {
+        		            name: '이용 건수',
+        		            data: cntDataList
+        		        }
+        		    ]
+        		};
+        		var options = {
+        		    chart: {
+        		        width: 1200,
+        		        height: 500,
+        		        format: '1,000'
+        		    },
+        		    yAxis: {
+        		        title: '항목'
+        		    },
+        		    xAxis: {
+        		        title: '건수',
+        		        min: 0,
+        		    },
+        		     series: {
+        		         showLabel: true
+        		     }
+        		};
+
+        		tui.chart.barChart(container, data, options);
+    		}
+    	},
+		excelCountCheck: function() {
+			/**/
+			if(this.excelData.length == 0){
+				 notifySubmit('warning', '게시판 이용자', '다운로드 받을 항목이 없습니다.', 'icon-caution');
+			}
+		},
+		getFileName: function() {
+			let self = this;
+			let pFileName = '';
+			
+			let filtedList = _.filter(self.appCodeSet.data, {'APP_ID': self.pSearchInfo.appId});
+			
+			if(filtedList.length > 0) {
+				pFileName = '[' + filtedList[0].APP_NM + '] 게시판 이용자 통계.xls';	
+			}
+			
+			return pFileName;
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

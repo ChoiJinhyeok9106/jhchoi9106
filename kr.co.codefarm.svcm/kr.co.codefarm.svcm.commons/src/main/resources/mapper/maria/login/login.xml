@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.commons.maria.login">
+
+	<select id="selectUser" resultType="hashMap" parameterType="hashMap">
+	SELECT TBL1.USER_GB
+		 , TBL1.USER_GROUP_GB
+		 , TBL1.USER_ID
+		 , CASE WHEN TBL1.PWD = #{PWD}
+				THEN 'Y'
+				ELSE 'N'
+				 END AS PWD
+		 , TBL1.INTERNAL_ID
+		 , TBL1.EMAIL
+		 , TBL1.USER_NM
+		 , TBL1.DEFAULT_AUTH_CD
+		 , TBL1.DEFAULT_AUTH_NM
+		 , TBL1.BIRTHDAY
+		 , TBL1.GENDER_GB
+		 , TBL1.GENDER_GBNM
+		 , TBL1.CORP_ID
+		 , TBL1.DEPT_NM
+		 , TBL1.TEL_NO
+		 , TBL1.HP_NO
+		 , TBL1.ZIPNO
+		 , TBL1.ADDR1
+		 , TBL1.ADDR2
+		 , TBL1.JOIN_DT
+		 , TBL1.USER_STATUS_GB
+		 , TBL1.USER_STATUS_GBNM
+		 , TBL1.USER_PIC
+		 , TBL1.AGREE_YN
+		 , TBL2.USE_DOMAIN
+		 , TBL2.LATEST_LOGIN_DTTM
+		 , TBL2.LATEST_LOGINSIDO_DOMAIN
+		 , COALESCE(TBL2.LATEST_PWD_CHG_DT,TO_CHAR(NOW(),'YYYYMMDD')) AS LATEST_PWD_CHG_DT
+		 , COALESCE(TBL2.LOGIN_FAIL_CNT,'1') AS LOGIN_FAIL_CNT
+		 , TBL2.USE_YN
+		 , TBL1.AGREE_DT
+	  FROM SMN_USER_V TBL1
+	  LEFT JOIN SMN_ACCOUNT TBL2
+		ON TBL1.USER_ID = TBL2.USER_ID
+	 WHERE TBL1.USER_ID = #{USER_ID}
+	</select>
+
+	<select id="selectRole" resultType="hashMap" parameterType="hashMap">
+	  CALL SMN_ROLE_V(#{USER_ID})
+	</select>
+	
+    <update id="updateToken" parameterType="hashMap">
+	UPDATE SMN_ACCOUNT
+       SET USE_DOMAIN = #{USE_DOMAIN}
+     WHERE USER_ID = #{USER_ID}
+    </update>
+    
+    <update id="updateAccount" parameterType="hashMap">
+	INSERT INTO SMN_ACCOUNT(USER_ID, USE_DOMAIN, LATEST_PWD_CHG_DT, LOGIN_FAIL_CNT, LATEST_LOGIN_DTTM, INSERT_DTTM, INSERT_ID, INSERT_IP, INSERT_PGM, UPDATE_DTTM, UPDATE_ID, UPDATE_IP, UPDATE_PGM)
+	VALUES (
+	       #{USER_ID}
+	     , #{USE_DOMAIN}
+	     , DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		 , CASE #{ACCESS_YN} WHEN 'Y' THEN 0 ELSE 1 END
+		 , CASE #{ACCESS_YN} WHEN 'Y' THEN SYSDATE() ELSE NULL END
+		 , SYSDATE()
+		 , #{USER_ID}
+		 , '0:0:0:0:0:0:0:1'
+		 , 'login'
+		 , SYSDATE()
+		 , #{USER_ID}
+		 , '0:0:0:0:0:0:0:1'
+		 , 'login'
+	       )
+		ON DUPLICATE KEY	 
+	UPDATE USE_DOMAIN		 = #{USE_DOMAIN}
+         , LOGIN_FAIL_CNT    = CASE #{ACCESS_YN} WHEN 'Y' THEN 0 ELSE (SELECT TBL1.LOGIN_FAIL_CNT FROM SMN_ACCOUNT TBL1 WHERE USER_ID = #{USER_ID}) + 1 END
+		 , LATEST_LOGIN_DTTM = CASE #{ACCESS_YN} WHEN 'Y' THEN NOW() ELSE (SELECT TBL2.LATEST_LOGIN_DTTM FROM SMN_ACCOUNT TBL2 WHERE USER_ID = #{USER_ID}) END
+		 , UPDATE_DTTM       = NOW()
+		 , UPDATE_ID         = #{USER_ID}
+		 , UPDATE_IP         = '0:0:0:0:0:0:0:1'
+		 , UPDATE_PGM        = 'login'
+    </update>
+	
+	<update id="updateAgree" parameterType="hashMap">
+	INSERT INTO USER_AGREE_RES(USER_ID, AGREE_ITEM1_ANSW, AGREE_ITEM2_ANSW, AGREE_ITEM3_ANSW, AGREE_ITEM4_ANSW, INSERT_DTTM, INSERT_ID, INSERT_IP, INSERT_PGM, UPDATE_DTTM, UPDATE_ID, UPDATE_IP, UPDATE_PGM)
+	VALUES (
+		   #{SYSTEM_ID}
+		 , #{AGREE_ITEM1}
+		 , #{AGREE_ITEM2}
+		 , #{AGREE_ITEM3}
+		 , #{AGREE_ITEM4}
+		 , SYSDATE()
+		 , #{SYSTEM_ID}
+		 , #{SYSTEM_IP}
+		 , 'login'
+		 , SYSDATE()
+		 , #{SYSTEM_ID}
+		 , #{SYSTEM_IP}
+		 , 'login'
+		   )
+		ON DUPLICATE KEY	
+	UPDATE AGREE_ITEM1_ANSW = #{AGREE_ITEM1}
+		 , AGREE_ITEM2_ANSW = #{AGREE_ITEM2}
+		 , AGREE_ITEM3_ANSW = #{AGREE_ITEM3}
+		 , AGREE_ITEM4_ANSW = #{AGREE_ITEM4}
+		 , UPDATE_DTTM		= SYSDATE()
+		 , UPDATE_ID		= #{SYSTEM_ID}
+		 , UPDATE_IP		= #{SYSTEM_IP}
+		 , UPDATE_PGM		= 'login'
+	</update>
+
+    <select id="loginDupCheck" resultType="hashMap" parameterType="hashMap">
+	  SELECT A.USE_DOMAIN 
+	       , B.USER_ID
+	    FROM SMN_ACCOUNT A
+	    JOIN SMN_USER_V B
+	      ON A.USER_ID = B.USER_ID
+	   WHERE B.INTERNAL_ID = #{USER_ID}
+    </select>
+</mapper>

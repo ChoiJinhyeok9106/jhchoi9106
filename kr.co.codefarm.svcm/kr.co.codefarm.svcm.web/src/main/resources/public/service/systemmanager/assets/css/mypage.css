@@ -1,0 +1,648 @@
+@charset "utf-8";
+.sub_cont_wrap .sub_cont_box.mypage-main-box01 {
+    width: 424px;
+    min-height: 588px;
+    margin-right: 16px;
+    padding: 0;
+    vertical-align: top;
+}
+
+.mypage-main-box01 .profile {
+    text-align: center;
+    position: relative;
+}
+
+.mypage-main-box01 .profile:before {
+    display: block;
+    content: "";
+    width: 100%;
+    height: 240px;
+    background: #364085;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.mypage-main-box01 .profile .inner {
+    width: 100%;
+    padding: 40px 30px;
+    position: relative;
+}
+
+.mypage-main-box01 .profile .name-kor {
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.mypage-main-box01 .profile .name-eng {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.mypage-main-box01 .profile .major {
+    text-align: center;
+}
+
+.mypage-main-box01 .profile .major span {
+    display: inline-block;
+    padding: 0 10px;
+    border-right: 1px solid #fff;
+    color: #fff;
+}
+
+.mypage-main-box01 .profile .major span:last-child {
+    border-right: 0;
+}
+
+.mypage-main-box01 .profile .profile-img {
+    display: inline-block;
+    width: 160px;
+    height: 160px;
+    margin: 28px 0 8px 0;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: -12px 12px 16px rgba(0, 0, 0, .2);
+    -webkit-box-shadow: -12px 12px 16px rgba(0, 0, 0, .2);
+    -moz-box-shadow: -12px 12px 16px rgba(0, 0, 0, .2);
+}
+
+.mypage-main-box01 .profile .btn-line {
+    margin-bottom: 25px;
+}
+
+.mypage-main-box01 .profile .btn-line a {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #eceef7;
+    text-align: center;
+    line-height: 48px;
+    font-size: 0;
+    margin: 0 8px;
+}
+
+.mypage-main-box01 .profile .btn-line a:before {
+    font-size: 20px;
+    color: #364085;
+}
+
+.mypage-main-box01 .profile .my-state {
+    border-top: 1px solid #dcdff1;
+    padding-top: 30px;
+    overflow: hidden;
+}
+
+.mypage-main-box01 .profile .my-state>div {
+    float: left;
+    width: 33.33333%;
+    text-align: center;
+}
+
+.mypage-main-box01 .profile .my-state>div a {
+    display:inline-block;
+    width:100%;
+    height:100%;
+}
+
+.mypage-main-box01 .profile .my-state>div i {
+    display: inline-block;
+    font-size: 24px;
+    color: #666faf;
+    position: relative;
+}
+
+.mypage-main-box01 .profile .my-state>div i.new:after {
+    display: block;
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff3434;
+    position: absolute;
+}
+
+.mypage-main-box01 .profile .my-state>div .icon-mail.new:after {
+    top: 1px;
+    right: -2px;
+}
+
+.mypage-main-box01 .profile .my-state>div .icon-bell.new:after {
+    top: 1px;
+    right: 1px;
+}
+
+.mypage-main-box01 .profile .my-state>div .icon-message-circle.new:after {
+    top: 2px;
+    right: 0px;
+}
+
+.mypage-main-box01 .profile .my-state>div .num {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #9ea4d0;
+    text-align: center;
+    margin-top: 4px;
+}
+
+.mypage-main-box01 .profile .my-state>div .tit-eng {
+    font-size: 15px;
+    font-weight: 600;
+    color: #666faf;
+    margin-top: 14px;
+    text-align: center;
+}
+
+.mypage-main-box01 .profile .my-state>div .tit-kor {
+    font-size: 13px;
+    color: #888;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.sub_cont_wrap .sub_cont_box.mypage-main-box02 {
+    width: 864px;
+    min-height: 570px;
+    vertical-align: top;
+}
+
+.sub_cont_wrap .sub_cont_box.mypage-main-box02:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.mypage-main-box02>article {
+    float: left;
+    width: 100%;
+    margin-bottom: 50px;
+    padding: 0 8px;
+    position: relative;
+}
+
+.mypage-main-box02>article:nth-child(1),
+.mypage-main-box02>article:nth-child(2) {
+    float: left;
+    width: 50%;
+}
+
+.mypage-main-box02>article:last-child {
+    margin-bottom: 0;
+}
+
+.mypage-main-box02>article h3 {
+    font-size: 20px;
+    color: #000;
+    line-height: 25px;
+    font-weight: 500;
+}
+
+.mypage-main-box02>article h3:before {
+    font-size: 24px;
+    color: #666faf;
+    margin-right: 8px;
+    vertical-align: top;
+}
+
+.mypage-main-box02>article .btn-setting {
+    font-size: 0;
+    position: absolute;
+    top: 0;
+    right: 20px;
+}
+
+.mypage-main-box02>article .btn-setting:before {
+    font-size: 18px;
+    color: #caccd9;
+}
+
+.mypage-main-box02>article .desc {
+    padding: 0 45px 0 10px;
+    margin: 15px 0;
+    color: #999;
+    line-height: 18px;
+}
+
+.mypage-main-box02>article .list-type05 {
+    border-top: 1px solid #dcdff1;
+    padding: 10px;
+}
+
+.mypage-main-box02>article .alarm-setting-list {
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.mypage-main-box02>article .alarm-setting-list li {
+    float: left;
+    width: 33.33333%;
+    background: #eceef7;
+    padding: 12px;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    position: relative;
+}
+
+.mypage-main-box02>article .alarm-setting-list li .size-s {
+    color: #4f5685;
+    margin-bottom: 0;
+}
+
+.mypage-main-box02>article .alarm-setting-list li .toggle-switch {
+    position: absolute;
+    top: 11px;
+    right: 15px;
+}
+
+.sub_cont_box.alarm-setting .tit .h3 {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 1px;
+    font-size: 20px;
+}
+
+.sub_cont_box.alarm-setting .tit label {
+    margin-left: 20px;
+    margin-top: 0;
+}
+
+.sub_cont_box.alarm-setting .desc {
+    color: #888;
+    line-height: 20px;
+}
+
+.sub_cont_box.alarm-setting .alarm-setting-list {
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.sub_cont_box.alarm-setting .alarm-setting-list li {
+    float: left;
+    width: calc(33.33333% - 16px);
+    margin: 5px 8px;
+    padding: 12px 8px;
+    background: #f1f2f8;
+    border: 1px solid #d7daf1;
+    border-radius: 8px;
+    position: relative;
+}
+
+.sub_cont_box.alarm-setting .alarm-setting-list li .size-s {
+    margin-bottom: 0;
+    font-size: 15px;
+}
+
+.sub_cont_box.alarm-setting .alarm-setting-list li .toggle-switch {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+}
+
+.sub_cont_box.password-change {
+    display: block;
+    width: 424px;
+    min-height: auto;
+    padding: 0;
+    border-radius: 18px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.sub_cont_box.password-change .head {
+    background: #364085;
+    padding: 40px 0 30px 0;
+}
+
+.sub_cont_box.password-change .head .name-kor {
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.sub_cont_box.password-change .head .name-eng {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+}
+
+.sub_cont_box.password-change .head .major {
+    margin-top: 23px;
+    text-align: center;
+}
+
+.sub_cont_box.password-change .head .major span {
+    display: inline-block;
+    color: #fff;
+    padding: 0 10px;
+    border-right: 1px solid #fff;
+}
+
+.sub_cont_box.password-change .head .major span:last-child {
+    border-right: 0;
+}
+
+.sub_cont_box.password-change .cont {
+    padding: 40px 40px 0 40px;
+}
+
+.sub_cont_box.password-change .cont .notice>p {
+    color: #ff515d;
+    font-weight: 300;
+    line-height: 20px;
+    margin-bottom: 10px;
+}
+
+.sub_cont_box.password-change .cont .notice>p:before {
+    font-size: 20px;
+    margin-right: 4px;
+    vertical-align: top;
+}
+
+.sub_cont_box.password-change .cont .notice .list-type02 li {
+    font-size: 13px;
+    font-weight: 300;
+    color: #888;
+}
+
+.sub_cont_box.password-change .current-pwd {
+    margin: 25px 0 20px 0;
+}
+
+.sub_cont_box.password-change .new-pwd input {
+    margin-bottom: 4px;
+}
+
+.sub_cont_box.password-change .btn-line {
+    padding: 30px 0;
+    border-top: 1px solid #dcdff1;
+    margin-top: 25px;
+}
+
+.sub_cont_box.my-alarm .today-header {
+    height: auto;
+    padding: 35px;
+}
+
+.sub_cont_box.my-alarm .today-header>.icon-bell {
+    vertical-align: middle;
+    height: 50px;
+    font-size: 50px;
+    font-weight: 400;
+    padding: 0 35px 0 0;
+    border-right: 0;
+}
+
+.sub_cont_box.my-alarm .today-header .today-statue {
+    display: inline-block;
+    top: 48px;
+}
+
+.sub_cont_box.my-alarm .today-header .today-cont {
+    border-left: 1px solid #9ea4d0;
+    vertical-align: middle;
+}
+
+.sub_cont_box.my-alarm .today-header .today-cont .info-txt {
+    font-weight: 300;
+    margin-bottom: 0;
+}
+
+.main-today-counsel .today-header .today-statue>a {
+    position: initial;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .title {
+    display: block;
+    padding: 12px 0 0 46px;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .title .etc {
+    font-size: 13px;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .title .etc .icon-bell {
+    font-size: 16px;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .title .etc.type03 {
+    color: #999;
+    font-style: italic;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .btn-group {
+    position: absolute;
+    top: 22px;
+    right: 30px;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .btn-group span {
+    display: inline-block;
+    font-size: 18px;
+    margin-left: 23px;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .btn-group .icon-bell-off {
+    color: #6dceb4;
+    margin-left: 0;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .btn-group .icon-bell {
+    color: #a4acaa;
+    margin-left: 0;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .btn-group .icon-eye-off {
+    color: #83a4db;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .btn-group .icon-eye {
+    color: #a4acaa;
+}
+
+.sub_cont_box.my-alarm .today-content .today-cont-list .btn-group .icon-x-mark {
+    color: #f26f6f;
+}
+
+.main-today-counsel .today-content .today-cont-list:hover:before,
+.main-today-counsel .today-content .today-cont-list.active:before {
+    display: none;
+}
+
+.sub_cont_box.my-alarm .main-right {
+    padding-left: 25px;
+}
+
+.sub_cont_box.my-alarm .main-right .h2 {
+    margin-top: 30px;
+}
+
+.sub_cont_box.my-alarm .main-right .alarm-setting-list li {
+    border-bottom: 1px dashed #d7daf1;
+    padding: 8px;
+    position: relative;
+}
+
+.sub_cont_box.my-alarm .main-right .alarm-setting-list li .size-s {
+    padding-left: 13px;
+    color: #4f5685;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.sub_cont_box.my-alarm .main-right .alarm-setting-list li label:first-child:before {
+    display: block;
+    content: "";
+    width: 5px;
+    height: 2px;
+    background: #a2a5af;
+    position: absolute;
+    top: 13px;
+    left: 0;
+}
+
+.sub_cont_box.my-alarm .main-right .alarm-setting-list li .toggle-switch {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+}
+
+.sub_cont_box.my-alarm .main-right .btn-line {
+    margin: 30px 0;
+}
+
+@media only screen and (max-width: 1280px) {
+    .sub_cont_wrap .sub_cont_box.mypage-main-box01,
+    .sub_cont_wrap .sub_cont_box.mypage-main-box02 {
+        width: 100%;
+        min-height: auto;
+        margin-bottom: 16px;
+    }
+    .main-left {
+        float: none;
+        width: 100%;
+        margin-top: 0;
+        padding-right: 0;
+        border-right: 0;
+    }
+    .sub_cont_box.my-alarm .main-right {
+        display: block;
+        padding-left: 0;
+    }
+    .sub_cont_wrap .sub_cont_box> :nth-child(2) {
+        order: 0;
+    }
+    .main-today-counsel .today-header .today-cont .title {
+        margin-bottom: 10px;
+    }
+    .main-today-counsel .today-header .today-statue {
+        top: 45px;
+        left: auto;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+	.sub_cont_box.alarm-setting .alarm-setting-list li {
+	    float: left;
+	    width: calc(50% - 16px);
+	    margin: 5px 8px;
+	    padding: 12px 8px;
+	    background: #f1f2f8;
+	    border: 1px solid #d7daf1;
+	    border-radius: 8px;
+	    position: relative;
+	}
+}
+
+@media only screen and (max-width: 800px) {
+    .mypage-main-box02>article {
+        width: 100% !important;
+        margin-bottom: 40px;
+    }
+    .mypage-main-box02 .list-type05 dt,
+    .mypage-main-box02 .list-type05 dd {
+        width: 100%;
+    }
+    .mypage-main-box02 .list-type05 dt:after {
+        display: none;
+    }
+    .mypage-main-box02 .list-type05 dd {
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
+    .mypage-main-box02>article .alarm-setting-list li {
+        width: 100%;
+        border-right: 0;
+    }
+    .sub_cont_box.password-change {
+        width: 100%;
+    }
+    .sub_cont_box.my-alarm .today-header {
+        padding: 30px 20px;
+        font-size: 0;
+    }
+    .main-today-counsel .today-header .today-cont .title {
+        margin-bottom: 15px;
+        position: relative;
+        top: auto;
+    }
+    .sub_cont_box.my-alarm .today-header .today-cont .info-txt {
+        display: block;
+    }
+    .sub_cont_box.my-alarm .today-header>.icon-bell {
+        width: 57px;
+        min-width: 57px;
+        padding-right: 20px;
+    }
+    .main-today-counsel .today-header .date:before {
+        font-size: 40px;
+    }
+    .sub_cont_box.my-alarm .today-header .today-cont {
+        width: calc(100% - 57px);
+        padding-left: 16px;
+    }
+    .main-today-counsel .today-header .today-statue>a {
+        margin: 0 10px;
+    }
+    .main-today-counsel .today-header .today-statue>a:last-child {
+        margin-right: 0;
+    }
+    .main-today-counsel .today-header .today-statue>a .icon {
+        font-size: 16px;
+    }
+    .sub_cont_box.my-alarm .today-header .today-statue {
+        top: 30px;
+    }
+    .sub_cont_box.my-alarm .today-content .today-cont-list .btn-group {
+        top: 15px;
+        right: 20px;
+    }
+    .main-today-counsel .today-content .today-cont-list .title .txt {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 560px) {
+	.sub_cont_box.alarm-setting .alarm-setting-list li {
+	    float: left;
+	    width: calc(100% - 16px);
+	    margin: 5px 8px;
+	    padding: 12px 8px;
+	    background: #f1f2f8;
+	    border: 1px solid #d7daf1;
+	    border-radius: 8px;
+	    position: relative;
+	}
+}

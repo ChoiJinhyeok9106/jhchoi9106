@@ -1,0 +1,139 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+
+<h2>알림 설정</h2>
+<section class="sub_cont_box alarm-setting" id="app">
+    <div class="tit">
+        <h3 class="h3">알림 전체설정</h3>
+        <label class="toggle-switch size-m">
+            <input type="checkbox" v-model="totalAlarmVal" true-value="Y" false-value="N" @change="insertUserAlarmList">
+            <span class="slider round bg-red"></span>
+        </label>
+    </div>
+    <p class="desc">포탈에서 제공되는 공지, 뉴스, 정보 등 내 활동에 관련된 모든 알림을 설정할 수 있습니다.</p>
+    <ul class="alarm-setting-list" id="userAlarmListLoading">
+    	<li v-for="(item, index) in userAlarmList.getData()">
+            <label for="" class="size-s">{{item.TITLE}}</label>
+            <label class="toggle-switch size-s">
+                <input type="checkbox" v-model="item.SUBSCRIBE_YN" true-value="Y" false-value="N" @change="insertUserAlarm(item)">
+                <span class="slider round bg-red"></span>
+            </label>
+        </li>
+    </ul>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+        userAlarmList: new Dataset(),
+        userAlarmListLoading: {id:'userAlarmListLoading', val:false},
+        totalAlarmVal: 'N',
+        userAlarmListAll: new Dataset(),
+	},
+	//데이터 감시
+	watch: {
+	    'userAlarmListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userAlarmListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setUserAlarmsList();
+	},
+	//함수
+	methods: {
+		setUserAlarmsList: function(){
+            var self = this;
+            self.userAlarmListLoading.val = true;
+            var returnVal = alertApi.userAlarms(false);
+            
+            returnVal.then(function(response) {
+            	self.userAlarmList.setData(response.data);
+            	self.totalAlarmVal = self.calcAlarmVal();
+            }).finally(function(){
+				self.userAlarmListLoading.val = false;
+			});
+        },
+        insertUserAlarm: function(pEntry){
+        	var self = this;
+            //self.userAlarmListLoading.val = true;
+            var returnVal = alertApi.userAlarmSettingInsert(pEntry, false);
+            
+            returnVal.then(function(response) {
+            	var data = response.data;
+				if(data == '1' || data._INSERT_ROW_CNT == '1'){
+					notifySubmit('success', '알림설정 저장', '저장이 완료되었습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '알림설정 저장', '저장에 실패하였습니다.', 'icon-caution');
+				}
+            }).finally(function(){
+				//self.userAlarmListLoading.val = false;
+				self.setUserAlarmsList();
+			});
+        },
+        insertUserAlarmList: function(event){
+        	var self = this;
+        	var curVal = self.totalAlarmVal;
+			_.forEach(this.userAlarmList.getData(), function(obj, index){
+				
+				obj.SUBSCRIBE_YN =  curVal == 'Y' ? 'N' : 'Y';
+				obj['USER_ID'] = self.session.USER_ID;
+			})
+        	
+            self.userAlarmListLoading.val = true;
+			self.userAlarmListAll.clear();
+			for(var  i = 0 ; i < self.userAlarmList.getRowCount() ; i++){
+				var obj = {
+						"USER_ID" : self.userAlarmList.getColumn(i,'USER_ID'),
+						"ALARM_SEQ" : self.userAlarmList.getColumn(i,'ALARM_SEQ'),
+						"SUBSCRIBE_YN" : curVal,
+				}
+				self.userAlarmListAll.addRow(obj);
+			}
+			
+            var returnVal = alertApi.userAlarmSettingInsert(self.userAlarmListAll, false);
+            
+            returnVal.then(function(response) {
+            	var data = parseInt(response.data,10);
+				
+				if(data > 0){
+					notifySubmit('success', '알림설정 저장', '저장이 완료되었습니다.', 'icon-save');
+					//self.totalAlarmVal = self.calcAlarmVal();
+					//
+				}else{
+					notifySubmit('warning', '알림설정 저장', '저장에 실패하였습니다.', 'icon-caution');
+				}
+            }).finally(function(){
+				self.userAlarmListLoading.val = false;
+				self.setUserAlarmsList();
+			});
+        },
+        calcAlarmVal: function () {
+			var self = this;
+			var sumCnt = _.sumBy(self.userAlarmList.getData(), function(o) {return o.SUBSCRIBE_YN == 'Y'});
+			
+			return sumCnt >= 2 ? 'Y' : 'N';
+	    }
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

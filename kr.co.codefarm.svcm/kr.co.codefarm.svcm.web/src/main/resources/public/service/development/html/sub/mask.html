@@ -1,0 +1,192 @@
+<h2 id="top">템플릿-v-mask</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">v-mask</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type02">
+	        	<li><a href="https://www.npmjs.com/package/v-mask" target="_blank">https://www.npmjs.com/package/v-mask</a> 오픈소스 사용(자세한 내용은 페이지 방문)</li>
+	        	<li>주의 할 점은 v-model로 바인딩 된 데이터를 기준으로 마스크를 나타내게 되어있습니다. 단순히 value="20180101" 형태로 value에 데이터를 셋팅하면 마스크가 적용되지 않습니다.</li>
+	        	<li>마스크 적용 시 실제 바인딩 된 데이터도 변경 되게 되어있으니, 참고하기 바라며 Database에 입력 시 마스크 문자를 제거하여 저장 바랍니다.</li>
+			</ul>
+		</div>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3">Using</h3>
+        <textarea id="codeEditor0"><input type="text" v-mask="'####-##'" v-model="myInputModel">
+<!-- OR -->
+<input type="text" v-mask="nameOfVariableWithMask" v-model="myInputModel"></textarea>
+    </section>
+    
+    <section class="cont_box">
+		<div class="form-group row form-row">        	
+			<table class="table-type01">
+				<thead>
+					<tr>
+						<th>Value</th>
+						<th>Format</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>#</td>
+						<td class="left">Number (0-9)</td>
+					</tr>
+					<tr>
+						<td>A</td>
+						<td class="left">Letter in any case (a-z,A-Z)</td>
+					</tr>
+					<tr>
+						<td>N</td>
+						<td class="left">Number or letter</td>
+					</tr>
+					<tr>
+						<td>X</td>
+						<td class="left">Any symbol</td>
+					</tr>
+					<tr>
+						<td>?</td>
+						<td class="left">Optional (next character)</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3">예제</h3>
+        <div class="box-type04">
+        	<div class="row form-row">
+				<div class="form-group col s12 l6">
+					<label for="exampleFormControlInput1" class="label-type01">시작일 {{date1}}</label>
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+						<input type="text" id="exampleFormControlInput1" class="size-m" style="width:90%" v-model="date1" v-mask="'####-##-##'"><span class="text" style="width:10%">~</span>
+					</div>
+				</div>
+				<div class="form-group col s12 l6">
+					<label for="exampleFormControlInput2" class="label-type01">종료일 {{date2}}</label>
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+						<input type="text" id="exampleFormControlInput2" class="size-m" v-model="date2" v-mask="'####-##-##'">
+					</div>
+				</div>
+			</div>   
+			<div class="row form-row">
+				<div class="col s12">
+					<label for="exampleFormControlInput3" class="label-type01">시간 {{time1}}  {{time2}}</label>										
+				</div>
+				<div class="form-group col s12 l6">
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+						<input type="text" id="exampleFormControlInput3" class="size-m" style="width:90%" v-model="time1" v-mask="'##-##-##'"><span class="text" style="width:10%">~</span>
+					</div>
+				</div>
+				<div class="form-group col s12 l6">										
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+						<input type="text" id="exampleFormControlInput4" class="size-m" v-model="time2" v-mask="'##-##-##'">
+					</div>
+				</div>
+			</div>  
+		</div>
+        <br/>
+        <textarea id="codeEditor1"><div class="row form-row">
+	<div class="form-group col s12 l6">
+		<label for="exampleFormControlInput1" class="label-type01">시작일</label>
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			<input type="text" id="exampleFormControlInput1" class="size-m" style="width:90%" v-model="date1" v-mask="'####-##-##'"><span class="text" style="width:10%">~</span>
+		</div>
+	</div>
+	<div class="form-group col s12 l6">
+		<label for="exampleFormControlInput2" class="label-type01">종료일</label>
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			<input type="text" id="exampleFormControlInput2" class="size-m" v-model="date2" v-mask="'####-##-##'">
+		</div>
+	</div>
+</div>   
+<div class="row form-row">
+	<div class="col s12">
+		<label for="exampleFormControlInput3" class="label-type01">시간</label>										
+	</div>
+	<div class="form-group col s12 l6">
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+			<input type="text" id="exampleFormControlInput3" class="size-m" style="width:90%" v-model="time1" v-mask="'##-##-##'"><span class="text" style="width:10%">~</span>
+		</div>
+	</div>
+	<div class="form-group col s12 l6">										
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+			<input type="text" id="exampleFormControlInput4" class="size-m" v-model="time2" v-mask="'##-##-##'">
+		</div>
+	</div>
+</div> 
+
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	date1: '20190101',
+    	date2: '20190214',
+    	time1: '123424',
+    	time2: '160200',
+    }
+});
+</textarea>
+   	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	date1: '20190101',
+    	date2: '20190214',
+    	time1: '123424',
+    	time2: '160200',
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor0', 100);	
+	editor('codeEditor1', 600);	
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

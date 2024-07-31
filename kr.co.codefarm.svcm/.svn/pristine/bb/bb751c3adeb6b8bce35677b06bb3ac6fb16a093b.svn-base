@@ -1,0 +1,820 @@
+<h2>기본정보 관리</h2>
+<section class="sub_cont_box survey-form" id="app">
+	<section class="cont_box" v-if="!defaultinfoList.currentRow">
+		<h2 class="h2">기본정보 리스트</h2>
+		<div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pSearchType" v-model="pSearchType" style="width:184px;" class="size-m">
+	            <option value="1">사이트명</option>
+	            <option value="2">회사명</option>
+            </select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	        <div class="f-right">
+	            <input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+	        </div>
+	    </div>
+
+	    <div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{defaultinfoListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{defaultinfoListPaging.getCurrentPage()}}</span> / {{defaultinfoListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="mainListLoading">
+					<caption>사이트 순번, 사이트 명, 주소</caption>
+					<colgroup>
+						<col />
+						<col width="40%" />
+						<col width="10%" />
+						<col width="10%" />
+						<col width="7%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col" class="left">사이트 명</th>
+							<th scope="col" class="left">주소 </th>
+							<th scope="col">사용여부</th>
+							<th scope="col">대표여부</th>
+							<th scope="col">삭제</th>
+						</tr>
+					</thead>
+					<tbody v-if="defaultinfoList.getRowCount() > 0">
+						<tr v-for="(item, index) in defaultinfoList.data" v-if="defaultinfoList.getRowType(index) != 8">
+							<td class="left" data-header="사이트 명"><a href="#!" @click="rowClick(index)">{{item.SITE_NM}}</a></td>
+							<td class="left" data-header="주소"><a href="#!" @click="rowClick(index)">{{item.ADDR1}} {{item.ADDR2}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="대표여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.DAEPYO_YN == 'Y', 'btn-table-type01':item.DAEPYO_YN == 'N'}"><span :class="{'icon-checkmark':item.DAEPYO_YN == 'Y', 'icon-minus-circle':item.DAEPYO_YN == 'N'}"></span></a></td>
+							<td data-header="삭제"><a href="#!"><span class="icon-trashcan" @click="messagePopup('ID_DELETE', index)"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="defaultinfoListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+
+	<section class="cont_box" v-if="defaultinfoList.currentRow" :key="componentKey">
+		<div class="tab-outter">
+			<div class="tab-type01">
+				<div class="tab-inner">
+					<div rel="tab1"><a href="#!" @click="tabPage = 1" :class="{'active':tabPage == 1}">기본정보 관리</a></div>
+					<div rel="tab3"><a href="#!" @click="tabPage = 3" :class="{'active':tabPage == 3}">사이트정보 관리</a></div>
+					<div rel="tab2"><a href="#!" @click="tabPage = 2" :class="{'active':tabPage == 2}">약관 관리</a></div>
+				</div>
+			</div>
+		</div>
+		<div class="tab-container">
+			<div id="tab1" class="tab-content" v-show="tabPage == 1">
+				<div class="style_set box-type01">
+					<div class="row form-row">
+						<!-- <div class="col s12 m6 l2 xl1">
+				            <label class="label-type01 required" for="siteSeq">순번</label>
+				            <input class="size-m" type="text" id="siteSeq"  name="siteSeq" data-vv-as="순번 " v-model="defaultinfoList.currentRow.SITE_SEQ" :disabled="updateDisabled"/>
+				            <small class="form-txt">{{ errors.first('siteSeq') }}</small>
+				        </div> -->
+				        <div class="form-group col s12 m6 l6 xl6">
+				    		<label class="label-type01 required" for="siteNm">사이트 명</label>
+				    		<input class="size-m" type="text" id="siteNm"  name="siteNm" placeholder="ex) 코드팜 XCloud 포탈 시스템" data-vv-as="사이트 명 " v-model="defaultinfoList.currentRow.SITE_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('siteNm')}"/>
+				    		<invalid-message :visible="true" :name="'siteNm'" :verror="errors"/>
+				    	</div>
+				    	<div class="form-group col s12 m6 l6 xl6">
+				            <label class="label-type01 required" for="coNm">회사 명</label>
+				            <input class="size-m" type="text" id="coNm"  name="coNm" placeholder="사업자 등록에 기반한 명칭" data-vv-as="회사 명 " v-model="defaultinfoList.currentRow.CO_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('coNm')}"/>
+				            <invalid-message :visible="true" :name="'coNm'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12 m4 l4 xl4">
+				            <label class="label-type01" for="coEnm">회사 영문명</label>
+				            <input class="size-m" type="text" id="coEnm"  name="coEnm" placeholder="회사 영문명" data-vv-as="회사 영문명 " v-model="defaultinfoList.currentRow.CO_ENM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('coEnm')}"/>
+				            <invalid-message :visible="true" :name="'coEnm'" :verror="errors"/>
+				        </div>
+				    	<div class="form-group col s12 m4 l4 xl4">
+				            <label class="label-type01" for="eoptae">업태</label>
+				            <input class="size-m" type="text" id="eoptae"  name="eoptae" placeholder="업태" data-vv-as="업태 " v-model="defaultinfoList.currentRow.EOPTAE" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('eoptae')}"/>
+				            <invalid-message :visible="true" :name="'eoptae'" :verror="errors"/>
+				        </div>
+				        <div class="form-group col s12 m4 l4 xl4">
+				            <label class="label-type01" for="jongmok">종목</label>
+				            <input class="size-m" type="text" id="jongmok"  name="jongmok" placeholder="종목" data-vv-as="종목" v-model="defaultinfoList.currentRow.JONGMOK" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('jongmok')}"/>
+				            <invalid-message :visible="true" :name="'jongmok'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12 m6 l6 xl6">
+				            <label class="label-type01 required" for="bizno">사업자등록번호</label>
+				            <input class="size-m" type="text" id="bizno"  name="bizno" placeholder="하이픈('-')없이 10자리"  data-vv-as="사업자등록번호 " v-model="defaultinfoList.currentRow.BIZNO" v-validate="'required|max:10'" v-bind:class="{'invalid': errors.has('bizno')}"/>
+				            <invalid-message :visible="true" :name="'bizno'" :verror="errors"/>
+				        </div>
+				    	<div class="form-group col s12 m6 l6 xl6">
+				            <label class="label-type01" for="corpno">법인번호</label>
+				            <input class="size-m" type="text" id="corpno"  name="corpno" placeholder="법인번호"  data-vv-as="법인번호 " v-model="defaultinfoList.currentRow.CORPNO" v-validate="'max:13'" v-bind:class="{'invalid': errors.has('corpno')}"/>
+				            <invalid-message :visible="true" :name="'corpno'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12 m6 l6 xl6">
+				            <label class="label-type01" for="telNo">대표 전화번호</label>
+				            <input class="size-m" type="text" id="telNo"  name="telNo" placeholder="대표 전화번호"  data-vv-as="대표 전화번호 " v-model="defaultinfoList.currentRow.TEL_NO" v-validate="'max:20'" v-bind:class="{'invalid': errors.has('telNo')}"/>
+				            <invalid-message :visible="true" :name="'telNo'" :verror="errors"/>
+				        </div>
+				    	<div class="form-group col s12 m6 l6 xl6">
+				            <label class="label-type01" for="faxNo">대표 팩스번호</label>
+				            <input class="size-m" type="text" id="faxNo"  name="faxNo" placeholder="대표 팩스번호"  data-vv-as="대표 팩스번호 " v-model="defaultinfoList.currentRow.FAX_NO" v-validate="'max:13'" v-bind:class="{'invalid': errors.has('faxNo')}"/>
+				            <invalid-message :visible="true" :name="'faxNo'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				    	<div class="form-group col s12 m3 l2 xl2">
+				            <label class="label-type01" for="zipno">우편번호</label>
+				            <input class="size-m" type="text" id="zipno"  name="zipno" placeholder="검색등록" data-vv-as="우편번호 " v-model="defaultinfoList.currentRow.ZIPNO" v-validate="'max:10'" v-bind:class="{'invalid': errors.has('zipno')}" disabled/>
+				            <invalid-message :visible="true" :name="'zipno'" :verror="errors"/>
+				        </div>
+				        <div class="form-group col s12 m9 l8 xl4">
+				    		<label class="label-type01" for="addr1">주소</label>
+				    		<input class="size-m" type="text" id="addr1"  name="addr1" placeholder="검색등록" data-vv-as="주소 " v-model="defaultinfoList.currentRow.ADDR1" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('addr1')}" disabled/>
+				    		<invalid-message :visible="true" :name="'addr1'" :verror="errors"/>
+				    	</div>
+				    	<div class="form-group col s12 m12 l2 xl6">
+				            <label class="label-type01" for="addr2">주소상세</label>
+				            <div class="btn-input">
+								<a href="#!" class="btn type02 size-m center-icon" @click="postSearch"><span class="icon-search"></span></a>
+								<input class="size-m" type="text" id="addr2" name="addr2" placeholder="검색 적용 후 상세주소" data-vv-as="주소상세 " v-model="defaultinfoList.currentRow.ADDR2" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('addr2')}"/>
+							</div>
+							<invalid-message :visible="true" :name="'addr2'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				    	<div class="form-group col s12 m12 l12 xl12">
+				    		 <label class="label-type01" for="remark">비고</label>
+				    		 <input class="size-m" type="text" id="remark"  name="remark" placeholder="비고" data-vv-as="비고" v-model="defaultinfoList.currentRow.REMARK" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('remark')}"/>
+				    		 <invalid-message :visible="true" :name="'remark'" :verror="errors"/>
+				    	</div>
+				    </div>
+				    <div class="row form-row">
+						<div class="form-group col s12 l6 form-row">
+							<div class="col s6 m4 l4 col-label">
+								<label for="useYn" class="label-type01 size-m">사용여부</label>
+							</div>
+							<div class="col s6 m4 l4">
+								<label class="toggle-switch size-m">
+									<input class="size-m" type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부" v-model="defaultinfoList.currentRow.USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('useYn')}" />
+									<span class="slider round"></span>
+								</label>
+							</div>
+						</div>
+						<div class="form-group col s12 l6 form-row">
+							<div class="col s6 m4 l4 col-label">
+								<label for="daepyoYn" class="label-type01 size-m">대표여부</label>
+							</div>
+							<div class="col s6 m4 l4">
+								<label class="toggle-switch size-m">
+									<input class="size-m" type="checkbox" id="daepyoYn" name="daepyoYn" data-vv-as="대표여부 " v-model="defaultinfoList.currentRow.DAEPYO_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('daepyoYn')}" />
+									<span class="slider round"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="tab3" class="tab-content" v-show="tabPage == 3">
+				<div class="style_set box-type01">
+				    <div class="row form-row">
+				        <div class="form-group col s12 m6 xl6">
+				            <label class="label-type01" for="logoFileNo1">로그인 로고 (.svg파일만 등록가능)</label>
+				            <single-file-uploader :fileset="logoImg1" :type="'file'" :fileid="'SMN_DEFAULTINFO'" :filekey="defaultinfoList.currentRow.SITE_SEQ" :filehangmok="'logoImg1'" :modify="true"></single-file-uploader>
+				        </div>
+				        <div class="form-group col s12 m6 xl6">
+				            <label class="label-type01" for="logoFileNo2">포탈 로고 (.svg파일만 등록가능)</label>
+				            <single-file-uploader :fileset="logoImg2" :type="'file'" :fileid="'SMN_DEFAULTINFO'" :filekey="defaultinfoList.currentRow.SITE_SEQ" :filehangmok="'logoImg2'" :modify="true"></single-file-uploader>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				    		 <label class="label-type01" for="campusUrlId">캠퍼스 URL 아이디</label>-->
+<!--				    		 <input class="size-m" type="text" id="campusUrlId"  name="campusUrlId" placeholder="캠퍼스 URL 아이디" data-vv-as="캠퍼스 URL 아이디 " v-model="defaultinfoList.currentRow.CAMPUS_URL_ID" v-validate="'max:30'" v-bind:class="{'invalid': errors.has('campusUrlId')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'campusUrlId'" :verror="errors"/>-->
+<!--				    	</div>-->
+				    	<div class="form-group col s12 m6 l6 xl6">
+				    		 <label class="label-type01" for="copyright">COPYRIGHT</label>
+				    		 <input class="size-m" type="text" id="copyright"  name="copyright" placeholder="COPYRIGHT" data-vv-as="COPYRIGHT" v-model="defaultinfoList.currentRow.COPYRIGHT" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('copyright')}"/>
+				    		 <invalid-message :visible="true" :name="'copyright'" :verror="errors"/>
+				    	</div>
+						<div class="form-group col s12 m6 l6 xl6">
+							<label class="label-type01" for="hoewonJoinUrl">회원가입 URL</label>
+							<input class="size-m" type="text" id="hoewonJoinUrl"  name="hoewonJoinUrl" placeholder="회원가입 URL ex) http://example.com or /html/signUp.html..." data-vv-as="회원가입 URL " v-model="defaultinfoList.currentRow.HOEWON_JOIN_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('hoewonJoinUrl')}"/>
+							<invalid-message :visible="true" :name="'hoewonJoinUrl'" :verror="errors"/>
+						</div>
+				    </div>
+				    <div class="row form-row">
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				    		 <label class="label-type01" for="hoewonJoinUrl">회원가입 URL</label>-->
+<!--				    		 <input class="size-m" type="text" id="hoewonJoinUrl"  name="hoewonJoinUrl" placeholder="회원가입 URL ex) http://example.com or /html/signUp.html..." data-vv-as="회원가입 URL " v-model="defaultinfoList.currentRow.HOEWON_JOIN_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('hoewonJoinUrl')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'hoewonJoinUrl'" :verror="errors"/>-->
+<!--				    	</div>-->
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				    		 <label class="label-type01" for="pwdFindUrl">아이디/패스워드 찾기 URL</label>-->
+<!--				    		 <input class="size-m" type="text" id="pwdFindUrl"  name="pwdFindUrl" placeholder="아이디/패스워드 찾기 URL ex) http://example.com or /html/signUp.html..." data-vv-as="회원가입 URL " v-model="defaultinfoList.currentRow.PWD_FIND_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('pwdFindUrl')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'pwdFindUrl'" :verror="errors"/>-->
+<!--				    	</div>-->
+				    </div>
+<!--				    <div class="row form-row">-->
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				    		 <label class="label-type01" for="groupwareSessionInsertUrl">그룹웨어 세션 생성 URL</label>-->
+<!--				    		 <input class="size-m" type="text" id="groupwareSessionInsertUrl"  name="groupwareSessionInsertUrl" placeholder="그룹웨어 세션 생성 URL ex) http://example.com" data-vv-as="그룹웨어 세션 생성 URL " v-model="defaultinfoList.currentRow.GROUPWARE_SESSION_INSERT_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('groupwareSessionInsertUrl')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'groupwareSessionInsertUrl'" :verror="errors"/>-->
+<!--				    	</div>-->
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				    		 <label class="label-type01" for="groupwareEmailLinkUrl">그룹웨어 이메일 링크 URL</label>-->
+<!--				    		 <input class="size-m" type="text" id="groupwareEmailLinkUrl"  name="groupwareEmailLinkUrl" placeholder="그룹웨어 이메일 링크 URL ex) http://example.com" data-vv-as="그룹웨어 이메일 링크 URL " v-model="defaultinfoList.currentRow.GROUPWARE_EMAIL_LINK_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('groupwareEmailLinkUrl')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'groupwareEmailLinkUrl'" :verror="errors"/>-->
+<!--				    	</div>-->
+<!--				    </div>-->
+<!--				    <div class="row form-row">-->
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				    		 <label class="label-type01" for="groupwareEmailListkUrl">그룹웨어 이메일 리스트 URL</label>-->
+<!--				    		 <input class="size-m" type="text" id="groupwareEmailListkUrl"  name="groupwareEmailListkUrl" placeholder="그룹웨어 이메일 리스트 URL ex) http://example.com or /html/signUp.html..." data-vv-as="그룹웨어 이메일 리스트 URL " v-model="defaultinfoList.currentRow.GROUPWARE_EMAIL_LIST_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('groupwareEmailListkUrl')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'groupwareEmailListkUrl'" :verror="errors"/>-->
+<!--				    	</div>-->
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				    		 <label class="label-type01" for="groupwareEmailCntUrl">그룹웨어 이메일 건수 URL</label>-->
+<!--				    		 <input class="size-m" type="text" id="groupwareEmailCntUrl"  name="groupwareEmailCntUrl" placeholder="그룹웨어 이메일 건수 URL ex) http://example.com" data-vv-as="그룹웨어 이메일 건수 URL " v-model="defaultinfoList.currentRow.GROUPWARE_EMAIL_CNT_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('groupwareEmailCntUrl')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'groupwareEmailCntUrl'" :verror="errors"/>-->
+<!--				    	</div>-->
+<!--				    </div>-->
+<!--				    <div class="row form-row">-->
+<!--						<div class="form-group col s16 m4 l6 xl6">-->
+<!--				            <label class="label-type01" for="sendMail">발신메일 주소</label>-->
+<!--				            <input class="size-m" type="text" id="sendMail"  name="sendMail" placeholder="발신 메일 (example@example.com)" data-vv-as="사용자 아이디" v-model="defaultinfoList.currentRow.SEND_MAIL" v-validate="'max:30|email'" v-bind:class="{'invalid':errors.has('sendMail')}" />-->
+<!--				            <invalid-message :visible="true" :name="'sendMail'" :verror="errors"/>-->
+<!--				        </div> -->
+<!--				    	<div class="form-group col s12 m6 l6 xl6">-->
+<!--				            <label class="label-type01" for="sendNm">발신메일 이름</label>-->
+<!--				            <input class="size-m" type="text" id="sendNm"  name="sendNm" placeholder="발신메일 이름" data-vv-as="발신메일 이름 " v-model="defaultinfoList.currentRow.SEND_NM" v-validate="'max:300'" v-bind:class="{'invalid':errors.has('sendNm')}"/>-->
+<!--				    		<invalid-message :visible="true" :name="'sendNm'" :verror="errors"/>-->
+<!--				        </div> 	-->
+<!--				    </div>-->
+<!--				    <div class="row form-row">-->
+<!--				    	<div class="form-group col s12 m12 l12 xl12">-->
+<!--				    		 <label class="label-type01" for="defaultMailTitle">기본 메일제목</label>-->
+<!--				    		 <input class="size-m" type="text" id="defaultMailTitle"  name="defaultMailTitle" placeholder="기본 메일제목" data-vv-as="기본 메일제목 " v-model="defaultinfoList.currentRow.DEFAULT_MAIL_TITLE" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('defaultMailTitle')}"/>-->
+<!--				    		 <invalid-message :visible="true" :name="'defaultMailTitle'" :verror="errors"/>-->
+<!--				    	</div>-->
+<!--				    </div>-->
+<!--				    <div class="row form-row">-->
+<!--						<div class="form-group col s12 l6 form-row">-->
+<!--							<div class="col s6 m4 l4 col-label">-->
+<!--								<label for="smsUseYn" class="label-type01 size-m">SMS 사용여부</label>-->
+<!--							</div>-->
+<!--							<div class="col s6 m8 l8">-->
+<!--								<label class="toggle-switch size-m">-->
+<!--									<input class="size-m" type="checkbox" id="smsUseYn" name="smsUseYn" data-vv-as="SMS 사용여부" v-model="defaultinfoList.currentRow.SMS_USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('smsUseYn')}" />-->
+<!--									<span class="slider round"></span>-->
+<!--								</label>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--						<div class="form-group col s12 l6 form-row">-->
+<!--							<div class="col s6 m4 l4 col-label">-->
+<!--								<label for="smsSendNo" class="label-type01 size-m">SMS 발신번호</label>-->
+<!--							</div>-->
+<!--							<div class="col s6 m8 l8">-->
+<!--								<input class="size-m" type="text" id="smsSendNo"  name="smsSendNo" placeholder="SMS 발신번호"  data-vv-as="SMS 발신번호 " v-model="defaultinfoList.currentRow.SMS_SEND_NO" v-validate="'max:20'" v-bind:class="{'invalid': errors.has('smsSendNo')}" :disabled="defaultinfoList.currentRow.SMS_USE_YN == 'Y' ? false : true"/>-->
+<!--			            		<invalid-message :visible="true" :name="'smsSendNo'" :verror="errors"/>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--					</div>-->
+				</div>
+			</div>
+			<div id="tab2" class="tab-content" v-show="tabPage == 2">
+				<div class="style_set box-type01">
+					<div class="survey-box">
+						<button></button>
+						<div class="survey-cont">
+							<div class="row form-row">
+								<div class="form-group col s12 m8 l8 xl10">
+									<label for="agreeItem1Nm" class="label-type01">동의항목1 제목</label>
+									<input class="size-m" type="text" id="agreeItem1Nm"  name="agreeItem1Nm" placeholder="동의항목1 제목  ex)개인정보 활용 동의" data-vv-as="동의항목1 제목 " v-model="defaultinfoList.currentRow.AGREE_ITEM1_NM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('agreeItem1Nm')}"/>
+					    			<invalid-message :visible="true" :name="'agreeItem1Nm'" :verror="errors"/>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem1PilsuYn" class="label-type01">필수여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem1PilsuYn" name="agreeItem1PilsuYn" v-model="defaultinfoList.currentRow.AGREE_ITEM1_PILSU_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem1PilsuYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem1UseYn" class="label-type01">사용여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem1UseYn" name="agreeItem1UseYn" v-model="defaultinfoList.currentRow.AGREE_ITEM1_USE_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem1UseYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="row form-row">
+						        <div class="form-group col s12 m12 l12 xl12">
+						    		<textarea rows="10" class="size-m" placeholder="동의항목1 내용 ex) 정보통신망법 규정에 따라 사이트에 회원가입 신청하시는 분께 수집하..." id="agreeItem1contents"  name="agreeItem1contents" data-vv-as="동의항목1 내용 " v-model="defaultinfoList.currentRow.AGREE_ITEM1_CONTENTS" v-bind:class="{'invalid': errors.has('agreeItem1contents')}"></textarea>
+			                        <invalid-message :visible="true" :name="'agreeItem1contents'" :verror="errors"/>
+						    	</div>
+						    </div>
+						</div>
+					</div>
+					<div class="survey-box">
+						<button></button>
+						<div class="survey-cont">
+							<div class="row form-row">
+								<div class="form-group col s12 m8 l8 xl10">
+									<label for="agreeItem2Nm" class="label-type01">동의항목2 제목</label>
+									<input class="size-m" type="text" id="agreeItem2Nm"  name="agreeItem2Nm" placeholder="동의항목2 제목  ex)개인정보 활용 동의" data-vv-as="동의항목2 제목 " v-model="defaultinfoList.currentRow.AGREE_ITEM2_NM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('agreeItem2Nm')}"/>
+					    			<invalid-message :visible="true" :name="'agreeItem2Nm'" :verror="errors"/>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem2PilsuYn" class="label-type01">필수여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem2PilsuYn" name="agreeItem2PilsuYn" v-model="defaultinfoList.currentRow.AGREE_ITEM2_PILSU_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem2PilsuYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem2UseYn" class="label-type01">사용여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem2UseYn" name="agreeItem2UseYn" v-model="defaultinfoList.currentRow.AGREE_ITEM2_USE_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem2UseYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="row form-row">
+						        <div class="form-group col s12 m12 l12 xl12">
+						    		<textarea rows="10" class="size-m" placeholder="동의항목2 내용 ex) 정보통신망법 규정에 따라 사이트에 회원가입 신청하시는 분께 수집하..." id="agreeItem2contents"  name="agreeItem2contents" data-vv-as="동의항목1 내용 " v-model="defaultinfoList.currentRow.AGREE_ITEM2_CONTENTS" v-bind:class="{'invalid': errors.has('agreeItem2contents')}"></textarea>
+			                        <invalid-message :visible="true" :name="'agreeItem2contents'" :verror="errors"/>
+						    	</div>
+						    </div>
+						</div>
+					</div>
+					<div class="survey-box">
+						<button></button>
+						<div class="survey-cont">
+							<div class="row form-row">
+								<div class="form-group col s12 m8 l8 xl10">
+									<label for="agreeItem3Nm" class="label-type01">동의항목3 제목</label>
+									<input class="size-m" type="text" id="agreeItem3Nm"  name="agreeItem3Nm" placeholder="동의항목3 제목  ex)개인정보 활용 동의" data-vv-as="동의항목3 제목 " v-model="defaultinfoList.currentRow.AGREE_ITEM3_NM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('agreeItem3Nm')}"/>
+					    			<invalid-message :visible="true" :name="'agreeItem3Nm'" :verror="errors"/>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem3PilsuYn" class="label-type01">필수여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem3PilsuYn" name="agreeItem3PilsuYn" v-model="defaultinfoList.currentRow.AGREE_ITEM3_PILSU_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem3PilsuYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem3UseYn" class="label-type01">사용여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem3UseYn" name="agreeItem3UseYn" v-model="defaultinfoList.currentRow.AGREE_ITEM3_USE_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem3UseYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="row form-row">
+						        <div class="form-group col s12 m12 l12 xl12">
+						    		<textarea rows="10" class="size-m" placeholder="동의항목3 내용 ex) 정보통신망법 규정에 따라 사이트에 회원가입 신청하시는 분께 수집하..." id="agreeItem3contents"  name="agreeItem3contents" data-vv-as="동의항목1 내용 " v-model="defaultinfoList.currentRow.AGREE_ITEM3_CONTENTS" v-bind:class="{'invalid': errors.has('agreeItem3contents')}"></textarea>
+			                        <invalid-message :visible="true" :name="'agreeItem3contents'" :verror="errors"/>
+						    	</div>
+						    </div>
+						</div>
+					</div>
+					<div class="survey-box">
+						<button></button>
+						<div class="survey-cont">
+							<div class="row form-row">
+								<div class="form-group col s12 m8 l8 xl10">
+									<label for="agreeItem4Nm" class="label-type01">동의항목4 제목</label>
+									<input class="size-m" type="text" id="agreeItem4Nm"  name="agreeItem4Nm" placeholder="동의항목4 제목  ex)개인정보 활용 동의" data-vv-as="동의항목4 제목 " v-model="defaultinfoList.currentRow.AGREE_ITEM4_NM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('agreeItem4Nm')}"/>
+					    			<invalid-message :visible="true" :name="'agreeItem4Nm'" :verror="errors"/>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem4PilsuYn" class="label-type01">필수여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem4PilsuYn" name="agreeItem4PilsuYn" v-model="defaultinfoList.currentRow.AGREE_ITEM4_PILSU_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem4PilsuYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+								<div class="form-group col s12 m2 l2 xl1 center">
+									<label for="agreeItem4UseYn" class="label-type01">사용여부</label>
+									<div class="form-check">
+										<label class="toggle-switch size-m">
+											<input class="size-m" type="checkbox" id="agreeItem4UseYn" name="agreeItem4UseYn" v-model="defaultinfoList.currentRow.AGREE_ITEM4_USE_YN" data-vv-as="필수여부" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('agreeItem4UseYn')}" />
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="row form-row">
+						        <div class="form-group col s12 m12 l12 xl12">
+						    		<textarea rows="10" class="size-m" placeholder="동의항목4 내용 ex) 정보통신망법 규정에 따라 사이트에 회원가입 신청하시는 분께 수집하..." id="agreeItem4contents"  name="agreeItem4contents" data-vv-as="동의항목1 내용 " v-model="defaultinfoList.currentRow.AGREE_ITEM4_CONTENTS" v-bind:class="{'invalid': errors.has('agreeItem4contents')}"></textarea>
+			                        <invalid-message :visible="true" :name="'agreeItem4contents'" :verror="errors"/>
+						    	</div>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-inline btn-line right">
+			<div class="col-inline right">
+				<a href="#!" class="btn type01 size-m" @click="defaultinfoList.selectRow(-1);">목록</a>
+	    		<a href="#!" class="btn type01 size-m" v-if="defaultinfoList.getRowType(defaultinfoList.rowposition) == ROWTYPE_NORMAL || defaultinfoList.getRowType(defaultinfoList.rowposition) == ROWTYPE_UPDATE" @click="messagePopup('ID_DELETE', defaultinfoList.rowposition)">삭제</a>
+	    		<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+			</div>
+		</div>
+	</section>
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+ /*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		defaultinfoList: new Dataset(),
+		defaultinfoListPaging: new PagingSet(5, 5),
+		updateDisabled: false,
+		componentKey: 0,
+		messageModal: new ModalSet('default-info-modal'),	// confirm 모달
+        pSearchType: '1',
+        pSearchArgv: '',
+		mainListLoading: {id:'mainListLoading', val:false},
+		titleImg: new SingleFileSet('SMN'),
+		logoImg1: new SingleFileSet('SMN', true, 'LOGO1.svg'),
+		logoImg2: new SingleFileSet('SMN', true, 'LOGO2.svg'),
+		logoImg3: new SingleFileSet('SMN', true, 'LOGO.svg'),
+		tabPage: 1,
+	},
+	//생성 될 때
+	beforeCreate: function(){
+
+	},
+	//계산된 속성 표현 시
+	computed: {
+
+	},
+	//데이터 감시
+	watch: {
+		//rowposition changed
+		'defaultinfoList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.defaultinfoList.enableevent){
+					var changeYn = this.defaultinfoList.dataCompare(oldVal);
+					var rowType = this.defaultinfoList.getRowType(val);
+					var oldRowType = this.defaultinfoList.getRowType(oldVal);
+
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.defaultinfoList.setDefaultRow(oldVal);
+					}
+
+					if(val != -1){
+						var siteSeq = this.defaultinfoList.getColumn(val, 'SITE_SEQ');
+
+						this.titleImg.init();
+                    	this.logoImg1.init();
+                    	this.logoImg2.init();
+                    	this.logoImg3.init();
+
+						if(rowType == this.ROWTYPE_NORMAL  || rowType == this.ROWTYPE_UPDATE){
+							this.updateDisabled = true;
+						}else{
+							this.updateDisabled = false;
+						}
+
+						if(rowType != this.ROWTYPE_INSERT){
+                        	this.titleImg.getFiles('SMN_DEFAULTINFO', siteSeq, 'titleImg', null);
+                        	this.logoImg1.getFiles('SMN_DEFAULTINFO', siteSeq, 'logoImg1', null);
+                        	this.logoImg2.getFiles('SMN_DEFAULTINFO', siteSeq, 'logoImg2', null);
+                        	this.logoImg3.getFiles('SMN_DEFAULTINFO', siteSeq, 'logoImg3', null);
+                        }
+						this.$validator.reset();
+					}
+				}
+			}
+		},
+		//row data changed
+		'defaultinfoList.data': {
+			handler: function (val, oldVal) {
+				if(this.defaultinfoList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.defaultinfoList.beforeData[rowposition][colNm];
+				          	vm.defaultinfoList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.defaultinfoList.beforeData[rowposition][colNm] = data[colNm];
+
+				          		if(rowposition != -1 && colNm == 'SMS_USE_YN'){
+				          			if(data[colNm] == 'N'){
+				          				vm.defaultinfoList.currentRow.SMS_SEND_NO = '';
+				          			}
+				          		}
+				          		vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+		'defaultinfoListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setDefaultinfoList();
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setDefaultinfoList();
+	},
+	//함수
+	methods: {
+		/* 기본정보관리 리스트 조회 */
+		setDefaultinfoList: function(){
+			var self = this;
+
+			if(isNull(this.pSearchArgv)) this.pSearchArgv = '';
+            if(isNull(this.pSearchType)){
+                this.pSearchType = '';
+                this.pSearchArgv = '';
+            }
+
+            self.mainListLoading.val = true;
+			var returnVal = defaultinfoApi.service(this.pSearchType, this.pSearchArgv, this.defaultinfoListPaging.currentPage, this.defaultinfoListPaging.getRowCnt(), false);
+
+			returnVal.then(function(response) {
+				self.defaultinfoList.setData(response.data);
+				if(response.data.length > 0){
+					var totalCnt = self.defaultinfoList.data[0].CNT;
+					self.defaultinfoListPaging.setTotalCnt(totalCnt);
+				}else{
+					self.defaultinfoListPaging.setTotalCnt(0);
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		 /* 검색 */
+        search: function(){
+        	var pageNo = this.defaultinfoListPaging.getCurrentPage();
+
+        	if(pageNo == 1){
+        		this.setDefaultinfoList();
+        	}else{
+        		this.defaultinfoListPaging.movePage(1);
+        	}
+        },
+		/* 기본정보관리  리스트 신규행 추가 */
+		newRow: function(){
+			var addObj = {
+                'SITE_SEQ': '',
+                'SITE_NM': '',
+                'BIZNO': '',
+                'CORPNO': '',
+                'CO_NM': '',
+                'CO_ENM': '',
+                'ADDR1': '',
+                'ADDR2': '',
+                'ZIPNO': '',
+                'EOPTAE': '',
+                'JONGMOK': '',
+                'CAMPUS_URL_ID': '',
+                'COPYRIGHT': '',
+                'HOEWON_JOIN_URL': '',
+                'GROUPWARE_SESSION_INSERT_URL': '',
+                'GROUPWARE_EMAIL_LINK_URL': '',
+                'GROUPWARE_EMAIL_LIST_URL': '',
+                'GROUPWARE_EMAIL_CNT_URL': '',
+                'PWD_FIND_URL': '',
+                'SEND_MAIL': '',
+                'SEND_NM': '',
+                'DEFAULT_MAIL_TITLE': '',
+                'SMS_USE_YN': '',
+                'SMS_SEND_NO': '',
+                'TEL_NO': '',
+                'FAX_NO': '',
+                'REMARK': '',
+                'USE_YN': '',
+                'DAEPYO_YN': '',
+                'AGREE_ITEM1_NM': '',
+                'AGREE_ITEM1_PILSU_YN': 'N',
+                'AGREE_ITEM1_USE_YN': 'N',
+                'AGREE_ITEM1_CONTENTS': '',
+                'AGREE_ITEM2_NM': '',
+                'AGREE_ITEM2_PILSU_YN': 'N',
+                'AGREE_ITEM2_USE_YN': 'N',
+                'AGREE_ITEM2_CONTENTS': '',
+                'AGREE_ITEM3_NM': '',
+                'AGREE_ITEM3_PILSU_YN': 'N',
+                'AGREE_ITEM3_USE_YN': 'N',
+                'AGREE_ITEM3_CONTENTS': '',
+                'AGREE_ITEM4_NM': '',
+                'AGREE_ITEM4_PILSU_YN': 'N',
+                'AGREE_ITEM4_USE_YN': 'N',
+                'AGREE_ITEM4_CONTENTS': '',
+                'AGREE_ITEM5_NM': '',
+                'AGREE_ITEM5_PILSU_YN': 'N',
+                'AGREE_ITEM5_USE_YN': 'N',
+                'AGREE_ITEM5_CONTENTS': '',
+                'AGREE_ITEM6_NM': '',
+                'AGREE_ITEM6_PILSU_YN': 'N',
+                'AGREE_ITEM6_USE_YN': 'N',
+                'AGREE_ITEM6_CONTENTS': '',
+                'AGREE_ITEM7_NM': '',
+                'AGREE_ITEM7_PILSU_YN': 'N',
+                'AGREE_ITEM7_USE_YN': 'N',
+                'AGREE_ITEM7_CONTENTS': '',
+                'AGREE_ITEM8_NM': '',
+                'AGREE_ITEM8_PILSU_YN': 'N',
+                'AGREE_ITEM8_USE_YN': 'N',
+                'AGREE_ITEM8_CONTENTS': '',
+                'AGREE_ITEM9_NM': '',
+                'AGREE_ITEM9_PILSU_YN': 'N',
+                'AGREE_ITEM9_USE_YN': 'N',
+                'AGREE_ITEM9_CONTENTS': '',
+                'AGREE_ITEM10_NM': '',
+                'AGREE_ITEM10_PILSU_YN': 'N',
+                'AGREE_ITEM10_USE_YN': 'N',
+                'AGREE_ITEM10_CONTENTS': '',
+            };
+
+			var newRowPosition = this.defaultinfoList.addRow(addObj);
+		},
+		/* 기본정보관리  리스트 저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.defaultinfoList.rowposition;
+					var rowType = self.defaultinfoList.getRowType(rowposition);
+					var returnVal = null;
+
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM1_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM1_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM2_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM2_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM3_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM3_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM4_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM4_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM5_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM5_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM6_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM6_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM7_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM7_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM8_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM8_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM9_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM9_CONTENTS = '';
+					if(isNull(self.defaultinfoList.currentRow.AGREE_ITEM10_CONTENTS)) self.defaultinfoList.currentRow.AGREE_ITEM10_CONTENTS = '';
+
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = defaultinfoApi.defaultinfoInsert(self.defaultinfoList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = defaultinfoApi.defaultinfoUpdate(self.defaultinfoList.currentRow, true);
+					}else{
+						notifySubmit('info', '기본정보 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+
+							notifySubmit('success', '기본정보 저장', '저장이 완료되었습니다.', 'icon-save');
+							systemApi.defaultinfoRefresh(null, false);
+							self.setDefaultinfoList();
+						}).catch(function(error) {
+							notifySubmit('warning', '기본정보 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}else{
+					notifySubmit('warning', '기본정보 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		/* 기본정보관리  리스트 삭제 */
+		deleteRow: function(row){
+			var self = this;
+			var rowType = self.defaultinfoList.getRowType(row);
+			var returnVal = null;
+			var siteSeq = self.defaultinfoList.getColumn(row, 'SITE_SEQ');
+
+			self.defaultinfoList.deleteRow(row);
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = defaultinfoApi.defaultinfoDelete(siteSeq, true);
+				returnVal.then(function(response) {
+					var data = response.data;
+
+					self.titleImg.delFiles('SMN_DEFAULTINFO', siteSeq, 'titleImg', null, null, false);
+					self.logoImg1.delFiles('SMN_DEFAULTINFO', siteSeq, 'logoImg1', null, null, false);
+					self.logoImg2.delFiles('SMN_DEFAULTINFO', siteSeq, 'logoImg2', null, null, false);
+					self.logoImg3.delFiles('SMN_DEFAULTINFO', siteSeq, 'logoImg3', null, null, false);
+
+					notifySubmit('success', '기본정보 저장', '저장이 완료되었습니다.', 'icon-save');
+					systemApi.defaultinfoRefresh(null, false);
+					self.setDefaultinfoList();
+					notifySubmit('success', '기본정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+				}).catch(function(error) {
+					notifySubmit('warning', '기본정보 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});
+			}else{
+				notifySubmit('success', '기본정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+			}
+		},
+		/* 기본정보관리  리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+			var rowposition = this.defaultinfoList.rowposition;
+			var rowType = this.defaultinfoList.getRowType(rowposition);
+
+			if(rowType == ROWTYPE_NORMAL || rowType == ROWTYPE_UPDATE || rowType == ROWTYPE_INSERT){
+				$('#siteSeq').attr('disabled', true);
+			}else{
+				$('#siteSeq').attr('disabled', false);
+			}
+		},
+		/*주소 검색*/
+		postSearch: function(){
+			new daum.Postcode({
+		        oncomplete: function(data) {
+		        	vm.defaultinfoList.setColumn(vm.defaultinfoList.rowposition,'ZIPNO',data.zonecode);
+		        	vm.defaultinfoList.setColumn(vm.defaultinfoList.rowposition,'ADDR1',data.roadAddress);
+		        	vm.componentKey++;
+		        }
+		    }).open();
+		},
+		rowClick: function(index){
+			this.tabPage = 1;
+			this.defaultinfoList.selectRow(index);
+		},
+		/* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            var pGb = 'confirm';
+
+            switch(pId) {
+	    		case 'ID_DELETE':
+	    			title = '삭제';
+	    			cont = "해당 항목을 삭제하시겠습니까?<br />(해당 건의 '대표자관리' 데이터도 삭제됩니다.)";
+                    break;
+	    	}
+
+            this.messageModal.openModal(pGb, title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+
+	    	switch(pId) {
+	    		case 'ID_DELETE':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    }
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>
+

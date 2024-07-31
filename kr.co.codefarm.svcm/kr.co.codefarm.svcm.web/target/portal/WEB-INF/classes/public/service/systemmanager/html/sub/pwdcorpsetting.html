@@ -1,0 +1,248 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+
+<h2>패스워드 설정</h2>
+<section class="sub_cont_box password-change" id="app">
+    <div class="head">
+        <p class="name-kor">{{session.USER_NM}}</p>
+    </div>
+    <div class="cont" id="mainListLoading">
+        <div class="notice">
+            <p class="icon-alert-circle">비밀번호 변경시 주의사항</p>
+            <ul class="list-type02">
+                <li>연속되지않는 영문, 숫자, 특수문자를 포함한 9-20자, <br/>특수문자(~!@#$%^&amp;*()_+`-=?) 사용</li>
+                <li>동일한 문자는 반복 불가합니다.</li>
+				<li>키보드 상에서 나란히 있는 문자열은 불가합니다.(예 : qwe)</li>
+				<li>신상정보(이름, 아이디)를 활용한 값은 불가합니다. </li>
+                <li>다른 아이디 / 사이트에서 사용한 적 없는 비밀번호(권장)</li>
+                <li>이전에 사용한 적 없는 비밀번호(권장)</li>
+            </ul>
+        </div>
+        <form autocomplete="off">
+	        <div class="current-pwd">
+	            <input type="password" class="size-l" placeholder="현재 비밀번호 입력" v-model="currPwd" id="curr-pwd" name="curr-pwd" data-vv-as="현재 비밀번호 " v-validate="'required'" v-bind:class="{'invalid': errors.has('curr-pwd')}"/>
+	            <invalid-message :visible="true" :name="'curr-pwd'" :verror="errors"/>
+	        </div>
+	        <div class="new-pwd">
+	            <input type="password" class="size-l" placeholder="새 비밀번호 입력" ref="newPwd1" v-model="newPwd1" id="newPwd1" name="newPwd1" data-vv-as="새 비밀번호 입력 " v-validate="{ required: true, regex: /^((?=.*[a-zA-Z0-9~!@#$%^&*()_+`\-=?]$)(?=.*[a-zA-Z])(?=.*[~!@#$%^&*()_+`\-=?])(?=.*[0-9])).{9,20}$/ }" v-bind:class="{'invalid': errors.has('newPwd1') || (pwdCheck(newPwd1,session.USER_ID,session.USER_NM) > 0)}" maxlength="20"/>
+	            <small class="form-txt invalid" v-show="pwdCheck(newPwd1,session.USER_ID,session.USER_NM) > 0">{{ pwdCheck(newPwd1,session.USER_ID,session.USER_NM) | pwdFormatter }}</small>
+	            <invalid-message :visible="true" :name="'newPwd1'" :verror="errors" v-show="pwdCheck(newPwd1,session.USER_ID,session.USER_NM) == 0"/>
+	        </div>
+            <div class="new-pwd">
+	            <input type="password" class="size-l" placeholder="새 비밀번호 확인" v-model="newPwd2" id="newPwd2" name="newPwd2" data-vv-as="새 비밀번호 확인 " v-validate="{ required: true, regex: /^((?=.*[a-zA-Z0-9~!@#$%^&*()_+`\-=?]$)(?=.*[a-zA-Z])(?=.*[~!@#$%^&*()_+`\-=?])(?=.*[0-9])).{9,20}$/, confirmed: newPwd1 }" v-bind:class="{'invalid': errors.has('newPwd2') || (pwdCheck(newPwd2,session.USER_ID,session.USER_NM) > 0)}" maxlength="20"/>
+	            <small class="form-txt invalid" v-show="pwdCheck(newPwd2,session.USER_ID,session.USER_NM) > 0">{{ pwdCheck(newPwd2,session.USER_ID,session.USER_NM) | pwdFormatter }}</small>
+	            <invalid-message :visible="true" :name="'newPwd2'" :verror="errors" v-show="pwdCheck(newPwd2,session.USER_ID,session.USER_NM) == 0"/>
+	        </div>
+	        <div class="btn-line right">
+	            <a href="#!" class="btn size-m type02" @click="openModal">비밀번호 변경</a>
+	        </div>
+        </form>
+    </div>
+
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		currPwd: '',
+		newPwd1: '',
+		newPwd2: '',
+		exKey: '',
+		key: '',
+	    mainListLoading: {id:'mainListLoading', val:false},
+		messageModal: new ModalSet('modal-message'),
+	},
+	//데이터 감시
+	watch: {
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+
+	},
+	filters:{
+		pwdFormatter: function(val){
+			var txt = '';
+			switch(val){
+			case 1: txt = '연속된 3자리 이상 키보드상 나란히 있는 문자열은 사용불가능합니다.'; break;
+			case 2: txt = '3자리 이상 동일한 문자반복은 사용불가능합니다.'; break;
+			case 3: txt = '3자리 이상 연속된숫자(역순)또는 알파벳(역순)은 사용불가능합니다.'; break;
+			case 4: txt = '3자리 이상 연속된숫자또는 알파벳은 사용불가능합니다.'; break;
+			case 5: txt = '아이디 또는 이름이 포함된 문자열은 사용불가능합니다.'; break;
+			}
+			return txt;
+		}
+	},
+	//함수
+	methods: {
+		/* 패스워드 수정 */
+		savePwd: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			validate.then(function(response) {
+				var checkPwd = self.pwdCheck(self.newPwd1, self.session.USER_ID, self.session_USER_NM);
+				if(checkPwd > 0){
+					switch(checkPwd){
+					case 1: alert('연속된 3자리 이상 키보드상 나란히 있는 문자열은 사용불가능합니다.'); break;
+					case 2: alert('3자리 이상 동일한 문자반복은 사용불가능합니다.'); break;
+					case 3: alert('3자리 이상 연속된숫자(역순)또는 알파벳(역순)은 사용불가능합니다.'); break;
+					case 4: alert('3자리 이상 연속된숫자또는 알파벳은 사용불가능합니다.'); break;
+					case 5: alert('아이디 또는 이름이 포함된 문자열은 사용불가능합니다.'); break;
+					}
+					
+				}
+				else if(self.currPwd == self.newPwd1){
+					alert('기존비밀번호와 바뀐 비밀번호가 일치합니다.');
+				}
+				else if(response){
+					self.mainListLoading.val = true;
+
+					$.ajax({
+						url: '/publickeys',
+						cache: false,
+						success: function(data) {
+							var rsa = new RSAKey();
+							rsa.setPublic(data.modulus, data.publicExponent);
+							var params = {
+								EXKEY : self.exKey,
+								KEY : self.key,
+								PWD : rsa.encrypt(sha256Enc(self.currPwd)),
+								NEW_PWD : rsa.encrypt(sha256Enc(self.newPwd2)),
+							}
+							var returnVal = userApi.updateMyPwd(params, true);
+							if(!isNull(returnVal)){
+								returnVal.then(function(response) {
+									var data = response.data;
+									
+									if(data == '1'){
+										alert('비밀번호 수정이 완료되었습니다.');
+// 										notifySubmit('success', '패스워드 수정', '수정이 완료되었습니다.', 'icon-save');
+										appOpen('mypage','03000000');
+									}else{
+										notifySubmit('warning', '패스워드 수정', '시스템 오류로 저장에 실패하였습니다.', 'icon-caution');
+									}
+									 
+								}).finally(function(){
+									self.mainListLoading.val = false;
+									modal_close('signModal');
+								});
+							}
+						},
+						error: function(jqXHR){
+							notifySubmit('warning', '패스워드 수정', '암호화오류로 저장에 실패하였습니다.', 'icon-caution');
+							self.mainListLoading.val = false;
+						}
+					});
+				}else{
+					notifySubmit('warning', '패스워드 수정', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		pwdCheck: function(pwd, id, name){
+    		var checkArr1 = new Array(8);
+    		var checkArr2 = new Array(8);
+    		checkArr1[0] ="~!@#$%^&*()_+";
+    		checkArr1[1] ="`1234567890-=";
+    		checkArr1[2] ="QWERTYUIOP{}|";
+    		checkArr1[3] ="ASDFGHJKL:\"";
+    		checkArr1[4] ="ZXCVBNM<>?";
+    		checkArr1[5] ="qwertyuiop[]\\";
+    		checkArr1[6] ="asdfghjkl;'";
+    		checkArr1[7] ="zxcvbnm,./";
+    		
+    		checkArr2[0] = checkArr1[0].split('').reverse().join('');
+    		checkArr2[1] = checkArr1[1].split('').reverse().join('');
+    		checkArr2[2] = checkArr1[2].split('').reverse().join('');
+    		checkArr2[3] = checkArr1[3].split('').reverse().join('');
+    		checkArr2[4] = checkArr1[4].split('').reverse().join('');
+    		checkArr2[5] = checkArr1[5].split('').reverse().join('');
+    		checkArr2[6] = checkArr1[6].split('').reverse().join('');
+    		checkArr2[7] = checkArr1[7].split('').reverse().join('');
+    		
+    		for (var i = 0 ; i < pwd.length - 2 ; i++ ){ 
+	    		var item = pwd.charAt(i) + pwd.charAt(i+1) + pwd.charAt(i+2);
+	    		for (var j = 0 ; j < checkArr1.length ; j++){
+		    		if ( checkArr1[j].indexOf(item) != -1  || checkArr2[j].indexOf(item) != -1){
+		    			return 1;
+		    		} 
+	    		}
+	    		if((pwd.charCodeAt(i) >= 48 && pwd.charCodeAt(i) <= 57) || (pwd.charCodeAt(i) >= 65 && pwd.charCodeAt(i) <= 90) || (pwd.charCodeAt(i) >= 97 && pwd.charCodeAt(i) <= 122)){
+		    		if(pwd.charAt(i) == pwd.charAt(i+1) && pwd.charAt(i+1) == pwd.charAt(i+2)) {
+		    			return 2;
+	   			    }
+	    		  	if(pwd.charCodeAt(i) - pwd.charCodeAt(i+1) == 1 && pwd.charCodeAt(i+1) - pwd.charCodeAt(i+2) == 1) {
+		    			return 3;
+	    			}
+	    			if(pwd.charCodeAt(i) - pwd.charCodeAt(i+1) == -1 && pwd.charCodeAt(i+1) - pwd.charCodeAt(i+2) == -1) {
+		    			return 4;
+	    			}
+	    		}
+    		}
+    		if(id.split("@")[0].length > 0){
+	    		if(pwd.indexOf(id.split("@")[0]) != -1){
+	    			return 5;
+	    		}
+    		}
+    		if(inko.ko2en(name).length > 0){
+	    		if(pwd.indexOf(inko.ko2en(name)) != -1){
+	    			return 5;
+	    		}
+    		}
+    		return 0;
+    	},
+		openModal: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					self.messageModal.openModal('confirm', '비밀번호 변경', '비밀번호 변경을 진행하시겠습니까?', 'small', 'pwdchanged','');
+				}else{
+					notifySubmit('warning', '비밀번호 변경', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		messagepoppupcallback : function(pGb, pId) {
+
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    	case 'pwdchanged' :
+	    		this.savePwd();
+	    		break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+
+function sha256Enc(pwd) {
+	var hash = CryptoJS.SHA256(pwd);
+	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+
+	return hashInBase64;
+}
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>

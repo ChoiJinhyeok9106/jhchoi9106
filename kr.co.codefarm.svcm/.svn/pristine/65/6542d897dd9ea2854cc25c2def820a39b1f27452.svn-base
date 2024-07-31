@@ -1,0 +1,120 @@
+<h2 id="top">Dataset-Tagset</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Method</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type02">
+	        	<li v-for="(item, index) in methodData" style="margin-top:10px;"><a :href="'#item'+index" class="btn type01 size-s c-blue" style="border:1px solid #2549b0;" >{{item.name}} {{item.param}}</a> : {{item.description}}</li>
+			</ul>
+		</div>
+    </section>
+    
+    <section class="cont_box" v-for="(item, index) in methodData" :id="'item'+index">
+        <h3 class="h3">{{item.name}} {{item.param}}</h3>
+        <div class="row form-row">
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Description</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description.split('\n').join('<br />')"></p>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description2.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Syntax</label>
+	            <!-- <p class="txt_info" v-html="item.syntax.split('\n').join('<br />')"></p> -->
+<textarea :id="'codeEditor'+index" style="line-height:30px;" v-html="item.syntax">
+</textarea>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Parameters</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.parameters.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Return</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.returnVal.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <p class="right" style="line-height:30px;"><a href="#top" class="btn type01 size-m c-sky icon-arrow-up-circle" style="border:1px; font-size:20px;"></a></p>
+	        </div>
+	    </div>
+        <br/>
+   	</section>
+</section>
+
+<style>
+html {
+    scroll-behavior: smooth;
+}
+</style>
+
+<script type="text/javascript">
+//{name:'',param:'()',description:'',description2:'',syntax:'',parameters:'',returnVal:''},
+var method = [
+	{name:'Tagset',param:'()',description:'input Tag를 구성하기 위한 파일 오브젝트입니다.',description2:'',syntax:'new Tagset();\n// Create Object\nvar tag = new Tagset();',parameters:'',returnVal:'boolean : 성공여부'},
+	{name:'init',param:'(pDataset, pColumnId, pIndex, pId, pDedupe)',description:'input tag 객체에 데이터를 입력하며 초기 셋팅합니다.',description2:'',syntax:'Tagset.init(pDataset, pColumnId, pIndex, pId);',parameters:'pDataset(Dataset) : 태그의 값이 있는 Dataset\npColumnId(String) : 데이터 셋에서 태그항목의 컬럼 아이디\npIndex(String) : 현재 행 번호\npId(String) : dom에 설정 될 아이디\npDedupe(Boolean) : 중복제거 여부 (true일 경우에만 중복 입력 방지)',returnVal:'boolean : 성공여부'},
+	{name:'getTag',param:'()',description:'태그를 문자열로 반환 합니다.',description2:'',syntax:'Tagset.getTag();',parameters:'',returnVal:'tag(String) : 문자열로 나열 된 태그 리스트'},
+	{name:'setTag',param:'(pTag)',description:'태그를 재정의 합니다.',description2:'',syntax:'Tagset.setTag(pTag);',parameters:'pTag(String) : 새롭게 정의 할 태그 문자열',returnVal:'boolean : 성공여부'},
+	{name:'tagToList',param:'()',description:'콤마로 구분되어있는 태그를 콤마 기준 배열로 반환 합니다.',description2:'',syntax:'Tagset.tagToList();',parameters:'',returnVal:'tagList(ArrayList) : 배열로 변환 된 태그리스트 반환'},
+	{name:'removeTag',param:'(pTag)',description:'input tag 항목을 삭제합니다.',description2:'',syntax:'Tagset.removeTag(pTag);',parameters:'pTag(String) : 삭제할 태그',returnVal:'boolean : 성공여부'},
+	{name:'insertTag',param:'(pTag, pTarget)',description:'input tag 항목을 추가합니다.',description2:'',syntax:'Tagset.insertTag(pTag);',parameters:'pTag(String) : insert할 태그\ntarget(Object) : 태그를 입력하는 input text Object',returnVal:'boolean : 성공여부'},
+]
+
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		testDate: new Date(),
+		methodData: _.sortBy(method, ['name']),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	_.forEach(vm.methodData, function(n, key) {
+		editor('codeEditor'+key, 100);
+	});
+	
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

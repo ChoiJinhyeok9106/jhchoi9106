@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CDF-Portal : Error Message</title>
+<script type="text/javascript">
+var url         = decodeURIComponent(window.location.href);
+var msgRegex    = new RegExp("[?&]errorMsg(=([^&#]*)|&|#|$)");
+var returnRegex = new RegExp("[?&]returnUrl(=([^&#]*)|&|#|$)");
+
+alert(msgRegex.exec(url)[1].substring(1).replace(/[+]/g, ' '));
+
+try{
+	document.location.href = window.location.origin + returnRegex.exec(url)[1].substring(1).replace('\\','&');
+}catch(e){
+	document.location.href = window.location.origin + '/html/main/index.html';
+}
+</script>
+</head>
+<body></body>
+</html>

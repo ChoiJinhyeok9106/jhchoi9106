@@ -1,0 +1,101 @@
+<h2>팝업-설문지 검색 팝업</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">설문지 검색 팝업</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>설문지 검색 팝업 활용법</li>
+	        	<li>popup-survey 태그로 사용, callback 함수에서 리턴되는 데이터를 확인, 팝업 오픈이벤트를 활용하기 위한 ref지정</li>
+	        	<li>lovcomp 값을 true로 입력 할 경우 아래 예제와 같이 돋보기를 포함한 검색 컴포넌트가 제공됩니다.</li>
+	        	<li>lovcomp 값을 false로 입력 할 경우 별도의 컴포넌트가 제공 되지 않고 ref를 통한 오픈함수를 이용해 팝업을 오픈합니다.</br>ex) this.$refs.popupsurvey.showSurveyPopup();</li>
+	        	<li>'id','surveycategory','searchargv', 'addsurveyset' 옵션을 지원합니다. 고유 아이디, 설문지 카테고리, 설문지명, 설문지추가 링크 생성여부(false를 주면 안생김) 순서입니다. (태그내 :surveycategory 형태로 지정)</li>
+	        	
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><popup-survey ref="[popupsurvey:String]"  v-on:callback="[callback:Function]" :lovcomp="[true:Boolean]" :type="[type:String]"></popup-survey>
+
+var vm = new Vue({
+	el: '#app',
+    data: {
+		returnMessage : ''
+    },
+	methods: {
+		callback(message){
+			this.returnMessage = JSON.stringify(message);
+		}
+	}
+});</textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3">실행</h3>
+        <popup-survey id="surveypopoup1" ref="popupsurvey" v-on:callback="callback" :lovcomp="true" :surveycategory="'99'" :addsurveyset="false"></popup-survey>
+        <popup-survey id="surveypopoup2" ref="popupsurvey" v-on:callback="callback" :lovcomp="true"></popup-survey>
+        <br/>
+        <textarea id="codeEditor2"><popup-survey id="surveypopoup1" ref="popupsurvey" v-on:callback="callback" :lovcomp="true" :surveycategory="'99'" :addsurveyset="false"></popup-survey>
+<popup-survey id="surveypopoup2" ref="popupsurvey" v-on:callback="callback" :lovcomp="true"></popup-survey></textarea>
+    </section>
+       
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage}}
+   		</div>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     data: {
+         returnMessage : ''
+     },
+     methods: {
+    	 callback: function(message){
+         	this.returnMessage = JSON.stringify(message);
+         },
+         openPopup: function(){
+        	 this.$refs.popupsurvey.showSurveyPopup();	 
+         }
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 300, 'javascript');
+	editor('codeEditor2', 80, 'javascript');
+});
+
+function editor(id, height, dataGb) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: dataGb,
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

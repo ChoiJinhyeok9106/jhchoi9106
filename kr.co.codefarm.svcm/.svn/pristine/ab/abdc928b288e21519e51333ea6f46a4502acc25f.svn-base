@@ -1,0 +1,263 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css" />  
+
+<h2>배너게시관리</h2>
+<section class="sub_cont_box">
+    <div class="banner-reg-top">
+        <label for=""><span class="icon-info"></span>그룹선택</label>
+        <select name="" id="" class="size-m">
+            <option value="">입시메인 팝업</option>
+        </select>
+    </div>
+
+    <div class="banner-reg-wrap">
+        <div class="registered-list box-type01">
+            <h3>게시리스트</h3>
+            <!-- <div class="drag-area no-list">
+                <div class="inner">
+                    <i><img src="/service/design/images/banner/banner-drag-here.jpg" alt=""></i>
+                    <p>게시할 배너를 두번 클릭 또는 마우스로 드래그 하여 등록</p>
+                </div>
+            </div> -->
+            <div class="app-list banner-list">
+                <div class="app-list-box active">
+                    <div data-header="선택" class="select">
+                        <div class="inner">
+                            <i class="icon-more-vertical"></i>
+                            <i class="icon-more-vertical"></i>
+                        </div>
+                    </div>
+                    <div data-header="제목" class="tit">
+                        <div class="inner">
+                            <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                            <div class="txt">
+                                <a href="#!">2018학년도 전기 학위수여식</a>
+                                <p class="date"><span class="icon-realtime"></span>2019-02-25 09:00 ~ 2019-03-05 09:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-header="세팅" class="setting">
+                        <div class="inner">
+                            <a href="#!" class="icon-trash"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="app-info-layer">
+                    <div class="box-type03">
+                        <div class="row form-row">
+                            <div class="form-group col s12">
+                                <label for="exampleFormControlInput1" class="label-type01">시작 일자</label>
+                                <div class="date-form-wrap">
+                                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                                    <input type="text" id="exampleFormControlInput1" class="size-m">
+                                </div>
+                            </div>
+                            <div class="form-group col s12">
+                                <label for="exampleFormControlInput1" class="label-type01">시작 시간</label>
+                                <div class="date-form-wrap">
+                                    <a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+                                    <input type="text" id="exampleFormControlInput1" class="size-m">
+                                </div>
+                            </div>
+                            <div class="form-group col s12">
+                                <label for="exampleFormControlInput1" class="label-type01">종료 일자</label>
+                                <div class="date-form-wrap">
+                                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                                    <input type="text" id="exampleFormControlInput1" class="size-m">
+                                </div>
+                            </div>
+                            <div class="form-group col s12">
+                                <label for="exampleFormControlInput1" class="label-type01">종료 시간</label>
+                                <div class="date-form-wrap">
+                                    <a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+                                    <input type="text" id="exampleFormControlInput1" class="size-m">
+                                </div>
+                            </div>
+                            <div class="form-group col s12 form-row">
+                                <div class="col s12 m3 col-label">
+                                    <label for="inlineFormInputName9" class="label-type01 size-l">게시 여부</label>
+                                </div>
+                                <div class="col s12 m9">
+                                    <label class="toggle-switch size-l">
+                                    <input type="checkbox" checked="">
+                                    <span class="slider round"></span>
+                                </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-line right">
+                            <a href="#!" class="btn type02 size-m">저장</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-list-box">
+                    <div data-header="선택" class="select">
+                        <div class="inner">
+                            <i class="icon-more-vertical"></i>
+                            <i class="icon-more-vertical"></i>
+                        </div>
+                    </div>
+                    <div data-header="제목" class="tit">
+                        <div class="inner">
+                            <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                            <div class="txt">
+                                <a href="#!">2018학년도 전기 학위수여식</a>
+                                <p class="date"><span class="icon-realtime"></span>2019-02-25 09:00 ~ 2019-03-05 09:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-header="세팅" class="setting">
+                        <div class="inner">
+                            <a href="#!" class="icon-trash"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-list-box">
+                    <div data-header="선택" class="select">
+                        <div class="inner">
+                            <i class="icon-more-vertical"></i>
+                            <i class="icon-more-vertical"></i>
+                        </div>
+                    </div>
+                    <div data-header="제목" class="tit">
+                        <div class="inner">
+                            <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                            <div class="txt">
+                                <a href="#!">2018학년도 전기 학위수여식</a>
+                                <p class="date"><span class="icon-realtime"></span>2019-02-25 09:00 ~ 2019-03-05 09:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-header="세팅" class="setting">
+                        <div class="inner">
+                            <a href="#!" class="icon-trash"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-list-box">
+                    <div data-header="선택" class="select">
+                        <div class="inner">
+                            <i class="icon-more-vertical"></i>
+                            <i class="icon-more-vertical"></i>
+                        </div>
+                    </div>
+                    <div data-header="제목" class="tit">
+                        <div class="inner">
+                            <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                            <div class="txt">
+                                <a href="#!">2018학년도 전기 학위수여식</a>
+                                <p class="date"><span class="icon-realtime"></span>2019-02-25 09:00 ~ 2019-03-05 09:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-header="세팅" class="setting">
+                        <div class="inner">
+                            <a href="#!" class="icon-trash"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-list banner-list banner-reg-list">
+            <div class="banner-list-control">
+                <div class="checkbox size-xs type02 single">
+                    <input type="checkbox" id="checkbox01">
+                    <i class="icon-check"></i>
+                </div>
+                <h3>배너리스트</h3>
+                <a href="#!" class="btn type01 size-s">선택등록</a>
+            </div>
+            <div class="app-list-box active">
+                <div data-header="선택" class="select02">
+                    <div class="inner">
+                        <div class="checkbox size-xs type02 single">
+                            <input type="checkbox" id="checkbox01" checked>
+                            <i class="icon-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div data-header="제목" class="tit">
+                    <div class="inner">
+                        <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                        <a href="#!">2018학년도 전기 학위수여식</a>
+                    </div>
+                </div>
+            </div>
+            <div class="app-list-box">
+                <div data-header="선택" class="select02">
+                    <div class="inner">
+                        <div class="checkbox size-xs type02 single">
+                            <input type="checkbox" id="checkbox01">
+                            <i class="icon-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div data-header="제목" class="tit">
+                    <div class="inner">
+                        <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                        <a href="#!">2018학년도 전기 학위수여식</a>
+                    </div>
+                </div>
+            </div>
+            <div class="app-list-box">
+                <div data-header="선택" class="select02">
+                    <div class="inner">
+                        <div class="checkbox size-xs type02 single">
+                            <input type="checkbox" id="checkbox01">
+                            <i class="icon-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div data-header="제목" class="tit">
+                    <div class="inner">
+                        <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                        <a href="#!">2018학년도 전기 학위수여식</a>
+                    </div>
+                </div>
+            </div>
+            <div class="app-list-box">
+                <div data-header="선택" class="select02">
+                    <div class="inner">
+                        <div class="checkbox size-xs type02 single">
+                            <input type="checkbox" id="checkbox01">
+                            <i class="icon-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div data-header="제목" class="tit">
+                    <div class="inner">
+                        <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                        <a href="#!">2018학년도 전기 학위수여식</a>
+                    </div>
+                </div>
+            </div>
+            <div class="app-list-box">
+                <div data-header="선택" class="select02">
+                    <div class="inner">
+                        <div class="checkbox size-xs type02 single">
+                            <input type="checkbox" id="checkbox01">
+                            <i class="icon-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div data-header="제목" class="tit">
+                    <div class="inner">
+                        <p class="banner-img no-img"><img src="/service/design/images/banner/banner-img01.jpg" alt=""></p>
+                        <a href="#!">2018학년도 전기 학위수여식</a>
+                    </div>
+                </div>
+            </div>
+            <!-- 페이징 -->
+            <div class="paginate">
+                <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+                            <span class="present">1</span>/<span class="total">10</span>
+                </span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+            </div>
+        </div>
+    </div>
+</section>

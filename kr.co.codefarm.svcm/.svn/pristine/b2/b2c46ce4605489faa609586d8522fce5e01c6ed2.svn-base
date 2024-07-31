@@ -1,0 +1,554 @@
+<h2>알림 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!alarmList.currentRow"> 
+		<h2 class="h2">알림 리스트</h2>
+		<div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select id="pAlarmChkGb" name="pAlarmChkGb" v-model="pAlarmChkGb" style="width:184px;" class="size-m">
+		        <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'ALARM_CHK_GB', 'all')" :value="item.CD">{{item.CD_NM}}</option>
+            </select>
+            <input type="text" id="pSearchArgv" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="알림 제목을 입력하세요" v-on:keyup.13="search($event);">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search($event);">
+	        <div class="f-right">
+	            <input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+	        </div>
+	    </div>
+		    <div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{alarmListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{alarmListPaging.getCurrentPage()}}</span> / {{alarmListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+	        	<table class="table-type04 response" id="mainListLoading">
+					<caption></caption>
+					<colgroup>
+	                    <col width="10%" />
+	                    <col width="25%" />
+						<col width="" />
+	                    <col width="10%" />
+	                    <col width="15%" />
+						<col width="10%" />
+						<col width="7%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">알림구분 </th>
+							<th scope="col" class="left">REST API</th>
+	                        <th scope="col" class="left">제목 </th>
+	                        <th scope="col">알림대상 </th>
+	                        <th scope="col">알림처리구분 </th>
+							<th scope="col">사용여부</th>
+							<th scope="col">삭제</th>
+						</tr>
+					</thead>
+					<tbody v-if="alarmList.getRowCount() > 0">
+						<tr v-for="(item, index) in alarmList.data" v-if="alarmList.getRowType(index) != '8'">
+	                        <td data-header="알림구분"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','ALARM_GB',item.ALARM_GB,'CD_NM')}}</a></td>
+	                        <td class="left" data-header="REST API"><a href="#!" @click="rowClick(index)">{{ restApiCodeSet.getCustomcodeNm('API_SEQ', item.API_SEQ, 'API_NM') }}</a></td>
+	                        <td class="left" data-header="제목"><a href="#!" @click="rowClick(index)">{{item.TITLE}}</a></td>
+	                        <td data-header="알림대상"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','ALARM_DAESANG_GB',item.ALARM_DAESANG_GB,'CD_NM')}}</a></td>
+	                        <td data-header="알림처리구분"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','ALARM_CHK_GB',item.ALARM_CHK_GB,'CD_NM')}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="삭제"><a href="#!" @click="messagePopup('ID_DELETE', index)"><span class="icon-trashcan"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="alarmListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+	
+	<section class="cont_box" v-if="alarmList.currentRow">
+		<h2 class="h2">알림 상세</h2>
+       	<div class="style_set box-type01">
+		    <form>
+				<div class="form-group row form-row">
+                       <div class="col s12 l12">
+			            <label class="label-type01 required" for="apiSeq">REST API</label>
+                           <div class="btn-input">
+                               <a href="#!" class="btn type02 size-m center-icon" @click="openRestApiModal"><span class="icon-search"></span></a>
+                               <input class="size-m" type="hidden" id="apiSeq" name="apiSeq" data-vv-as="REST API" v-model="alarmList.currentRow.API_SEQ" v-validate="'required'" v-bind:class="{'invalid': errors.has('apiSeq')}"/>
+                               <input class="size-m" type="text" id="apiNm" name="apiNm" data-vv-as="restAPI" :value="alarmList.currentRow.API_SEQ?getApiTitle(alarmList.currentRow.API_SEQ):''" v-validate="'required'" placeholder="REST API를 선택하세요." v-bind:class="{'invalid': errors.has('apiNm')}" disabled/>
+                           </div>
+                           <invalid-message :visible="alarmList.currentRow" :name="'apiSeq'" :verror="errors"/>
+                       </div>
+			    </div>
+			    <div class="row form-row">
+                    <div class="form-group col s12 l4">
+			            <label class="label-type01 required" for="alarmChkGb">알림체크구분</label>
+	                          <select class="size-m" name="alarmChkGb" id="alarmChkGb" data-vv-as="알림체크구분" v-model="alarmList.currentRow.ALARM_CHK_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('alarmChkGb')}">
+					        <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'ALARM_CHK_GB', 'select')" :value="item.CD">{{item.CD_NM}}</option>
+		                </select>
+			            <invalid-message :visible="alarmList.currentRow" :name="'alarmChkGb'" :verror="errors"/>
+                    </div>
+					<div class="form-group col s12 l4">
+			            <label class="label-type01 required" for="alarmGb">알림구분</label>
+                           <select class="size-m" name="alarmGb" id="alarmGb" data-vv-as="알림구분 " v-model="alarmList.currentRow.ALARM_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('alarmGb')}">
+					        <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'ALARM_GB', 'select')" :value="item.CD">{{item.CD_NM}}</option>
+		                </select>
+			            <invalid-message :visible="alarmList.currentRow" :name="'alarmGb'" :verror="errors"/>
+			        </div>
+					<div class="form-group col s12 l4">
+			            <label class="label-type01 required" for="alarmDetailGb">알림상세 구분</label>
+                           <select class="size-m" name="alarmDetailGb" id="alarmDetailGb" data-vv-as="알림상세 구분 " v-model="alarmList.currentRow.ALARM_DETAIL_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('alarmDetailGb')}">
+					        <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'ALARM_DETAIL_GB', 'select', 'CD_NM', 'N', 'all'), function(e){return e.CD1 == alarmList.currentRow.ALARM_GB;})" :value="item.CD">{{item.CD_NM}}</option>
+		                </select>
+			            <invalid-message :visible="alarmList.currentRow" :name="'alarmDetailGb'" :verror="errors"/>
+			        </div>
+			    </div>
+			    <div class="row form-row" v-if="alarmList.currentRow.ALARM_GB != '02'">
+					<div class="form-group col s12 l4">
+			            <label class="label-type01 required" for="alarmDaesangGb">알림대상 구분</label>
+                        <select class="size-m" ref="alarmDaesangGb" name="alarmDaesangGb" id="alarmDaesangGb" data-vv-as="알림구분 " v-model="alarmList.currentRow.ALARM_DAESANG_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('alarmDaesangGb')}">
+					        <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'ALARM_DAESANG_GB', 'select')" :value="item.CD">{{item.CD_NM}}</option>
+		                </select>
+			            <invalid-message :visible="alarmList.currentRow" :name="'alarmDaesangGb'" :verror="errors"/>
+			        </div>
+			        <div class="form-group col s12 l4">
+			            <label :class="alarmList.currentRow.ALARM_DAESANG_GB=='03'?'label-type01 required':'label-type01'" for="daesangjaColumnId">대상자 컬럼 아이디</label>
+			            <input class="size-m" type="text" id="daesangjaColumnId"  name="daesangjaColumnId" data-vv-as="대상자 컬럼 아이디 " v-model="alarmList.currentRow.DAESANGJA_COLUMN_ID" v-validate.immediate="'required_if:alarmDaesangGb,03'" v-bind:class="{'invalid': errors.has('daesangjaColumnId')}" :disabled="alarmList.currentRow.ALARM_DAESANG_GB == '03' ? false : true"/>
+			            <invalid-message :visible="alarmList.currentRow" :name="'daesangjaColumnId'" :verror="errors"/>
+                    </div>
+			    </div>
+				<div class="row form-row">
+			        <div class="form-group col s12 l12">
+			            <label class="label-type01 required" for="title">제목</label>
+			            <input class="size-m" type="text" id="title"  name="title" data-vv-as="제목 " v-model="alarmList.currentRow.TITLE" v-validate="'required|max:500'" placeholder="제목을 입력하세요." v-bind:class="{'invalid': errors.has('title')}"/>
+			            <invalid-message :visible="alarmList.currentRow" :name="'title'" :verror="errors"/>
+                    </div>
+                </div>
+				<div class="form-group row form-row">
+					<div class="col s12 l12" v-if="alarmList.currentRow.ALARM_GB != '02'">
+			            <label class="label-type01" for="text">내용</label>
+			    		<textarea rows="" cols="" class="size-m" id="text"  name="text" data-vv-as="내용 " v-model="alarmList.currentRow.TEXT" v-validate="'max:4000'" placeholder=" 내용을 입력하세요." v-bind:class="{'invalid': errors.has('text')}"></textarea>
+				        <invalid-message :visible="alarmList.currentRow" :name="'text'" :verror="errors"/>
+			        </div>
+                   </div>
+                   <div class="row form-row">
+                       <div class="form-group col s12 m6 form-row">
+                           <div class="col s8 xl3 col-label">
+                               <label for="useYn" class="label-type01 size-m">사용여부</label>
+                           </div>
+                           <div class="col s4 xl9">
+                               <label class="toggle-switch size-m">
+                                   <input class="size-m" type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부" v-model="alarmList.currentRow.USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('useYn')}"/>
+                                   <span class="slider round"></span>
+                               </label>
+                           </div>
+                       </div>
+                   </div>
+			</form>
+           </div>
+           <div class="form-group row form-row" />
+           <div class="form-group row form-row">
+		   	<div class="col-inline right">
+		   		<a href="#!" class="btn type01 size-m" @click="alarmList.selectRow(-1)">목록</a>
+                <a href="#!" class="btn type01 size-m" @click="messagePopup('ID_DELETE', alarmList.rowposition)">삭제</a>
+			    <a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+			</div>
+		</div>
+	</section>
+    
+    <!-- 신규 게시판 템플릿 선택 모달 -->
+	<transition name="fade">
+		<div class="modal-layer-wrap on" v-show="RestApiModalShow">
+		    <div id="searchApi_modal" class="modal-layer modal-large" style="display:block;">
+		        <div class="modal-container">
+			        <div class="modal-header">
+		                <p class="modal-title">REST API 검색</p>
+		            </div>
+		            <div class="modal-content">
+		                <div class="row">
+		                    <div class="col s12">
+			                    <div class="form-group">
+				                    <div class="box-type03 col-inline">
+					                    <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+					                    <input type="text" id="pApiSearchArgv" name="pApiSearchArgv" class="size-m" v-on:keyup.enter="setRestApiList();" placeholder="API명">
+					                    <input type="button" value="검색" class="btn type01 size-m" @click="setRestApiList()">
+					                </div>
+				            	</div>
+				            	<div class="col s12 m12 xl12">
+				            	    <table class="table-type01 response" summary="">
+				            		    <caption>REST API 목록</caption>
+				            			<colgroup>
+                                            <col width="20%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                            <col />
+                                            <col width="10%" />
+				            			</colgroup>
+				            			<thead>
+				            				<tr>
+				            					<th scope="col">API명</th>
+                                                <th scope="col">서비스 코드</th>
+                                                <th scope="col">메소드 구분</th>
+                                                <th scope="col">API URL</th>
+                                                <th scope="col">사용여부</th>
+				            				</tr>
+				            			</thead>
+				            			<tbody v-if="restApiList.getRowCount() > 0">	
+				            				<tr v-for="(item, index) in restApiList.data" v-if="restApiList.getRowType(index) != 8" @dblclick="closeRestApiModal(item)" style="cursor:pointer;">
+				            					<td class="left" data-header="API명">{{item.API_NM}}</td>
+                                                <td class="center" data-header="서비스 코드"> {{ serviceCodeSet.getCustomcodeNm('service_CD', item.SERVICE_CD, 'service_NM') }}</td>
+                                                <td class="center" data-header="메소드 구분">{{ smnCommcode.getCommcodeNm('SMN','METHOD_GB',item.METHOD_GB,'CD_NM') }}</td>
+                                                <td class="left" data-header="API URL">{{item.API_URL}}</td>
+                                                <td class="center" data-header="사용여부">{{ item.USE_YN == 'Y' ? '사용' : '미사용' }}</td>
+				            				</tr>
+				            			</tbody>
+										<tbody v-else>
+											<tr>
+												<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+											</tr>
+										</tbody>
+				            		</table>
+				            		<paging :pagingset="restApiListPaging" :type="'normal'"></paging>
+				            		</div>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="btn-r">
+		                    <a href="#!" class="cbtn" style="display: inline-block;" title="닫기" @click="closeRestApiModal"><span class="icon-exit"></span></a>
+		                </div>
+		            </div>
+		    </div>
+		 </div>
+     </transition>
+     
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+    
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	/* 사용할 데이터 */
+	data: {
+		pAlarmChkGb: '',
+        pSearchArgv: '',
+		
+        alarmList: new Dataset(),				// 실적 목록(상하위 공용))
+        alarmListPaging: new PagingSet(5, 5),	// 페이징
+        restApiList: new Dataset(),				// 실적 목록(상하위 공용))
+        restApiListPaging: new PagingSet(5, 5),	// 페이징
+        updateDisabled : false,
+        serviceCodeSet: new CustomcodeSet('/system-manager/service/initList'),
+        restApiCodeSet: new CustomcodeSet('/system-manager/rest-api'),
+
+        RestApiModalShow: false,					//커스텀 모달(RestApi 검색) 버튼 visible flag
+        messageModal: new ModalSet('alarm-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+	},
+	/* 생성 될 때 */ 
+	beforeCreate: function(){
+	},
+	/* 계산된 속성 표현 시 */
+	computed: {
+	},
+	/* 데이터 감시 */
+	watch: {
+		'alarmList.rowposition': {
+			handler: function (val, oldVal) {
+                
+				if(this.alarmList.enableevent){
+					var changeYn = this.alarmList.dataCompare(oldVal);
+					var rowType = this.alarmList.getRowType(val);
+					
+					if(!changeYn){
+						this.alarmList.setDefaultRow(oldVal);
+					}
+					
+					if(this.alarmList.getRowType(oldVal)==ROWTYPE_INSERT) this.alarmList.deleteRow(oldVal);
+					
+					//pk에 대한 able 설정
+					if(rowType == ROWTYPE_NORMAL  || rowType == ROWTYPE_UPDATE){
+						this.updateDisabled = true;	
+					}else{
+						this.updateDisabled = false;
+					}
+					
+					this.$validator.reset();
+                }
+              
+			}
+		},		
+		'alarmList.data': {
+			handler: function (val, oldVal) {                
+				if(this.alarmList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data ).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.alarmList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.alarmList.beforeData[rowposition][colNm] = data[colNm];
+				          		vm.componentStateChange();
+				          		
+				          		if(colNm == 'ALARM_GB'){
+				          			if(data[colNm] == '01'){
+				          				vm.alarmList.setColumn(rowposition, 'ALARM_DETAIL_GB', '0199');
+				          			} 
+				          			else if(data[colNm] == '02'){
+				          				vm.alarmList.setColumn(rowposition, 'ALARM_DETAIL_GB', '0299');
+				          			}
+				          			else if(data[colNm] == '03'){
+				          				vm.alarmList.setColumn(rowposition, 'ALARM_DETAIL_GB', '0399');
+				          			}
+				          		}
+				          	}
+				      	})
+				  	});
+                }
+			},
+			deep: true
+	    },	
+		'alarmListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setAlarmList()
+			}
+        },
+        'restApiListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setRestApiList(null, val)
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	/* 마운트 된 시점수행 */
+	mounted: function(){
+		this.setAlarmList();
+	},
+	/* 함수 */
+	methods: {
+		/* 서비스 리스트 조회 */
+		setAlarmList: function(){
+			var self = this;
+			var param = {
+				ALARM_CHK_GB: this.pAlarmChkGb, 
+				TITLE: this.pSearchArgv, 
+				pPageNo: this.alarmListPaging.currentPage,
+				pRowCount: this.alarmListPaging.getRowCnt(),
+			}
+			
+			self.mainListLoading.val = true;
+			var returnVal = alertApi.alert(param, false);
+			
+			returnVal.then(function(response) {
+				self.alarmList.setData(response.data);
+				
+				if(self.alarmList.getRowCount() > 0){
+                       var totalCnt = self.alarmList.data[0].CNT;
+					self.alarmListPaging.setTotalCnt(totalCnt);
+					//self.alarmList.selectRow(0);
+				}else{
+					self.alarmListPaging.setTotalCnt(0);
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		/* 검색 */
+		search: function(){
+		   var pageNo = this.alarmListPaging.getCurrentPage();
+
+		   if(pageNo == 1){
+		       this.setAlarmList();
+		   }else{
+		       this.alarmListPaging.movePage(1);
+		   }  
+		},
+		/* 서비스 리스트 신규행 추가, 초기값 설정 */
+		newRow: function(){
+			//if(this.alarmList.getRowType(this.alarmList.rowposition)==ROWTYPE_INSERT) return;
+			
+			var addObj = {
+					'ALARM_SEQ' : null,
+					'API_SEQ' : null,
+					'ALARM_GB' : '01',
+					'ALARM_DETAIL_GB' : '',
+					'ALARM_CHK_GB' : '02',
+					'ALARM_DAESANG_GB' : '01',
+					'TITLE' : '',
+					'TEXT' : '',
+					'USE_YN' : 'Y'
+				};
+			var newRowPosition = this.alarmList.addRow(addObj);
+		},
+		/* 서비스 리스트 저장, 수정 */
+		saveRow: function(){
+            var validate = this.$validator.validateAll();
+            var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.alarmList.rowposition;
+					var rowType = self.alarmList.getRowType(rowposition); 
+					var returnVal = null;
+					
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = alertApi.alertInsert(self.alarmList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = alertApi.alertUpdate(self.alarmList.currentRow, true);
+					}else{
+						notifySubmit('info', '권한정보 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+					
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							//alert(JSON.stringify(data));
+							notifySubmit('success', '권한정보 저장', '저장이 완료되었습니다.', 'icon-save');
+							self.setAlarmList();
+							systemApi.alarmRefresh(null, false);
+						}).catch(function(error) {
+							notifySubmit('warning', '권한정보 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});	
+					}
+				}else{
+					notifySubmit('warning', '권한정보 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+        },
+        deleteRow: function(row) {
+            var rowType = this.alarmList.getRowType(row); 
+			var returnVal = null; 
+            var self = this;
+            
+			if(rowType == ROWTYPE_INSERT) {
+				self.alarmList.deleteRow(row);
+				notifySubmit('success', '권한정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+			}else {
+				returnVal = alertApi.alertDelete(self.alarmList.getRow(row), true);
+				returnVal.then(function(response) {
+					var data = response.data;
+					
+					notifySubmit('success', '권한정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+					self.setAlarmList();
+					systemApi.alarmRefresh(null, false);
+				}).catch(function(error) {
+					notifySubmit('warning', '권한정보 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});	
+			}
+        },
+		/* 서비스 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+			var rowposition = this.alarmList.rowposition;
+			var rowType = this.alarmList.getRowType(rowposition);
+        },
+        setRestApiList: function(e, pPageNo){
+			if(isNull(e) || e.type == 'click'){
+				var pSearchArgv = $('#pApiSearchArgv').val();
+                var pPageNo = pPageNo;
+                var pRowCount = this.restApiListPaging.getRowCnt();
+				
+				if(isNull(pSearchArgv)) pSearchArgv = '';
+                if(isNull(pPageNo)) pPageNo = 1;
+                if(isNull(pRowCount)) pRowCount = 5;
+
+                var self = this;	
+				var returnVal = restApiApi.restApi(pSearchArgv, pPageNo, pRowCount, true);
+				
+				returnVal.then(function(response) {
+					self.restApiList.setData(response.data);
+					
+					if(self.restApiList.getRowCount() > 0){
+						var totalCnt = self.restApiList.data[0].CNT;
+						self.restApiListPaging.setTotalCnt(totalCnt);
+						//self.restApiList.selectRow(0);
+					}else{
+						self.restApiListPaging.setTotalCnt(0);
+					}
+				});
+			}
+        },
+		vaildateCheck: function(pId) {
+            if(isNull(pId))
+                this.$validator.validateAll();
+            else
+                this.$validator.validate(pId);
+        },
+        openRestApiModal: function() {
+            //alert('openRestApiModal()');
+            this.RestApiModalShow = modal_open('searchApi_modal');
+            this.setRestApiList();
+        },
+        closeRestApiModal: function(pObj){
+            if(!isNull(pObj.API_SEQ)) this.alarmList.currentRow.API_SEQ = pObj.API_SEQ;
+
+            //alert('closeRestApiModal()');
+            this.RestApiModalShow = false;
+            
+            //검색결과 초기화
+            this.restApiList.clear();
+            this.restApiListPaging.setTotalCnt(0);
+        },
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+		/* 저장할때 메세지창 띄우기*/ 	
+    	messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+
+            switch(pId) {
+	    		case 'ID_SAVE':
+                    title = '저장';
+                    cont = '변경 사항을 저장하시겠습니까?';
+	    			break;
+	    		case 'ID_DELETE':
+	    			title = '삭제';
+                    cont = '해당 항목을 삭제하시겠습니까?';
+                    break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+		rowClick: function(index){
+			this.alarmList.selectRow(index);
+		},
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'ID_SAVE':
+	    			this.saveRow();
+	    			break;
+	    		case 'ID_DELETE':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    },
+	    getApiTitle: function(pApiSeq) {
+	    	var methodGb = this.restApiCodeSet.getCustomcodeNm('API_SEQ', pApiSeq, 'METHOD_GB');
+	    	var apiNm = this.restApiCodeSet.getCustomcodeNm('API_SEQ', pApiSeq, 'API_NM');
+	    	var apiUrl = this.restApiCodeSet.getCustomcodeNm('API_SEQ', pApiSeq, 'API_URL');
+	    	var methodGbNm = this.smnCommcode.getCommcodeNm('SMN','METHOD_GB',methodGb,'CD_NM');
+	    	
+	    	return '['+methodGbNm+'] '+apiNm+' ('+apiUrl+')';
+	    }
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

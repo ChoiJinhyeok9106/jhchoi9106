@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.deptmgmt">
+	<!-- 부서 조회 -->
+	<select id="getDeptMgmtList" parameterType="hashMap" resultType="hashMap" >
+	SELECT
+       A_.*
+         FROM 
+          (SELECT 
+               <if test="pPageNo != null and pPageNo != ''.toString()">
+	             ROW_NUMBER() OVER(ORDER BY A.ORGNZT_ID) AS RNUM
+	           , COUNT(*) OVER() AS CNT
+	           </if>
+               , A.ORGNZT_ID AS DEPT_CD
+               , CONCAT(C.ORGNZT_NM , CASE WHEN C.ORGNZT_NM IS NULL THEN '' ELSE '-' END , A.ORGNZT_NM) AS DEPT_NM
+               , A.ORGNZT_NM AS REAL_DEPT_NM 
+               , A.UP_DEPT_CD 
+               , A.USE_YN 
+               , CASE WHEN A.USE_YN = '1' THEN '사용' ELSE '미사용' END AS USE_YN_TEXT
+               , A.OUTPUT_SEQ  
+               , A.AGENCY_ID 
+            FROM 
+                 LETTNORGNZTINFO A 
+                 LEFT JOIN LETTNORGNZTINFO C ON A.UP_DEPT_CD = C.ORGNZT_ID AND A.AGENCY_ID = C.AGENCY_ID
+            WHERE 1=1 
+            AND A.AGENCY_ID = '00000000'
+            <!--  A.ORGNZT_ID != 'XX'  -->
+			<!--  사용여부  -->
+			<if test="pUseYn != null and pUseYn != ''.toString()">
+				<if test="pUseYn != 'ALL'">
+					AND A.USE_YN = #{pUseYn}
+             	</if>
+             </if>
+			<!--  부서명  -->
+			<if test='pRealDeptNm != null and pRealDeptNm != ""'>
+				AND A.ORGNZT_NM LIKE CONCAT('%',#{pRealDeptNm},'%')
+			</if>
+                ) A_
+	        WHERE 1=1
+			<if test="pPageNo != null and pPageNo != ''.toString()">
+      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    		</if>
+    		ORDER BY A_.DEPT_CD
+		
+	</select>
+	
+	
+	<insert id="insertDept" parameterType="hashMap">
+	INSERT
+	INTO LETTNORGNZTINFO
+		VALUES
+		( 	 #{ORGNZT_ID}
+           , #{ORGNZT_NM}
+           , #{ORGNZT_DC}
+           , #{UP_DEPT_CD}
+           , #{OUTPUT_SEQ}
+           , '1'
+           , #{LAST_CHGR}
+           , now()
+           , NULL
+           , '1'
+           , NULL
+           , '00000000'
+		) 
+	
+    </insert>
+    
+    <update id="updateDept" parameterType="hashMap">
+	UPDATE LETTNORGNZTINFO	
+		SET
+			ORGNZT_NM = #{ORGNZT_NM},
+		   	ORGNZT_DC = #{ORGNZT_DC},
+		   	UP_DEPT_CD = #{UP_DEPT_CD},
+		   	OUTPUT_SEQ = #{OUTPUT_SEQ},
+		   	LAST_CHGR = #{LAST_CHGR},
+		   	LAST_CHG_DT = now()
+		
+	</update>
+		
+</mapper>

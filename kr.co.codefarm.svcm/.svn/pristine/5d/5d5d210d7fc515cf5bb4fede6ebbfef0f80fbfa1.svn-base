@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="portal">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-test-sources/test-annotations"/>
+        <dependent-module archiveName="kr.co.codefarm.svcm.commons-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/kr.co.codefarm.svcm.commons/kr.co.codefarm.svcm.commons">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="kr.co.codefarm.svcm.systemmanager-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/kr.co.codefarm.svcm.systemmanager/kr.co.codefarm.svcm.systemmanager">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="kr.co.codefarm.svcm.amanager-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/kr.co.codefarm.svcm.amanager/kr.co.codefarm.svcm.amanager">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="kr.co.codefarm.svcm.additional-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/kr.co.codefarm.svcm.additional/kr.co.codefarm.svcm.additional">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="portal"/>
+        <property name="java-output-path" value="/kr.co.codefarm.svcm.web/target/classes"/>
+    </wb-module>
+</project-modules>

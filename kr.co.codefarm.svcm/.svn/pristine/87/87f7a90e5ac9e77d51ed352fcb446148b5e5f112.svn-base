@@ -1,0 +1,279 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+
+<h2>알림</h2>
+<section class="sub_cont_box my-alarm" id="app">
+    <div>
+        <div class="main-today-alarm">
+            <div class="today-header">
+                <span class="date icon-bell"></span>
+                <div class="today-cont">
+                    <span class="title">나의 알림</span>
+                    <span class="info-txt">{{session.USER_NM}}님의 오늘 알림이 <span>{{alarmCnt}}</span>건 있습니다.</span>
+                </div>
+                <div class="today-statue">
+                    <a href="#!"><span class="icon icon-rotate-cw" @click="setUserAlarmDataList(); moreBtn=true;"></span></a>
+                    <a href="#!"><span class="icon icon-gear" onclick="contentsOpen('SMN', 'alarmsetting');"></span></a>
+                </div>
+            </div>
+            <div class="today-content" id="userAlarmDataListLoading">
+            	<transition-group name="slide">
+                <!-- <a href="#!" @click="item.LINK ? openWindow(item.LINK) : '#!'" class="today-cont-list" v-if="userAlarmDataList.getRowType(index) != 8 && userAlarmDataList.getRowCount() != 0 && item.ALARM_DELETE_YN == 'N'" v-for="(item, index) in userAlarmDataList.getData()" :key="index"> -->
+                <a href="#!" class="today-cont-list" v-if="userAlarmDataList.getRowType(index) != 8 && userAlarmDataList.getRowCount() != 0 && item.ALARM_DELETE_YN == 'N'" v-for="(item, index) in userAlarmDataList.getData()" :key="index">
+                    <span class="icon icon-time"></span>
+                    <span class="time">{{getAlarmDttm(item.ALARM_DTTM)}}</span>
+                    <div class="title">
+                        <span class="txt" v-if="item.ALARM_PYOSI_YN == 'Y'" v-html="item.TEXT"></span>
+                        <span class="txt" v-if="item.ALARM_PYOSI_YN == 'N'">알림 내용이 숨겨진 상태입니다. 우측의 <span class="icon-eye"></span> 버튼을 통해 나타낼 수 있습니다.</span>
+                        <span class="etc type01"><span class="icon-bell"></span>{{item.ALARM_TITLE}}</span>
+                        <span class="etc type03">{{getAlarmTime(item.ALARM_DTTM)}}</span>
+                    </div>
+                    <div class="btn-group">
+                        <span href="#!" @click="messagePopup('change_subscribe',item)" :class="item.SUBSCRIBE_YN == 'Y' ? 'icon-bell-off' : 'icon-bell'"></span>
+                        <span href="#!" @click="messagePopup('change_pyosi',item)" :class="item.ALARM_PYOSI_YN == 'Y' ? 'icon-eye-off' : 'icon-eye'"></span>
+                        <span href="#!" @click="messagePopup('change_delete',item)" :class="item.ALARM_DELETE_YN == 'N' ? 'icon-x-mark' : 'icon-x-mark'"></span>
+                    </div>
+                </a>
+                </transition-group>
+                <a href="#!" class="today-cont-list" v-if="userAlarmDataList.getRowCount() == 0">
+                    <span class="icon icon-time"></span>
+                    <span class="time">TODAY</span>
+                    <span class="time">&nbsp;</span>
+                    <div class="title">
+                        <span class="txt">도착한 알림이 없습니다.</span>
+                    </div>
+                </a>
+            </div>
+        	<p class="tab_btn" v-if="moreBtn"><a href="#!" class="btn_type02" @click="setUserAlarmDataList(true)">알림 더보기</a></p>
+        	<div class="box-type01 tab_btn" v-if="!moreBtn">더 이상 알림이 존재하지 않습니다.</div>
+        </div>
+    </div>
+    <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+        userAlarmDataList: new Dataset(),
+        userAlarmDataListLoading: {id:'userAlarmDataListLoading', val:false},
+        moreBtn: true,
+        messageModal: new ModalSet('common-msg-modal'),	// confirm 모달
+        alarmCnt: 0
+	},
+	//데이터 감시
+	watch: {
+	    'userAlarmDataListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userAlarmDataListLoading.id), val);
+			}
+	    },
+	},
+	computed: {
+		
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setUserAlarmDataList();
+	},
+	//함수
+	methods: {
+		newAlarmCnt: function() {
+			var self = this;
+			
+			var sumCnt = 0;
+			
+			_.forEach(self.userAlarmDataList.getData(), function(obj, index){
+				if(self.getAlarmDttm(obj.ALARM_DTTM) == 'TODAY'){
+					sumCnt += 1;
+				}
+			});
+			
+			self.alarmCnt = sumCnt;
+		},
+		setUserAlarmDataList: function(pMoreYn){
+            var self = this;
+            var minTime = _.minBy(self.userAlarmDataList.getData(), function(o) { return o.ALARM_DTTM_MS; });
+            
+            if(isNull(minTime) || pMoreYn != true){
+            	minTime = null;
+            }else if(!isNull(minTime) && pMoreYn){
+            	minTime = minTime['ALARM_DTTM_MS'];
+            }
+            
+            if(!pMoreYn) self.userAlarmDataListLoading.val = true;
+            var returnVal = alertApi.getUserAlarmDataList(minTime, false);
+            returnVal.then(function(response) {
+            	if(self.userAlarmDataList.getRowCount() == 0 || pMoreYn != true){
+            		self.userAlarmDataList.setData(_.sortBy(response.data, ['ALARM_DTTM_MS']).reverse());	
+            	}else{
+            		if(response.data.length > 0){
+            			_.forEach(_.sortBy(response.data, ['ALARM_DTTM_MS']).reverse(), function(o){
+                			self.newRow(o);
+                		});        			
+            		}else{
+            			self.moreBtn = false;
+            		}
+            	}
+            	if(self != top){
+            		parent.vmHeader.getUnidentifiedAlarmDataCnt();
+            		parent.vmHeader.setPushInitNotiList();
+            	}
+            }).finally(function(){
+				self.userAlarmDataListLoading.val = false;
+				
+				self.newAlarmCnt();
+			});
+        },
+        newRow: function(pAddObj){
+        	var self = this;
+        	self.userAlarmDataList.addRow(_.cloneDeep(pAddObj));
+		},
+		getAlarmDttm: function(pAlarmDttm) {
+			var getDay = moment(pAlarmDttm, 'YYYYMMDD').format('YYYY. MM. DD');
+			var getToday = moment(new Date(), 'YYYYMMDD').format('YYYY. MM. DD');
+			
+			if(getDay == getToday){
+				return 'TODAY';
+			}else{
+				return getDay;
+			}
+			return getDay;
+		},
+		getAlarmTime: function(pAlarmDttm) {
+			var getTime = moment(pAlarmDttm, 'YYYYMMDD h:mm:ss a').format('h:mm:ss a');
+			
+			return getTime;
+		},
+		insertUserAlarm: function(pEntry){
+			var alarmSeq = pEntry.ALARM_SEQ;
+			var subscribeYn = '';
+        	var self = this;
+        	
+        	if(pEntry['SUBSCRIBE_YN'] == 'N'){
+        		subscribeYn =  'Y';
+        	}else{
+        		subscribeYn =  'N';
+        	}
+        	
+        	pEntry['SUBSCRIBE_YN'] = subscribeYn;
+            //self.userAlarmListLoading.val = true;
+            var returnVal = alertApi.userAlarmSettingInsert(pEntry, false);
+            
+            returnVal.then(function(response) {
+            	var data = response.data;
+				if(data == '1' || data._INSERT_ROW_CNT == '1'){
+					_.forEach(self.userAlarmDataList.getData(), function(o){
+						if(o.ALARM_SEQ == alarmSeq){
+							o['SUBSCRIBE_YN'] = subscribeYn;
+						}
+					});
+					notifySubmit('success', '알림설정 저장', '저장이 완료되었습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '알림설정 저장', '저장에 실패하였습니다.', 'icon-caution');
+				}
+            });
+        },
+		insertUserAlarmData: function(pEntry, pGubun){
+			var alarmSeq = pEntry.ALARM_SEQ;
+			var ynVal = '';
+        	var self = this;
+        	
+        	if(pEntry[pGubun] == 'N'){
+        		ynVal =  'Y';
+        	}else{
+        		ynVal =  'N';
+        	}
+        	
+        	pEntry[pGubun] = ynVal;
+            //self.userAlarmListLoading.val = true;
+            var returnVal = alertApi.userAlarmSettingUpdate(pEntry, false);
+            
+            returnVal.then(function(response) {
+            	var data = response.data;
+				if(data == '1' || data._INSERT_ROW_CNT == '1'){
+					_.forEach(self.userAlarmDataList.getData(), function(o, i){
+						if(o.ALARM_SEQ == alarmSeq){
+							o[pGubun] = ynVal;
+						}
+						
+						//삭제 시 해당 로우 데이터셋에서 삭제 (수정자 : 김성래)
+						if(o.ALARM_DELETE_YN == 'Y'){
+            				self.userAlarmDataList.data.splice(i, 1);
+            				self.userAlarmDataList.beforeData.splice(i, 1);
+            				self.userAlarmDataList.defaultData.splice(i, 1);
+            			}
+					});
+					
+					notifySubmit('success', '알림설정 저장', '저장이 완료되었습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '알림설정 저장', '저장에 실패하였습니다.', 'icon-caution');
+				}
+            }).finally(function(){
+            	self.newAlarmCnt();
+			});
+        },
+        /* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            
+      		switch(pId) {
+	    		case 'change_subscribe':
+	    			var tempVal = pData.SUBSCRIBE_YN == 'Y' ? '중지' : '설정';
+                    title = '알림설정 수정';
+                    cont = '['+pData.ALARM_TITLE+'] 을 '+tempVal+' 하시겠습니까?';
+	    			break;
+	    		case 'change_pyosi':
+	    			var tempVal = pData.ALARM_PYOSI_YN == 'Y' ? '숨기' : '보이';
+                    title = '알림내용 숨김설정';
+                    cont = '선택 된 알림내용을 '+tempVal+'시겠습니까?';
+	    			break;
+	    		case 'change_delete':
+	    			var tempVal = pData.SUBSCRIBE_YN == 'Y' ? '중지' : '설정';
+                    title = '알림내역 삭제';
+                    cont = '선택 된 알림내용을 삭제하시겠습니까?</br>(삭제 된 알림 데이터는 복구가 불가능 합니다.)';
+	    			break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+        //confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+        messagePopupCallback: function(pGb, pId, pData) {	
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'change_subscribe':
+	    			this.insertUserAlarm(pData);
+	    			break;
+	    		case 'change_pyosi':
+	    			this.insertUserAlarmData(pData, 'ALARM_PYOSI_YN');
+	    			break;
+	    		case 'change_delete':
+	    			this.insertUserAlarmData(pData, 'ALARM_DELETE_YN');
+	    			break;
+	    	}
+	    },
+	    openWindow: function(pLink) {
+	    	window.open(pLink); 
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

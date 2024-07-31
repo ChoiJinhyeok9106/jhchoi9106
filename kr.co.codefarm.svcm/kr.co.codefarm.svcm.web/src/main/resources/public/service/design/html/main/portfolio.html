@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>포트폴리오</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+    
+    <link rel="stylesheet" type="text/css" href="/assets/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/feather.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/xcloud-icon.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/jui/jui-ui.classic.css">
+    <link rel="stylesheet" type="text/css" href="/service/design/assets/css/pf-complete.css" />
+    <link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio.css" />    
+    <link rel="stylesheet" type="text/css" href="/assets/css/slick.css" />
+	
+    <!-- 기본 -->
+    <script type="text/javascript" src="/assets/js/vendor/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/es6-promise.auto.min.js"></script>
+    <script type="text/javascript" src="/assets/js/vendor/lodash.min.js"></script>
+    <script type="text/javascript" src="/assets/js/vendor/moment.js"></script>
+    <script type="text/javascript" src="/assets/js/vendor/slick.min.js"></script>
+    
+    <!-- vue 관련 -->
+	<script type="text/javascript" src="/assets/js/vendor/vue/vue.js"></script>
+	<script type="text/javascript" src="/assets/js/vendor/vue/axios.min.js"></script>
+	
+    <!-- 프로젝트 공통 -->
+    <script type="text/javascript" src="/assets/js/cdf_library.js"></script>
+    <script type="text/javascript" src="/assets/js/axios.common.js"></script>
+	
+    <script type="text/javascript" src="/app-assets/js/api/systemmanager/user.api.js"></script>
+</head>
+<body class="jui feather">
+    <div id="skip_navi">
+        <p><a href="#content_wrap">본문 바로가기</a></p>
+        <p><a href="#gnb">메인메뉴 바로가기</a></p>
+    </div>
+    <div id="wrap">
+        <aside id="left-zone" class="on">
+            <div class="inner-wrap">
+                <div class="user-info">
+                    <a href="#!" class="btn-set"><span class="icon-gear"></span></a>
+                    <span class="user-photo"><img src="/service/design/images/portfolio/counsel_main_photo04.jpg" alt=""></span>
+                    <span class="user-name">강수민</span>
+                    <span class="user-major">컴퓨터공학과</span>
+                    <div class="btn-box">
+                         <a href="#!" class="btn type02 size-m center-icon "><span class="icon-message-square"></span></a>
+                         <a href="#!" class="btn type02 size-m center-icon "><span class="icon-smartphone"></span></a>
+                         <a href="#!" class="btn type02 size-m center-icon "><span class="icon-mail"></span></a>
+                     </div>
+                </div>
+                <ul class="action">
+                    <li><a href="#!">1. 컨텐츠</a></li>
+                    <li><a href="#!">2. 표지</a></li>
+                </ul>
+            </div>
+            <a href="#!" class="btn-close"><span></span></a>
+        </aside>
+        <div class="dark-layer on"></div>
+
+        <main id="content-wrap">
+            <header id="header">
+                <div class="header-zone">
+                    <h2>Kang Su Min portfolio</h2>
+                    <span class="sch-logo"><img src="/service/design/images/portfolio/daedong_logo.png" alt="대동대학교" /></span>
+                </div>
+            </header>
+            <div class="contents">
+                <div class="cont-slide-box">
+                    <span class="pagingInfo"></span>
+                    <div class="cont-slide">
+                        <div class="slide page-write-wrap" data-title="컨텐츠">
+                            <p class="slide-tit">컨텐츠</p>
+                            <div class="write-content">
+                                <div class="form-wrap">
+                                    <div class="image-wrap w100">
+                                        <div class="image"><img src="/service/design/images/portfolio/ability_main_bg.jpg" alt=""></div>
+                                    </div>
+                                </div> 
+                                <div class="form-wrap">
+                                    <div class="text w100 h50"><span>계절이 지나가는 하늘에는 가을로 가득 차 있습니다.
+                                        나는 아무 걱정도 없이 가을 속의 별들을 다 헤일 듯합니다...
+                                        가슴 속에 하나 둘 새겨지는 별을 이제 다 못 헤는 것은 쉬이 아침이 오는 까닭이요, 내일 밤이 남은 까닭이요, 아직 나의 청춘이 다하지 않은 까닭입니다.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide page-write-wrap cv" data-title="표지">
+                            <p class="slide-tit">표지</p>
+                            <div class="write-content cv-con">
+                                <div class="form-wrap center">
+                                    <div class="middle">
+                                        Spring Boot를 활용한 웹기반의 프로젝트 관리 시스템
+                                    </div> 
+                                    <div class="foot">
+                                        컴퓨터공학과 2010734071 스티브잡스
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <footer id="footer">            
+                <p class="license"><span>copyright ⓒ 2018 Xcloud. All Rights Reserved.</span></p>
+            </footer>
+        </main>
+        
+    </div>
+</body>
+
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		testdata : null,
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		var returnVal = userApi.user('1', '1', '박기태', '1', '5', false);
+		var self = this;
+		
+		returnVal.then(function(response) {
+			console.log(JSON.stringify(response.data));
+			self.testdata = JSON.stringify(response.data);
+		}).catch(function(error) {
+			console.error('error:', error);
+		}).finally(function(){
+		});
+	},
+	//함수
+	methods: {
+		
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+ $(document).ready(function() {
+	    
+	    //포트폴리오 슬라이더
+	    $('.cont-slide').on('init', function(event, slick) {
+	        $(this).append('<div class="slick-counter"><span class="current"></span> / <span class="total"></span></div>');
+	        $('.current').text(slick.currentSlide + 1);
+	        $('.total').text(slick.slideCount);
+	    })
+	    .slick({
+	        infinite: true,
+	        arrows: true
+	    })
+	    .on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+	        $('.current').text(nextSlide + 1);
+	    });
+	     $('.action li a').click(function() {
+	       var slideNo = $(this).parent().index();
+	       $('.cont-slide').slick('slickGoTo', slideNo);
+	       $('.action li a').removeClass('on');
+	       $(this).addClass('on');
+	     });
+	     $('.slick-arrow').on('click', function(){
+	        var current = ($('.slick-counter .current').text())-1;
+	        $('.action li a').removeClass('on');
+	        $('.action li').eq(current).find('a').addClass('on');
+	     })     
+	});
+
+	$(document).ready(function() {
+	    //창이 작아질때 왼쪽 메뉴 열고 닫기
+	     $('#left-zone .btn-close').on('click', function(){
+	        console.log($(this).parent());
+	        if ($(this).parent().hasClass('on')) {
+	             console.log(1);
+	            $('.dark-layer').removeClass('on');
+	            $(this).parent().removeClass('on');
+	                
+	        } else {
+	            console.log(2);
+	            $('.dark-layer').addClass('on');
+	            $(this).parent().addClass('on');
+	        }
+	     })
+	});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+</html>

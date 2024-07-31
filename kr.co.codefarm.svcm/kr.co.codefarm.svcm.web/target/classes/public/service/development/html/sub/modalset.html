@@ -1,0 +1,116 @@
+<h2 id="top">Dataset-ModalSet</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Method</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type02">
+	        	<li v-for="(item, index) in methodData" style="margin-top:10px;"><a :href="'#item'+index" class="btn type01 size-s c-blue" style="border:1px solid #2549b0;" >{{item.name}} {{item.param}}</a> : {{item.description}}</li>
+			</ul>
+		</div>
+    </section>
+    
+    <section class="cont_box" v-for="(item, index) in methodData" :id="'item'+index">
+        <h3 class="h3">{{item.name}} {{item.param}}</h3>
+        <div class="row form-row">
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Description</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description.split('\n').join('<br />')"></p>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description2.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Syntax</label>
+	            <!-- <p class="txt_info" v-html="item.syntax.split('\n').join('<br />')"></p> -->
+<textarea :id="'codeEditor'+index" style="line-height:30px;" v-html="item.syntax">
+</textarea>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Parameters</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.parameters.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Return</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.returnVal.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <p class="right" style="line-height:30px;"><a href="#top" class="btn type01 size-m c-sky icon-arrow-up-circle" style="border:1px; font-size:20px;"></a></p>
+	        </div>
+	    </div>
+        <br/>
+   	</section>
+</section>
+
+<style>
+html {
+    scroll-behavior: smooth;
+}
+</style>
+
+<script type="text/javascript">
+//{name:'',param:'()',description:'',description2:'',syntax:'',parameters:'',returnVal:''},
+var method = [
+	{name:'ModalSet',param:'(pId)',description:'모달팝업을 나타내기 위한 데이터 오브젝트입니다.',description2:'',syntax:'new ModalSet(pId);\n// Create Object\nvar ds = new ModalSet(pId);',parameters:'pId(String) : 모달 오브젝트 아이디',returnVal:'ModalSet()'},
+	{name:'openModal',param:'(pType, pTitle, pMessage, pSize, pId, pCustomData)',description:'모달 팝업을 오픈 합니다.',description2:'',syntax:'ModalSet.openModal(pType, pTitle, pMessage, pSize, pId, pCustomData)',parameters:'pType(String) : 팝업 타입 (message, confirm)\npTitle(String) : 팝업 제목\npMessage(String) : 팝업내용\npSize(String) : 팝업 사이즈 (small, middle, large)\npId(String) : 현재 오픈하는 팝업의 아이디\npCustomData(String) : 현재 오픈하는 팝업에 전달되는 데이터',returnVal:'boolean : 성공여부'},
+	{name:'closeModal',param:'(pGb)',description:'모달 팝업을 닫습니다.',description2:'',syntax:'ModalSet.closeModal(pGb)',parameters:'pGb(String) : 어떤 동작에 의해 닫는지 구분값',returnVal:'pGb(String) : 어떤 동작에 의해 닫는지 구분값'},
+]
+
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		testDate: new Date(),
+		methodData: _.sortBy(method, ['name']),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	_.forEach(vm.methodData, function(n, key) {
+		editor('codeEditor'+key, 100);
+	});
+	
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

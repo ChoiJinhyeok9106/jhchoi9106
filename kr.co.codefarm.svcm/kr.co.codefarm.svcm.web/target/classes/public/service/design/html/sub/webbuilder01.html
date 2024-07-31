@@ -1,0 +1,117 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/webbuilder.css" /> 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css">
+<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.js"></script>
+
+<h2>메인 설정</h2>
+<section class="sub_cont_box widget_setting" id="app">
+    <div class="left-area">
+        <h3>나의 메인</h3>
+        <p>현재 설정되어진 메인입니다.<br>각 메인화면에서 원하는 위젯을 추가, 삭제할 수 있습니다.</p>
+        <a href="#!" class="left-area-toggle icon-arrow-right">펼치기</a>
+        <section class="main-list-wrap">
+        	<div>
+	            <ul>
+	                <li>
+	                    <label for="" class="size-s">Smart Campus</label>
+	                    <label class="toggle-switch size-s">
+	                        <input type="checkbox" checked="">
+	                        <span class="slider round bg-red"></span>
+	                    </label>
+	                </li>
+	                <li>
+	                    <label for="" class="size-s">My Campus</label>
+	                    <label class="toggle-switch size-s">
+	                        <input type="checkbox" checked="">
+	                        <span class="slider round bg-red"></span>
+	                    </label>
+	                </li>
+	                <li>
+	                    <label for="" class="size-s">나의 취업정보</label>
+	                    <label class="toggle-switch size-s">
+	                        <input type="checkbox">
+	                        <span class="slider round bg-red"></span>
+	                    </label>
+	                </li>
+	            </ul>
+	            <a href="#!" class="btn"><span class="icon-monitor"></span>메인 추가하기</a>
+            </div>
+        </section>
+    </div>
+    <div class="right-area">
+        <div class="btn-line right">
+            <a href="#!" class="btn type02 size-m center-icon"><span class="icon-pen"></span></a>
+            <a href="#!" class="btn type02 size-m center-icon"><span class="icon-close"></span></a>
+        </div>
+        <section class="widget-setting-detail">
+            <div class="title">
+                <p>Smart Campus</p>
+            </div>
+            <div class="widget-list">
+                <article class="widget-box">
+                    <div class="widget-img">
+                        <img src="/service/design/images/webbuilder/webbuilder_img01.jpg" alt="">
+                    </div>
+                </article>
+                <article class="widget-box">
+                    <div class="widget-img">
+                        <img src="/service/design/images/webbuilder/webbuilder_img02.jpg" alt="">
+                    </div>
+                </article>
+                <article class="widget-box">
+                    <div class="widget-img">
+                        <img src="/service/design/images/webbuilder/webbuilder_img03.jpg" alt="">
+                    </div>
+                </article>
+                <article class="widget-box box04">
+                    <a href="#!" class="icon-close">삭제</a>
+                    <div class="widget-img">
+                        <img src="/service/design/images/webbuilder/webbuilder_img04.jpg" alt="">
+                    </div>
+                </article>
+                <article class="widget-box box05">
+                    <a href="#!" class="icon-close">삭제</a>
+                    <div class="widget-img">
+                        <img src="/service/design/images/webbuilder/webbuilder_img05.jpg" alt="">
+                    </div>
+                </article>
+            </div>
+        </section>
+    </div>
+</section>
+           
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+    $(function() {
+        $('.left-area-toggle').on('click', function() {
+            $(this).toggleClass('on');
+            $(this).next('section').slideToggle();
+            if ($(this).hasClass('on')) {
+                $(this).removeClass('icon-arrow-right');
+                $(this).addClass('icon-arrow-left');
+                $(this).next('section').children('div').css('opacity', '1');
+            } else {
+                $(this).removeClass('icon-arrow-left');
+                $(this).addClass('icon-arrow-right');
+                $(this).next('section').children('div').css('opacity', '0');
+            }
+        })
+    });
+</script>

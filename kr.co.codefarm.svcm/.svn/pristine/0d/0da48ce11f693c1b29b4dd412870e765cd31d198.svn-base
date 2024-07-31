@@ -1,0 +1,343 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+
+<h2>실적성과관리</h2>
+<section class="sub_cont_box">
+    <div class="tab-outter">
+        <div class="ability-tab">
+            <div class="tab-inner">
+                <div rel="tab1"><a href="#!" class="active">교과</a></div>
+                <div rel="tab2"><a href="#!">비교과</a></div>
+                <div rel="tab3"><a href="#!">외부비교과</a></div>                               
+            </div>
+        </div>
+    </div>
+    <div class="tab-container">
+        <!-- 교과 -->
+        <div id="tab1" class="tab-content">
+            <div class="row form-row board">
+                <div class="form-group col s12 l5">
+                    <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+                </div>
+                <div class="form-group col s12 l7 col-inline right">
+                    <select name="" id="" class="size-m">
+                        <option selected="">과정명</option>
+                    </select>
+                    <input type="text" name="" id="" class="size-m" placeholder="입력하세요">
+                    <a href="#!" class="btn type00 size-m icon-search"></a>
+                </div>
+            </div>
+            <!-- 테이블 -->
+            <table class="table-type02 response">
+                <caption>실적성과관리 테이블로 번호, 구분, 과목코드, 과정명(후기수), 수강년도/학기, 학점, 교수명, 노트  항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="8%">
+                    <col width="12%">
+                    <col width="10%">
+                    <col>
+                    <col width="13%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="13%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">구분</th>
+                        <th scope="col">과목코드</th>
+                        <th scope="col">과정명(후기수)</th>
+                        <th scope="col">수강년도/학기</th>
+                        <th scope="col">학점</th>
+                        <th scope="col">교수명</th>
+                        <th scope="col">노트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>                         
+                </tbody>
+            </table>
+            <!-- 페이징 -->
+            <div class="paginate">
+                <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+            </div>
+            
+        </div>
+        <!-- 비교과 -->
+        <div id="tab2" class="tab-content">
+            <div class="row form-row board">
+                <div class="form-group col s12 l5">
+                    <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+                </div>
+                <div class="form-group col s12 l7 col-inline right">
+                    <select name="" id="" class="size-m">
+                        <option selected="">과정명</option>
+                    </select>
+                    <input type="text" name="" id="" class="size-m" placeholder="입력하세요">
+                    <a href="#!" class="btn type00 size-m icon-search"></a>
+                </div>
+            </div>
+            <!-- 테이블 -->
+            <table class="table-type02 response">
+                <caption>실적성과관리 테이블로 번호, 구분, 과목코드, 과정명(후기수), 수강년도/학기, 학점, 교수명, 노트  항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="8%">
+                    <col width="12%">
+                    <col width="10%">
+                    <col>
+                    <col width="13%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="13%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">구분</th>
+                        <th scope="col">과목코드</th>
+                        <th scope="col">과정명(후기수)</th>
+                        <th scope="col">수강년도/학기</th>
+                        <th scope="col">학점</th>
+                        <th scope="col">교수명</th>
+                        <th scope="col">노트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>                         
+                </tbody>
+            </table>
+            <!-- 페이징 -->
+            <div class="paginate">
+                <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+            </div>
+            
+        </div>
+        <!-- 외부비교과 -->
+        <div id="tab3" class="tab-content">
+            <div class="row form-row board">
+                <div class="form-group col s12 l5">
+                    <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+                </div>
+                <div class="form-group col s12 l7 col-inline right">
+                    <select name="" id="" class="size-m">
+                        <option selected="">과정명</option>
+                    </select>
+                    <input type="text" name="" id="" class="size-m" placeholder="입력하세요">
+                    <a href="#!" class="btn type00 size-m icon-search"></a>
+                </div>
+            </div>
+            <!-- 테이블 -->
+            <table class="table-type02 response">
+                <caption>실적성과관리 테이블로 번호, 구분, 과목코드, 과정명(후기수), 수강년도/학기, 학점, 교수명, 노트  항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="8%">
+                    <col width="12%">
+                    <col width="10%">
+                    <col>
+                    <col width="13%">
+                    <col width="10%">
+                    <col width="10%">
+                    <col width="13%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">구분</th>
+                        <th scope="col">과목코드</th>
+                        <th scope="col">과정명(후기수)</th>
+                        <th scope="col">수강년도/학기</th>
+                        <th scope="col">학점</th>
+                        <th scope="col">교수명</th>
+                        <th scope="col">노트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>
+                    <tr>
+                        <td data-header="No">2016</td>
+                        <td data-header="구분">교양선택</td>
+                        <td data-header="과목코드">000123</td>
+                        <td data-header="과정명(후기수)">간호학개론</td>
+                        <td data-header="수강년도/학기">2018/1학기</td>
+                        <td data-header="학점">2.5</td>
+                        <td data-header="교수명">이범신</td>
+                        <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+                    </tr>                         
+                </tbody>
+            </table>
+            <!-- 페이징 -->
+            <div class="paginate">
+                <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+            
+<script>
+    $(function(){
+        //탭메뉴
+        $(".tab-content").hide();
+        $(".tab-content:first").show();
+        $(".ability-tab div a").click(function() {
+            $(".ability-tab div a").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").hide()
+            var activeTab = $(this).parent().attr("rel");
+            $("#"+activeTab).fadeIn()
+        });   
+    });
+</script>
+
+

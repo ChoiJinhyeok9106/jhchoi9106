@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.defaultinfoApi">
+		
+	<!-- 이용약관 SELECT -->
+    <select id="getDefaultinfo"  parameterType="hashMap" resultType="hashMap">
+    	SELECT 'N' AS CHK
+    		 , AGREE_ITEM1_NM
+		     , AGREE_ITEM1_CONTENTS
+		     , COALESCE(AGREE_ITEM1_USE_YN, 'N')   AS AGREE_ITEM1_USE_YN
+		     , COALESCE(AGREE_ITEM1_PILSU_YN, 'N') AS AGREE_ITEM1_PILSU_YN
+			 , 'N' AS CHK1
+		     , AGREE_ITEM2_NM
+		     , AGREE_ITEM2_CONTENTS
+		     , COALESCE(AGREE_ITEM2_USE_YN, 'N')   AS AGREE_ITEM2_USE_YN
+		     , COALESCE(AGREE_ITEM2_PILSU_YN, 'N') AS AGREE_ITEM2_PILSU_YN
+			 , 'N' AS CHK2
+		     , AGREE_ITEM3_NM
+		     , AGREE_ITEM3_CONTENTS
+		     , COALESCE(AGREE_ITEM3_USE_YN, 'N')   AS AGREE_ITEM3_USE_YN
+		     , COALESCE(AGREE_ITEM3_PILSU_YN, 'N') AS AGREE_ITEM3_PILSU_YN
+		     , 'N' AS CHK3
+			 , AGREE_ITEM4_NM
+		     , AGREE_ITEM4_CONTENTS
+		     , COALESCE(AGREE_ITEM4_USE_YN, 'N')   AS AGREE_ITEM4_USE_YN
+		     , COALESCE(AGREE_ITEM4_PILSU_YN, 'N') AS AGREE_ITEM4_PILSU_YN
+			 , 'N' AS CHK4
+		  FROM SMN_DEFAULTINFO
+		 WHERE DAEPYO_YN = 'Y'
+    </select>
+		
+	<!-- 기본정보 SELECT -->
+    <select id="getInfo"  parameterType="hashMap" resultType="hashMap">
+		 SELECT   A.SITE_NM
+		       ,  A.CO_NM 
+			   , (SELECT FILE_PATH
+				  FROM SMN_FILE AA
+				 WHERE 1=1
+				   AND AA.FILE_ID	   = 'SMN_DAEPYOJA'
+				   AND AA.FILE_KEY 	   = CONCAT(IFNULL(A.SITE_SEQ,''),'#',IFNULL(#{pDaepyojaGb},''),'#',(SELECT DAEPYOJA_SEQ FROM SMN_DAEPYOJA WHERE DATE_FORMAT(SYSDATE(), '%Y%m%d') BETWEEN FR_DT AND TO_DT AND DAEPYOJA_GB = #{pDaepyojaGb})
+				   AND AA.FILE_HANGMOK = 'stamp'
+			    ) AS STAMP_PATH
+			   , B.DAEPYOJA_NM
+			   , B.DAEPYOJA_JIKHAM
+		  FROM SMN_DEFAULTINFO A 
+		  LEFT OUTER JOIN (
+							 SELECT SITE_SEQ
+							      , DAEPYOJA_NM
+							      , DAEPYOJA_JIKHAM
+							   FROM SMN_DAEPYOJA 
+							  WHERE 1 = 1
+							    AND DATE_FORMAT(SYSDATE(), '%Y%m%d') BETWEEN FR_DT AND TO_DT 
+							    <if test="pDaepyojaGb != null and pDaepyojaGb != ''.toString()">
+							    AND DAEPYOJA_GB = #{pDaepyojaGb}
+							    </if>
+		     			  ) B
+		    ON A.SITE_SEQ 	  = B.SITE_SEQ
+		 WHERE A.DAEPYO_YN    = 'Y'
+    </select>
+    
+	<select id="getTerms" parameterType="hashMap" resultType="hashMap">
+		SELECT TITLE
+		  	 , CONTENTS
+		  	 , CONTENTS_HTML
+		  	 , JAKSEONGJA_NM
+		  	 , SEARCH_CNT
+		  	 , DATE_FORMAT(INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS INSERT_DTTM
+		  FROM ADD_BOARD_POST
+		 WHERE BOARD_SEQ = CAST(#{BOARD_SEQ} AS INT)
+		   AND (DELETE_YN != 'Y' OR DELETE_YN IS NULL)
+		 ORDER BY INSERT_DTTM DESC
+	</select>
+	
+	<select id="getLastTerms" parameterType="hashMap" resultType="hashMap">
+	   (SELECT TITLE
+		  	 , CONTENTS
+		  	 , CONTENTS_HTML
+		  	 , JAKSEONGJA_NM
+		  	 , SEARCH_CNT
+		  	 , DATE_FORMAT(INSERT_DTTM, '%Y-%m-%d %H:%i:%s')  AS INSERT_DTTM
+		  FROM ADD_BOARD_POST
+		 WHERE BOARD_SEQ = '4'
+		   AND (DELETE_YN != 'Y' OR DELETE_YN IS NULL)
+		 ORDER BY INSERT_DTTM DESC
+		 LIMIT 1)
+		 UNION ALL
+	   (SELECT TITLE
+		  	 , CONTENTS
+		  	 , CONTENTS_HTML
+		  	 , JAKSEONGJA_NM
+		  	 , SEARCH_CNT
+		  	 , DATE_FORMAT(INSERT_DTTM, '%Y-%m-%d %H:%i:%s')  AS INSERT_DTTM
+		  FROM ADD_BOARD_POST
+		 WHERE BOARD_SEQ = '5'
+		   AND (DELETE_YN != 'Y' OR DELETE_YN IS NULL)
+		 ORDER BY INSERT_DTTM DESC
+		 LIMIT 1)
+	</select>
+</mapper>

@@ -1,0 +1,477 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/banner.css" />  
+<!-- <link rel="stylesheet" type="text/css" href="/widget/assets/css/widget.css" /> -->  
+
+<h2>배너 관리</h2>
+<section class="sub_cont_box" id="app">
+    <div class="banner-top row form-row">
+        <div class="col m12 l2">
+            <a href="#!" class="group-create" @click="newRow();"><i class="icon-grid"></i>배너생성</a>
+        </div>
+        <div class="col m12 xl6 offset-xl4">
+            <div class="box-type03 col-inline">
+                <label class="label-type00 size-m icon-search">검색</label>
+                <select name="pSearchType" id="pSearchType" class="size-m">
+					<option value="1">배너 제목</option>
+					<option value="2">배너 내용</option>
+                </select>
+                <input type="text" name="pSearchArgv" id="pSearchArgv" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+                <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+            </div>
+        </div>
+    </div>
+
+    <div class="app-list banner-list" v-if="bannerList.getRowCount() > 0">
+		<div v-for="(item, index) in bannerList.data">
+			<div class="app-list-box" :class="{'active': index == bannerList.rowposition}" @click="bannerList.selectRow(index)">
+				<div data-header="제목" class="tit">
+					<div class="inner">
+						<p v-if="item.FILE_PATH != null && item.FILE_PATH != ''" class="banner-img"><img :src="'/upload'+item.FILE_PATH" alt="" /></p>
+						<p v-if="item.FILE_PATH == null || item.FILE_PATH == ''" class="banner-img no-img"><span class="icon-image"></span></p>
+						<a href="#!">{{item.BANNER_TITLE}}</a>
+					</div>
+				</div>
+				<div data-header="내용" class="description">
+					<div class="inner">
+						<p>{{item.BANNER_TEXT}}</p>
+					</div>
+				</div>
+				<div data-header="주소" class="url">
+					<div class="inner">
+						<p>{{item.LINK_URL}}</p>
+					</div>
+				</div>
+				<div data-header="세팅" class="setting">
+					<div class="inner">
+						<a href="#!" v-if="bannerList.getRowType(index) != 2" @click="confirmOpen('delete')"><span class="icon icon-trashcan"></span></a>
+						<a href="#!" v-if="item.USE_YN=='Y'"><span class="icon icon-checkmark"></span></a>
+						<a href="#!" v-if="item.USE_YN=='N'"><span class="icon icon-slash"></span></a>
+					</div>
+				</div>
+			</div>
+		<transition name="slide">
+			<div class="app-info-layer" v-if="index == bannerList.rowposition">
+				<div class="box-type03">
+					<input class="size-m" type="hidden" id="bannerSeq" name="bannerSeq" v-model="bannerList.currentRow.BANNER_SEQ" disabled="true" />
+					<div class="row form-row">
+						<div class="form-group col s12 l6 xl6">
+							<label for="bannerTitle" class="label-type01 required">배너 제목</label>
+							<input type="text" id="bannerTitle" name="bannerTitle" class="size-m" data-vv-as="배너 제목 " v-model="bannerList.currentRow.BANNER_TITLE" v-validate="'required|max:500'" v-bind:class="{'invalid': errors.has('bannerTitle')}">
+							<invalid-message :visible="bannerList.currentRow" :name="'bannerTitle'" :verror="errors"/>
+						</div>
+						<div class="col s12 l6 xl6">
+							<label class="label-type01 required" for="bannerGb">배너 구분</label>
+				            <select class="size-m" id="bannerGb" name="bannerGb" data-vv-as="배너구분 " v-model="bannerList.currentRow.BANNER_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('bannerGb')}" @change="bannerGbChange(bannerList.currentRow.BANNER_GB)">
+				          		<option v-for="(item, index) in addCommcode.getCommcode('ADD', 'BANNER_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+			        		</select>
+						</div>
+					</div>
+					<div class="row form-row" v-if="bannerList.currentRow.BANNER_GB == '1'">
+						<div class="form-group col s12 l6 xl6">
+							<label for="bannerText" class="label-type01 required">템플릿 구분</label>
+							<select class="size-m" id="templateGb" name="templateGb" data-vv-as="템플릿 구분 " v-model="bannerList.currentRow.TEMPLATE_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('templateGb')}" @change="templateGbChange(bannerList.currentRow.TEMPLATE_GB)">
+				          		<option value="">- 선택 -</option>
+				          		<option v-for="(item, index) in _.filter(addCommcode.getCommcode('ADD', 'TEMPLATE_GB', 'select', 'CD_NM', 'N', 'all'), {CD2: 'N'})" :value="item.CD">{{item.CD_NM}}</option>
+			        		</select>
+						</div>
+						<div class="form-group col s12 l6 xl6 form-row">
+							<article class="widget_box">
+								<section class="content_box">
+            						<div class="inner">
+										<div class="col s12 col-label box-type04">
+											<div class="widget-type18">
+												<div class="banner-template-wrap">
+					                        		<span class="image-box">
+					                        			<img :src="addCommcode.getCommcodeNm('ADD','TEMPLATE_GB',bannerList.currentRow.TEMPLATE_GB,'CD1')" />
+					                        		</span>
+					                        		<div class="content-box">
+					                        			<p class="tit">{{bannerList.currentRow.BANNER_TITLE}}</p>
+					                        			<p class="txt" v-html="convertBrTag(bannerList.currentRow.BANNER_TEXT)"></p>
+					                        			<div v-if="bannerList.currentRow.LINK_URL" class="btn-box">
+					                        				<a :href="bannerList.currentRow.LINK_URL" target="_blank">
+					                        					<span class="span-btn">자세히보기</span>
+					                        				</a>
+					                        			</div>
+					                        		</div>
+					                        	</div>
+					                        </div>
+										</div>
+									</div>
+								</section>
+							</article>
+						</div>
+					</div>
+					<div class="row form-row" v-if="bannerList.currentRow.BANNER_GB == '1'">
+						<div class="form-group col s12 l12 xl12">
+							<label for="bannerText" class="label-type01 required">배너 내용</label>
+							<textarea rows="10" class="size-m" placeholder="배너 설명" id="bannerText"  name="bannerText" data-vv-as="배너 내용 " v-model="bannerList.currentRow.BANNER_TEXT" v-validate="'required|max:4000'" v-bind:class="{'invalid': errors.has('bannerText')}"></textarea>
+							<invalid-message :visible="bannerList.currentRow" :name="'bannerText'" :verror="errors"/>
+						</div>
+					</div>
+					<div class="row form-row" v-if="bannerList.currentRow.BANNER_GB == '3'">
+						<div class="form-group col s12">
+							<label for="bannerText" class="label-type01 required">템플릿 구분</label>
+							<select class="size-m" id="templateGb" name="templateGb" data-vv-as="템플릿 구분 " v-model="bannerList.currentRow.TEMPLATE_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('templateGb')}" @change="templateGbChange(bannerList.currentRow.TEMPLATE_GB)">
+				          		<option value="">- 선택 -</option>
+				          		<option v-for="(item, index) in _.filter(addCommcode.getCommcode('ADD', 'TEMPLATE_GB', 'select', 'CD_NM', 'N', 'all'), {CD2: 'Y'})" :value="item.CD">{{item.CD_NM}}</option>
+			        		</select>
+						</div>
+						<div class="form-group col s12 l10 xl10 form-row">
+							<article class="widget_box">
+								<section class="content_box">
+            						<div class="inner">
+										<div class="col s12 col-label box-type04 banner-type02">											
+			                        		<div class="content-box" :style="setBackground(addCommcode.getCommcodeNm('ADD','TEMPLATE_GB',bannerList.currentRow.TEMPLATE_GB,'CD1'))">
+			                        			<!--<p class="tit">{{bannerList.currentRow.BANNER_TITLE}}</p>
+			                        			<p class="txt" v-html="convertBrTag(bannerList.currentRow.BANNER_TEXT)"></p>
+			                        			<div v-if="bannerList.currentRow.LINK_URL" class="btn-box">
+			                        				<a :href="bannerList.currentRow.LINK_URL" target="_blank">
+			                        					<span class="span-btn">자세히보기</span>
+			                        				</a>
+			                        			</div>-->
+			                        			
+				                                <p class="cate">카테고리 명</p>
+				                                <p class="tit">{{ bannerList.currentRow.BANNER_TITLE }}</p>
+				                                <p class="stit" v-html="convertBrTag(bannerList.currentRow.BANNER_TEXT)">
+				                                <div class="btn-zone" v-if="bannerList.currentRow.LINK_URL">
+				                                    <a :href="bannerList.currentRow.LINK_URL" class="btn-detail" tabindex="0">자세히 보기</a>
+				                                </div>					                            
+			                        		
+			                        		</div>
+										</div>
+									</div>
+								</section>
+							</article>
+						</div>
+					</div>
+					<div class="row form-row" v-if="bannerList.currentRow.BANNER_GB == '3'">
+						<div class="form-group col s12 l12 xl12">
+							<label for="bannerText" class="label-type01 required">배너 내용</label>
+							<textarea rows="10" class="size-m" placeholder="배너 설명" id="bannerText"  name="bannerText" data-vv-as="배너 내용 " v-model="bannerList.currentRow.BANNER_TEXT" v-validate="'required|max:4000'" v-bind:class="{'invalid': errors.has('bannerText')}"></textarea>
+							<invalid-message :visible="bannerList.currentRow" :name="'bannerText'" :verror="errors"/>
+						</div>
+					</div>
+					<div class="row form-row" v-if="bannerList.currentRow.BANNER_GB == '2'">
+						<div class="form-group col s12 l12 xl12">
+							<label class="label-type01">배너 이미지</label>
+							<single-file-uploader :title="'사진등록'" :floatnone="true" :modify="bannerList.getRowType(bannerList.rowposition) != ROWTYPE_INSERT" :fileset="titleImg" :imgwidth="90" :type="'file'" :fileid="'ADD_BANNER'" :filekey="bannerList.currentRow.BANNER_SEQ" :filehangmok="'titleImg'"></single-file-uploader>
+						</div>
+					</div>
+					<div class="row form-row">
+						<div class="form-group col s12 l9">
+							<label for="linkUrl" class="label-type01 required">링크 URL</label>
+							<input type="text" id="linkUrl" name="linkUrl" class="size-m" data-vv-as="링크 URL " v-model="bannerList.currentRow.LINK_URL" v-validate="'required|max:1000'" v-bind:class="{'invalid': errors.has('linkUrl')}"/>
+							<invalid-message :visible="bannerList.currentRow" :name="'linkUrl'" :verror="errors"/>
+						</div>
+						<div class="form-group col s12 xl3 form-row">
+			                <div class="col s12">
+			                    <label for="useYn" class="label-type01">사용 여부</label>
+			                </div>
+			                <div class="col s12">
+			                    <label class="toggle-switch size-l">
+			                        <input type="checkbox" id="useYn" name="useYn" data-vv-as="사용 여부 " v-model="bannerList.currentRow.USE_YN" true-value="Y" false-value="N">
+			                        <span class="slider round"></span>
+			                    </label>
+			                </div>
+		            	</div>
+					</div>
+					<div class="btn-line center">
+						<a href="#!" class="btn type02 size-m" @click="saveRow()">저장</a>
+					</div>
+				</div>
+			</div>
+		</transition>
+		</div>
+	</div>
+	<div class="app-list banner-list" v-else>
+	    <div class="no-cont">
+	    	검색결과가 없습니다.
+	    </div>
+	</div>
+    <paging :pagingset="bannerListPaging" :type="'normal'"></paging>
+    
+    <!-- 모달팝업 -->
+    <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		bannerList: new Dataset(),
+		bannerListPaging: new PagingSet(10, 5),
+		titleImg: new SingleFileSet('ADD'),
+		messageModal: new ModalSet('banner-modal')	// confirm 모달
+	},
+	//계산된 속성 표현 시
+	computed: {
+		currBannerText: function(){
+			return this.bannerList.currentRow.BANNER_TEXT.split('\n').join('<br/>');
+		}
+	},
+	//데이터 감시
+	watch: {
+		'bannerList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.bannerList.enableevent){
+					var changeYn = this.bannerList.dataCompare(oldVal);
+					var oldRowType = this.bannerList.getRowType(oldVal);
+					
+					var rowpos = this.bannerList.rowposition;
+					
+					if(rowpos!=-1){
+						if(oldRowType != this.ROWTYPE_INSERT){
+							var result = this.titleImg.getFiles('ADD_BANNER', this.bannerList.getColumn(rowpos, "BANNER_SEQ"), 'titleImg', null);
+						}
+						
+						if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+							this.bannerList.setDefaultRow(oldVal);
+						}
+						if(val != -1){
+							this.$validator.reset();
+						}
+					}
+// 					if(rowType == ROWTYPE_NORMAL  || rowType == ROWTYPE_UPDATE){
+// 						this.updateDisabled = true;	
+// 					}else{
+// 						this.updateDisabled = false;
+// 					}	
+
+					this.$validator.reset();
+				}
+			}
+		},		
+		'bannerList.data': {
+			handler: function (val, oldVal) {
+				if(this.bannerList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.bannerList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.bannerList.beforeData[rowposition][colNm] = data[colNm];
+				          		//colNm, rosposition 
+
+// 				          		vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			//Objects 내부의 중첩된 값 변경을 감지
+			deep: true
+	    },		
+		'bannerListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setBannerList();
+			}
+	    }
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setBannerList();
+	},
+	//함수
+	methods: {
+		/* 배너 리스트 조회 */
+		setBannerList: function(){
+			var pSearchType = $('#pSearchType option:selected').val();
+			var pSearchArgv = $('#pSearchArgv').val();
+			var pageNo = this.bannerListPaging.getCurrentPage();
+			var pRowCnt = this.bannerListPaging.getRowCnt();
+			
+			if(isNull(pSearchArgv)) pSearchArgv = '';
+			
+			if(isNull(pSearchType)){
+				pSearchType = '';
+				pSearchArgv = '';
+			}
+			
+			if(isNull(pageNo)) pageNo = 1;
+			
+			var returnVal = bannerApi.banner(pSearchType, pSearchArgv, pageNo, pRowCnt, '', 'Y',true);
+			
+			var self = this;
+			
+			returnVal.then(function(response){
+				self.bannerList.setData(response.data);
+				
+				if(response.data.length > 0){
+					var totalCnt = self.bannerList.data[0].CNT;
+					self.bannerListPaging.setTotalCnt(totalCnt);
+				}else{
+					self.bannerListPaging.setTotalCnt(0);
+				}
+			});
+		},
+		search: function(){
+			var pageNo = this.bannerListPaging.getCurrentPage();
+        	
+        	if(pageNo == 1){
+        		this.setBannerList();
+        	}else{
+        		this.bannerListPaging.movePage(1);
+        	}  
+		},
+		/* 서비스 리스트 신규행 추가 */
+		newRow: function(){
+			var addObj = {
+				'BANNER_TITLE':'',
+				'BANNER_TEXT':'',
+				'LINK_URL':'',
+				'USE_YN':'Y',
+				'BANNER_GB':'1',
+				'TEMPLATE_GB': '01',
+			};
+			
+			this.bannerList.addRow(addObj);
+		},
+		/* 서비스 리스트 저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			
+			var self = this;
+			
+			validate.then(function(response){
+				if(response){
+					var rowposition = self.bannerList.rowposition;
+					var rowType = self.bannerList.getRowType(rowposition); 
+					var returnVal = null;
+					
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = bannerApi.bannerInsert(self.bannerList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = bannerApi.bannerUpdate(self.bannerList.currentRow, true);
+					}else{
+						notifySubmit('info', '배너 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+					
+					if(!isNull(returnVal)){
+						returnVal.then(function(response){
+							var data = response.data;
+							
+							if(data == '1'){
+								self.setBannerList();
+								notifySubmit('success', '배너 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '배너 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						}).catch(function(error){
+							notifySubmit('warning', '배너 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}else{
+					notifySubmit('warning', '배너 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+   			});
+			
+		},
+		/* 서비스 리스트 삭제 */
+		deleteRow: function(row){
+			var self = this;
+			
+			var rowType = self.bannerList.getRowType(row); 
+			var returnVal = null;
+			var bannerSeq = self.bannerList.getColumn(row, 'BANNER_SEQ');
+			self.bannerList.deleteRow(row);
+			
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = bannerApi.bannerDelete(bannerSeq, true);
+				returnVal.then(function(response){
+					var data = response.data;
+					
+// 					if(parseInt(data,10) > 0){
+						self.titleImg.delFiles('ADD_BANNER', bannerSeq, 'titleImg', null);
+						self.search();
+						
+						notifySubmit('success', '배너 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+// 					}else{
+// 						notifySubmit('warning', '배너 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+// 					}
+				}).catch(function(error){
+					notifySubmit('warning', '배너 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});	
+			}
+		},
+		confirmOpen : function(id){
+			if(id == 'save'){
+				var validate = this.$validator.validateAll();
+    			
+    			var self = this;
+    			
+    			validate.then(function(response){
+    				if(response){
+    					self.messageModal.openModal('confirm', '저장', '저장하시겠습니까?', 'small', 'save', '');	
+    				}else{
+    					notifySubmit('warning', '배너 저장', '입력항목을 확인해주세요.', 'icon-caution');
+   					}
+       			});
+			}else if(id == 'delete'){
+				this.messageModal.openModal('confirm', '삭제', '선택된 배너를 삭제하시겠습니까?</br><span style="color:#c90000;">(해당 배너가 게시된 모든 그룹에서 배너가 삭제되며</br>복구가 불가능합니다.)</span>', 'small', 'delete', '');
+			}
+    	},
+    	messagepoppupcallback : function(gb, currentId, customData){
+    	 	//alert('버튼 구분 : '+gb+'\n'+'ID : '+currentId+'\n'+'returnData : '+customData);
+    	 	if(gb == 'confirm' && currentId == 'save'){
+ 				this.saveRow();
+    	 	}else if(gb == 'confirm' && currentId == 'delete'){
+    	 		this.deleteRow(this.bannerList.rowposition);
+    	 	}
+    	},
+    	bannerGbChange: function(pBannerGb) {
+    		//템플릿(아이콘)
+    		if(pBannerGb == '1') {
+   				this.bannerList.currentRow.TEMPLATE_GB = '01';
+    		}
+    		//이미지
+    		else if(pBannerGb == '2'){
+    			
+    		}
+    		//템플릿(배경)
+    		else if(pBannerGb == '3'){
+   				this.bannerList.currentRow.TEMPLATE_GB = '04';
+    		}
+    	},
+    	templateGbChange: function(pTemplateGb) {
+    		this.$forceUpdate();
+    	},
+	    convertBrTag: function(pText){
+	    	return pText.split('\n').join('<br/>');
+	    },
+	    setBackground: function(pImgPath){
+	    	return "background:url('" + pImgPath + "')";
+	    }
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+
+</script>
+

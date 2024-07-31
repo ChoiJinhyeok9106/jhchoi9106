@@ -1,0 +1,312 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/counseling.css" />
+
+<h2>상담이력</h2>
+<section class="sub_cont_box">
+    <form>
+        <div class="box-type03">
+            <div class="row form-row">
+                <div class="form-group col s12 l6 xl2">
+                    <label for="formGroupExampleInput1" class="label-type01">학적</label>
+                    <select class="size-m" id="formGroupExampleInput1">
+                        <option value="">재학</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l6 xl5">
+                    <label for="formGroupExampleInput2" class="label-type01">소속/학과</label>
+                    <div class="col-inline">
+                        <select class="size-m" id="formGroupExampleInput2" style="width:30%;">
+                            <option value="">전체</option>
+                        </select>
+                        <select class="size-m" style="width:67%;">
+                            <option value="">학과선택</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col s12 l12 xl5">
+                    <label for="formGroupExampleInput3" class="label-type01">학년/반</label>
+                    <div class="col-inline">
+                        <select class="size-m" id="formGroupExampleInput3" style="width:67%;">
+                            <option value="">전체</option>
+                        </select>
+                        <select class="size-m" style="width:30%;">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-row">
+                <div class="form-group col s12 l6 xl4">
+                    <label for="formGroupExampleInput4" class="label-type01">그룹</label>
+                    <select class="size-m" id="formGroupExampleInput4">
+                        <option value="">그룹선택</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l6 xl2">
+                    <label for="formGroupExampleInput5" class="label-type01">성별</label>
+                    <select class="size-m" id="formGroupExampleInput5">
+                        <option value="">전체</option>
+                    </select>
+                </div>
+                <div class="form-group col s12 l6 xl3">
+                    <label for="formGroupExampleInput6" class="label-type01">이름</label>
+                    <input type="text" id="formGroupExampleInput6" class="size-m">
+                </div>
+                <div class="form-group col s12 l6 xl3">
+                    <label for="formGroupExampleInput7" class="label-type01">학번</label>
+                    <input type="text" id="formGroupExampleInput7" class="size-m">
+                </div>
+            </div>
+        </div>
+        <div class="col-inline btn-line right">
+            <a href="#!" class="btn type02 size-m">검색</a>
+        </div>
+    </form>
+
+    <div class="form-group row form-row board" style="margin-top:50px;">
+        <div class="col s12 l6">
+            <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+        </div>
+        <div class="col s12 l6 col-inline right">
+            <a href="#!" class="btn type03 size-m">메세지</a>
+            <a href="#!" class="btn type03 size-m">그룹등록</a>
+        </div>
+    </div>
+    <!-- 테이블 -->
+    <table class="table-type02 response">
+        <caption>상담이력 테이블로 상담구분, 상담유형, 상담분야, 상담일자, 예약구분, 만족도조사, 상담자, 내용 순서대로 안내하는 표입니다</caption>
+        <colgroup>
+            <col width="10%" />
+            <col width="10%" />
+            <col width="8%" />
+            <col width="12%" />
+            <col width="10%" />
+            <col width="12%" />
+            <col />
+            <col width="10%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope="col">상담구분</th>
+                <th scope="col">상담유형</th>
+                <th scope="col">상담분야</th>
+                <th scope="col">상담일자</th>
+                <th scope="col">예약구분</th>
+                <th scope="col">상담자</th>
+                <th scope="col">내용</th>
+                <th scope="col">만족도조사</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-header="상담구분">방문상담</td>
+                <td data-header="상담유형">정기싱담</td>
+                <td data-header="상담분야">학업</td>
+                <td data-header="상담일자">2019-02-02</td>
+                <td data-header="예약구분">상담완료</td>
+                <td data-header="상담자">이성호교수</td>
+                <td data-header="내용" class="left"><a href="#!" onclick="modal_open('modal1');return false;">졸업 후 편입</a></td>
+                <td data-header="만족도조사"><a href="#!" class="btn-table-type02"><span class="icon-checkmark"></span></a></td>
+            </tr>
+            <tr>
+                <td data-header="상담구분">온라인상담</td>
+                <td data-header="상담유형">정기싱담</td>
+                <td data-header="상담분야">취업</td>
+                <td data-header="상담일자">2019-02-02</td>
+                <td data-header="예약구분">상담완료</td>
+                <td data-header="상담자">이성호교수</td>
+                <td data-header="내용" class="left"><a href="#!">장애인복지 관련</a></td>
+                <td data-header="만족도조사"><a href="#!" class="btn-table-type02"><span class="icon-checkmark"></span></a></td>
+            </tr>
+            <tr>
+                <td data-header="상담구분">온라인상담</td>
+                <td data-header="상담유형">수시상담</td>
+                <td data-header="상담분야">신상</td>
+                <td data-header="상담일자">2019-02-02</td>
+                <td data-header="예약구분">예약완료</td>
+                <td data-header="상담자">이성호교수</td>
+                <td data-header="내용" class="left"><a href="#!">편입희망</a></td>
+                <td data-header="만족도조사"><a href="#!" class="btn-table-type01"><span class="icon-minus-circle"></span></a></td>
+            </tr>
+            <tr>
+                <td data-header="상담구분">집단상담</td>
+                <td data-header="상담유형">수시상담</td>
+                <td data-header="상담분야">기타</td>
+                <td data-header="상담일자">2019-02-02</td>
+                <td data-header="예약구분">예약완료</td>
+                <td data-header="상담자">이성호교수</td>
+                <td data-header="내용" class="left"><a href="#!">신학기 상담</a></td>
+                <td data-header="만족도조사"><a href="#!" class="btn-table-type01"><span class="icon-minus-circle"></span></a></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- 페이징 -->
+    <div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+            <a href="#" class="active" title="1 페이지">1</a>
+            <a href="#" title="2 페이지">2</a>
+            <a href="#" title="3 페이지">3</a>
+            <a href="#" title="4 페이지">4</a>
+            <a href="#" title="5 페이지">5</a>
+            <a href="#" title="6 페이지">6</a>
+            <a href="#" title="7 페이지">7</a>
+            <a href="#" title="8 페이지">8</a>
+            <a href="#" title="9 페이지">9</a>
+            <a href="#" title="10 페이지">10</a>
+        </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+</section>
+
+<!-- modal layer popup -->
+<div class="modal-layer-wrap">
+
+    <div id="modal1" class="modal-layer modal-middle">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">상담내역</p>
+            </div>
+            <div class="modal-content">
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">상담자</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <input type="text" id="formGroupExampleInput5" class="size-m" value="이성호교수" readonly>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">상담일자</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <input type="text" id="formGroupExampleInput5" class="size-m" value="2019-01-30" readonly>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">상담구분</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <input type="text" id="formGroupExampleInput5" class="size-m" value="상담" readonly>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">상담유형</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <input type="text" id="formGroupExampleInput5" class="size-m" value="정기상담" readonly>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">상담분야</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <input type="text" id="formGroupExampleInput5" class="size-m" value="신상" readonly>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">제목</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <input type="text" id="formGroupExampleInput5" class="size-m" value="졸업 후 편입" readonly>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">전달사항</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <textarea id="exampleFormControlInput3" class="size-m" rows="10" readonly>귀는 청춘의 청춘 천지는 것이다. 위하여 거선의 산야에 품에 남는 보이는 능히 얼음에 힘있다. 이상을 인간의 끓는 쓸쓸하랴? 힘차게 청춘에서만 무엇을 이성은 가는 수 천지는 것이다. 내려온 있는 설산에서 황금시대를 따뜻한 평화스러운 아니다. </textarea>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">만족도구분</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <select id="exampleFormControlInput4" class="size-m">
+                                <option value="">선택하세요</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">예약내용</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <textarea id="exampleFormControlInput3" class="size-m" rows="10"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type01 size-m layer_close">닫기</a><a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //모달레이어팝업
+    function modal_open(el) {
+
+        var temp = $('#' + el); //레이어의 id를 temp변수에 저장
+        var bg = temp.prev().hasClass('bg'); //dimmed 레이어를 감지하기 위한 boolean 변수 
+
+        if (bg) {
+            $('.layer').fadeIn();
+        } else {
+            temp.fadeIn(); //bg 클래스가 없으면 일반레이어로 실행한다.
+        }
+
+        // 화면의 중앙에 레이어를 띄운다.
+
+        //if (temp.outerHeight() < $(document).height()) temp.css('margin-top', '-' + temp.outerHeight() / 2 + 'px');
+        //else temp.css('top', '0px');
+        if (temp.outerWidth() < $(document).width()) temp.css('margin-left', '-' + temp.outerWidth() / 2 + 'px');
+        else temp.css('left', '0px');
+
+        temp.find('a.cbtn, a.layer_close, .cbtn2').click(function(e) {
+            if (bg) {
+                $('.layer').fadeOut();
+            } else {
+                temp.fadeOut(); //'닫기'버튼을 클릭하면 레이어가 사라진다.
+            }
+            e.preventDefault();
+        });
+
+        $('.layer .bg').click(function(e) {
+            $('.layer').fadeOut();
+            e.preventDefault();
+        });
+
+        // Prevent mousewheel scroll
+        //$('html').on('wheel.modal mousewheel.modal', function () {
+        //	return false; 
+        //});
+        // Disable browser scrolling
+        $("html").css("overflow", "hidden");
+
+        //Show & hide dialog
+        $('.cbtn, .layer_close, .cbtn2').fadeIn().click(function() {
+            $(this).fadeOut()
+                // Enable scrollbars and mousewheel
+                //	$('html').off('wheel.modal mousewheel.modal');
+            $("html").css("overflow", "auto");
+            $('.modal-layer-wrap').removeClass('on');
+        });
+
+        //modal background dark
+        $('.modal-layer-wrap').find(temp).parent().addClass('on');
+
+
+    }
+</script>

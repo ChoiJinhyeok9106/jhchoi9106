@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.send">
+
+
+
+	<select id="getSendAuth" parameterType="hashMap" resultType="hashMap">
+		SELECT USER_ID
+			 , ROLE_CD
+			 , DEPT_CD
+			 , SEND_ID
+			 , RECIVE_YN
+			 , RECIVE_DTTM
+		  FROM SMN_USER_AUTH_SEND
+		 WHERE USER_ID = #{USER_ID}
+		   AND RECIVE_YN = 'N'
+	</select>
+
+	<select id="insertSendAuth" parameterType="hashMap" resultType="hashMap" statementType="CALLABLE">
+		{CALL SP_USER_SEND_AUTH
+			 ( #{USER_ID,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{DEPT_CD,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SEND_ID,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SYSTEM_ID,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SYSTEM_IP,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SYSTEM_PGM,mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{OUT_CD,	mode=OUT, jdbcType=VARCHAR, javaType=String}
+			 )
+		}
+	</select>
+
+	<delete id="deleteSendAuth" parameterType="hashMap">
+		DELETE FROM SMN_USER_AUTH_SEND
+		 WHERE USER_ID = #{USER_ID}
+		   AND RECIVE_YN = 'N'
+	</delete>
+
+	<select id="getReciveAuth" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+			 , B.USER_NM
+			 , A.ROLE_CD
+			 , A.DEPT_CD
+			 , B.DEPT_NM
+			 , A.SEND_ID
+			 , A.RECIVE_YN
+			 , A.RECIVE_DTTM
+		  FROM SMN_USER_AUTH_SEND A
+		  JOIN SMN_USER_V B
+			ON A.USER_ID = B.USER_ID
+		 WHERE A.SEND_ID = #{SEND_ID}
+		   AND A.RECIVE_YN = 'N'
+	</select>
+
+	<select id="applyrecive" parameterType="hashMap" resultType="hashMap" statementType="CALLABLE">
+		{CALL SP_USER_RECIVE_AUTH
+			 ( #{USER_ID,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SEND_ID,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SYSTEM_ID,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SYSTEM_IP,	mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{SYSTEM_PGM,mode=IN,  jdbcType=VARCHAR, javaType=String}
+			 , #{OUT_CD,	mode=OUT, jdbcType=VARCHAR, javaType=String}
+			 )
+		}
+	</select>
+</mapper>

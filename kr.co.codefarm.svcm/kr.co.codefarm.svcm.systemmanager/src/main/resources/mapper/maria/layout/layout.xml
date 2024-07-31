@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.layout">
+
+    <!-- 레이아웃 조회 -->
+    <select id="selectLayoutList"  parameterType="hashMap" resultType="hashMap">
+    	SELECT A.USER_ID
+             , A.USER_PAGE_SEQ
+			 , A.AUTH_CD
+             , A.USER_PAGE_NM
+             , A.MAIN_ORD
+             , A.ORD
+             , A.USE_YN
+          FROM (
+			        SELECT A.USER_ID
+			             , A.USER_PAGE_SEQ
+			             , A.AUTH_CD
+			             , A.USER_PAGE_NM
+			             , CASE WHEN A.AUTH_CD IS NULL THEN 1 ELSE 0 END AS MAIN_ORD
+			             , A.ORD
+			             , A.USE_YN
+			          FROM SMN_LAYOUT_PAGE A
+			         WHERE 1 = 1
+			         <if test="pSearchGb eq 'manage'.toString()">
+			           <if test="AUTH_CD != null and AUTH_CD != ''.toString()">
+			           AND A.AUTH_CD = #{AUTH_CD}
+			           </if>
+			           <if test="AUTH_CD == null or AUTH_CD eq ''.toString()">
+			           AND A.USER_ID = #{USER_ID}
+			           AND A.AUTH_CD IS NULL
+			           </if>
+			         </if>
+			         <if test="pSearchGb eq 'main'.toString()">
+			           AND (A.AUTH_CD IS NULL OR A.AUTH_CD = #{DEFAULT_AUTH_CD})
+			           AND A.USE_YN = 'Y'
+			           AND (A.USER_ID = #{USER_ID} OR A.AUTH_CD = #{DEFAULT_AUTH_CD})
+			         </if>
+			         <if test="pSearchGb eq ''.toString()">
+			           AND 1 = 0
+			         </if>
+			         <if test="USER_PAGE_SEQ != null and USER_PAGE_SEQ != ''.toString()">AND A.USER_PAGE_SEQ = #{USER_PAGE_SEQ}</if>
+               ) A
+         ORDER BY A.MAIN_ORD, A.ORD
+    </select>
+    
+    <!-- 레이아웃 삽입 -->
+    <insert id="insertLayout" parameterType="hashMap" useGeneratedKeys="true" keyProperty="NEW_USER_PAGE_SEQ">
+    	<selectKey resultType="string" keyProperty="NEW_USER_PAGE_SEQ" order="BEFORE">
+        	SELECT COALESCE(MAX(A.USER_PAGE_SEQ),0)+1 AS NEW_USER_PAGE_SEQ
+        	  FROM SMN_LAYOUT_PAGE A
+        	 WHERE A.USER_ID = #{USER_ID}
+    	</selectKey>
+    	
+        INSERT INTO SMN_LAYOUT_PAGE 
+        (
+            USER_ID
+          , USER_PAGE_SEQ
+          , AUTH_CD
+          , USER_PAGE_NM
+          , ORD
+          , USE_YN
+          , INSERT_DTTM
+          , INSERT_ID
+          , INSERT_IP
+          , INSERT_PGM
+          , UPDATE_DTTM
+          , UPDATE_ID
+          , UPDATE_IP
+          , UPDATE_PGM
+		) 
+		VALUES 
+		(
+            #{USER_ID}
+          , #{NEW_USER_PAGE_SEQ}
+          , #{AUTH_CD}
+          , #{USER_PAGE_NM}
+          , #{ORD}
+          , #{USE_YN}
+          , SYSDATE()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}
+          , SYSDATE()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}
+		)
+    </insert>    
+    
+    <!-- 레이아웃 갱신 -->
+    <update id="updateLayout" parameterType="hashMap">
+        UPDATE SMN_LAYOUT_PAGE
+           SET UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+             <if test="AUTH_CD != null and AUTH_CD != ''.toString()">, AUTH_CD = #{AUTH_CD}</if>
+             <if test="USER_PAGE_NM != null and USER_PAGE_NM != ''.toString()">, USER_PAGE_NM = #{USER_PAGE_NM}</if>
+             <if test="ORD != null and ORD != ''.toString()">, ORD = #{ORD}</if>
+             <if test="USE_YN != null and USE_YN != ''.toString()">, USE_YN = #{USE_YN}</if>
+         WHERE USER_ID = #{USER_ID} 
+           AND USER_PAGE_SEQ = #{USER_PAGE_SEQ}
+    </update>
+    
+    <!--  레이아웃 삭제 -->
+    <delete id="deleteLayout" parameterType="hashMap">
+    
+        DELETE FROM SMN_LAYOUT_CONTENT
+         WHERE USER_ID = #{USER_ID} 
+           AND USER_PAGE_SEQ = #{USER_PAGE_SEQ};
+           
+        DELETE FROM SMN_LAYOUT_PAGE
+         WHERE USER_ID = #{USER_ID} 
+           AND USER_PAGE_SEQ = #{USER_PAGE_SEQ};
+	
+    </delete>
+    
+    
+
+    <!-- 레이아웃 컨텐츠 조회 -->
+    <select id="selectLayoutContentList"  parameterType="hashMap" resultType="hashMap">
+    	SELECT A.USER_ID
+             , A.USER_PAGE_SEQ
+             , A.LAYOUT_CONTENT_SEQ
+             , A.APP_ID
+             , A.WIDGET_SEQ
+             , CONCAT(A.APP_ID,' ',A.WIDGET_SEQ) AS "i"
+             , CAST(A.X AS SIGNED) AS "x"
+             , CAST(A.Y AS SIGNED) AS "y"
+             , CAST(B.WIDTH AS SIGNED) AS "w"
+             , CAST(B.HEIGHT AS SIGNED) AS "h"
+             , B.URL
+             , B.PARAMETER
+             , B.DEFAULT_IMAGE_PATH
+             , C.FILE_PATH AS FILE_PATH
+    	  FROM SMN_LAYOUT_CONTENT A
+    	  LEFT OUTER JOIN SMN_WIDGET B
+    	    ON A.APP_ID = B.APP_ID
+    	   AND A.WIDGET_SEQ = B.WIDGET_SEQ
+          LEFT OUTER JOIN SMN_FILE C
+            ON C.FILE_ID = 'SMN_WIDGET'
+           AND C.FILE_KEY = CONCAT(A.APP_ID,'#',A.WIDGET_SEQ)
+           AND C.FILE_HANGMOK = 'widgetImg'
+	       AND NOT EXISTS
+	           (
+	               SELECT 'X'
+	                 FROM SMN_FILE SUB_A
+	                WHERE 1=1
+	                  AND C.FILE_ID = SUB_A.FILE_ID
+	                  AND C.FILE_KEY = SUB_A.FILE_KEY
+	                  AND C.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+	                  AND C.FILE_NO &lt; SUB_A.FILE_NO
+	           )
+    	 WHERE 1=1
+    	   AND A.USER_ID = #{USER_ID}
+    	   AND A.USER_PAGE_SEQ = #{USER_PAGE_SEQ}
+    </select>
+    
+    <!-- 레이아웃 컨텐츠 삽입 -->
+    <insert id="insertLayoutContent" parameterType="hashMap" useGeneratedKeys="true" keyProperty="NEW_LAYOUT_CONTENT_SEQ">
+    	<selectKey resultType="string" keyProperty="NEW_LAYOUT_CONTENT_SEQ" order="BEFORE">
+        	SELECT COALESCE(MAX(A.LAYOUT_CONTENT_SEQ),0)+1 AS LAYOUT_CONTENT_SEQ
+        	  FROM SMN_LAYOUT_CONTENT A
+        	 WHERE A.USER_ID = #{USER_ID}
+    	       AND A.USER_PAGE_SEQ = #{USER_PAGE_SEQ}
+    	</selectKey>
+    	
+        INSERT INTO SMN_LAYOUT_CONTENT 
+        (
+            USER_ID
+          , USER_PAGE_SEQ
+          , LAYOUT_CONTENT_SEQ
+          , APP_ID
+          , WIDGET_SEQ
+          , X
+          , Y
+          , INSERT_DTTM
+          , INSERT_ID
+          , INSERT_IP
+          , INSERT_PGM
+          , UPDATE_DTTM
+          , UPDATE_ID
+          , UPDATE_IP
+          , UPDATE_PGM
+		) 
+		VALUES 
+		(
+            #{USER_ID}
+          , #{USER_PAGE_SEQ}
+          , #{NEW_LAYOUT_CONTENT_SEQ}
+          , #{APP_ID}
+          , #{WIDGET_SEQ}
+          , #{x}
+          , #{y}
+          , SYSDATE()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}
+          , SYSDATE()
+          , #{SYSTEM_ID}
+          , #{SYSTEM_IP}
+          , #{SYSTEM_PGM}
+		)
+    </insert>    
+    
+    <!-- 레이아웃 컨텐츠 갱신 -->
+    <update id="updateLayoutContent" parameterType="hashMap">
+        UPDATE SMN_LAYOUT_CONTENT
+           SET APP_ID = #{APP_ID}
+             , WIDGET_SEQ = #{WIDGET_SEQ}
+             , X = #{X}
+             , Y = #{Y}
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE USER_ID = #{USER_ID}
+           AND USER_PAGE_SEQ = #{USER_PAGE_SEQ}
+           AND LAYOUT_CONTENT_SEQ = #{LAYOUT_CONTENT_SEQ}
+    </update>
+    
+    <!--  레이아웃 컨텐츠 삭제 -->
+    <delete id="deleteLayoutContent" parameterType="hashMap">
+    	 DELETE FROM SMN_LAYOUT_CONTENT
+         WHERE USER_ID = #{USER_ID}
+           AND USER_PAGE_SEQ = #{USER_PAGE_SEQ}
+           <if test="LAYOUT_CONTENT_SEQ != null and LAYOUT_CONTENT_SEQ != ''.toString()">AND LAYOUT_CONTENT_SEQ = #{LAYOUT_CONTENT_SEQ}</if>
+    </delete>
+</mapper>

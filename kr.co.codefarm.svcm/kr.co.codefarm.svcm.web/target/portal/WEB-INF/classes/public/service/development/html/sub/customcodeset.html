@@ -1,0 +1,116 @@
+<h2 id="top">Dataset-CustomcodeSet</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Method</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type02">
+	        	<li v-for="(item, index) in methodData" style="margin-top:10px;"><a :href="'#item'+index" class="btn type01 size-s c-blue" style="border:1px solid #2549b0;" >{{item.name}} {{item.param}}</a> : {{item.description}}</li>
+			</ul>
+		</div>
+    </section>
+    
+    <section class="cont_box" v-for="(item, index) in methodData" :id="'item'+index">
+        <h3 class="h3">{{item.name}} {{item.param}}</h3>
+        <div class="row form-row">
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Description</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description.split('\n').join('<br />')"></p>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description2.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Syntax</label>
+	            <!-- <p class="txt_info" v-html="item.syntax.split('\n').join('<br />')"></p> -->
+<textarea :id="'codeEditor'+index" style="line-height:30px;" v-html="item.syntax">
+</textarea>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Parameters</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.parameters.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Return</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.returnVal.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <p class="right" style="line-height:30px;"><a href="#top" class="btn type01 size-m c-sky icon-arrow-up-circle" style="border:1px; font-size:20px;"></a></p>
+	        </div>
+	    </div>
+        <br/>
+   	</section>
+</section>
+
+<style>
+html {
+    scroll-behavior: smooth;
+}
+</style>
+
+<script type="text/javascript">
+//{name:'',param:'()',description:'',description2:'',syntax:'',parameters:'',returnVal:''},
+var method = [
+	{name:'CustomcodeSet',param:'(pUrl, pParam)',description:'커스텀코드를 가지고 오는 오브젝트 입니다.',description2:'커스텀 코드는 공통코드 이외에 코드/코드명 형태로 데이터를 가지고 오기 위한 오브젝트 입니다.',syntax:'new CustomcodeSet(pUrl, pParam);\n// Create Object\nvar cd = new CustomcodeSet(pUrl, pParam);',parameters:'pUrl(String) : 코드를 가지고 올 REST API 주소\npParam(Object) : API호출 시 필요한 조건 Object',returnVal:''},
+	{name:'getCustomcode',param:'(pCd, pCdNm, pFirstRow)',description:'가져온 커스텀코드에서 상위코드에 해당하는 코드를 리턴합니다.',description2:'',syntax:'CustomcodeSet.getCommcode(pServiceCd, pUpCd, pFirstRow)',parameters:'pCd(String) : CD(코드)로 가져올 컬럼 명\npCdNm(String) : CD_NM(코드 명)으로 가져올 컬럼 명\npFirstRow(String) : 첫로우 타입 all, select, null (default : null)',returnVal:'ArrayObject [{CD, CD_NM}]'},
+	{name:'getCustomcodeNm',param:'(pCd, pFindValue, pReturnColumnNm)',description:'커스텀코드의 key에 해당하는 정보를 받아 원하는 컬럼 값을 리턴한다.',description2:'',syntax:'CustomcodeSet.getCustomcodeNm(pCd, pFindValue, pReturnColumnNm)',parameters:'pCd(String) : 검색할 컬럼명\npFindValue(String) : 검색할 컬럼값\npReturnColumnNm(String) : 리턴할 컬럼명',returnVal:'value(String)'},
+]
+
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		testDate: new Date(),
+		methodData: _.sortBy(method, ['name']),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	_.forEach(vm.methodData, function(n, key) {
+		editor('codeEditor'+key, 100);
+	});
+	
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

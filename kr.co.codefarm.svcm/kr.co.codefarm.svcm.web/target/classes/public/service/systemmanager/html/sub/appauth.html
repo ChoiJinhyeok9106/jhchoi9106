@@ -1,0 +1,356 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />
+
+<h2>앱 권한 관리</h2>
+<section class="sub_cont_box board-view-page nonsubject-info" id="app">
+    <div class="head-box">
+        <p class="title">앱 권한 등록</p>
+        <p class="description">권한 목록에서 권한을 선택한 후 앱 목록에서 해당 권한을 부여할 앱을 선택하여 토글 스위치로 권한을 활성화하세요.</p>
+    </div>
+    <div class="nonsubject-attend row">
+        <div class="attend-list col s12 l12">
+            <h2 class="h2">권한 목록</h2>
+            <div class="table-type04-wrap">
+                <table class="table-type04 response">
+                    <caption></caption>
+                    <colgroup>
+                        <col width="20%" />
+                        <col width="20%" />
+                        <col width="40%" />
+                        <col width="20%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">권한구분</th>
+                            <th scope="col">권한코드</th>
+                            <th scope="col">권한명</th>
+                            <th scope="col">사용여부</th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="authList.getRowCount() > 0">
+                        <tr v-for="(item, index) in authList.data" v-if="authList.getRowType(index) != '8'">
+                            <td data-header="권한구분"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</a></td>
+                            <td data-header="권한코드"><a href="#!" @click="rowClick(index)">{{item.AUTH_CD}}</a></td>
+                            <td class="left" data-header="권한명"><a href="#!" @click="rowClick(index)">{{item.AUTH_NM}}</a></td>
+                            <td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <tr>
+                            <td colspan="100">검색결과가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <paging :pagingset="authListPaging" :type="'normal'"></paging>
+        </div>
+        <!-- //출석일자 -->
+        <!-- 탭 -->
+        <div class="attend-list col s12 l12">
+            <h2 class="h2">{{appTitle}}</h2>
+            <div class="app-list">
+                <div v-for="(item, index) in appList.getData()" v-show="appList.getRowType(index) != 8 && !appList.isFilterRow(index)" :key="index">
+                    <div class="app-list-box" :class="{'active': index == appList.rowposition}">
+                        <div data-header="앱명" style="width:45%;">
+                            <span><span><span class="icon-bg" :class="[item.ICON]"></span><span class="tit">{{item.APP_NM}}</span></span></span>
+                        </div>
+                        <div data-header="앱 영문 명" style="width:35%;">
+                            <span><span><span class="text">{{item.APP_ENM}}</span></span></span>
+                        </div>
+                        <div data-header="버전" style="width:10%;">
+                            <span><span><span class="text">{{item.APP_VER}}</span></span></span>
+                        </div>
+                        <div data-header="등록" style="width:10%;">
+                            <span><span>
+                            <label class="toggle-switch size-m" v-show="item.AUTH_YN!=null">
+                                <input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.AUTH_YN" @change="appList.selectRow(index); regAppAuth($event)"/>
+                                <span class="slider bg-red round"></span>
+                            </label>
+                            </span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <paging :pagingset="appListPaging" :type="'normal'"></paging>
+            <!-- <div class="table-type04-wrap">
+                <table class="table-type04 response">
+                    <caption></caption>
+                    <colgroup>
+                        <col width="35%" />
+                        <col width="35%" />
+                        <col width="15%" />
+                        <col width="15%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">앱명</th>
+                            <th scope="col">앱 영문명</th>
+                            <th scope="col">버전</th>
+                            <th scope="col">등록</th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="appList.getRowCount() > 0">
+                        <tr v-for="(item, index) in appList.data" v-if="appList.getRowType(index) != '8'">
+                            <td data-header="앱명">{{item.APP_NM}}</td>
+                            <td data-header="앱 영문명">{{item.APP_ENM}}</td>
+                            <td class="left" data-header="버전">{{item.APP_VER}}</td>
+                            <td data-header="등록">
+                                <label class="toggle-switch size-m" v-show="item.AUTH_YN!=null">
+                                    <input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.AUTH_YN" @change="appList.selectRow(index); regAppAuth($event)"/>
+                                    <span class="slider bg-red round"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <tr>
+                            <td colspan="100">검색결과가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+        </div>
+        <!-- //탭 -->
+    </div>
+</section>
+    
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+    el: '#app',
+    /* 사용할 데이터 */
+    data: {
+        authList: new Dataset(),                // 
+        authListPaging: new PagingSet(5, 3),    // 페이징(page, row)
+        appList: new Dataset(),                    // 
+        appListPaging: new PagingSet(3, 50),        // 페이징(page, row)
+        appAuthList: new Dataset(),
+        appTitle: '앱 목록',
+        messageModal: new ModalSet('appauth-modal'),    // confirm 모달
+    },
+    /* 생성 될 때 */ 
+    beforeCreate: function(){
+    },
+    /* 계산된 속성 표현 시 */
+    computed: {
+    },
+    /* 데이터 감시 */
+    watch: {
+        'authList.rowposition': {
+            handler: function (val, oldVal) {
+                this.initToggle();
+                this.setAppTitle();
+                this.setAppAuthList();
+            }
+        },        
+        'authList.data': {
+            handler: function (val, oldVal) {                
+                if(this.appList.enableevent){
+                
+                }
+            },
+            deep: true
+        },
+        'appList.rowposition': {
+            handler: function (val, oldVal) {
+               
+            }
+        },        
+        'appList.data': {
+            handler: function (val, oldVal) {                
+                if(this.appList.enableevent){
+        
+                }
+            },
+            deep: true
+        },
+        'authListPaging.currentPage': {
+            handler: function (val, oldVal) {
+            	this.authList.pageChange(val, this.authListPaging.getRowCnt());
+            }
+        },    
+        'appListPaging.currentPage': {
+            handler: function (val, oldVal) {
+                this.appList.pageChange(val, this.appListPaging.getRowCnt());
+                this.setAppAuthInfo();
+            }
+        }
+    },
+    /* 마운트 된 시점수행 */
+    mounted: function(){
+        this.setAuthList();
+        this.setAppList();
+    },
+    /* 함수 */
+    methods: {
+        /* 서비스 리스트 조회 */
+        setAuthList: function(){
+            var self = this;
+            var returnVal = authApi.auth('Y');
+            
+            returnVal.then(function(response) {
+                self.authList.setRawData(response.data, self.authListPaging.getRowCnt());
+                
+                if(response.data.length > 0){
+                    self.authListPaging.setTotalCnt(response.data.length);
+                }else{
+                    self.authListPaging.setTotalCnt(0);
+                }
+            });
+        },
+        setAppList: function(){
+            var self = this;
+            var returnVal = appApiApi.app();
+            
+            returnVal.then(function(response) {
+                self.appList.setRawData(response.data, self.appListPaging.getRowCnt());
+                
+                if(response.data.length > 0){
+                    self.appListPaging.setTotalCnt(response.data.length);
+                }else{
+                    self.appListPaging.setTotalCnt(0);
+                }
+            });
+        },
+        setAppAuthList: function(){
+            var self = this;
+            var returnVal = authApi.appAuth(this.authList.currentRow.AUTH_CD);
+            
+            returnVal.then(function(response) {
+                self.appAuthList.setData(response.data);
+                self.setAppAuthInfo();
+            });
+        },
+        /* 검색 */
+        searchAuth: function(){
+           var pageNo = this.authListPaging.getCurrentPage();
+
+           if(pageNo == 1){
+               this.setAuthList();
+           }else{
+               this.authListPaging.movePage(1);
+           }  
+        },
+        searchApp: function(){
+           var pageNo = this.appListPaging.getCurrentPage();
+
+           if(pageNo == 1){
+               this.setAppList();
+           }else{
+               this.appListPaging.movePage(1);
+           }  
+        },
+        test: function(){
+            alert(this.appList.currentRow.APP_NM + " : " + this.appList.currentRow.AUTH_YN);
+            //alert(this.authList.rowposition);
+        },
+        initToggle: function(){
+           
+            this.appList.data.forEach(function(appObj, idx) {
+                vm.appList.data[idx].AUTH_YN = 'N';
+            });
+        },
+        setAppAuthInfo: function(){
+            this.appList.data.forEach(function(appObj, idx) {
+                appObj.AUTH_YN = vm.isAppAuthInfo(appObj.APP_ID);
+                Vue.set(vm.appList.data, idx, appObj);  
+            });
+        },
+        isAppAuthInfo: function(appId) {
+            if(isNull(appId)) return;
+
+            var findObj = _.filter(this.appAuthList.data, function(appAuth) {
+				return appAuth.APP_ID == appId;
+			});
+
+            try {
+                return isNull(findObj[0].APP_ID)?'N':'Y';
+            } catch (err) {
+                return 'N';
+            }
+            
+        },
+        usePrint: function(bYn) {
+            return bYn=='Y'?'사용':'미사용';
+        },
+        setAppTitle: function() {
+             return this.appTitle = "앱 목록 - '" + this.authList.currentRow.AUTH_NM + "(" + this.authList.currentRow.AUTH_CD + ")'";
+        },
+        regAppAuth: function(ev){
+            var dataObj = {
+                'APP_ID': this.appList.currentRow.APP_ID,
+                'AUTH_CD': this.authList.currentRow.AUTH_CD
+            }
+
+            switch(this.appList.currentRow.AUTH_YN) {
+                case 'Y':   //현재 상태가 'N'인 경우 등록(insert)
+                    this.saveAppAuth(dataObj);
+                    break;
+                case 'N':   //현재 상태가 'Y'인 경우 삭제(delete)
+                    this.deleteAppAuth(dataObj);
+                    break;
+                default:
+                    break;
+            }
+            //alert(this.authList.rowposition);
+        },
+        saveAppAuth: function(pAppAuthinfo) {
+            var self = this;
+
+            var returnVal = authApi.appAuthInsert(pAppAuthinfo, true);
+                    
+            if(!isNull(returnVal)){
+                returnVal.then(function(response) {
+                    var data = response.data;    
+
+                    notifySubmit('success', '앱권한 등록', '등록이 완료되었습니다.', 'icon-save');
+                    self.setAppAuthList();
+                    systemApi.authRefresh(null, false);
+                }).catch(function(error) {
+                	notifySubmit('warning', '앱권한 등록', '등록에 실패하였습니다.', 'icon-caution');
+				});	
+            }
+        },
+        rowClick: function(index){
+            this.authList.selectRow(index);
+        },
+        deleteAppAuth: function(pAppAuthinfo) {
+            var self = this;
+
+            var returnVal = authApi.appAuthDelete(pAppAuthinfo, true);
+                        
+            if(!isNull(returnVal)){
+                returnVal.then(function(response) {
+                    var data = response.data;
+                    
+                    notifySubmit('success', '앱권한 해제', '해제가 완료되었습니다.', 'icon-save');
+                    self.setAppAuthList();
+                    systemApi.authRefresh(null, false);
+                }).catch(function(error) {
+                	notifySubmit('warning', '앱권한 해제', '해제에 실패하였습니다.', 'icon-caution');
+				});	
+            }
+        },
+        /* 서비스 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+        componentStateChange: function(obj){
+            var rowposition = obj.rowposition;
+            var rowType = obj.getRowType(rowposition);
+        }
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+    
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

@@ -1,0 +1,149 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio.css" />  
+
+<h2>포트폴리오 관리</h2>
+<section class="sub_cont_box portfolio-area">
+    <div class="portfolio-area-top">
+        <div class="row form-row">
+            <div class="form-group col s12 l12 xl10">            
+                <div class="user-info-box">
+                    <div class="photo-line">
+                        <span class="photo"><img src="/service/design/images/portfolio/counsel_main_photo04.jpg" alt=""></span>
+                    </div>
+                    <span class="user"><span class="name">강수민</span><span class="grade">(201600212)</span>님의 포트폴리오</span>
+                    <ul class="pf-list">
+                        <li class="list new">
+                            <a href="#!" class="color01">테</a>
+                        </li>
+                        <li class="list">
+                            <a href="#!" class="color02">전</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group col s12 l12 xl2">                                     
+                <div class="user-info-box f-right">                                    
+                    <div class="btn-line">
+                        <a href="#!" class="btn type01 size-m right-icon icon-folder btn-portfolio">포트폴리오 생성</a>
+                    </div>
+                </div>                              
+            </div>
+        </div>
+    </div>  
+    <div class="row form-row portfolio-area-title">
+        <div class="form-group col s12 l6">
+            <h2>나의 포트폴리오 리스트</h2>
+        </div>
+        <div class="form-group col s12 l6 right">
+            <div class="btn-line">
+                <a href="#!" class="btn type01 size-s btn-secret">비공개</a>
+                <a href="#!" class="btn type01 size-s btn-secret">공개</a>
+            </div>
+        </div>
+    </div>     
+    <div class="portfolio-list">
+        <div class="list">
+            <input type="checkbox" name="layout_select" id="layout-select101" class="out">
+            <label class="check-btn" for="layout-select101"></label>
+            <p class="title">테스트 포트폴리오</p>
+            <p class="link"><a href="#!">http://www.xcloud.com/user/tgkim/myportfolio/myhome20190312.do</a></p>
+            <span class="date-box"><span class="tit">등록/수정일</span><span>2019.03.15 16:10</span></span>
+            <div class="row form-row">
+                <div class="form-group col s9 form-row">            
+                    <div class="col s4 col-label">
+                        <label for="inlineFormInputName9" class="pf-label">공개</label>
+                    </div>
+                    <div class="col s8">
+                        <label class="toggle-switch size-l">
+                            <input type="checkbox" checked="">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group col s3 right">                                     
+                    <a href="#!" title="수정"><span class="pf-icon icon-pen"></span></a><a href="#!" class="삭제"><span class="pf-icon icon-trashcan"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <input type="checkbox" name="layout_select" id="layout-select102" class="out">
+            <label class="check-btn" for="layout-select102"></label>
+            <p class="title">전공  포트폴리오</p>
+            <p class="link"><a href="#!">http://www.xcloud.com/user/tgkim/myportfolio/myhome20190312.do</a></p>
+            <span class="date-box"><span class="tit">등록/수정일</span><span>2019.03.15 16:10</span></span>
+            <div class="row form-row">
+                <div class="form-group col s9 form-row">            
+                    <div class="col s4 col-label">
+                        <label for="inlineFormInputName9" class="pf-label">공개</label>
+                    </div>
+                    <div class="col s8">
+                        <label class="toggle-switch size-l">
+                            <input type="checkbox" checked="">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group col s3 right">                                     
+                    <a href="#!" title="수정"><span class="pf-icon icon-pen"></span></a><a href="#!" class="삭제"><span class="pf-icon icon-trashcan"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <input type="checkbox" name="layout_select" id="layout-select103" class="out">
+            <label class="check-btn" for="layout-select103"></label>
+            <p class="title">2019 portfolio</p>
+            <p class="link"><a href="#!">http://www.xcloud.com/user/tgkim/myportfolio/myhome20190312.do</a></p>
+            <span class="date-box"><span class="tit">등록/수정일</span><span>2019.03.15 16:10</span></span>
+            <div class="row form-row">
+                <div class="form-group col s9 form-row">            
+                    <div class="col s4 col-label">
+                        <label for="inlineFormInputName9" class="pf-label">공개</label>
+                    </div>
+                    <div class="col s8">
+                        <label class="toggle-switch size-l">
+                            <input type="checkbox" checked="">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group col s3 right">                                     
+                    <a href="#!" title="수정"><span class="pf-icon icon-pen"></span></a><a href="#!" class="삭제"><span class="pf-icon icon-trashcan"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+            <a href="#" class="active" title="1 페이지">1</a>
+            <a href="#" title="2 페이지">2</a>
+            <a href="#" title="3 페이지">3</a>
+            <a href="#" title="4 페이지">4</a>
+            <a href="#" title="5 페이지">5</a>
+            <a href="#" title="6 페이지">6</a>
+            <a href="#" title="7 페이지">7</a>
+            <a href="#" title="8 페이지">8</a>
+            <a href="#" title="9 페이지">9</a>
+            <a href="#" title="10 페이지">10</a>
+        </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>                     
+</section>
+
+            
+
+<script>
+    $(document).ready(function() {
+        /* 포트폴리오 선택 */
+        $('.portfolio-list .list input').on('click', function(){
+            if ($(this).is(':checked')) {
+                $(this).parent().addClass('on');
+                $(this).next().addClass('on')
+            } else {
+                $(this).parent().removeClass('on');
+                $(this).next().removeClass('on');
+            }
+        })        
+    });    
+</script>

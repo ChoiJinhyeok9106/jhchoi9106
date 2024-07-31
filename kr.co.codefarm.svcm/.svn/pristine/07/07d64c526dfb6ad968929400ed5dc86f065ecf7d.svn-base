@@ -1,0 +1,1130 @@
+<script type="text/javascript" src="/app-assets/js/api/amanager/deptmgmt.api.js"></script>
+<script type="text/javascript" src="/app-assets/js/api/amanager/commonsearch.api.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<h3 style="margin-top:-20px;">자산관리 > 설정 > 내부시스템관리 > <strong>부서관리</strong></h3>
+<section class="sub_cont_box" id="app" style="margin-top:10px;">
+	<section class="cont_box" v-if="!mainList.currentRow">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">부서</label> 
+					<div class="select-group" style="display: flex; align-items: center;">   
+						<select class="size-m" v-model="pTreeDeptCd" name="pTreeDeptCd" id="pTreeDeptCd">
+							<option v-for="(item, index) in deptCodeSet.data" :value="item.ORGNZT_ID">{{item.ORGNZT_NM}}</option>
+						</select>
+						<button type="button" class="btn type02 size-s" @click="openModal('deptTreeModal');" style="width: 20px; display: flex; justify-content: center; align-items: center;">
+							<span class="icon icon-search"></span>
+						</button>
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">부서명</label>
+					<input type="text" v-model="pRealDeptNm" id="pRealDeptNm" name="pRealDeptNm" class="size-m" v-on:keyup.13="search()">
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">부서코드</label>
+					<input type="text" v-model="pDeptCd" id="pDeptCd" name="pDeptCd" class="size-m" v-on:keyup.13="search()">
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01">부서순번</label>
+					<input type="text" v-model="pOutputSeq" id="pOutputSeq" name="pOutputSeq" class="size-m" v-on:keyup.13="search()">
+				</div>
+				
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">사용여부</label>
+					<div class="select-group" style="display: flex; align-items: center;">
+						<select class="size-m" v-model="pUseYn" name="pUseYn" id="pUseYn">
+							<option value="ALL">-전체-</option>
+							<option value="1">사용</option>
+							<option value="0">미사용</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div style="display: flex; align-items: center;">
+			<!-- 현재페이지 / 전체페이지 -->
+			<div class="col s12 l6" style="flex: 1;">
+				<span class="board-info-txt size-m">
+					총 <span>{{ mainListPaging.totalCnt }}</span>건의 게시물이 있습니다.
+					(<span>{{ mainListPaging.getCurrentPage() }}</span> / {{ mainListPaging.getTotalPage() }})
+				</span>
+			</div>
+			
+			<!-- 버튼 라인 -->
+			<div class="col-inline btn-line right" style="display: flex; justify-content: flex-end; align-items: center;">
+				<!-- 버튼들 -->
+				<a href="#!" class="btn type02 size-m center-icon" @click="resetFields"><span class="icon-refresh"></span></a>
+				<a href="#!" class="btn type04 size-m left-icon icon-search" @click="search()" style="margin-right: 5px;">조회</a>
+				<a href="#!" class="btn type04 size-m left-icon icon-more" @click="newRow" style="margin-right: 5px;">입력</a>
+				<a href="#!" class="btn type04 size-m left-icon icon-edit" @click="rowCheckClick()" style="margin-right: 5px;">수정</a>
+				<a href="#!" class="btn type04 size-m left-icon icon-trashcan" @click="rowCheckUseNot()" style="margin-right: 5px;">미사용</a>
+				<a href="#!" class="btn type02 size-m left-icon icon-report" @click="excelDownload()" style="margin-right: 5px;">엑셀</a>
+			</div>
+		</div>
+		
+		<!-- 테이블 영역 -->
+		<div class="box-type03">
+			<div class="col s12 m12 xl12">
+				<div class="table-type01-wrap">
+					<perfect-scrollbar style="max-height: 450px;">
+					<table class="table-type01 response" id="datas-reponsive">
+						<caption></caption>
+						<thead class="thead-fixed">
+							<tr>
+								<th><input type="checkbox" v-model="selectAll" @change="toggleSelectAll"/></th>
+								<th scope="col">No</th>
+								<th scope="col" @click="sort('DEPT_NM')" class="sortable"><span :class="sortIcon('DEPT_NM')"></span> 상위부서-부서명</th>
+								<th scope="col" @click="sort('REAL_DEPT_NM')" class="sortable"><span :class="sortIcon('REAL_DEPT_NM')"></span> 부서명</th>
+								<th scope="col" @click="sort('DEPT_CD')" class="sortable"><span :class="sortIcon('DEPT_CD')"></span> 부서코드</th>
+								<th scope="col" @click="sort('OUTPUT_SEQ')" class="sortable"><span :class="sortIcon('OUTPUT_SEQ')"></span> 부서순번</th>
+								<th scope="col" @click="sort('USE_YN_TEXT')" class="sortable"><span :class="sortIcon('USE_YN_TEXT')"></span> 사용여부</th>
+							</tr>
+						</thead>
+						<tbody v-if="sortedData.length > 0">
+							<tr v-for="(item, index) in sortedData" v-if="mainList.getRowType(index) != 8" :key="index">
+								<td><input type="checkbox" v-model="selectedRows[index]"/></td>
+								<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox(index)" @dblclick="rowDbClick(index)">{{ index + 1 }}</a></td>
+								<td data-header="상위부서-부서명" style="text-align: left;"><a href="#!" @click="toggleCheckbox(index)" @dblclick="rowDbClick(index)">{{ item.DEPT_NM }}</a></td>
+								<td data-header="부서명" style="text-align: left;"><a href="#!" @click="toggleCheckbox(index)" @dblclick="rowDbClick(index)">{{ item.REAL_DEPT_NM }}</a></td>
+								<td data-header="부서코드" style="text-align: center;"><a href="#!" @click="toggleCheckbox(index)" @dblclick="rowDbClick(index)">{{ item.DEPT_CD }}</a></td>
+								<td data-header="부서순번" style="text-align: center;"><a href="#!" @click="toggleCheckbox(index)" @dblclick="rowDbClick(index)">{{ item.OUTPUT_SEQ }}</a></td>
+								<td data-header="사용여부" style="text-align: center;"><a href="#!" @click="toggleCheckbox(index)" @dblclick="rowDbClick(index)">{{ item.USE_YN_TEXT }}</a></td>
+							</tr>
+						</tbody>
+						<tbody v-else>
+							<tr>
+								<td colspan="100">검색결과가 없습니다.</td>
+							</tr>
+						</tbody>
+					</table>
+					</perfect-scrollbar>
+				</div>
+				
+				<!-- 페이지당 Row 선택 드랍다운 메뉴 -->
+				<div class="col s12 l6" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 10px;">
+					<div class="col s3" style="margin-top: -2px;">
+						<select class="size-s" v-model="pageSize" @change="changePageSize" name="pageSize" id="pageSize">
+							<option v-for="sizeOption in pageSizes" :value="sizeOption">{{ sizeOption }} 건</option>
+						</select>
+					</div>
+					<label style="margin-left: 10px; margin-bottom: 0;">/ 페이지당</label>
+				</div>
+				<paging :pagingset="mainListPaging" :type="'normal'" style="margin-top: -10px;"></paging>
+			</div>
+		</div>
+	</section>
+		
+		
+	<!-- 입력/수정 화면 -->
+	<section class="cont_box" v-if="mainList.currentRow">
+		<h3 class="h3" v-if="mainList.getRowType(mainList.rowposition) == ROWTYPE_INSERT">부서 관리(입력)</h3>
+		<h3 class="h3" v-if="mainList.getRowType(mainList.rowposition) == ROWTYPE_NORMAL || mainList.getRowType(mainList.rowposition) == ROWTYPE_UPDATE">부서 관리(수정)</h3>
+		<div class="box-type04">
+			<div class="form-group row">
+				<div class="col s12 m12 l5">
+					<label class="label-type01 required size-m">상위부서</label>
+					<select class="size-m" name="upDeptCd" id="upDeptCd" v-model="mainList.currentRow.UP_DEPT_CD">
+						<option v-for="(item, index) in deptCodeSet.data" v-bind:value="item.ORGNZT_ID">{{item.ORGNZT_NM}}</option>
+					</select>
+				</div>
+				
+				<div class="col s12 m12 l5">
+					<label class="label-type01 required size-m">부서코드</label>
+					<input type="text" class="size-m" id="deptCd" name="deptCd" data-vv-as="부서코드" v-model="mainList.currentRow.DEPT_CD" :disabled="mainList.getRowType(mainList.rowposition) !== ROWTYPE_INSERT"/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<div class="col s12 m12 l5">
+					<label class="label-type01 required size-m">부서명</label>
+					<input type="text" class="size-m" id="realDeptNm" name="realDeptNm" data-vv-as="부서명" v-model="mainList.currentRow.REAL_DEPT_NM">
+				</div>
+				
+				<div class="col s12 m12 l5">
+					<label class="label-type01 required size-m" for="outputSeq">부서순번</label>
+					<input type="text" class="size-m" id="outputSeq" name="outputSeq" data-vv-as="부서순번" v-model="mainList.currentRow.OUTPUT_SEQ">
+				</div>
+			</div>
+		</div>
+		
+		<div class="btn-line right">
+			<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow">저장</a>
+			<a href="#!" class="btn type01 size-m left-icon icon-close" @click="search($event)">닫기</a>
+		</div>
+	</section>
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+	
+	<!-- 부서 검색 모달 레이어 팝업 -->
+	<div class="modal-layer-wrap">
+		<div id="deptTreeModal" class="modal-layer modal">
+			<div class="modal-container">
+				<div class="modal-header">
+					<p class="modal-title">부서검색</p>
+				</div>
+				<section class="sub_cont_box" style="min-height: 700px;">
+					<div class="box-type03" style="height: auto; padding: 10px;">
+						<div class="modal-content" style="padding: 10px;">
+							<div class="row form-row" style="margin: 0;">
+								<div class="form-group col s12 l5">
+									<label for="pModalDeptNm" class="label-type01">부서명</label>
+									<div class="input-group" style="display: flex; align-items: center;">   
+										<input type="text" v-model="pModalDeptNm" id="pModalDeptNm" name="pModalDeptNm" class="size-m" v-on:keyup.13="searchDeptModal()">
+										<button type="button" class="btn type02 size-s" @click="searchDeptModal()" style="width: 20px; display: flex; justify-content: center; align-items: center;">
+											<span class="icon icon-search"></span>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="box-type04">
+						<perfect-scrollbar style="max-height: 430px;">
+							<div class="col s12 m12 xl12">
+								<div v-if="deptTreeData.length === 0">
+									<span>검색 결과가 없습니다. 검색어를 확인 후 다시 검색해주세요.</span>
+								</div>
+								<div v-else>
+									<dept-tree :nodes="deptTreeData" :selectedNode.sync="selectedNode"></dept-tree>
+								</div>
+							</div>
+						</perfect-scrollbar>
+					</div>
+					
+					<div style="display: flex; justify-content: flex-end; align-items: center; max-height:50px;">
+						<div class="col-inline btn-line right" style="display: flex; justify-content: flex-end;">
+							<a href="#!" class="btn type02 size-m center-icon" @click="resetModalFields"><span class="icon-refresh"></span></a>
+							<a href="#!" class="btn type04 size-m left-icon icon-search" @click="searchDeptModal()" style="margin-right: 5px;">조회</a>
+							<a href="#!" class="btn type04 size-m left-icon icon-checkmark" @click="confirmDeptTreeModal()" style="margin-right: 5px;">선택</a>
+							<a href="#!" class="btn type04 size-m left-icon icon-close " @click.prevent="closeModal('deptTreeModal')" style="margin-right: 5px;">닫기</a>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+	</div>
+</section>
+
+<template id="dept-tree-template">
+	<ul class="dept-tree">
+		<li v-for="node in nodes" :key="node.id">
+			<div class="dept-node"
+				:class="{'selected': node.selected, 'has-children': node.children && node.children.length > 0, 'open': node.open}"
+				@click="toggle(node)">
+				<input type="checkbox" v-model="node.selected" @change="selectNode(node)" style="margin-right: 5px;" />
+				<i v-if="node.children && node.children.length" :class="{ 'open': node.open }"
+					@click.stop="toggle(node)"></i> {{ node.text }}
+			</div>
+			<ul v-if="node.open && node.children && node.children.length > 0" class="sub-tree">
+				<dept-tree v-for="childNode in node.children" :key="childNode.id" :nodes="[childNode]"
+					:selectedNode.sync="selectedNode"></dept-tree>
+			</ul>
+		</li>
+	</ul>
+</template>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+Vue.component('dept-tree', {
+	template: '#dept-tree-template',
+	props: {
+		nodes: Array,
+		selectedNode: String // 선택된 노드의 ID를 문자열로 받음
+	},
+	data() {
+		return {
+			selectedId: null // 초기값으로 null 설정
+		};
+	},
+	computed: {
+		// 선택된 노드의 id에 따라 클래스를 동적으로 반환
+		nodeClass() {
+			return (node) => ({
+				'selected': this.selectedId === node.id,
+				'has-children': node.children && node.children.length > 0,
+				'open': node.open
+			});
+		}
+	},
+	methods: {
+		toggle(node) {
+			Vue.set(node, 'open', !node.open);
+			// 부모 노드가 닫힌 상태일 때 자식 노드의 open 상태 초기화
+			if (!node.open) {
+				this.closeChildren(node);
+			}
+		},
+		selectNode(node) {
+			// 체크박스 선택 시 selectedNode에 선택된 노드의 id를 반영
+			this.$emit('update:selectedNode', node.selected ? node.id.toString() : null);
+			// 다른 체크박스들의 선택 상태를 해제
+			this.nodes.forEach(n => {
+				if (n !== node) {
+					Vue.set(n, 'selected', false);
+				}
+			});
+			// 선택된 노드의 ID를 부모 컴포넌트로 전달
+			this.$emit('update:selectedNode', this.selectedId);
+		},
+		closeChildren(parentNode) {
+			// 모든 자식 노드의 open 상태를 false로 설정
+			parentNode.children.forEach(child => {
+				Vue.set(child, 'open', false);
+			});
+		}
+	},
+	watch: {
+		nodes: {
+			handler(newValue, oldValue) {
+				// nodes 배열이 변경될 때마다 콘솔 출력
+				console.log('Nodes changed:');
+				// 체크된 노드의 ID 출력 및 selectedNode에 저장
+				newValue.forEach(node => {
+					if (node.selected) {
+						this.selectedId = node.id;
+						console.log('Selected Node ID:', this.selectedId);
+						console.log('Selected Node TEXT:', node.text);
+					}
+				});
+				// 선택된 노드의 ID를 부모 컴포넌트로 전달
+				this.$emit('update:selectedNode', this.selectedId);
+			},
+			deep: true // 객체의 내부까지 깊게 감시
+		},
+	}
+});
+
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: function() {
+		return {
+		mainList: new Dataset(),
+		deptmodalList: new Dataset(),
+		initialState: {
+			pRealDeptNm: '',
+			pDeptCd: '',
+			pTreeDeptCd: '00',
+			pOutputSeq: '',
+			pUseYn: '1',
+		},
+		
+		initialModalState: {
+			pModalDeptNm: '',
+			pModalDeptCd: '',
+			pModalUpDeptCd: '',
+		},
+		sortKey: '',
+		sortOrders: {
+			DEPT_NM: 0,
+			REAL_DEPT_NM: 0,
+			DEPT_CD: 'ASC',
+			OUTPUT_SEQ: 0,
+			USE_YN_TEXT: 0
+		},
+		pRealDeptNm: '',
+		pDeptCd: '',
+		pTreeDeptCd: '00',
+		pOutputSeq: '',
+		pUseYn: '1',
+		pModalDeptNm: '',
+		pModalDeptCd: '',
+		pModalUpDeptCd: '',
+		messageModal: new ModalSet('deptmgmt-modal'),
+		mainListPaging: new PagingSet(10,100),
+		pageSizes: [100, 300, 500, 1000, 5000],
+		pageSize: 100,
+		size: 100,
+		deptCodeSet: new CustomcodeSet('/amanager/common/dept-list',{}),
+		selectAll: false, 
+		selectedRows: [],
+		excelData: [],
+		deptTreeData: [],
+		selectedNodes: [],
+		selectedNode: '',
+		selectedNodeId: '',
+		selectedNodeText: '',
+		};
+	},
+	
+	//생성 될 때
+	beforeCreate: function(){
+	},
+	
+	//계산된 속성 포현 시
+	computed: {
+		/* 테이블 정렬 추적 */
+		sortedData() {
+			if (this.sortKey) {
+				return this.mainList.data.slice().sort((a, b) => {
+					let result = 0;
+					if (a[this.sortKey] > b[this.sortKey]) {
+						result = 1;
+					} else if (a[this.sortKey] < b[this.sortKey]) {
+						result = -1;
+					}
+					return result * (this.sortOrders[this.sortKey] === 'ASC' ? 1 : -1);
+				});
+			} else {
+				return this.mainList.data;
+			}
+		}
+	},
+	
+	filters: {
+
+	},
+	
+	//데이터 감시
+	watch: {
+		'mainList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList.enableevent){
+					var changeYn = this.mainList.dataCompare(oldVal);
+					var rowType = this.mainList.getRowType(val);
+
+					if(!changeYn){
+						this.mainList.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList.data': {
+			handler: function (val, oldVal) {
+				if (this.mainList.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.mainList.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.mainList.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+		
+		'mainListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList(null, val)
+			}
+		},
+	},
+	
+	/* 마운트 된 시험수행 */
+	mounted: function(){
+		this.setmainList();
+		document.addEventListener('keydown', this.handleEscKey);
+
+	},
+	
+	beforeDestroy() {
+		document.removeEventListener('keydown', this.handleEscKey);	
+		
+	},
+	
+	/* 함수 */
+	methods: {
+		setmainList: function(e, pPageNo, isExcelDownload, callback){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click' && isExcelDownload == 0){
+
+				var pTreeDeptCd			= $('#pTreeDeptCd option:selected').val();
+				var pRealDeptNm 		= $('#pRealDeptNm').val();
+				var pDeptCd	 			= $('#pDeptCd').val();
+				var pOutputSeq	 		= $('#pOutputSeq').val();
+				var pUseYn				= $('#pUseYn option:selected').val();
+				var pageNo 				= pPageNo;
+				var rowCount 			= this.mainListPaging.getRowCnt();
+
+				if(isNull(pTreeDeptCd)) 		pTreeDeptCd 	= '';
+				if(isNull(pRealDeptNm)) 		pRealDeptNm 	= '';
+				if(isNull(pDeptCd)) 			pDeptCd 		= '';
+				if(isNull(pOutputSeq)) 			pOutputSeq 		= '';
+				if(isNull(pUseYn)) 				pUseYn 			= '1';
+				if(isNull(pageNo)) 				pageNo 			= 1;
+				if(isNull(pageNo)) 				pageNo 			= 1;
+				if(isNull(rowCount)) 			rowCount 		= 50;
+				
+				if (isExcelDownload == 1) {
+					rowCount = 9999;
+				}
+				
+				var param = {
+					'pTreeDeptCd'		: pTreeDeptCd,
+					'pRealDeptNm'		: pRealDeptNm,
+					'pDeptCd'			: pDeptCd,
+					'pOutputSeq'		: pOutputSeq,
+					'pUseYn'			: pUseYn,
+					'pPageNo'			: pageNo,
+					'pRowCount'			: rowCount
+				};
+				
+				var self = this;
+				
+				var returnVal = deptMgmtApi.getDeptMgmtList(param, true);	
+				
+				returnVal.then(function(response) {
+					self.mainList.setData(response.data);
+					self.excelData = response.data;
+					
+					if(self.mainList.getRowCount() > 0){
+						var totalCnt = self.mainList.data[0].CNT;
+						self.mainListPaging.setTotalCnt(totalCnt);
+					} else {
+						self.mainListPaging.setTotalCnt(0);
+					}
+					if (typeof callback === "function") {
+						callback();
+					}
+				});
+			}
+		},
+		
+		/*  페이지 당 Row 선택 */
+		changePageSize: function() {
+			this.mainListPaging.setRowCnt(this.pageSize);
+			this.setmainList(null, 1);
+		},
+		
+		/*
+		#### 부서 검색 모달 관련 ####
+		 */
+		
+		/* 모달 오픈 */
+		openModal(modalId) {
+			modal_open(modalId);
+			this.searchDeptModal();
+		},
+		
+		/* 부서 트리 조회 */
+		/*setdeptTreeList() {
+			var pModalDeptNm = this.pModalDeptNm;
+			var pModalDeptCd = this.pModalDeptCd;
+			var pModalUpDeptCd = this.pModalUpDeptCd;
+
+			var param = {
+				'pModalDeptNm'		: pModalDeptNm,
+				'pModalDeptCd'		: pModalDeptCd, 
+				'pModalUpDeptCd'	: pModalUpDeptCd 
+			};
+			var self = this;
+			CommonSearchApi.getDeptTreeList(param, true)
+			.then(function(response) {
+				self.deptTreeData = self.buildTree(response.data);
+			});
+		},*/
+		
+		/* 트리 구조 생성 */
+		buildTree(data) {
+			let tree = [];
+			let lookup = {};
+
+			// 데이터 각 항목에 대해 변환을 준비
+			data.forEach(item => {
+				lookup[item.id] = {...item, children: [], selected: false};
+			});
+
+			// 트리 구조를 만듦
+			data.forEach(item => {
+				if (item.parent === '##' || !item.parent) {
+					tree.push(lookup[item.id]);
+				} else {
+					// 부모 항목이 존재하는지 확인
+					if (lookup[item.parent]) {
+						lookup[item.parent].children.push(lookup[item.id]);
+					} else {
+						console.warn(`Parent ID ${item.parent} not found for item ID ${item.id}`);
+					}
+				}
+			});
+			return tree;
+		},
+		
+		/*created() {
+			this.setdeptTreeList();
+		},*/
+		
+		/* 부서 선택 후 적용 클릭 시 */
+		confirmDeptTreeModal() {
+			console.log('SelectedNodeId1 :', this.selectedId); // 선택된 노드 확인
+
+			if (this.selectedId) {
+				this.pTreeDeptCd = this.selectedId; // 선택된 노드의 id 값을 문자열로 변환하여 pTreeDeptCd에 저장
+			} else {
+				this.pTreeDeptCd = '00'; // 선택된 노드가 없을 경우 기본 값으로 설정
+			}
+			console.log('pTreeDeptCd:', this.pTreeDeptCd); // pTreeDeptCd 값 확인
+			modal_close('deptTreeModal'); // 모달 닫기
+		},
+		
+		/* 이벤트 핸들러: 부모 컴포넌트에서 선택된 노드 ID 업데이트 */
+		updateSelectedNodeId(nodeId) {
+			this.selectedNodeId = nodeId;
+		},
+
+		/* 일반 조회 */
+		search: function (e, pPageNo) {
+			var pageNo = this.mainListPaging.getCurrentPage();
+
+			if (pageNo == 1) {
+				this.setmainList(e, pPageNo, 0);
+			} else {
+				this.mainListPaging.movePage(1);
+			}
+		},
+		
+		/* 부서 검색 모달 조회 */
+		searchDeptModal() {
+			// Axios를 사용한 부서 검색 API 요청
+			axios.get('/amanager/common/depttree-list', {
+				params: {
+					pDeptNm: this.pModalDeptNm,
+				}
+			}).then(response => {
+				this.deptTreeData = this.buildTree(response.data);
+			});
+		},
+
+		/* DEPT MGMT 리스트 신규행 추가 */
+		newRow: function () {
+			var addObj = {
+				'UP_DEPT_CD': '',
+				'ORGNZT_ID': '',
+				'DEPT_NM': '',
+				'OUTPUT_SEQ': '',
+				'USE_YN': '1',
+				'AGENCY_ID': '',
+			};
+			var newRowPosition = this.mainList.addRow(addObj);
+		},
+
+		/* DEPT MGMT 리스트 저장,수정 */
+		saveRow: function () {
+			/* 폼 입력 검증 */
+			if (!this.mainList.currentRow.UP_DEPT_CD) {
+				this.messageModal.openModal('message', '상위부서 미입력', '상위부서(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+			if (!this.mainList.currentRow.DEPT_CD) {
+				this.messageModal.openModal('message', '부서코드 미입력', '부서코드(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+			if (!this.mainList.currentRow.REAL_DEPT_NM) {
+				this.messageModal.openModal('message', '부서명 미입력', '부서명(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+			if (!this.mainList.currentRow.OUTPUT_SEQ) {
+				this.messageModal.openModal('message', '부서순번 미입력', '부서순번(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function (response) {
+				if (response) {
+					/* 부서 중복 체크 */
+					const requestData = {
+						ORGNZT_ID: self.mainList.currentRow.DEPT_CD,
+						DEPT_CD: self.mainList.currentRow.UP_DEPT_CD,
+						ORGNZT_NM: self.mainList.currentRow.REAL_DEPT_NM,
+						OUTPUT_SEQ: self.mainList.currentRow.OUTPUT_SEQ
+					};
+
+					// 데이터 요청
+					deptMgmtApi.checkDeptMgmt(requestData)
+					.then(function (response) {
+						var data = response.data;
+						if (data && data.length > 0 && data[0]) {
+							// ROWTYPE이 UPDATE가 아닐 때만 부서코드에 대한 중복 체크를 수행
+
+							if (data[0].ORGNZTIDCNT > 0) {
+								if (self.mainList.getRowType(self.mainList.rowposition) !== ROWTYPE_UPDATE) {
+									self.messageModal.openModal('message', '저장 오류', '사용중인 부서코드입니다.', 'middle', '', '');
+									// 부서코드 중복 체크 실패 시 메시지만 띄우고 return
+									return;
+								}
+							} else if (data[0].DEPTNMCNT > 0) {
+								self.messageModal.openModal('message', '저장 오류', '사용중인 부서명입니다.', 'middle', '', '');
+								// 부서명 중복 체크 실패 시 메시지만 띄우고 return
+								return;
+							} else if (data[0].DEPTSEQCNT > 0) {
+								self.messageModal.openModal('message', '저장 오류', '사용중인 부서순번입니다.', 'middle', '', '');
+								// 부서순번 중복 체크 실패 시 메시지만 띄우고 return
+								return;
+							}
+							// 모든 중복 체크 통과 후 저장 로직 실행
+							proceedSaving();
+
+						} else {
+							self.messageModal.openModal('message', '유효하지 않은 응답', '입력된 중복 체크값이 유효하지 않습니다.', 'middle', '', '');
+							return;
+						}
+					})
+					.catch(function (error) {
+						console.error('중복 체크 API 호출 중 오류 발생:', error);
+						self.messageModal.openModal('message', '오류 발생', '중복 체크를 수행하는 도중 오류가 발생했습니다.', 'middle', '', '');
+					});
+
+					function proceedSaving() {
+						// 중복 체크 통과 후 저장 로직 실행
+						var rowposition = self.mainList.rowposition;
+						var checkedIndex = self.selectedRows.findIndex(row => row === true);
+						const selectedRow = self.mainList.data[checkedIndex];
+						var rowType1 = self.mainList.getRowType(rowposition);
+						var rowType2 = self.mainList.getRowType(checkedIndex);
+						var returnVal = null;
+
+						//신규 입력 시 저장
+						if (rowType1 === ROWTYPE_INSERT || rowType2 === ROWTYPE_INSERT) {
+							returnVal = deptMgmtApi.deptmgmtInsert(self.mainList.currentRow, false);
+						}
+						//수정 시 저장
+						else if (rowType1 === ROWTYPE_UPDATE || rowType2 === ROWTYPE_UPDATE) {
+							returnVal = deptMgmtApi.deptmgmtUpdate(self.mainList.currentRow, false);
+						} else {
+							notifySubmit('info', 'DEPT MGMT 저장', '저장할 내역이 없습니다.', 'icon-message');
+						}
+
+						if (!isNull(returnVal)) {
+							returnVal.then(function (response) {
+								var data = response.data;
+								notifySubmit('success', 'DEPT MGMT 저장', '저장이 완료되었습니다.', 'icon-save');
+								self.setmainList(null, self.mainListPaging.currentPage, 0);
+							}).catch(function (error) {
+								notifySubmit('warning', 'DEPT MGMT 저장', '저장에 실패하였습니다.', 'icon-caution');
+							});
+						}
+					}
+				} else {
+					notifySubmit('warning', 'DEPT MGMT 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+			// 체크 상태 리셋
+			self.resetSelectedRows();
+		},
+
+		/* DEPT MGMT 미사용(로우단위) */
+		useNotRows(deptCds) {
+			var self = this;
+			var promises = deptCds.map(deptCd => {
+				var index = this.mainList.data.findIndex(row => row.DEPT_CD === deptCd);
+				if (index !== -1) {
+					var rowType = this.mainList.getRowType(index);
+					return deptMgmtApi.deptUseNot(deptCd, true).then(function (response) {
+						return {deptCd, success: true};
+					}).catch(function (error) {
+						return {deptCd, success: false};
+					});
+				} else {
+					console.error("유효하지 않은 DEPT_CD입니다.");
+					return Promise.resolve({deptCd, success: false});
+				}
+			});
+
+			Promise.all(promises).then(results => {
+				results.forEach(result => {
+					if (result.success) {
+						notifySubmit('success', '미사용 처리', `${result.deptCd} 부서의 미사용 처리가 완료되었습니다.`, 'icon-trashcan');
+					} else {
+						notifySubmit('warning', '미사용 처리', `${result.deptCd} 부서의 미사용 처리에 실패하였습니다.`, 'icon-caution');
+					}
+				});
+				self.setmainList(null, self.mainListPaging.currentPage, 0);
+				self.resetSelectedRows();
+			});
+		},
+
+		/* DEPT MGMT 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+		},
+		
+		/* 수정버튼 클릭시 체크박스 선택 상태 확인 */
+		rowCheckClick() {
+			const checkedIndex = this.selectedRows.findIndex(row => row === true);
+			if (checkedIndex !== -1) {
+				const selectedRow = this.mainList.data[checkedIndex];
+				/* 최상위 부서 수정 불가 */
+				if (selectedRow.DEPT_CD == '00') {
+					this.messageModal.openModal('message', '최상위 부서', '최상위 부서는 수정할 수 없습니다.', 'middle', '', '');
+					return;
+				} else {
+					this.mainList.setRowType(checkedIndex, this.ROWTYPE_UPDATE);
+					this.mainList.rowposition = checkedIndex;
+					this.mainList.currentRow = this.mainList.data[checkedIndex];
+				}
+			} else {
+				this.messageModal.openModal('message', '선택된 부서 없음', '수정할 부서를 선택 해주세요.', 'middle', '', '');
+			}
+		},
+		
+		/* 미사용 버튼 클릭 시 체크박스 선택 및 미사용 여부 상태 확인 */
+		rowCheckUseNot() {
+			const selectedDeptCd = [];
+			this.selectedRows.forEach((isSelected, index) => {
+				if (isSelected) {
+					const selectedRowData = this.mainList.data[index];
+					if (selectedRowData && selectedRowData.DEPT_CD) {
+						if (selectedRowData.USE_YN === '1') {
+							if (selectedRowData.DEPT_CD === '00') {
+								this.messageModal.openModal('message', '최상위 부서', '최상위 부서는 미사용 처리 할 수 없습니다.', 'middle', '', '');
+								return;
+							}
+							selectedDeptCd.push(selectedRowData.DEPT_CD);
+						} else if (selectedRowData.USE_YN === '0') {
+							this.messageModal.openModal('message', '미사용 처리 완료', '이미 미사용 처리가 완료된 부서입니다.', 'middle', '', '');
+							return;
+						}
+					}
+				}
+			});
+
+			if (selectedDeptCd.length > 0) {
+				this.messagePopup('ROW_USENOT', selectedDeptCd);
+			} else {
+				this.messageModal.openModal('message', '선택된 부서 없음', '미사용 처리 할 부서를 선택 해주세요.', 'middle', '', '');
+			}
+		},
+		
+		/* 특정 Row 더블클릭시 수정창 [index값 기준] open */
+		rowDbClick: function(index){
+			var nRowType = this.mainList.setRowType(0, this.ROWTYPE_UPDATE);
+			const selectedRow = this.mainList.data[index];
+
+			/* 최상위 부서 수정 불가 */
+			if (selectedRow.DEPT_CD == '00') {
+				this.messageModal.openModal('message', '최상위 부서', '최상위 부서는 수정할 수 없습니다.', 'middle', '', '');
+				return;
+			}
+			if (!selectedRow) {
+				console.error("선택된 행이 유효하지 않습니다.");
+				return;
+			}
+			this.mainList.selectRow(index);
+		},
+		
+		/* 메세지창 띄우기 */
+		messagePopup: function (pId, pData) {
+			console.log('messagePopup 호출됨', pId, pData); // 디버깅용 로그
+			var title = '확인';
+			var cont = '해당 작업을 수행하시겠습니까?';
+			var pGb = 'confirm';
+
+			switch (pId) {
+				case 'ROW_USENOT':
+					title = '선택 및 적용';
+					cont = '선택된 부서를 미사용 처리하시겠습니까?'
+					break;
+			}
+			this.messageModal.openModal(pGb, title, cont, 'middle', pId, pData);
+		},
+		
+		/* 메시지 콜백 */
+		messagePopupCallback: function (pGb, pId, pData) {
+			if (pGb != 'confirm') return;
+
+			switch (pId) {
+				case 'ROW_USENOT':
+					this.useNotRows(pData);
+					break;
+			}
+		},
+		
+		/* 검색조건 초기화 */
+		resetFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialState)));
+		},
+		
+		/* 모달 검색조건 초기화 */
+		resetModalFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialModalState)));
+		},
+		
+		/* 모달 레이어 팝업 Close */
+		closeModal(modalId) {
+			if (!this.mainList.currentRow) {
+				modal_close(modalId);
+				this.search(event);
+			} else {
+				modal_close(modalId);
+			}
+		},
+		
+		/* 체크박스 선택시 데이터 저장*/
+		toggleRowSelection(index) {
+			if (this.selectedRows.includes(index)) {
+				this.selectedRows = this.selectedRows.filter(i => i !== index);
+				this.mainList.deselectRow(index);
+			} else {
+				this.selectedRows.push(index);
+				this.mainList.selectRow(index);
+			}
+		},
+		
+		/* 프로세스 적용 후 체크 선택 해제 */
+		resetSelectedRows() {
+			this.selectedRows = [];
+			this.selectAll = false;
+		},
+		
+		/* 체크박스 토글 */
+		toggleCheckbox(index) {
+			this.$set(this.selectedRows, index, !this.selectedRows[index]);
+		},
+		
+		/* 모든 체크박스 토글  */
+		toggleSelectAll() {
+			this.selectedRows = this.mainList.data.map(() => this.selectAll);
+		},
+		
+		/* ESC 버튼 다운시 핸들러 */
+		handleEscKey(event) {
+			if (event.key === 'Escape' || event.key === 'Esc') {
+				this.closeModal(event);
+			}
+		},
+		
+		/* 엑셀 다운로드 */
+		excelDownload() {
+			this.setmainList(null, 1, 1, () => {
+				let date = moment().format('YYYY-MM-DD');
+				let filename = '부서관리_' + date + '.xlsx';
+
+				const dataForExcel = this.excelData.map((item, index) => ({
+					'No': index + 1,
+					'상위부서-부서명': item.DEPT_NM,
+					'부서명': item.REAL_DEPT_NM,
+					'부서코드': item.DEPT_CD,
+					'부서순번': item.OUTPUT_SEQ,
+					'사용여부': item.USE_YN_TEXT,
+				}));
+
+				const workSheet = XLSX.utils.json_to_sheet(dataForExcel);
+
+				const colWidths = [
+					{wpx: 30},    // No
+					{wpx: 150},   // 상위부서-부서명
+					{wpx: 150},   // 부서명
+					{wpx: 70},    // 부서코드
+					{wpx: 70},    // 부서순번
+					{wpx: 50},    // 사용여부
+				];
+				workSheet['!cols'] = colWidths;
+
+				const workBook = XLSX.utils.book_new();
+				XLSX.utils.book_append_sheet(workBook, workSheet, '부서관리');
+
+				XLSX.writeFile(workBook, filename);
+			});
+		},
+		
+		/* 테이블 정렬 상태값 적용 */
+		sort(key) {
+			if (this.sortKey === key) {
+				this.sortOrders[key] = this.sortOrders[key] === 'ASC' ? 'DESC' : 'ASC';
+			} else {
+				this.sortKey = key;
+				this.sortOrders = {
+					DEPT_NM: 0,
+					REAL_DEPT_NM: 0,
+					DEPT_CD: 0,
+					OUTPUT_SEQ: 0,
+					USE_YN_TEXT: 0
+				};
+				this.sortOrders[key] = 'ASC';
+			}
+		},
+		
+		/* 테이블 정렬 아이콘 */
+		sortIcon(key) {
+			if (this.sortOrders[key] === 'ASC') {
+				return 'icon-arrow3'; // 오름차순 아이콘
+			} else if (this.sortOrders[key] === 'DESC') {
+				return 'icon-arrow1'; // 내림차순 아이콘
+			} else {
+				return ''; // 초기 정렬 상태 아이콘
+			}
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+
+function handleNullValues(row) {
+     Object.keys(row).forEach(function(key) {
+         if (row[key] === '') {
+             row[key] = null;
+         }
+     });
+     return row;
+}
+ 
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+	
+</script>
+
+<!--*******************************************************************************************************************************************************************
+ * style start
+ *******************************************************************************************************************************************************************-->
+<style>
+	.thead-fixed {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background-color: #FFF;
+	}
+
+	.sub_cont_wrap {
+		width: 97%;
+		margin: 0 auto;
+		margin-top: 40px;
+		margin-bottom: 60px;
+	}
+
+	.sub_cont_wrap .sub_cont_box {
+		padding: 20px;
+		margin-bottom: 0px;
+	}
+
+	.row .col.l2 {
+		width: 20%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l4 {
+		width: 40%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l5 {
+		width: 50%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l6 {
+		width: 60%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	th,
+	td {
+		/* 텍스트 줄바꿈 방지 */
+		white-space: nowrap;
+		/* 넘치는 텍스트 숨김 */
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* 트리 구조를 위한 CSS */
+	.dept-tree {
+		list-style-type: none;
+		padding-left: 20px;
+	}
+
+	.dept-node {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		padding: 10px 0;
+		position: relative;
+	}
+
+	.dept-node.selected {
+		background-color: rgb(0, 64, 128);
+		color: white;
+	}
+
+	.dept-node.open:before {
+		content: "└";
+		/* 부모 노드가 열린 경우 */
+		margin-right: 5px;
+	}
+
+	.dept-node:not(.open):before {
+		content: "≡";
+		/* 부모 노드가 닫힌 경우 */
+		margin-right: 5px;
+	}
+
+	/* 자식 노드가 있는 경우를 나타내는 스타일 */
+	.dept-node.has-children {
+		color: orange;
+		font-weight: bold;
+	}
+
+	.sub-tree {
+		padding-left: 10px;
+		/* 자식 노드 리스트의 들여쓰기 설정 */
+	}
+
+	.parent-node {
+		cursor: pointer;
+		font-weight: bold;
+	}
+
+	/*
+	ul {
+	    list-style-type: none;
+	    padding-left: 20px;
+	}
+	
+	li {
+	    margin: 5px 0;
+	}
+	
+	.dept-node {
+	    display: flex;
+	    align-items: center;
+	}
+	
+	.dept-node .open {
+	    margin-right: 5px;
+	    cursor: pointer;
+	}*/
+
+	.sortable {
+		cursor: pointer;
+		transition: background-color 0.3s, color 0.3s;
+	}
+
+	.sortable:hover {
+		background-color: rgb(204, 204, 204);
+		color: #333;
+	}
+</style>
+
+<!--*******************************************************************************************************************************************************************
+ * style end
+ *******************************************************************************************************************************************************************-->

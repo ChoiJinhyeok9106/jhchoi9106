@@ -1,0 +1,451 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio2.css" />  
+
+<h2>메뉴구성관리</h2>
+<section class="sub_cont_box" id="app">
+    <p class="label-type01">메뉴 검색</p>
+    <div class="box-type03 col-inline">
+        <label for="InputText01" class="label-type00 size-m icon-search">검색</label>
+        <select class="size-m">
+            <option value="전체">전체</option>
+        </select>
+        <input type="text" id="InputText01" class="size-m" placeholder="입력하세요">
+        <input type="button" value="검색" class="btn type01 size-m">
+    </div>
+    <div class="row form-row">
+        <div class="col s12 l6">
+            <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+        </div>                                
+    </div>
+    <table class="table-type01 response">
+	    <caption>메뉴구성관리 테이블로 번호, 학과, 제목, 작성자, 사용여부, 대표여부  항목별 순서대로 안내하는 표입니다</caption>
+	    <colgroup>
+	        <col width="10%">
+	        <col width="20%">
+	        <col>
+	        <col width="10%">
+	        <col width="10%">
+	        <col width="10%">
+	    </colgroup>
+	    <thead>
+	        <tr>
+	            <th scope="col">번호</th>
+	            <th scope="col">학과</th>
+	            <th scope="col">제목</th>
+	            <th scope="col">작성자</th>
+	            <th scope="col">사용여부</th>
+	            <th scope="col">대표여부</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr>
+	            <td data-header="번호">1</td>
+	            <td data-header="학과">간호학부</td>
+	            <td data-header="제목" class="left">간호학부 메뉴</td>
+	            <td data-header="작성자">admin</td>
+	            <td data-header="사용여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	            <td data-header="대표여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td data-header="번호">1</td>
+	            <td data-header="학과">헤어디자인과</td>
+	            <td data-header="제목" class="left">헤어디자인과 메뉴</td>
+	            <td data-header="작성자">admin</td>
+	            <td data-header="사용여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	            <td data-header="대표여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td data-header="번호">3</td>
+	            <td data-header="학과">바이오스킨케어과</td>
+	            <td data-header="제목" class="left">바이오스킨케어과 메뉴</td>
+	            <td data-header="작성자">admin</td>
+	            <td data-header="사용여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	            <td data-header="대표여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td data-header="번호">4</td>
+	            <td data-header="학과">유아교육과</td>
+	            <td data-header="제목" class="left">유아교육과 메뉴</td>
+	            <td data-header="작성자">admin</td>
+	            <td data-header="사용여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	            <td data-header="대표여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td data-header="번호">5</td>
+	            <td data-header="학과">사회복지과</td>
+	            <td data-header="제목" class="left">사회복지과 메뉴</td>
+	            <td data-header="작성자">admin</td>
+	            <td data-header="사용여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	            <td data-header="대표여부">
+	                <div class="checkbox size-xs single">
+	                	<input type="checkbox" id="allChk"> 
+	                	<i class="icon-check"></i>
+	                </div>
+	            </td>
+	        </tr>
+	    </tbody>
+	</table>
+	<!-- 페이지 -->
+	<div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+    <div class="btn-line right">
+    	<a href="#!" class="btn type02 size-l">신청하기</a>
+    </div>
+    <div class="box-type03 pf-make-box">
+    	<div class="row form-row">
+    		<div class="form-group col s12  xl6">    			
+    			<div class="row form-row">
+    				<div class="col s5 l2 col-label">
+    					<label for="protocolGb" class="label-type01 size-l">학과</label>
+    				</div> 
+    				<div class="col s7 l10">
+    					<select id="protocolGb" name="protocolGb" class="size-l">
+	    					<option value="">선택</option> 
+    					</select>
+    				</div>
+    			</div>
+    		</div> 
+    		<div class="form-group col s12 xl3">
+    			<div class="row form-row">
+    				<div class="col s5 l2 xl5 col-label">
+    					<label for="useYn1" class="label-type01 size-l">사용여부</label>
+    				</div> 
+    				<div class="col s7 l10 xl7">
+    					<label class="toggle-switch size-l">
+    						<input type="checkbox" id="useYn1" name="useYn1" class="size-l"> 
+    						<span class="slider round"></span>
+    					</label>
+    				</div>
+    			</div>
+    		</div>
+    		<div class="form-group col s12 xl3">
+    			<div class="row form-row">
+    				<div class="col s5 l2 xl5 col-label">
+    					<label for="useYn2" class="label-type01 size-l">대표여부</label>
+    				</div> 
+    				<div class="col s7 l10 xl7">
+    					<label class="toggle-switch size-l">
+    						<input type="checkbox" id="useYn2" name="useYn2" class="size-l"> 
+    						<span class="slider round"></span>
+    					</label>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    	<div class="row form-row">
+    		<div class="form-group col s12  xl6">    			
+    			<div class="row form-row">
+    				<div class="col s5 l2 col-label">
+    					<label for="title" class="label-type01 size-l">학과</label>
+    				</div> 
+    				<div class="col s7 l10">
+    					<input type="text" id="title" name="title"  placeholder="메뉴 제목을 입력하세요" class="size-l">
+    				</div>
+    			</div>
+    		</div> 
+    	</div>
+    	<div class="row form-row">
+    		<div class="form-group col s12">    
+    			<p class="label-type01">메뉴구성</p>
+    			<div class="row form-row pf-admin-menu-wrap">
+    				<div class="col s12 l4">
+    					<div class="pf-admin-menu">
+    						<div class="menu-header">그룹목록
+    							<div class="btn-box">
+    								<a href="#!" class="btn-arrow"><span class="icon-arrow3"></span></a>
+    								<a href="#!" class="btn-arrow"><span class="icon-arrow1"></span></a>
+    							</div>
+    						</div>
+    						<perfect-scrollbar class="menu-middle">
+    							<ul class="menu-list list-l">
+    								<li>
+    									<a href="#!">
+    										<span class="text">자기소개</span>
+    										<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+    										<span class="mod-form col-inline"><input type="text" value="자기소개" class="size-s"><button class="btn type02 size-s">완료</button></span>
+    									</a>
+    								</li>
+    								<li>
+    									<a href="#!">
+	    									<span class="text">학습성과</span>
+	    									<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+    										<span class="mod-form col-inline"><input type="text" value="학습성과" class="size-s"><button class="btn type02 size-s">완료</button></span>
+    									</a>
+    								</li>
+    								<li>
+    									<a href="#!">
+    										<span class="text">교내활동</span>
+    										<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+    										<span class="mod-form col-inline"><input type="text" value="교내활동" class="size-s"><button class="btn type02 size-s">완료</button></span>
+    									</a>
+    								</li>
+    								<li>
+    									<a href="#!">
+    										<span class="text">교외활동</span>
+    										<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+    										<span class="mod-form col-inline"><input type="text" value="교외활동" class="size-s"><button class="btn type02 size-s">완료</button></span>
+    									</a>
+    								</li>
+    								<li>
+    									<a href="#!">
+    										<span class="text">스펙</span>
+    										<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+    										<span class="mod-form col-inline"><input type="text" value="스펙" class="size-s"><button class="btn type02 size-s">완료</button></span>
+    									</a>
+    								</li>
+    								<li>
+    									<a href="#!">
+    										<span class="text">기타</span>
+    										<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+    										<span class="mod-form col-inline"><input type="text" value="기타" class="size-s"><button class="btn type02 size-s">완료</button></span>
+    									</a>
+    								</li>    								
+    							</ul>    							
+    						</perfect-scrollbar>    						
+    					</div>
+    					<div class="menu-add col-inline">
+							<input type="text" class="size-m" placeholder="그룹명을 입력하세요."><a href="#!" class="btn type02 size-m left-icon icon-plus bg-blue">추가</a>							
+						</div>
+    				</div>
+    				<div class="col s12 l8">
+    					<div class="pf-admin-menu">
+    						<div class="menu-header">페이지 목록
+    							<div class="btn-box">
+    								<a href="#!" class="btn-arrow"><span class="icon-arrow3"></span></a>
+    								<a href="#!" class="btn-arrow"><span class="icon-arrow1"></span></a>
+    							</div>
+    						</div>
+    						<perfect-scrollbar class="menu-middle">
+    							<ul class="menu-list list-r">
+    								<li>
+    									<a href="#!">
+	    									<span class="select">
+	    										<select id="sel01" name="sel01" class="size-s" disabled>
+	    											<option value="">선택</option>
+	    										</select>
+	    									</span>
+	    									<span class="tit">교과</span>
+	    									<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+	    									<span class="mod-form col-inline"><input type="text" value="교과" class="size-s"><button class="btn type02 size-s">완료</button></span>
+	    								</a>    									
+    								</li>
+    								<li>
+    									<a href="#!">
+	    									<span class="select">
+	    										<select id="sel02" name="sel02" class="size-s" disabled>
+	    											<option value="">선택</option>
+	    										</select>
+	    									</span>
+	    									<span class="tit">비교과</span>    
+	    									<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+	    									<span class="mod-form col-inline"><input type="text" value="비교과" class="size-s"><button class="btn type02 size-s">완료</button></span>
+    									</a>									
+    								</li>
+    								<li>
+    									<a href="#!">
+	    									<span class="select">
+	    										<select id="sel03" name="sel03" class="size-s" disabled>
+	    											<option value="">선택</option>
+	    										</select>
+	    									</span>
+	    									<span class="tit">실적</span>    	
+	    									<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+	    									<span class="mod-form col-inline"><input type="text" value="실적" class="size-s"><button class="btn type02 size-s">완료</button></span>
+	    								</a>								
+    								</li>
+    								<li>
+    									<a href="#!">
+	    									<span class="select">
+	    										<select id="sel04" name="sel04" class="size-s" disabled>
+	    											<option value="">선택</option>
+	    										</select>
+	    									</span>
+	    									<span class="tit">직무별 성과관리</span>  
+	    									<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+	    									<span class="mod-form col-inline"><input type="text" value="직무별 성과관리" class="size-s"><button class="btn type02 size-s">완료</button></span>
+	    								</a>  									
+    								</li>
+    								<li>    		
+    									<a href="#!">							
+	    									<span class="select">
+	    										<select id="sel05" name="sel05" class="size-s" disabled>
+	    											<option value="">선택</option>
+	    										</select>
+	    									</span>
+	    									<span class="tit">PO별 학습성과관리</span>
+	    									<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+	    									<span class="mod-form col-inline"><input type="text" value="PO별 학습성과관리" class="size-s"><button class="btn type02 size-s">완료</button></span>
+	    								</a>
+    								</li>
+    								<li>    				
+    									<a href="#!">					
+	    									<span class="select">
+	    										<select id="sel06" name="sel06" class="size-s" disabled>
+	    											<option value="">선택</option>
+	    										</select>
+	    									</span>
+	    									<span class="tit">기타 학습성과관리</span>
+	    									<span class="btn-box"><button class="btn type01 size-s modify">수정</button><button class="btn type01 size-s c-red delete">삭제</button></span>
+	    									<span class="mod-form col-inline"><input type="text" value="기타 학습성과관리" class="size-s"><button class="btn type02 size-s">완료</button></span>
+	    								</a>
+    								</li>    								
+    							</ul>
+    							
+    						</perfect-scrollbar>
+    						
+    					</div>
+    					<div class="menu-add col-inline">
+							<select id="sel00" name="sel00" class="size-m" style="min-width:200px;">
+								<option value="">선택</option>
+							</select>
+							<input type="text" class="size-m" placeholder="페이지명을 입력하세요."><a href="#!" class="btn type02 size-m left-icon icon-plus bg-blue">추가</a>
+						</div>
+    				</div>
+    			</div>
+    			<div class="btn-line center">
+					<a href="#!" class="btn type01 size-m">삭제</a>
+					<a href="#!" class="btn type02 size-m">저장</a>
+				</div>
+    		</div>
+    	</div>
+    </div>
+                         
+</section>
+
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ /*******************************************************************************************************************************************************************
+  * javascript start 
+  ********************************************************************************************************************************************************************/
+
+	$(document).ready(function() {
+		/*메뉴구성 그룹목록 선택*/
+		var listL = $('.pf-admin-menu .menu-list.list-l li a');
+		listL.on('click',function(){
+			if($(this).hasClass('on')) {
+				listL.find('.btn-box').removeClass('on');
+				$(this).removeClass('on');								
+			} else {
+				listL.find('.btn-box').removeClass('on');
+				listL.find('span.mod-form').removeClass('on');				
+				listL.removeClass('on');
+				listL.find('span.text').removeClass('off');
+				$(this).addClass('on');
+				$(this).children('.btn-box').addClass('on');
+			}
+			event.stopPropagation();
+		});		
+		listL.find('.btn-box .modify').on('click',function(){
+			$(this).parent().siblings('.text').addClass('off');
+			$(this).parent().removeClass('on');
+			$(this).parent().siblings('.mod-form').addClass('on');
+			event.stopPropagation();
+		});	
+		listL.find('.mod-form').on('click', function(){
+			event.stopPropagation();
+		})
+		
+		/*메뉴구성 페이지목록 선택*/
+		var listR = $('.pf-admin-menu .menu-list.list-r li a');
+		listR.on('click',function(){
+			if($(this).hasClass('on')) {
+				listR.find('.btn-box').removeClass('on');
+				$(this).removeClass('on');								
+			} else {
+				listR.find('.btn-box').removeClass('on');
+				listR.find('span.mod-form').removeClass('on');				
+				listR.removeClass('on');
+				listR.find('span.tit').removeClass('off');
+				$(this).addClass('on');
+				$(this).children('.btn-box').addClass('on');
+				listR.find('.select select').attr('disabled',true);
+				$(this).children('.select').find('select').removeAttr('disabled'); 
+			}
+			event.stopPropagation();
+		});		
+		listR.find('.select select').on('click', function(){
+			event.stopPropagation();
+		})
+		listR.find('.btn-box .modify').on('click',function(){
+			$(this).parent().siblings('.tit').addClass('off');
+			$(this).parent().removeClass('on');
+			$(this).parent().siblings('.mod-form').addClass('on');
+			event.stopPropagation();
+		});	
+	});
+
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+            
+ </script>

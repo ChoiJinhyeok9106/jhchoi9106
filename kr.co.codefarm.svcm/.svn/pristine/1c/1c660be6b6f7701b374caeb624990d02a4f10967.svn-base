@@ -1,0 +1,541 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/circle.css" />
+
+<h2>비교과 프로그램 목록</h2>
+<section class="sub_cont_box new-non-program">	
+	<div class="ability-sel">
+		<div class="row form-row">
+			<div class="form-group col s12 l6">
+				<h2 class="h2 sel">나의 핵심역량 현황</h2>
+			</div> 
+			<div class="form-group col s12 l6 col-inline right">
+				<label class="label-type03 inverse size-m">역량선택</label> 
+				<select name="" id="" class="size-m">
+					<option selected="selected">SW 중심대학 역량</option>
+				</select>
+			</div>
+		</div>
+	</div>	
+    <h2 class="h2 bot-txt">핵심역량 선택</h2>
+    <p class="heading-txt">각 핵심역량에 해당하는 비교과 프로그램을 조회해보세요</p>
+    <div class="select-menu-box">
+        <div class="sel-menu col01 active">
+            <span class="icon-type-box"><span class="icon col01"></span></span>
+            <span class="tit">자기관리<span class="eng">Self management</span></span>
+        </div>
+        <div class="sel-menu col02">
+            <span class="icon-type-box"><span class="icon col02"></span></span>
+            <span class="tit">글로벌<span class="eng">Global</span></span>
+        </div>
+        <div class="sel-menu col03">
+            <span class="icon-type-box"><span class="icon col03"></span></span>
+            <span class="tit">의사소통<span class="eng">Communication</span></span>
+        </div>
+        <div class="sel-menu col04 active">
+            <span class="icon-type-box"><span class="icon col04"></span></span>
+            <span class="tit">대인관계<span class="eng">Relationship</span></span>
+        </div>
+        <div class="sel-menu col05 active">
+            <span class="icon-type-box"><span class="icon col05"></span></span>
+            <span class="tit">종합적사고<span class="eng">Holistic thinking</span></span>
+        </div>
+    </div>
+
+    <div class="form-group row form-row board">
+        <div class="col s12 l5">
+            <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+        </div>
+        <div class="col s12 l7 col-inline right">
+            <select name="" id="" class="size-m">
+                <option selected>제목</option>
+                <option>내용</option>
+            </select>
+            <input type="text" name="" id="" class="size-m" placeholder="입력하세요">
+            <a href="#!" class="btn type00 size-m icon-search"></a>
+        </div>
+    </div>
+    <!-- 게시판 thumbnail+text -->
+    <div class="board-thumb-text">
+        <div class="list">
+            <div class="thumb">            
+            	<span class="image">
+            		<span class="alert-line"><span class="dday">D-7</span><span class="statue type01">접수</span></span>            		
+            		<img src="/service/design/images/ability/board_noimage2.jpg" alt="">
+            	</span>
+            </div>
+            <div class="list-content">
+                <span class="cate-line"><span class="division">특강</span><span class="star">3.7</span></span>
+                <div class="cont-scrap">                	
+                	<div>
+                    	<label for="">스크랩</label>
+                    </div>
+                    <div>
+                        <label class="toggle-switch size-m">
+			                <input type="checkbox" checked="">
+			                <span class="slider round"></span>
+			            </label>
+                   </div>                   	
+                </div>
+                <span class="cont-tit"><a href="#!">국가정보원 견학 및 산업보안교육</a></span>
+                <span class="cont-text">국가정보원 산업기밀보호센터 방문을 통한 최신 산업보안 동향 파악</span>
+                <span class="etc icon-realtime">2019 - 01 - 15</span><span class="etc icon-gift">40포인트</span><span class="etc icon-users"><span class="bold">32명</span> / 326</span>
+                <div class="pie-chart-wrap">
+			        <svg viewBox="0 0 31.85 31.85" class="pie">
+			            <circle r="50%" cx="50%" cy="50%" class="pie-bg" />
+			            <circle r="50%" cx="50%" cy="50%" class="pie-clr01" stroke-dasharray="48, 100" />
+			            <circle r="50%" cx="50%" cy="50%" class="pie-clr02" stroke-dasharray="11, 100" stroke-dashoffset="-48"/>
+			            <circle r="50%" cx="50%" cy="50%" class="pie-clr03" stroke-dasharray="6, 100" stroke-dashoffset="-59"/>
+			            <circle r="50%" cx="50%" cy="50%" class="pie-clr04" stroke-dasharray="24, 100" stroke-dashoffset="-65"/>
+			            <circle r="50%" cx="50%" cy="50%" class="pie-clr05" stroke-dasharray="7, 100" stroke-dashoffset="-89"/>
+			            <circle r="50%" cx="50%" cy="50%" class="pie-clr06" stroke-dasharray="4, 100" stroke-dashoffset="-96"/>
+			        </svg>
+			        <ul class="pie-list">
+			            <li class="list-clr01">지식정보 <span>48</span></li>
+			            <li class="list-clr02">인문 <span>11</span></li>
+			            <li class="list-clr03">창의융합 <span>6</span></li>
+			            <li class="list-clr04">글로벌 <span>24</span></li>
+			            <li class="list-clr05">리더십 <span>7</span></li>
+			            <li class="list-clr06">소통 <span>4</span></li>
+			        </ul>
+			    </div>
+            </div>
+        </div>
+        <div class="list">
+            <div class="thumb">
+            	<span class="image">
+            		<span class="end-layer"><span class="txt">종료된 프로그램입니다</span></span>
+            		<img src="/service/design/images/ability/board_noimage2.jpg" alt="">
+            	</span>
+            </div>
+            <div class="list-content">
+                <span class="cate-line"><span class="division">산업체실습</span><span class="star">3.7</span></span>
+                <div class="cont-scrap">                	
+                	<div>
+                    	<label for="">스크랩</label>
+                    </div>
+                    <div>
+                        <label class="toggle-switch size-m">
+			                <input type="checkbox">
+			                <span class="slider round"></span>
+			            </label>
+                   </div>                   	
+                </div>
+                <span class="cont-tit"><a href="#!">호텔 실무체험 캠프</a></span>
+                <span class="cont-text">호텔 객실 및 프론트 실무체험을 통하여 학생들이 호텔 객실을 실제로 체험하고 프론트 근무시 필요한 역량 강화를 목표로 함 </span>
+                <span class="etc icon-realtime">2019 - 01 - 15</span><span class="etc icon-gift">40포인트</span><span class="etc icon-users"><span class="bold">32명</span> / 326</span>
+                <div class="board-graph">
+                    <ul class="ability-graph-list">
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="23, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">23</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">자기관리</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">글로벌</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">대인관계</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="48, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">48</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">의사소통</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="56, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">56</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">종합적 사고</span>
+                        </li>
+                    </ul> 
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <div class="thumb">
+            	<span class="image">
+            		<span class="alert-line"><span class="dday">D-7</span><span class="statue type01">접수</span></span>   
+            		<img src="/service/design/images/ability/board_noimage2.jpg" alt="">
+            	</span>
+            </div>
+            <div class="list-content">
+                <span class="cate-line"><span class="division">외국어</span><span class="star">3.7</span></span>
+                <div class="cont-scrap">                	
+                	<div>
+                    	<label for="">스크랩</label>
+                    </div>
+                    <div>
+                        <label class="toggle-switch size-m">
+			                <input type="checkbox">
+			                <span class="slider round"></span>
+			            </label>
+                   </div>                   	
+                </div>
+                <span class="cont-tit"><a href="#!">Sucessful Study Group</a></span>
+                <span class="cont-text">1학년부터 3학년까지 1인 1스터디그룹에 가입하여 기초역량 향상을 통한 실무 응용 능력 배양을 목표로 함 </span>
+                <span class="etc icon-realtime">2019 - 01 - 15</span><span class="etc icon-gift">40포인트</span><span class="etc icon-users"><span class="bold">32명</span> / 326</span>
+                <div class="board-graph">
+                    <ul class="ability-graph-list">
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="23, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">23</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">자기관리</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">글로벌</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">대인관계</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="48, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">48</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">의사소통</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="56, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">56</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">종합적 사고</span>
+                        </li>
+                    </ul> 
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <div class="thumb">
+            	<span class="image">
+            		<span class="alert-line"><span class="dday">D-7</span><span class="statue type01">접수</span></span>   
+            		<img src="/service/design/images/ability/board_noimage2.jpg" alt="">
+            	</span>
+            </div>
+            <div class="list-content">
+                <span class="cate-line"><span class="division">산업체실습</span><span class="star">3.7</span></span>
+                <div class="cont-scrap">                	
+                	<div>
+                    	<label for="">스크랩</label>
+                    </div>
+                    <div>
+                        <label class="toggle-switch size-m">
+			                <input type="checkbox">
+			                <span class="slider round"></span>
+			            </label>
+                   </div>                   	
+                </div>
+                <span class="cont-tit"><a href="#!">좋은 강의 에세이 공모전</a></span>
+                <span class="cont-text">좋은 강의와 교수님에 관한 에세이를 모든 학생, 교수님과 공유하여 우리 대학 수업의 질 향상 제고</span>
+                <span class="etc icon-realtime">2019 - 01 - 15</span><span class="etc icon-gift">40포인트</span><span class="etc icon-users"><span class="bold">32명</span> / 326</span>
+                <div class="board-graph">
+                    <ul class="ability-graph-list">
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="23, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">23</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">자기관리</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">글로벌</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">대인관계</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="48, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">48</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">의사소통</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="56, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">56</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">종합적 사고</span>
+                        </li>
+                    </ul> 
+                </div>
+            </div>
+        </div>
+        <div class="list">
+            <div class="thumb">
+            	<span class="image">
+            		<span class="alert-line"><span class="dday">D-7</span><span class="statue type01">접수</span></span>   
+            		<img src="/service/design/images/ability/board_noimage2.jpg" alt="">
+            	</span>
+            </div>
+            <div class="list-content">
+                <span class="cate-line"><span class="division">외국어</span><span class="star">3.7</span></span>
+                <div class="cont-scrap">                	
+                	<div>
+                    	<label for="">스크랩</label>
+                    </div>
+                    <div>
+                        <label class="toggle-switch size-m">
+			                <input type="checkbox">
+			                <span class="slider round"></span>
+			            </label>
+                   </div>                   	
+                </div>
+                <span class="cont-tit"><a href="#!">간호복지역량강화를 위한 통계연수</a></span>
+                <span class="cont-text">간호복지학부(간호학과, 사회복지학과) 학생들의 취업역량 강화를 위함</span>
+                <span class="etc icon-realtime">2019 - 01 - 15</span><span class="etc icon-gift">40포인트</span><span class="etc icon-users"><span class="bold">32명</span> / 326</span>
+                <div class="board-graph">
+                    <ul class="ability-graph-list">
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="23, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">23</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">자기관리</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">글로벌</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01 none">0</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text none">대인관계</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="48, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">48</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">의사소통</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 36 36" class="circular-chart pink type01">
+                              <path class="circle-bg" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- stroke-dasharray 앞에 값으로 백분율 표시 -->
+                              <path class="circle" stroke-dasharray="56, 100" d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                              <!-- 0%일때 .none 클래스 추가 -->
+                              <text x="18" y="23" class="percentage type01">56</text>
+                            </svg>
+                            <!-- 0%일때 .none 클래스 추가 -->
+                            <span class="text">종합적 사고</span>
+                        </li>
+                    </ul> 
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- 페이징 -->
+    <div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+            <a href="#" class="active" title="1 페이지">1</a>
+            <a href="#" title="2 페이지">2</a>
+            <a href="#" title="3 페이지">3</a>
+            <a href="#" title="4 페이지">4</a>
+            <a href="#" title="5 페이지">5</a>
+            <a href="#" title="6 페이지">6</a>
+            <a href="#" title="7 페이지">7</a>
+            <a href="#" title="8 페이지">8</a>
+            <a href="#" title="9 페이지">9</a>
+            <a href="#" title="10 페이지">10</a>
+        </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+</section>
+            

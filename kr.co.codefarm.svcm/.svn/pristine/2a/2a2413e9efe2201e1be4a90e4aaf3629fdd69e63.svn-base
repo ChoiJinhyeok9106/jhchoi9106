@@ -1,0 +1,47 @@
+function HaveExcelApi(){}
+var haveExcelApi = new HaveExcelApi(); // => 함수로 객체를 생성
+/********************************************************************************************
+ * 엑셀 업로드 조회 
+ * @param: 검색어
+ * @return: 조회 리스트
+ ********************************************************************************************/
+HaveExcelApi.prototype.getHaveExcelList = function(pEntry, pLoading){
+	var entry = pEntry;
+	var loadingYn = pLoading;
+	
+	if(isNull(loadingYn)) 		loadingYn 		= false;
+    
+    return axios.get("/amanager/haveexcel/haveexcel-list",
+	{
+		//post는 data사용 
+		params: pEntry,
+    	loading: loadingYn
+    });
+};
+
+/********************************************************************************************
+ * 엑셀 업로드 입력 
+ * @param: 
+ * @return: 
+ ********************************************************************************************/
+HaveExcelApi.prototype.insertHaveExcel = async function(pEntry, pLoading) {
+    var entry = pEntry;
+    var loadingYn = pLoading;
+
+    if (isNull(entry)) entry = {};
+    if (isNull(loadingYn)) loadingYn = false;
+
+    try {
+        const response = await axios.post('/amanager/haveexcel/insert-haveexcel', entry, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+

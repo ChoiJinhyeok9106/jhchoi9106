@@ -1,0 +1,136 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+
+<h2>내 정보 수정</h2>
+<section class="sub_cont_box">
+    <div class="resume-step-box">
+        <div class="step-statue">
+            <span class="statue active"><span class="num">1</span><span class="text">개인정보</span></span>
+            <span class="statue"><span class="num">2</span><span class="text">학력,병역,가족사항</span></span>
+            <span class="statue"><span class="num">3</span><span class="text">이력사항</span></span>
+            <span class="statue"><span class="num">4</span><span class="text">자기소개서</span></span>
+        </div>
+        <a href="#!" class="btn-left"><span class="icon-chevron-left"></span></a>
+        <a href="#!" onclick="contentsOpen('DSN', 'new_resume02');" class="btn-right"><span class="icon-chevron-right"></span></a>
+    </div>
+    <section class="form-section">
+        <h2 class="h2">개인정보</h2>                    
+        <div class="row form-row resume-basic">
+            <div class="col s12 l8">
+                <div class="row form-row">
+                    <div class="form-group col s12 l6">
+                        <label for="formGroupExampleInput2" class="label-type01">성명(한글)</label>
+                        <input type="text" id="formGroupExampleInput2" class="size-m">
+                    </div>
+                    <div class="form-group col s12 l6">
+                        <label for="formGroupExampleInput3" class="label-type01">성명(한자)</label>
+                        <input type="text" id="formGroupExampleInput3" class="size-m">
+                    </div>                                
+                </div>
+                <div class="row form-row">
+                    <div class="form-group col s12 l6">
+                        <label for="exampleFormControlInput1" class="label-type01">생년월일</label>
+                        <div class="date-form-wrap">
+                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                            <input type="text" id="exampleFormControlInput1" class="size-m">
+                        </div>
+                    </div>
+                    <div class="form-group col s12 l3">
+                        <label for="formGroupExampleInput3" class="label-type01">나이</label>
+                        <input type="text" id="formGroupExampleInput3" class="size-m">
+                    </div>   
+                    <div class="form-group col s12 l3">
+                        <label for="formGroupExampleInput3" class="label-type01">성별</label>
+                        <select id="exampleFormControlInput2" class="size-m">
+                            <option value="">여자</option>
+                        </select>
+                    </div>                             
+                </div>
+                <div class="row form-row">                                
+                    <div class="form-group col s12">
+                        <label class="label-type01">이메일</label>
+                        <div class="col-inline">                                        
+                            <input type="text" id="formGroupExampleInput3" class="size-m" style="width:260px"> @
+                            <input type="text" id="formGroupExampleInput3" class="size-m" style="width:260px">
+                            <select name="" id="" class="size-m" style="width:260px">
+                                <option selected>직접입력</option>
+                            </select>                                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 l4 center">                                
+                <div class="box-type03 d-inline-block">
+                    <div class="photo-add-wrap">
+                        <div class="photo-box">
+                            <div id="photo_image" style="display:none"></div>                                               
+                        </div>
+                        <div class="btn-photo" for="cma_file">
+                            <label for="cma_file">사진등록</label>
+                            <input type="file" name="cma_file" id="cma_file" accept="image/*" capture="camera" onchange="getThumbnailPrivew(this,$('#photo_image'))" />
+                        </div>
+                        <a href="#!" class="btn-del-photo"><span class="icon icon-minus2">사진삭제</span></a>
+                        <p class="info-txt">제한용량 : 10MB</p>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    
+        <div class="row form-row">
+            <div class="form-group col s12">
+	            <label class="label-type01">현주소</label>
+	            <div class="col-inline">                                        
+	                <input type="text" id="formGroupExampleInput3" class="size-m" style="width:260px"> 
+	                <input type="button" value="우편번호 찾기" class="btn type02 size-m">
+	            </div>
+           </div>
+           <div class="form-group col s12">  
+               <input type="text" id="formGroupExampleInput3" class="size-m"> 
+           </div>                             
+        </div>
+        
+        <div class="row form-row">
+	        <div class="form-group col s12 l4">
+	            <label for="formGroupExampleInput2" class="label-type01">자택전화</label>
+	            <input type="text" id="formGroupExampleInput2" class="size-m">
+	        </div>
+	        <div class="form-group col s12 l4">
+	            <label for="formGroupExampleInput3" class="label-type01">핸드폰</label>
+	            <input type="text" id="formGroupExampleInput3" class="size-m">
+	        </div>  
+	        <div class="form-group col s12 l4">
+	            <label for="formGroupExampleInput3" class="label-type01">희망근무지</label>
+	            <input type="text" id="formGroupExampleInput3" class="size-m">
+	        </div>
+        </div>
+        <div class="row form-row"> 
+            <div class="form-group col s12 l4">
+                <label for="formGroupExampleInput2" class="label-type01">지원부분</label>
+                <input type="text" id="formGroupExampleInput2" class="size-m">
+            </div>
+            <div class="form-group col s12 l4">
+                <label for="formGroupExampleInput3" class="label-type01">희망연봉</label>
+                <input type="text" id="formGroupExampleInput3" class="size-m">
+            </div>                                  
+        </div>
+    </section>
+    
+    <div class="btn-line large center">
+        <a href="#!" class="btn type01 size-m">취소</a>
+        <a href="#!" class="btn type02 size-m">다음</a>
+    </div>
+</section>
+
+<script>        
+    // input file 이미지 미리보기
+    function getThumbnailPrivew(html, $target) {
+        if (html.files && html.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $target.css('display', 'block');
+                $target.html('<img src="' + e.target.result + '" border="0" alt="" />');
+            }
+            reader.readAsDataURL(html.files[0]);
+        }
+    }
+</script>

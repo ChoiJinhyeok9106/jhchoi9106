@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>대동대학교 포탈</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/reset.css" />
+
+
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/jui/jui-grid.classic.css">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/jui/jui-ui.classic.css">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/iframe_layout.css" />
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/feather.css" />
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/xcloud-icon.css" />
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/slick.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/talk.css">
+
+    <script type="text/javascript" src="../../../assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/slick.min.js"></script>
+    <script type="text/javascript" src="../../../assets/js/iframe.js"></script>
+    <script type="text/javascript" src="../../../assets/js/modal.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/progresscircle.js"></script>
+</head>
+
+<body class="jui feather">
+    <div id="wrap">
+        <!-- header 배경색은 학생일때.stu, 교수일때.pro, 직원일때.mng  -->
+        <header id="sub_header" class="stu">
+            <a href="#!" class="btn_menu"><span class="icon-menu"></span></a>
+            <div class="sub_title">
+                <span class="icon icon-xcloud001 app_color_blue"></span>
+                <h1 class="txt">스마트 캠퍼스 서비스</h1>
+            </div>
+        </header>
+        <nav id="snb">
+            <!-- 해당 메뉴가 활성화 되어있을때 ul에 'display:block' li에 클래스 .on을 넣어준다 -->
+            <ul class="snb_list">
+                <li class="on"><a href="#!">강의 시간표 및 정보</a>
+                    <ul style="display:block;">
+                        <li class="on"><a href="#!">교육과정표</a>
+                            <ul style="display:block;">
+                                <li><a href="#!" class="on">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">교육과정이수과목</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">진단평가</a></li>
+                        <li><a href="#!">중간강의평가</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#!">교육과정표</a></li>
+                <li><a href="#!">교육과정이수과목</a>
+                    <ul>
+                        <li><a href="#!">교육과정표</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">교육과정이수과목</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">진단평가</a></li>
+                        <li><a href="#!">중간강의평가</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#!">진단평가</a></li>
+                <li><a href="#!">중간강의평가</a></li>
+            </ul>
+        </nav>
+        <article class="sub_content">
+            <div class="sub_cont_wrap">
+                <h2>톡</h2>
+                <section class="sub_cont_box">
+
+                </section>
+            </div>
+        </article>
+        <div id="header">
+            <div class="talk_layer theme_red" style="right: 100px; opacity: 1;">
+                <!-- 톡 메인 -->
+                <div class="talk-main talk-setting-sub">
+                    <div class="talk-header">
+                        <a href="#!" class="btn-prev icon-arrow-left">이전</a>
+                        <div class="sub-title">
+                            <h3>채팅방 설정</h3>
+                        </div>
+                        <!-- <a href="#!" class="btn-close icon-close">닫기</a> -->
+                    </div>
+                    <div class="talk-content">
+                        <article class="talk-content-box theme-setting">
+                            <h4 class="c_primary">Themes</h4>
+                            <p>채팅방에 배경화면을 설정합니다.</p>
+                            <ul>
+                                <li class="theme01">
+                                    <label for="theme01" class="theme-label">
+                                        <img src="images/theme-type-icon.png" alt="">
+                                    </label>
+                                    <div class="talk-checkbox">
+                                        <input type="radio" name="themeSelect" id="theme01">
+                                        <label for="theme01" class="talk-checkbox-label">Red</label>
+                                        <label for="theme01" class="talk-checkbox-bg"></label>
+                                        <label for="theme01" class="talk-checkbox-icon bg_primary"></label>
+                                    </div>
+                                </li>
+                                <li class="theme02">
+                                    <label for="theme02" class="theme-label">
+                                        <img src="images/theme-type-icon.png" alt="">
+                                    </label>
+                                    <div class="talk-checkbox">
+                                        <input type="radio" name="themeSelect" id="theme02">
+                                        <label for="theme02" class="talk-checkbox-label">Dark</label>
+                                        <label for="theme02" class="talk-checkbox-bg"></label>
+                                        <label for="theme02" class="talk-checkbox-icon bg_primary"></label>
+                                    </div>
+                                </li>
+                                <li class="theme03">
+                                    <label for="theme03" class="theme-label">
+                                        <img src="images/theme-type-icon.png" alt="">
+                                    </label>
+                                    <div class="talk-checkbox">
+                                        <input type="radio" name="themeSelect" id="theme03">
+                                        <label for="theme03" class="talk-checkbox-label">Sky</label>
+                                        <label for="theme03" class="talk-checkbox-bg"></label>
+                                        <label for="theme03" class="talk-checkbox-icon bg_primary"></label>
+                                    </div>
+                                </li>
+                                <li class="theme04">
+                                    <label for="theme04" class="theme-label">
+                                        <img src="images/theme-type-icon.png" alt="">
+                                    </label>
+                                    <div class="talk-checkbox">
+                                        <input type="radio" name="themeSelect" id="theme04">
+                                        <label for="theme04" class="talk-checkbox-label">Aurora</label>
+                                        <label for="theme04" class="talk-checkbox-bg"></label>
+                                        <label for="theme04" class="talk-checkbox-icon bg_primary"></label>
+                                    </div>
+                                </li>
+                                <li class="theme05">
+                                    <label for="theme05" class="theme-label">
+                                        <img src="images/theme-type-icon.png" alt="">
+                                    </label>
+                                    <div class="talk-checkbox">
+                                        <input type="radio" name="themeSelect" id="theme05">
+                                        <label for="theme05" class="talk-checkbox-label">Orange</label>
+                                        <label for="theme05" class="talk-checkbox-bg"></label>
+                                        <label for="theme05" class="talk-checkbox-icon bg_primary"></label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </article>
+                    </div>
+                    <div class="talk-subfooter">
+                        <a href="#!" class="icon-checkmark">확인</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

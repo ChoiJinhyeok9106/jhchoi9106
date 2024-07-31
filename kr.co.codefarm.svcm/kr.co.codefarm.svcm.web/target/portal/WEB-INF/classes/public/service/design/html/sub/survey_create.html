@@ -1,0 +1,634 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/survey.css" /> 
+
+<script>
+    $(function () {
+        //탭메뉴
+        $(".tab-content").hide();
+        $(".tab-content:first").show();
+        $(".tab-type03 .tab-inner div a").click(function () {
+            $(".tab-type03 .tab-inner div a").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").hide()
+            var activeTab = $(this).parent().attr("rel");
+            $("#" + activeTab).fadeIn()
+        });
+
+        //탭메뉴
+        $(".menu-tab-content").hide();
+        $(".menu-tab-content:first").show();
+        $(".menu-tab a").click(function () {
+            $(".menu-tab a").removeClass("active");
+            $(this).addClass("active");
+            $(".menu-tab-content").hide()
+            var activeTab = $(this).attr("rel");
+            $("#" + activeTab).fadeIn()
+        });
+    });
+</script>
+
+
+<h2>설문관리</h2>
+<div class="sub_cont_box survey-form">
+    <a href="#!" class="btn go-to-list">설문그룹으로 이동</a>
+    <div class="tab-outter">
+        <div class="tab-type03">
+            <div class="tab-inner">
+                <div rel="tab1"><a href="#!" class="active">설문작성</a></div>
+                <div rel="tab2"><a href="#!">설문결과<span>38</span></a></div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-container">
+        <div id="tab1" class="tab-content survey-create">
+            <div class="box-type07">
+                <div class="row form-row">
+                    <div class="form-group col s12">
+                        <label for="exampleFormControlInput3" class="label-type01 required">설문지명</label>
+                        <input type="text" id="formGroupExampleInput2" class="size-m">
+                    </div>
+                </div>
+                <div class="row form-row">
+                    <div class="form-group col s6 l3">
+                        <label for="exampleFormControlInput1" class="label-type01">시작일자</label>
+                        <div class="date-form-wrap">
+                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                            <input type="text" id="exampleFormControlInput1" class="size-m">
+                        </div>
+                    </div>
+                    <div class="form-group col s6 l3">
+                        <label for="exampleFormControlInput2" class="label-type01">시작시간</label>
+                        <div class="date-form-wrap">
+                            <a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+                            <input type="text" id="exampleFormControlInput2" class="size-m"
+                                style="width:90%"><span class="text" style="width:10%">~</span>
+                  </div>
+              </div>
+              <div class="form-group col s6 l3">
+                  <label for="exampleFormControlInput1" class="label-type01">종료일자</label>
+                  <div class="date-form-wrap">
+                      <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                      <input type="text" id="exampleFormControlInput1" class="size-m">
+                  </div>
+              </div>
+              <div class="form-group col s6 l3">
+                  <label for="exampleFormControlInput2" class="label-type01">종료시간</label>
+                  <div class="date-form-wrap">
+                      <a href="#!" class="size-m"><span class="icon icon-realtime"></span></a>
+                      <input type="text" id="exampleFormControlInput2" class="size-m">
+                  </div>
+              </div>
+          </div>
+          <div class="row form-row">
+              <div class="form-group col s6 l3 form-row">
+                  <div class="col s12">
+                      <label for="formGroupExampleInput2" class="label-type01">익명여부</label>
+                  </div>
+                  <div class="col s12">
+                      <label class="toggle-switch size-l">
+                          <input type="checkbox" checked="">
+                          <span class="slider round"></span>
+                      </label>
+                  </div>
+              </div>
+              <div class="form-group col s6 l3">
+                  <div class="col s12">
+                      <label for="formGroupExampleInput2" class="label-type01">사용여부</label>
+                  </div>
+                  <div class="col s12">
+                      <label class="toggle-switch size-l">
+                          <input type="checkbox" checked="">
+                          <span class="slider round"></span>
+                      </label>
+                  </div>
+              </div>
+              <div class="form-group col s12 l6">
+                  <label for="exampleFormControlInput3" class="label-type01 required">비고</label>
+                  <input type="text" id="formGroupExampleInput2" class="size-m">
+              </div>
+          </div>
+      </div>
+      <!-- 설문작성 -->
+      <div class="survey-area">
+          <div class="btn-line right">
+              <a href="#!" class="btn type02 size-l bg-sky">설문 보내기</a>
+          </div>
+          <div class="box-type03">
+              <div class="btn-line">
+                  <a href="#!" class="btn type01 size-m">질문추가</a>
+                  <a href="#!" class="btn type02 size-m">저장</a>
+              </div>
+              <!-- 단방향알림 -->
+              <div class="survey-box">
+                  <button class="drag-handle"></button>
+                  <div class="survey-cont">
+                      <div class="row form-row">
+                          <div class="form-group col s12 l8">
+                              <label for="DiagnosisForm01" class="label-type01">설문제목</label>
+                              <div class="input-btn-form">
+                                  <input type="text" id="DiagnosisForm01" class="size-l"
+                                      placeholder="입력하세요">
+                                  <a href="#!"><span class="icon-clip"></span></a>
+                              </div>
+                          </div>
+                          <div class="form-group col s12 l3 offset-l1 diagnosis-sort">
+                              <label for="DiagnosisForm02" class="label-type01">답변유형</label>
+                              <select id="DiagnosisForm02" class="size-l">
+                                  <option value="">단방향</option>
+                                  <option value="">객관식답변</option>
+                                  <option value="">주관식답변</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="row form-row">
+                          <div class="form-group col s12">
+                              <label for="DiagnosisForm03" class="label-type01">설문설명</label>
+                              <div class="input-btn-form">
+                                  <input type="text" id="DiagnosisForm03" class="size-s"
+                                      placeholder="입력하세요">
+                                  <a href="#!"><span class="icon-clip"></span></a>
+                                  <a href="#!"><span class="icon-close"></span></a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="survey-foot">
+                          <div class="basic-form">
+                              <div class="control-group">
+                                  <div>
+                                      <span class="toggle-label">사용</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                                  <div>
+                                      <span class="toggle-label">필수</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                              </div>
+                              <ul class="btn-group">
+                                  <li><a href="#!"><span class="icon-trashcan"></span></a></li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- 단답형 -->
+              <div class="survey-box">
+                  <button class="drag-handle"></button>
+                  <div class="survey-cont">
+                      <div class="row form-row">
+                          <div class="form-group col s12 l8">
+                              <label for="DiagnosisForm01" class="label-type01">설문제목</label>
+                              <div class="input-btn-form">
+                                  <input type="text" id="DiagnosisForm01" class="size-l"
+                                      placeholder="입력하세요">
+                                  <a href="#!"><span class="icon-clip"></span></a>
+                              </div>
+                          </div>
+                          <div class="form-group col s12 l3 offset-l1 diagnosis-sort">
+                              <label for="DiagnosisForm02" class="label-type01">답변유형</label>
+                              <select id="DiagnosisForm02" class="size-l">
+                                  <option value="">단답형</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="row form-row">
+                          <div class="form-group col s12 col-inline">
+                              <input type="text" class="size-m" placeholder="단답형 텍스트" readonly>
+                          </div>
+                      </div>
+                      <div class="survey-foot">
+                          <div class="basic-form">
+                              <div class="control-group">
+                                  <div>
+                                      <span class="toggle-label">사용</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                                  <div>
+                                      <span class="toggle-label">필수</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                              </div>
+                              <ul class="btn-group">
+                                  <li><a href="#!"><span class="icon-trashcan"></span></a></li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- 장문형 -->
+              <div class="survey-box">
+                  <button class="drag-handle"></button>
+                  <div class="survey-cont">
+                      <div class="row form-row">
+                          <div class="form-group col s12 l8">
+                              <label for="DiagnosisForm01" class="label-type01">설문제목</label>
+                              <div class="input-btn-form">
+                                  <input type="text" id="DiagnosisForm01" class="size-l"
+                                      placeholder="입력하세요">
+                                  <a href="#!"><span class="icon-clip"></span></a>
+                              </div>
+                          </div>
+                          <div class="form-group col s12 l3 offset-l1 diagnosis-sort">
+                              <label for="DiagnosisForm02" class="label-type01">답변유형</label>
+                              <select id="DiagnosisForm02" class="size-l">
+                                  <option value="">장문형</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="row form-row">
+                          <div class="form-group col s12">
+                              <input type="text" class="size-m" placeholder="장문형 텍스트" readonly>
+                          </div>
+                      </div>
+                      <div class="survey-foot">
+                          <div class="basic-form">
+                              <div class="control-group">
+                                  <div>
+                                      <span class="toggle-label">사용</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                                  <div>
+                                      <span class="toggle-label">필수</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                              </div>
+                              <ul class="btn-group">
+                                  <li><a href="#!"><span class="icon-trashcan"></span></a></li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- 객관식답변 - 체크박스 -->
+              <div class="survey-box">
+                  <button class="drag-handle"></button>
+                  <div class="survey-cont">
+                      <div class="row form-row">
+                          <div class="form-group col s12 l8">
+                              <label for="DiagnosisForm01" class="label-type01">설문제목</label>
+                              <div class="input-btn-form">
+                                  <input type="text" id="DiagnosisForm01" class="size-l"
+                                      placeholder="입력하세요">
+                                  <a href="#!"><span class="icon-clip"></span></a>
+                              </div>
+                          </div>
+                          <div class="form-group col s12 l3 offset-l1 diagnosis-sort">
+                              <label for="DiagnosisForm02" class="label-type01">답변유형</label>
+                              <select id="DiagnosisForm02" class="size-l">
+                                  <option value="">객관식</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="row form-row">
+                          <div class="input-btn-form form-group col s12">
+                              <div class="radio type02 size-s single">
+                                  <input type="checkbox" id="checkbox01">
+                                  <i class="icon-check"></i>
+                              </div>
+                              <input type="text" id="DiagnosisForm01" class="size-s"
+                                  placeholder="답변을 입력하세요">
+                              <a href="#!"><span class="icon-clip"></span></a>
+                              <a href="#!"><span class="icon-close"></span></a>
+                          </div>
+                          <div class="input-btn-form form-group col s12">
+                              <div class="radio type02 size-s single">
+                                  <input type="checkbox" id="checkbox01">
+                                  <i class="icon-check"></i>
+                              </div>
+                              <input type="text" id="DiagnosisForm01" class="size-s"
+                                  placeholder="답변을 입력하세요">
+                              <a href="#!"><span class="icon-clip"></span></a>
+                              <a href="#!"><span class="icon-close"></span></a>
+                          </div>
+                          <div class="input-btn-form form-group col s12">
+                              <div class="radio type02 size-s single">
+                                  <input type="checkbox" id="checkbox01">
+                                  <i class="icon-check"></i>
+                              </div>
+                              <input type="text" id="DiagnosisForm01" class="size-s"
+                                  placeholder="답변을 입력하세요">
+                              <a href="#!"><span class="icon-clip"></span></a>
+                              <a href="#!"><span class="icon-close"></span></a>
+                          </div>
+                          <div class="form-btn">
+                              <a href="#!" class="btn type01">답변 추가</a>
+                              <span>or</span>
+                              <a href="#!" class="btn type02">그외 기타 추가</a>
+                          </div>
+                      </div>
+                      <div class="survey-foot">
+                          <div class="basic-form">
+                              <div class="control-group">
+                                  <div>
+                                      <span class="toggle-label">사용</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                                  <div>
+                                      <span class="toggle-label">필수</span>
+                                      <label class="toggle-switch size-m">
+                                          <input type="checkbox" checked="">
+                                          <span class="slider round"></span>
+                                  </div>
+                              </div>
+                              <ul class="btn-group">
+                                  <li><a href="#!"><span class="icon-trashcan"></span></a></li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- 미선택 -->
+              <div class="survey-box">
+                  <button class="drag-handle"></button>
+                  <div class="survey-cont">
+                      <div class="row form-row">
+                          <div class="form-group col s12 l8">
+                              <label for="DiagnosisForm01" class="label-type01">설문제목</label>
+                              <div class="input-btn-form">
+                                  <input type="text" id="DiagnosisForm01" class="size-l"
+                                      placeholder="입력하세요">
+                                  <a href="#!"><span class="icon-clip"></span></a>
+                              </div>
+                          </div>
+                          <div class="form-group col s12 l3 offset-l1 diagnosis-sort">
+                              <label for="DiagnosisForm02" class="label-type01">답변유형</label>
+                              <select id="DiagnosisForm02" class="size-l">
+                                  <option value="">선택하세요</option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="btn-line center">
+                  <a href="#!" class="btn type01 add-survey"><i class="icon-edit-2"></i>질문추가</a>
+              </div>
+          </div>
+      </div>
+      <!-- //설문작성 -->
+  </div>
+  <div id="tab2" class="tab-content survey-result-wrap">
+      <div class="result-menu">
+          <p class="realtime-setting">
+              <span>실시간 결과반영</span>
+              <label class="toggle-switch size-m">
+                  <input type="checkbox" checked="">
+                  <span class="slider round bg-red"></span>
+              </label>
+          </p>
+          <p class="reply-num"><span class="num">38</span>개의 답변이 있습니다.</p>
+          <ul class="menu-tab">
+              <li><a href="#!" rel="menuTab1" class="active">설문통계</a></li>
+              <li><a href="#!" rel="menuTab2">설문개별</a></li>
+          </ul>
+      </div>
+      <section id="menuTab1" class="menu-tab-content survey-result">
+          <article class="survey-responders">
+              <p><span class="icon-users"></span>설문지 답변자</p>
+              <!-- 테이블 -->
+              <table class="table-type01">
+                  <caption>설문지 답변자 게시판 답변자 아이디, 답변자 명, 답변 일시 항목별 순서대로 안내하는 표입니다</caption>
+                  <colgroup>
+                      <col width="40%">
+                      <col width="25%">
+                      <col width="35%">
+                  </colgroup>
+                  <thead>
+                      <tr>
+                          <th scope="col">답변자 아이디</th>
+                          <th scope="col">답변자 명</th>
+                          <th scope="col">답변 일시</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td class="left">kmh218@gmail.com</td>
+                          <td class="left">김판근</td>
+                          <td class="left">2019.02.22 15:12:30</td>
+                      </tr>
+                      <tr>
+                          <td class="left">kmh218@gmail.com</td>
+                          <td class="left">김판근</td>
+                          <td class="left">2019.02.22 15:12:30</td>
+                      </tr>
+                      <tr>
+                          <td class="left">kmh218@gmail.com</td>
+                          <td class="left">김판근</td>
+                          <td class="left">2019.02.22 15:12:30</td>
+                      </tr>
+                      <tr>
+                          <td class="left">kmh218@gmail.com</td>
+                          <td class="left">김판근</td>
+                          <td class="left">2019.02.22 15:12:30</td>
+                      </tr>
+                      <tr>
+                          <td class="left">kmh218@gmail.com</td>
+                          <td class="left">김판근</td>
+                          <td class="left">2019.02.22 15:12:30</td>
+                      </tr>
+                  </tbody>
+              </table>
+              <!-- 페이징 -->
+              <div class="paginate">
+                  <a href="#" class="first" title="처음 페이지"><span
+                          class="icon-chevrons-left"></span></a>
+                  <a href="#" class="prev" title="이전 페이지"><span
+                          class="icon-chevron-left"></span></a>
+                  <span>
+                      <span class="present">1</span>/<span class="total">10</span>
+                  </span>
+                  <a href="#" class="next" title="다음페이지"><span
+                          class="icon-chevron-right"></span></a>
+                  <a href="#" class="last" title="마지막페이지"><span
+                          class="icon-chevrons-right"></span></a>
+              </div>
+          </article>
+          <article class="survey-list01">
+              <div class="survey-tit">
+                  <span class="num">설문1</span>
+                  <p>당신의 신분은 무엇입니까?</p>
+                  <span class="answer">38 답변</span>
+              </div>
+              <div class="survey-cont">
+                  <img src="/service/design/images/survey_img01.jpg" alt="">
+              </div>
+              <div class="progress-line">  
+                  <div class="progress-inner"> 
+                      <div class="progress-bar">                                                 
+                          <span class="inner col-bg01" style="width:89%;"></span>
+                      </div>
+                  </div>
+                  <span class="num col-txt01">89%</span>    
+              </div>
+          </article>
+          <article class="survey-list02">
+              <div class="survey-tit">
+                  <span class="num">설문2</span>
+                  <p>단답형 질문입니다.</p>
+                  <span class="answer">38 답변</span>
+              </div>
+              <div class="survey-cont">
+                  <ul class="short-answer-list">
+                      <li>주관식 답변입니다.</li>
+                      <li>주관식 답변입니다.</li>
+                      <li>주관식 답변입니다.</li>
+                      <li>주관식 답변입니다.</li>
+                      <li>주관식 답변입니다.</li>
+                  </ul>
+                  <!-- 페이징 -->
+                  <div class="paginate">
+                      <a href="#" class="first" title="처음 페이지"><span
+                              class="icon-chevrons-left"></span></a>
+                      <a href="#" class="prev" title="이전 페이지"><span
+                              class="icon-chevron-left"></span></a>
+                      <span>
+                          <span class="present">1</span>/<span class="total">10</span>
+                      </span>
+                      <a href="#" class="next" title="다음페이지"><span
+                              class="icon-chevron-right"></span></a>
+                      <a href="#" class="last" title="마지막페이지"><span
+                              class="icon-chevrons-right"></span></a>
+                  </div>
+              </div>
+          </article>
+          <article class="survey-list03">
+              <div class="survey-tit">
+                  <span class="num">설문3</span>
+                  <p>좋아하는 색을 투표해주세요</p>
+                  <span class="answer">38 답변</span>
+              </div>
+              <div class="survey-cont">
+                  <img src="/service/design/images/survey_img02.jpg" alt="">
+              </div>
+          </article>
+      </section>
+      <section id="menuTab2" class="menu-tab-content survey-answer">
+          <div class="user-info row form-row">
+              <div class="form-group col s12 xl6 col-inline">
+                  <select name="" id="" class="size-m">
+                      <option value="">김판근</option>
+                  </select>
+                  <a href="#!" class="btn type01 size-m center-icon"><span
+                          class="icon-printer"></span></a>
+                  <a href="#!" class="btn type01 size-m center-icon"><span
+                          class="icon-trash"></span></a>
+              </div>
+              <div class="form-group col s12 xl6 col-inline right">
+                  <input type="text" class="size-m" placeholder="아이디/이름 조회">
+                  <a href="#!" class="btn type01 size-m">조회</a>
+              </div>
+          </div>
+          <article class="survey-info">
+              <h3>대동대 설문지</h3>
+              <p>안녕하십니까. 대동대 입학처에서 학생들을 위해 다양한 포털 어플리케이션을 운영하고 있습니다.<br>학생분들에게 실질적인 도움이 될 수 있는
+                  어플리케이션을 구성하기 위해 아래와 같이 설문을 진행하오니 많은 참여부탁드립니다.</p>
+              <span class="info-required">* 필수항목</span>
+              <p class="date"><span class="icon-calendar"></span>2019-02-15 ~ 2019-02-20</p>
+              <p class="time"><span class="icon-realtime"></span>09:00:00 ~ 18:00:00</p>
+          </article>
+          <section class="survey-answer-list">
+              <article>
+                  <div class="survey-tit correct">
+                      <span class="num">설문1</span>
+                      <p class="tit required">당신의 신분은 무엇입니까?</p>
+                      <p class="description">예비입학자는 기타에 예비입학자로 입력해주세요.</p>
+                  </div>
+                  <div class="survey-cont">
+                      <ul>
+                          <li>
+                              <div class="radio size-m type02">
+                                  <input type="radio" name="radio" id="radio01">
+                                  <label for="radio01" class="correct">교수</label>
+                                  <i class="radio-icon"></i>
+                              </div>
+                              <div class="radio size-m type02">
+                                  <input type="radio" name="radio" id="radio02">
+                                  <label for="radio02">학생</label>
+                                  <i class="radio-icon"></i>
+                              </div>
+                              <div class="radio size-m type02">
+                                  <input type="radio" name="radio" id="radio03">
+                                  <label for="radio03">교직원</label>
+                                  <i class="radio-icon"></i>
+                              </div>
+                              <div class="radio size-m type02">
+                                  <input type="radio" name="radio" id="radio04">
+                                  <label for="radio04">기타 :</label>
+                                  <i class="radio-icon"></i>
+                              </div>
+                              <input type="text" class="size-m half-input" readonly>
+                          </li>
+                      </ul>
+                  </div>
+              </article>
+              <article>
+                  <div class="survey-tit wrong">
+                      <span class="num">설문2</span>
+                      <p class="tit">주관식 질문입니다.</p>
+                      <p class="description">주관적인 부분을 입력해주세요.</p>
+                  </div>
+                  <div class="survey-cont">
+                      <input type="text" class="size-l half-input" placeholder="입력하세요">
+                  </div>
+              </article>
+              <article>
+                  <div class="survey-tit">
+                      <span class="num">설문3</span>
+                      <p class="tit required">좋아하는 색을 투표해주세요.</p>
+                      <p class="description">중복투표가능</p>
+                  </div>
+                  <div class="survey-cont">
+                      <li>
+                          <div class="checkbox size-m type02">
+                              <input type="checkbox" name="checkbox" id="checkbox01">
+                              <label for="checkbox01">빨간색</label>
+                              <i class="icon-check"></i>
+                          </div>
+                          <div class="checkbox size-m type02">
+                              <input type="checkbox" name="checkbox" id="checkbox02">
+                              <label for="checkbox02">노랑색</label>
+                              <i class="icon-check"></i>
+                          </div>
+                          <div class="checkbox size-m type02">
+                              <input type="checkbox" name="checkbox" id="checkbox03">
+                              <label for="checkbox03">파란색</label>
+                              <i class="icon-check"></i>
+                          </div>
+                          <div class="checkbox size-m type02">
+                              <input type="checkbox" name="checkbox" id="checkbox04">
+                              <label for="checkbox04">연두색</label>
+                              <i class="icon-check"></i>
+                          </div>
+                          <div class="checkbox size-m type02">
+                              <input type="checkbox" name="checkbox" id="checkbox05">
+                              <label for="checkbox05">기타 핑크색</label>
+                              <i class="icon-check"></i>
+                          </div>
+                      </li>
+                      </ul>
+                  </div>
+              </article>
+          </section>
+          <div class="btn-line">
+              <a href="#!" class="btn type02 size-l bg-sky">설문 제출</a>
+              <a href="#!" class="btn type02 size-l bg-gray">돌아가기</a>
+          </div>
+      </section>
+  </div>
+</div>
+</div>
+

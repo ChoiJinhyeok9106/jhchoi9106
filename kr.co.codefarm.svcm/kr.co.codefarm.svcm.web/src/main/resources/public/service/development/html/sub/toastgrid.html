@@ -1,0 +1,367 @@
+<!-- CSS File -->
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<!-- JS File -->
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script src="/assets/js/cf_component/SingleFileSet.js"></script>
+
+<h2 id="top">그리드</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<div class="form-group row form-row">
+			<ul class="list-type02">
+				<li style="margin-top: 10px;"><a href="https://ui.toast.com/tui-grid/" class="btn type01 size-s c-blue" style="border: 0px" target="_blank">https://ui.toast.com/tui-grid//</a></li>
+			</ul>
+		</div>
+		
+		<div class="box-type03" v-if="mode == 'list'">
+<!-- 	        <div class="row form-row"> -->
+<!-- 	            <div class="form-group col s12 xl6"> -->
+<!-- 	                <label for="frdt" class="label-type01 required">마일리지 처리 일자</label> -->
+<!-- 	                <div class="row form-row"> -->
+<!-- 	                    <div class="form-group col s12 l6"> -->
+<!-- 	                        <div class="date-form-wrap"> -->
+<!-- 	                        <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> -->
+<!-- 							<date-picker :value="pFrdt" @input="function(value){ pFrdt = value }" :invalid="errors.has('pFrdt')"></date-picker> -->
+<!-- 							<input type="hidden" id="pFrdt" name="pFrdt" v-model="pFrdt" data-vv-as="마일리지 처리 시작일자 " v-validate="'required'"> -->
+<!-- 							<invalid-message :visible="true" :name="'pFrdt'" :verror="errors"/> -->
+<!-- 							</div> -->
+<!-- 	                    </div> -->
+<!-- 	                    <div class="form-group col s12 l6"> -->
+<!-- 	                    <div class="date-form-wrap"> -->
+<!-- 	                        <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a> -->
+<!-- 							<date-picker :value="pTodt" @input="function(value){ pTodt = value }" :invalid="errors.has('pTodt')"></date-picker> -->
+<!-- 							<input type="hidden" id="pTodt" name="pTodt" v-model="pTodt" data-vv-as="마일리지 처리 종료일자 " v-validate="'required'"> -->
+<!-- 							<invalid-message :visible="true" :name="'pTodt'" :verror="errors"/> -->
+<!-- 							</div> -->
+<!-- 	                    </div> -->
+<!-- 	                </div> -->
+<!-- 	            </div> -->
+<!-- 	            <div class="form-group col s12 l6 xl3"> -->
+<!-- 	                <label for="pMileageStatusGb" class="label-type01">마일리지 상태 구분</label> -->
+<!-- 	                <select class="size-m" id="pMileageStatusGb" name="pMileageStatusGb"> -->
+<!-- 			            <option v-for="(item, index) in milCommcode.getCommcode('MIL', 'MILEAGE_STATUS_GB', 'all', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option> -->
+<!-- 			        </select> -->
+<!-- 	            </div> -->
+<!-- 	            <div class="form-group col s12 l6 xl3"> -->
+<!-- 	                <label for="pSummYn" class="label-type01">소계 포함 여부</label> -->
+<!-- 	                <select class="size-m" id="pSummYn" name="pSummYn"> -->
+<!-- 			            <option value="Y">소계 포함</option> -->
+<!-- 			            <option value="N" selected>소계 미포함</option> -->
+<!-- 			        </select> -->
+<!-- 	            </div> -->
+<!-- 	        </div> -->
+<!-- 	        <div class="row form-row"> -->
+<!-- 	            <div class="form-group col s12 l6 xl2"> -->
+<!-- 	                <label for="pMileageGroupCd" class="label-type01">마일리지 그룹</label> -->
+<!-- 	                <select class="size-m" id="pMileageGroupCd" name="pMileageGroupCd" @change="setMileageList()"> -->
+<!-- 			            <option value="">- 전체 -</option> -->
+<!-- 			            <option v-for="(item, index) in mileageGroupList.data" :value="item.MILEAGE_GROUP_CD">{{item.MILEAGE_GROUP_NM}}</option> -->
+<!-- 			        </select> -->
+<!-- 	            </div> -->
+<!-- 	            <div class="form-group col s12 l6 xl4"> -->
+<!-- 	                <label for="pMileageCd" class="label-type01">마일리지 명</label> -->
+<!-- 	                <select class="size-m" id="pMileageCd" name="pMileageCd"> -->
+<!-- 	                    <option value="">- 전체 -</option> -->
+<!-- 			            <option v-for="(item, index) in mileageGijunList.data" :value="item.MILEAGE_CD">{{item.MILEAGE_NM}}</option> -->
+<!-- 			        </select> -->
+<!-- 	            </div> -->
+<!-- 	            <div class="form-group col s12 l6 xl2"> -->
+<!-- 	                <label for="pGoodsCategoryGb" class="label-type01">상품 카테고리 구분</label> -->
+<!-- 	                <select class="size-m" id="pGoodsCategoryGb" name="pGoodsCategoryGb"> -->
+<!-- 			            <option v-for="(item, index) in milCommcode.getCommcode('MIL', 'GOODS_CATEGORY_GB', 'all', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option> -->
+<!-- 			        </select> -->
+<!-- 	            </div> -->
+<!-- 	            <div class="form-group col s12 l6 xl4"> -->
+<!-- 	                <label for="pGoodsNm" class="label-type01">상품 명</label> -->
+<!-- 	                <input type="text" id="pGoodsNm" name="pGoodsNm" class="size-m" @keyup.13="search()"> -->
+<!-- 	            </div> -->
+<!-- 	        </div> -->
+<!-- 	        <div class="row form-row"> -->
+<!-- 	            학과 -->
+<!-- 	            <div class="form-group col s12 l3"> -->
+<!-- 	                <label for="pHakgwaCd" class="label-type01">학과</label> -->
+<!-- 		            <select class="size-m" id="pHakgwaCd" name="pHakgwaCd"> -->
+<!-- 		            	<option value="">- 전체 -</option> -->
+<!-- 		            	<option v-for="(item, index) in hakgwaList.data" :value="item.DEPT_CD">{{item.DEPT_NM}}</option> -->
+<!-- 					</select> -->
+<!-- 	            </div> -->
+<!-- 	            학년 -->
+<!-- 	            <div class="form-group col s12 l3"> -->
+<!-- 	                <label for="pHaknyeon" class="label-type01">학년</label> -->
+<!-- 	                <select class="size-m" id="pHaknyeon" name="pHaknyeon"> -->
+<!-- 			            <option v-for="(item, index) in bouCommcode.getCommcode('BOU', 'HAKNYEON', 'all', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option> -->
+<!-- 			        </select> -->
+<!-- 	            </div> -->
+<!-- 	            학번 -->
+<!-- 	            <div class="form-group col s12 l3"> -->
+<!-- 	                <label for="pAnswerIdd" class="label-type01">학번</label> -->
+<!-- 	                <input type="text" id="pAnswerId" name="pAnswerId" class="size-m" @keyup.13="search()"> -->
+<!-- 	            </div> -->
+<!-- 	            성명 -->
+<!-- 	            <div class="form-group col s12 l3"> -->
+<!-- 	                <label for="pUserNm" class="label-type01">성명</label> -->
+<!-- 	                <input type="text" id="pUserNm" name="pUserNm" class="size-m" @keyup.13="search()"> -->
+<!-- 	            </div> -->
+<!-- 	        </div> -->
+	    </div>
+
+    <div class="row form-row" v-if="mode == 'list'">                           
+        <div class="form-group col s12 l5">
+            <span class="board-info-txt size-m">총 <span>{{ mainList.getRowCount() > 0 ? mainList.getColumn(0, 'CNT') : 0 }}</span>건의 마일리지 내역이 있습니다. 
+            (<span>{{ mainList.getRowCount() > 0 ? mainListPaging.currentPage : 0 }}</span> / {{ mainListPaging.getTotalPage() }})</span>
+        </div>     
+        <div class="form-group col s12 l7 col-inline right"> 
+	        <a href="#!" class="btn type01 size-m" @click="search()">검색</a>
+        </div>
+    </div>
+		
+	<div id="grid"></div>
+	</section>
+</section>
+
+<script type="text/javascript">/*******************************************************************************************************************************************************************
+* vue start
+********************************************************************************************************************************************************************/
+	// var CustomBtnRenderer = function(props){
+//  	//<a href="#!" class="btn type01 size-xs bg-sky">취소</a>
+// 	const el = document.createElement('a');
+// 	const rowKey = props.rowKey;
+// 	const columnInfo = props.columnInfo;
+// 	var btnName = props.columnInfo.renderer.options.btnName;
+// 	var deptNm = vm.mileageMasterList.getColumn(rowKey, 'DEPT_NM');
+// 	const summYn = vm.mileageMasterList.getColumn(rowKey, 'SUMM_YN');
+// 	const mileageStatusGb = vm.mileageMasterList.getColumn(rowKey, 'MILEAGE_STATUS_GB');
+	
+	
+// 	if(summYn != '1' && (mileageStatusGb == '01')){
+// 		el.appendChild(document.createTextNode(btnName));
+// 		el.href = '#!';
+// 		el.setAttribute("class", "btn type01 size-xs bg-red");
+// 		el.addEventListener('click', function() {
+// 	    	vm.gridCellBtnClick(rowKey, columnInfo);
+// 	    });
+			
+// 		this.el = el;
+// 		this.render(props);
+// 	}else{
+// 		const tempEl = document.createElement('input');
+// 		tempEl.type = 'hidden';
+// 		this.el = tempEl;
+// 	}	
+// }
+
+// CustomBtnRenderer.prototype.getElement = function(){
+// 	return this.el;
+// }
+
+// CustomBtnRenderer.prototype.render = function(props){
+	
+// }
+
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		mode : 'list', /* 화면 모드 list : 리스트, excel : 엑셀 업로드 */
+		mainList: new Dataset(),
+		mainListPaging: new PagingSet(10, 5),
+		grid : ''
+    },
+	//데이터 감시
+	watch: {
+		'mainList.data': {
+			handler: function(val, oldVal) {
+				if(this.mainList.enableevent) {
+					var vm = this;
+					val.filter(function(data, rowposition) {
+						return Object.keys(data).some(function(colNm) {
+							var diff = data[colNm] !== vm.mainList.beforeData[rowposition][colNm];
+							if(diff) {
+								vm.mainList.beforeData[rowposition][colNm] = data[colNm];
+							}
+						});
+					});
+				}
+			},
+			deep: true
+		},
+		'mainListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.mainList.pageChange(val, this.mainListPaging.getRowCnt());
+			}
+		}
+
+	},
+    //마운트 된 시점수행
+    mounted: function(){
+		var self = this;
+
+		self.setMainList();
+    },
+    //함수
+    methods: {
+		gridInit : function() {
+			var self = this;
+
+			class CustomSliderRenderer {
+				constructor(props) {
+					const el = document.createElement('div');
+
+					this.el = el;
+					this.render(props);
+				}
+
+				getElement() {
+					return this.el;
+				}
+
+				getValue() {
+					return this.el.value;
+				}
+
+				render(props) {
+					if(props.value > 0){
+						this.el.innerHTML = "<input type=\"button\" id=\"download\" value=\"다운로드\" class=\"btn\">"
+					} else {
+						this.el.innerHTML = "<span> 없어시댕 </span>";
+					}
+				}
+			}
+
+			self.grid = new tui.Grid({
+				el: document.getElementById('grid'),
+				scrollX: true,
+				bodyHeight: 300,
+				data: self.mainList.data,
+				rowHeaders: ['rowNum'],
+				//selectionUnit: 'row',
+				columns: [
+					{
+						header: 'POST_NO',
+						name: 'POST_NO',
+						sortingType: 'asc',
+						minWidth: 250,
+						whiteSpace: 'normal',
+						sortable: true,
+					},
+					{
+						header: 'BOARD_SEQ',
+						name: 'BOARD_SEQ',
+						align: 'center',
+						//className: 'clickable',
+						sortingType: 'asc',
+						minWidth: 80,
+						whiteSpace: 'normal',
+						sortable: true,
+						rowSpan: true
+					},
+					{
+						header: 'TITLE',
+						name: 'TITLE',
+						align: 'center',
+					},
+					{
+						header: 'FILE_NO',
+						name: 'FILE_NO',
+						align: 'center',
+						renderer: {
+							type: CustomSliderRenderer
+						}
+					},
+				],
+				summary: {
+					height: 100,
+				}
+			});
+			self.grid.setSummaryColumnContent('POST_NO', {
+				template(summary) {
+					return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
+				}
+			});
+
+			self.grid.on('click', ev => {
+				var target = ev.nativeEvent.target;
+
+				console.log('click: ' + target);
+				if(target == document.getElementById('download')) {
+					console.log(ev.rowKey);
+					console.log('클릭성공');
+					var fileset = new SingleFileSet();
+					var pFileId = 'ADD_BOARD';
+					var pFileKey = self.mainList.data[ev.rowKey].BOARD_SEQ + '#' + self.mainList.data[ev.rowKey].POST_NO;
+					var pFileHangmok = 'attach';
+					var pFileNo = 1;
+					var pFilename = 'Apple-logo.png';
+					var pFilePath = '/ADD/ADD_BOARD/attach/c29edd88-2272-4c37-b1ec-df5a19b768ab.png';
+
+					fileset.download(pFileId, pFileKey, pFileHangmok, pFileNo, pFilename, pFilePath);
+				} else {
+					console.log(ev);
+					console.log('fail');
+				}
+
+			});
+		},
+    	setMainList: function() {
+			var self = this;
+
+			var pBoardSeq = "5";
+			var pBoardGb = "04";
+			var pSearchType = "";
+			var pSearchArgv = "";
+			var pageNo = "1";
+			var rowCount = "8";
+
+			var returnVal = boardApi.boardPost(pBoardSeq, pBoardGb, pSearchType, pSearchArgv, pageNo, rowCount, '', true);
+			self.mainListPaging.currentPage = 1;
+
+			returnVal.then(function(response) {
+				self.mainList.setRawData(response.data, self.mainListPaging.getRowCnt());
+				self.gridInit();
+				if(response.data.length > 0){
+					self.mainListPaging.setTotalCnt(response.data.length);
+				}else{
+					self.mainListPaging.setTotalCnt(0);
+				}
+			}).catch(function(error) {
+				console.error('error:', error);
+			});
+		},
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * tui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * tui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+// 	editor('codeEditor1', 350);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

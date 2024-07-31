@@ -1,0 +1,320 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/user.css" />
+
+<h2>장기 가입승인 대기</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!userList.currentRow">
+		<h2 class="h2">장기 가입승인 대기</h2>
+		<div class="box-type03 form-group">
+			<div class="row form-row col s12 m12 l12">
+				<div class="form-group col s12 m2 l2">
+					<label class="label-type01 size-m">기준 날짜</label>
+	        	</div>
+				<div class="form-group col s12 m2 l2">
+					<div class="date-form-wrap">
+						<date-picker :value="pSearchDate" @input="function(value){ pSearchDate = value }" :invalid="errors.has('fromDate')"></date-picker>
+						<input type="hidden" name="fromDate" data-vv-as="이전 " v-model="pSearchDate" v-validate="'required'">
+			            <invalid-message :visible="true" :name="'fromDate'" :verror="errors"></invalid-message>
+		            </div>
+	        	</div>
+        	</div>
+	    </div>
+	    <div class="btn-line right">
+        	<input type="button" value="검색" class="btn type01 size-m" @click="setUserList">
+    	</div>
+		<div class="col s12 l12">
+			<span class="board-info-txt size-m">총 <span>{{userListPaging.totalCnt}}</span>건의 대기자가 있습니다. (<span v-if="userListPaging.getTotalPage() != 0">{{userListPaging.getCurrentPage()}}</span><span v-else>0</span> / {{userListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="userListLoading">
+					<colgroup>
+						<col width="40%" /> <!-- 소속 -->
+						<col width="20%" /> <!-- 사용자 명 -->
+						<col width="10%" /> <!-- 생년월일 -->
+						<col width="20%" /> <!-- 생년월일 -->
+						<col width="10%" /> <!-- 사용 여부 -->
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">소속</th>
+							<th scope="col">사용자 명</th>
+							<th scope="col">상태</th>
+							<th scope="col">가입신청일</th>
+							<th scope="col">정지</th>
+						</tr>
+					</thead>
+					<tbody v-if="userList.getRowCount() > 0">
+						<tr style="cursor:pointer;" v-for="(item, index) in userList.data">
+							<td data-header="소속" @click="rowClick(index)">{{item.DEPT_NM}}</td>
+							<td data-header="사용자 명" @click="rowClick(index)">{{item.USER_NM}} ({{item.USER_ID}})</td>
+							<td data-header="상태" @click="rowClick(index)">{{item.USER_STATUS_GBNM}}</td>
+							<td data-header="가입신청일" @click="rowClick(index)">{{item.INSERT_DTTM | dateFormatter }}</td>
+							<td data-header="정지"><input type="button" class="btn type02 size-m" value="정지" @click="messageModal.openModal('confirm','회원 정지',userList.currentRow.USER_NM + '님을 계정사용을 정지하시겠습니까?','middle','stop',userList.currentRow)"></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="userListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+	<section class="cont_box" v-if="userList.currentRow">
+		<h3 class="h2">회원 정보</h3>
+		<div class="style_set box-type01">
+			<div class="row form-row">
+				<div class="form-group col s12 m6 l6 xl6">
+		            <label class="label-type01" for="userId">사용자 아이디</label>
+		            <input class="size-m" type="text" :value="userList.currentRow.USER_ID" disabled/>
+		        </div> 
+		    	<div class="form-group col s12 m6 l6 xl6">
+		            <label class="label-type01" for="userId">사용자 명</label>
+		            <input class="size-m" type="text" :value="userList.currentRow.USER_NM" disabled/>
+		        </div> 
+		    </div>
+			<div class="row form-row">
+		    	<div class="form-group col s12 m6 l6 xl6">
+		    		<label class="label-type01" for="genderGb">성별 구분</label>
+		    		<select class="size-m" id="genderGb" name="genderGb" :value="userList.currentRow.GENDER_GB" disabled>
+		    			<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'GENDER_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+					</select>
+		    	</div>
+		        <div class="form-group col s12 m6 l6 xl6">
+	            	<label class="label-type01">회원 구분</label>
+	            	<select name="userStatusGb" class="size-m" id="userStatusGb" v-model="userList.currentRow.USER_STATUS_GB" disabled>
+		                <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'USER_STATUS_GB', 'select', 'CD_NM', 'N', 'all'), function(e){return e.CD1 == userList.currentRow.USER_GROUP_GB || e.CD == '';})" :value="item.CD">{{item.CD_NM}}</option>
+		            </select>
+		        </div>
+			</div>
+			<div class="row form-row">
+		        <div class="form-group col s12 m6 l6 xl6">
+		            <label class="label-type01" for="hpNo">휴대폰 번호</label>
+		            <input class="size-m" type="text" id="hpNo"  name="hpNo" :value="userList.currentRow.HP_NO" disabled/>
+		        </div> 
+		    	<div class="form-group col s12 m6 l6 xl6">
+		            <label class="label-type01" for="telNo">전화 번호</label>
+		            <input class="size-m" type="text" id="telNo"  name="telNo" :value="userList.currentRow.TEL_NO" disabled/>
+		        </div>
+			</div>
+			<div class="row form-row">
+				<div class="form-group col s12 m4 l4 xl4">
+		            <label class="label-type01" for="defaultAuthCd">신분 권한</label>
+		            <input class="size-m" type="text" id="defaultAuthCd"  name="defaultAuthCd" :value="authCodeSet.getCustomcodeNm('AUTH_CD',userList.currentRow.DEFAULT_AUTH_CD,'AUTH_NM')" disabled="disabled"/>
+		        </div> 
+		        <div class="form-group col s12 m8 l8 xl8">
+		            <label class="label-type01">소속 명</label>
+		            <input class="size-m" type="text" :value="userList.currentRow.DEPT_NM" disabled/>
+		        </div>
+		    </div>
+		</div>
+		<div class="btn-line right">
+			<input type="button" class="btn type01 size-m" value="목록" @click="userList.selectRow(-1)">
+			<input type="button" class="btn type02 size-m" value="반려" @click="messageModal.openModal('confirm','회원가입 반려',userList.currentRow.USER_NM + '님의 계정사용을 반려하시겠습니까?','middle','reject',userList.currentRow)">
+			<input type="button" class="btn type02 size-m" value="정지" @click="messageModal.openModal('confirm','회원 정지',userList.currentRow.USER_NM + '님을 계정사용을 정지하시겠습니까?','middle','stop',userList.currentRow)">
+			<input type="button" class="btn type02 size-m" value="가입 승인" @click="messageModal.openModal('confirm','회원가입 승인',userList.currentRow.USER_NM + '님의 회원가입을 승인하시겠습니까?','middle','admission',userList.currentRow)">
+        </div>
+	</section>
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		userList: new Dataset(),
+		userListPaging: new PagingSet(10, 10),
+		componentKey: 0,
+		errorBag: { 
+			name: '', 
+		},
+	    pSearchDate: moment().format('YYYYMMDD'),
+	    userListLoading: {id:'userListLoading', val:false},
+		fileSet: new SingleFileSet('SMN'),
+	    authCodeSet: new CustomcodeSet('/system-manager/auth',{pUseYn:'Y',pAuthGb:'02'}),
+        messageModal: new ModalSet('common-msg-modal'),	// confirm 모달
+	},
+	//데이터 감시
+	watch: {
+		'userList.data': {
+			handler: function(val, oldVal) {
+				if(this.userList.enableevent) {
+					var vm = this;
+					val.filter(function(data, rowposition) {
+						return Object.keys(data).some(function(colNm) {
+							var diff = data[colNm] !== vm.userList.beforeData[rowposition][colNm];
+							if(diff) {
+								vm.userList.beforeData[rowposition][colNm] = data[colNm];
+							}
+						});
+					});
+				}
+			},
+			deep: true
+		},
+		'userListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.userList.pageChange(val, this.userListPaging.getRowCnt());
+			}
+		},
+	    'pUserGroupGb': {
+	    	handler: function (val, oldVal) {
+    			this.pUserStatusGb = '';
+			}
+	    },
+	    'userListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userListLoading.id), val);
+			}
+	    }
+	},
+	filters: {
+		dateFormatter: function (value) {
+			if (!value) return '';
+			return moment(value).format('YYYY-MM-DD');
+		},
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setUserList();
+	},
+	//함수
+	methods: {
+		/* 사용자 리스트 조회 */
+		setUserList: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					self.userListLoading.val = true;
+					var param = {
+						pSearchDate: self.pSearchDate,
+					}
+					
+					var returnVal = userApi.userSign(param, false);
+					self.userListPaging.currentPage = 1;
+					
+					returnVal.then(function(response) {
+						self.userList.setRawData(response.data, self.userListPaging.getRowCnt());
+						if(response.data.length > 0){
+							self.userListPaging.setTotalCnt(response.data.length);
+						}else{
+							self.userListPaging.setTotalCnt(0);
+						}
+						vm.$forceUpdate();
+					}).finally(function(){
+						self.userListLoading.val = false;
+					});
+				}
+			});
+		},
+		updateUser: function(pData){
+			var self = this;
+
+			var params = pData;
+			var returnVal;
+			if(pData.DEFAULT_AUTH_CD == 'S0002'){
+				returnVal = userApi.userOrgSignAdmission(params);
+			}
+			else{
+				returnVal = userApi.userSignAdmission(params);
+			}
+			returnVal.then(function(response) {
+				if(response.data > 0){
+					notifySubmit('success', '회원가입 승인', '회원가입 승인에 성공하였습니다.', 'icon-save');
+					self.setUserList();                                                                      
+				}
+				else{
+					notifySubmit('warning', '회원가입 승인', '회원가입 승인에 실패하였습니다.', 'icon-caution');
+				}
+			}).finally(function(){
+				self.userListLoading.val = false;
+			});	
+		},
+		rejectUser: function(pData){
+			var self = this;
+			var params = pData;
+			if(pData.DEFAULT_AUTH_CD == 'S0002'){
+				var returnVal = userApi.rejectOrgUser(params);
+				returnVal.then(function(response) {
+					if(response.data > 0){
+						notifySubmit('success', '회원가입 승인', '회원가입이 반려되었습니다.', 'icon-save');
+						self.userList.selectRow(-1);
+						self.setUserList();						                                                                                                            
+					}
+					else{
+						notifySubmit('warning', '회원가입 승인', '회원가입 반려에 실패했습니다.', 'icon-caution');
+					}
+				}).finally(function(){
+					self.userListLoading.val = false;
+				});	
+			}
+		},
+		stopUser: function(pData){
+			var self = this;
+			var params = pData;
+			if(pData.DEFAULT_AUTH_CD == 'S0002'){
+				var returnVal = userApi.stopOrgUser(params);
+				returnVal.then(function(response) {
+					if(response.data > 0){
+						notifySubmit('success', '회원가입 승인', '회원가입이 반려되었습니다.', 'icon-save');
+						self.userList.selectRow(-1);
+						self.setUserList();						                                                                                                            
+					}
+					else{
+						notifySubmit('warning', '회원가입 승인', '회원가입 반려에 실패했습니다.', 'icon-caution');
+					}
+				}).finally(function(){
+					self.userListLoading.val = false;
+				});	
+			}
+		},
+		rowClick: function(rowposition){
+			var self = this;
+			self.userList.selectRow(rowposition);
+			self.fileSet.getFiles('SMN_USER',self.userList.currentRow.USER_ID,'file');
+		},
+		downloadFile: function(){
+			var self = this;
+			self.fileSet.download('SMN_USER',self.userList.currentRow.USER_ID,'file','1',self.fileSet.fileList[0].FILE_PATH.split('\\').pop(),self.fileSet.fileList[0].FILE_PATH);
+		},
+        messagePopupCallback: function(pGb, pId, pData) {	
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    	case 'admission' :
+	    		this.updateUser(pData);
+	    		break;
+	    	case 'reject' :
+	    		this.rejectUser(pData);
+	    		break;
+	    	case 'stop' :
+	    		this.stoptUser(pData);
+	    		break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	$('.pro-photo img').on('error', function() {$(this).attr('src', '/service/design/images/mypage/noimage.png');});
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

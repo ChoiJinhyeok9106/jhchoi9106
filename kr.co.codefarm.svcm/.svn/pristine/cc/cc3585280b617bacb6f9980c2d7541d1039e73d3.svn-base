@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.log">
+
+    <!-- 로그 목록 조회 -->
+    <select id="getLogList"  parameterType="hashMap" resultType="hashMap">
+    	SELECT A.USER_ID
+			 , A.ALARM_SEQ
+			 , A.LOG_LIST_SEQ
+			 , A.TITLE
+			 , A.TEXT
+			 , A.LOG_DT
+			 , A.LOG_DTTM
+			 , A.INSERT_IP
+			 , A.ALARM_GB
+			 , A.ALARM_DETAIL_GB
+			 , A.LOG_METHOD_GB
+			 , V.USER_NM
+             <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.RNUM
+             , A.CNT
+             </if>
+    	  FROM (
+		        SELECT A.USER_ID
+					 , A.ALARM_SEQ
+					 , A.LOG_LIST_SEQ
+					 , A.TITLE
+					 , A.TEXT
+					 , DATE_FORMAT(A.LOG_DTTM, '%Y-%m-%d') AS LOG_DT
+					 , DATE_FORMAT(A.LOG_DTTM, '%Y-%m-%d %H:%i:%s') AS LOG_DTTM
+					 , A.INSERT_IP
+					 , B.ALARM_GB
+					 , B.ALARM_DETAIL_GB
+					 , CASE WHEN C.METHOD_GB = 'GET' THEN '01'
+					        WHEN C.METHOD_GB = 'POST' THEN '02'
+					        WHEN C.METHOD_GB = 'PUT' OR C.METHOD_GB = 'PATCH' THEN '03'
+					        WHEN C.METHOD_GB = 'DELETE' THEN '04'
+					        ELSE ''
+					        END LOG_METHOD_GB
+		             <if test="pPageNo != null and pPageNo != ''.toString()">
+		             , ROW_NUMBER() OVER(ORDER BY A.LOG_DTTM DESC) AS RNUM
+		             , COUNT(*) OVER() AS CNT
+		             </if>
+				  FROM SMN_LOG A 				
+				  LEFT OUTER JOIN SMN_ALARM B
+				    ON A.ALARM_SEQ	= B.ALARM_SEQ
+				  LEFT OUTER JOIN SMN_REST_API C
+					ON B.API_SEQ	= C.API_SEQ
+				 WHERE A.USER_ID != 'codefarm@codefarm.co.kr'
+				   AND B.ALARM_GB 	= '02' <!-- 알림 구분: 로그 -->
+				 <if test="pSearchType == 1">AND A.TITLE	LIKE CONCAT('%' , #{pSearchArgv} , '%')</if>
+				 <if test="pSearchType == 2">AND A.TEXT 	LIKE CONCAT('%' , #{pSearchArgv} , '%')</if>
+				 <if test="pSearchType == 3">AND A.USER_ID = #{pSearchArgv}</if>
+				 <if test="pMethodGb == '01'">AND C.METHOD_GB = 'GET'</if>
+				 <if test="pMethodGb == '02'">AND C.METHOD_GB = 'POST'</if>
+				 <if test="pMethodGb == '03'">AND C.METHOD_GB IN ('PUT', 'PATCH')</if>
+				 <if test="pMethodGb == '04'">AND C.METHOD_GB = 'DELETE'</if>
+		         <if test="pAlarmDetailGb != null and pAlarmDetailGb != ''.toString()">AND B.ALARM_DETAIL_GB = #{pAlarmDetailGb}</if>
+		         <if test="pLogFrDt != null and pLogFrDt != ''.toString() and pLogToDt != null and pLogToDt != ''.toString()">AND DATE_FORMAT(A.LOG_DTTM, '%Y%m%d') BETWEEN #{pLogFrDt} AND #{pLogToDt}</if>
+        	   ) A	
+          LEFT JOIN SMN_USER_V V
+		    ON A.USER_ID	= V.USER_ID
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+	       AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+	     ORDER BY A.RNUM
+	     </if>
+	     <if test="pPageNo == null or pPageNo eq ''.toString()">
+	     ORDER BY A.LOG_DTTM DESC
+	     </if>
+    </select>
+    
+     <!-- 로그 통계 조회 -->
+    <select id="getLogTonggye"  parameterType="hashMap" resultType="hashMap">
+    	SELECT A.CNT
+			 , A.USER_ID
+			 , V.USER_NM
+			 <if test="pLogTonggyeGb == '02'.toString()">
+			 	, V.DEPT_NM
+			    , (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'01')
+				   ) AS JAN_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'02')
+				   ) AS FEB_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'03')
+				   ) AS MAR_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT( LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'04')
+				   ) AS APR_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'05')
+				   ) AS MAY_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'06')
+				      AND USER_ID = A.USER_ID
+				   ) AS JUN_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'07')
+				   ) AS JUL_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'08')
+				   ) AS AUG_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT( LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'09')
+				   ) AS SEP_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'10')
+				   ) AS OCT_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT(LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'11')
+				   ) AS NOV_CNT
+				, (SELECT COUNT(*) AS CNT
+				     FROM SMN_LOG
+				    WHERE USER_ID = A.USER_ID
+				      AND DATE_FORMAT (LOG_DTTM,'%Y%m') = CONCAT(IFNULL(#{pYear},''),'12')
+				   ) AS DEC_CNT 
+			 </if>
+		  FROM (
+				SELECT A.CNT
+					 , A.USER_ID
+					 , ROW_NUMBER() OVER(ORDER BY A.CNT DESC) AS RNUM
+				  FROM (
+						SELECT COUNT(*) AS CNT
+							 , A.USER_ID
+						  FROM SMN_LOG A 
+						 WHERE 1=1
+		   				   AND A.USER_ID != 'codefarm@codefarm.co.kr'
+		   				   AND A.USER_ID != ''
+ 				   		 <if test="pYear != null and pYear != ''.toString()">AND DATE_FORMAT(A.LOG_DTTM, '%Y') = #{pYear}</if>
+						 <if test="pLogFrDt != null and pLogFrDt != ''.toString() and pLogToDt != null and pLogToDt != ''.toString()">AND DATE_FORMAT(A.LOG_DTTM, '%Y%m%d') BETWEEN #{pLogFrDt} AND #{pLogToDt}</if>
+						 GROUP BY A.USER_ID
+					   ) A
+			   ) A
+	      LEFT JOIN SMN_USER_V V
+			ON A.USER_ID = V.USER_ID
+		 WHERE 1=1
+		 <if test="pCd1 != null and pCd1 != ''.toString()">
+		   AND A.RNUM BETWEEN 1 AND #{pCd1}
+		 </if>
+		 <if test="pCd1 == null or pCd1 == ''.toString()">
+		   AND A.RNUM BETWEEN 1 AND 5
+		 </if>
+		 ORDER BY A.RNUM
+    </select>
+
+	<select id="getUsersLogList" parameterType="hashMap" resultType="hashMap">
+		<if test="tonggyeGb.equals('MONTH')">
+			SELECT '1월' AS MM_NM
+			     , '01' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL1.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL1.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT     
+			     , COALESCE(SUM(TBL1.CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL1.CNT), 0) != 0 AND COALESCE(MAX(TBL1.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL1.CNT), 0) - COALESCE(MAX(TBL1.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL1.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = #{haknyeondo}
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo} - 1
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '01'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL1
+			 UNION ALL
+			SELECT '2월' AS MM_NM
+			     , '02' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL2.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL2.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL2.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL2.CNT), 0) != 0 AND COALESCE(MAX(TBL2.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL2.CNT), 0) - COALESCE(MAX(TBL2.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL2.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(INSERT_DTTM,'%m') = '01'
+			               AND DATE_FORMAT(INSERT_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(INSERT_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(INSERT_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '02'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '02'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL2
+			 UNION ALL
+			SELECT '3월' AS MM_NM
+			     , '03' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL3.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL3.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL3.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL3.CNT), 0) != 0 AND COALESCE(MAX(TBL3.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL3.CNT), 0) - COALESCE(MAX(TBL3.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL3.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '02'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '03'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '03'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL3
+			 UNION ALL
+			SELECT '4월' AS MM_NM
+			     , '04' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL4.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL4.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL4.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL4.CNT), 0) != 0 AND COALESCE(MAX(TBL4.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL4.CNT), 0) - COALESCE(MAX(TBL4.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL4.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '03'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '04'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '04'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL4
+			 UNION ALL
+			SELECT '5월' AS MM_NM
+			     , '05' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL5.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL5.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL5.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL5.CNT), 0) != 0 AND COALESCE(MAX(TBL5.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL5.CNT), 0) - COALESCE(MAX(TBL5.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL5.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '04'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '05'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '05'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL5
+			 UNION ALL
+			SELECT '6월' AS MM_NM
+			     , '06' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL6.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL6.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL6.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL6.CNT), 0) != 0 AND COALESCE(MAX(TBL6.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL6.CNT), 0) - COALESCE(MAX(TBL6.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL6.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '05'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '06'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '06'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL6
+			 UNION ALL
+			SELECT '7월' AS MM_NM
+			     , '07' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL7.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL7.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL7.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL7.CNT), 0) != 0 AND COALESCE(MAX(TBL7.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL7.CNT), 0) - COALESCE(MAX(TBL7.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL7.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '06'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '07'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '07'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL7
+			 UNION ALL
+			SELECT '8월' AS MM_NM
+			     , '08' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL8.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL8.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL8.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL8.CNT), 0) != 0 AND COALESCE(MAX(TBL8.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL8.CNT), 0) - COALESCE(MAX(TBL8.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL8.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '07'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '08'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '08'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL8
+			 UNION ALL
+			SELECT '9월' AS MM_NM
+			     , '09' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL9.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL9.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL9.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL9.CNT), 0) != 0 AND COALESCE(MAX(TBL9.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL9.CNT), 0) - COALESCE(MAX(TBL9.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL9.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '08'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '09'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '09'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL9
+			 UNION ALL
+			SELECT '10월' AS MM_NM
+			     , '10' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL10.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL10.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL10.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL10.CNT), 0) != 0 AND COALESCE(MAX(TBL10.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL10.CNT), 0) - COALESCE(MAX(TBL10.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL10.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '09'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '10'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '10'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL10
+			 UNION ALL
+			SELECT '11월' AS MM_NM
+			     , '11' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL11.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL11.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL11.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL11.CNT), 0) != 0 AND COALESCE(MAX(TBL11.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL11.CNT), 0) - COALESCE(MAX(TBL11.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL11.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '10'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '11'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '11'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL11
+			 UNION ALL
+			SELECT '12월' AS MM_NM
+			     , '12' AS MM
+			     , #{haknyeondo} AS YYYY
+			     , COALESCE(SUM(TBL12.CNT), 0) AS JEOPSOKJA_CNT
+			     , COALESCE(MAX(TBL12.BEF_SUM_CNT), 0) AS BEF_JEOPSOKJA_CNT
+			     , COUNT(0) AS JEOPSOKJA_INWON_CNT
+			     , COALESCE(MAX(TBL12.SUM_CNT), 0) AS TOT_JEOPSOKJA_CNT
+			     , CASE WHEN COALESCE(SUM(TBL12.CNT), 0) != 0 AND COALESCE(MAX(TBL12.BEF_SUM_CNT), 0) != 0 THEN ROUND( (COALESCE(SUM(TBL12.CNT), 0) - COALESCE(MAX(TBL12.BEF_SUM_CNT), 0) )/ COALESCE(MAX(TBL12.BEF_SUM_CNT), 0) * 100 , 2) ELSE 0 END AS NOW_DATA
+			  FROM (
+			    SELECT USER_ID
+			         , COUNT(0) AS CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') = '11'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS BEF_SUM_CNT
+			         , (
+			            SELECT SUM(COUNT(0))
+			              FROM SMN_LOG
+			             WHERE 1=1
+			               AND ALARM_SEQ = '0'
+			               AND DATE_FORMAT(LOG_DTTM,'%m') &lt;= '12'
+			               AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+			               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+			               </if>
+			               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+			               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+			               </if>
+			             GROUP BY USER_ID
+			         ) AS SUM_CNT
+			      FROM SMN_LOG
+			     WHERE 1=1
+			       AND ALARM_SEQ = '0'
+			       AND DATE_FORMAT(LOG_DTTM,'%m') = '12'
+			       AND DATE_FORMAT(LOG_DTTM, '%Y') = #{haknyeondo}
+	               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+	               </if>
+	               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+	               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+	               </if>
+			     GROUP BY USER_ID
+			 ) TBL12
+		</if>
+	</select>
+	
+	<select id="getBoardsLogList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.*
+		     , CASE WHEN A.DIT_CNT != 0 AND A.CNT != 0 THEN ROUND((A.DIT_CNT / A.CNT) * 100 , 2) ELSE 0 END AS TOT_AVG
+		  FROM (
+		    SELECT REPLACE(SUBSTR(TITLE, 0, INSTR(TITLE,')') - 1), '메뉴(', '') AS MENU_NM
+		         , COUNT(DISTINCT USER_ID) AS DIT_CNT
+		         , COUNT(USER_ID) AS CNT
+		      FROM SMN_LOG
+		     WHERE 1=1
+		       AND ALARM_SEQ = '16'
+		       <if test="appId != null and !appId.equals('') and appId != ''.toString()">
+		        AND TEXT LIKE CONCAT('%APP_ID=', #{appId} ,'%')
+		       </if>
+               <if test="strDate != null and strDate != ''.toString() and endDate == null and endDate == ''.toString()">
+               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') = #{strDate}
+               </if>
+               <if test="strDate != null and strDate != ''.toString() and endDate != null and endDate != ''.toString()">
+               	AND DATE_FORMAT(LOG_DTTM, '%Y%m%d') BETWEEN #{strDate} AND #{endDate}
+               </if>
+		     GROUP BY TITLE
+		 ) A
+	</select>
+</mapper>

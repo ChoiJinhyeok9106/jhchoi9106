@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.alert">
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                             알림관리                                                          -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="selectAlertList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.ALARM_SEQ
+		     , A.API_SEQ
+		     , A.ALARM_GB
+		     , A.ALARM_DETAIL_GB
+		     , A.ALARM_DAESANG_GB
+		     , A.DAESANGJA_COLUMN_ID
+		     , A.ALARM_CHK_GB
+		     , A.TITLE
+		     , A.TEXT
+		     , A.USE_YN
+		     , A.INSERT_DTTM
+		     <if test="pPageNo != null and pPageNo != ''.toString()">
+		     , A.CNT
+		     </if>
+		FROM (
+                 SELECT SA.ALARM_SEQ
+                      , SA.API_SEQ
+                      , SA.ALARM_GB
+                      , SA.ALARM_DETAIL_GB
+                      , SA.ALARM_DAESANG_GB
+                      , SA.DAESANGJA_COLUMN_ID
+                      , SA.ALARM_CHK_GB
+                      , SA.TITLE
+                      , SA.TEXT
+                      , SA.USE_YN
+                      , SA.INSERT_DTTM
+                      <if test="pPageNo != null and pPageNo != ''.toString()">
+                      , ROW_NUMBER() OVER(ORDER BY SA.INSERT_DTTM DESC) AS RNUM
+                      , COUNT(*) OVER() AS CNT
+                      </if>
+                   FROM SMN_ALARM SA
+                  WHERE 1=1
+                  <if test="ALARM_GB != null and ALARM_GB != ''.toString()">AND SA.ALARM_GB = #{ALARM_GB}</if>
+                  <if test="ALARM_DETAIL_GB != null and ALARM_DETAIL_GB != ''.toString()">AND SA.ALARM_DETAIL_GB = #{ALARM_DETAIL_GB}</if>
+                  <if test="TITLE != null and TITLE != ''.toString()">AND SA.TITLE LIKE CONCAT('%',#{TITLE},'%')</if>
+                  <if test="ALARM_CHK_GB != null and ALARM_CHK_GB != ''.toString()">AND SA.ALARM_CHK_GB = #{ALARM_CHK_GB}</if>
+                  <if test="NOT_ALARM_DAESANG_GB != null and NOT_ALARM_DAESANG_GB != ''.toString()">AND SA.ALARM_DAESANG_GB != #{NOT_ALARM_DAESANG_GB}</if>
+             ) A
+       WHERE 1=1
+       <if test="pPageNo != null and pPageNo != ''.toString()">
+         AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+       ORDER BY A.RNUM
+       </if>
+       <if test="pPageNo == null or pPageNo eq ''.toString()">
+       ORDER BY A.INSERT_DTTM DESC
+       </if>
+    </select>
+
+    <insert id="insertAlert" parameterType="hashMap">
+    	<selectKey keyProperty="ALARM_SEQ" resultType="int" order="BEFORE">
+	     	SELECT COALESCE(MAX(ALARM_SEQ), 0) + 1
+	          FROM SMN_ALARM
+	         WHERE 1=1
+  		</selectKey>
+    	INSERT INTO SMN_ALARM
+		(
+		     ALARM_SEQ
+		   , API_SEQ
+		   , ALARM_GB
+		   , ALARM_DETAIL_GB
+		   , ALARM_DAESANG_GB
+		   , DAESANGJA_COLUMN_ID
+		   , ALARM_CHK_GB
+		   , TITLE
+		   , TEXT
+		   , USE_YN
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM
+		)
+     	VALUES
+		(
+		     #{ALARM_SEQ}
+           , #{API_SEQ}
+		   , #{ALARM_GB}
+		   , #{ALARM_DETAIL_GB}
+		   , #{ALARM_DAESANG_GB}
+		   , #{DAESANGJA_COLUMN_ID}
+		   , #{ALARM_CHK_GB}
+		   , #{TITLE}
+		   , #{TEXT}
+		   , #{USE_YN}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM}
+		)
+    </insert>
+
+     <update id="updateAlert" parameterType="hashMap">
+    	UPDATE SMN_ALARM
+    	   SET ALARM_SEQ = #{ALARM_SEQ}
+             , API_SEQ = #{API_SEQ}
+		     , ALARM_GB = #{ALARM_GB}
+		     , ALARM_DETAIL_GB = #{ALARM_DETAIL_GB}
+		     , ALARM_DAESANG_GB = #{ALARM_DAESANG_GB}
+		     , DAESANGJA_COLUMN_ID = #{DAESANGJA_COLUMN_ID}
+		     , ALARM_CHK_GB = #{ALARM_CHK_GB}
+		     , TITLE = #{TITLE}
+		     , TEXT = #{TEXT}
+		     , USE_YN = #{USE_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE ALARM_SEQ = #{ALARM_SEQ}
+    </update>
+
+    <delete id="deleteAlert" parameterType="hashMap">
+
+    	DELETE FROM SMN_ALARM
+		 WHERE ALARM_SEQ = #{ALARM_SEQ};
+
+        DELETE FROM SMN_ALARM_DAESANG
+		 WHERE ALARM_SEQ = #{ALARM_SEQ};
+
+    </delete>
+
+
+
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                       알림 대상 관리                                                          -->
+	<!-- ***************************************************************************************************************************** -->
+
+    <select id="selectDaesangList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.ALARM_SEQ
+			 , A.ALARM_DAESANG_GB
+			 , A.DAESANGJA_ID
+			 , A.INSERT_DTTM
+		  FROM SMN_ALARM_DAESANG A
+		 WHERE 1=1
+           AND A.ALARM_SEQ = #{ALARM_SEQ}
+           AND A.ALARM_DAESANG_GB = #{ALARM_DAESANG_GB}
+         <if test="DAESANGJA_ID != null">AND A.DAESANGJA_ID = #{DAESANGJA_ID}</if>
+    </select>
+
+    <select id="selectDaesangUserList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.ALARM_SEQ
+			 , A.ALARM_DAESANG_GB
+			 , A.DAESANGJA_ID
+			 , A.INSERT_DTTM
+			 , A.USER_ID
+			 , A.USER_NM
+			 , A.BIRTHDAY
+			 , A.USER_STATUS_GBNM
+	      FROM (
+	      			SELECT A.ALARM_SEQ
+						 , A.ALARM_DAESANG_GB
+						 , A.DAESANGJA_ID
+						 , A.INSERT_DTTM
+						 , B.USER_ID
+						 , B.USER_NM
+						 , B.BIRTHDAY
+						 , B.USER_STATUS_GBNM
+						 , B.USER_GROUP_GB
+						 , B.USER_STATUS_GB
+					  FROM SMN_ALARM_DAESANG A
+					  LEFT OUTER JOIN SMN_USER_V B
+					    ON A.DAESANGJA_ID = B.USER_ID
+					 WHERE 1=1
+			           AND A.ALARM_SEQ = #{ALARM_SEQ}
+			           <if test="ALARM_DAESANG_GB != null and ALARM_DAESANG_GB != ''.toString()">AND A.ALARM_DAESANG_GB = #{ALARM_DAESANG_GB}</if>
+	           ) A
+	     WHERE 1=1
+         <if test="USER_GROUP_GB != null and USER_GROUP_GB != ''.toString()">AND A.USER_GROUP_GB = #{USER_GROUP_GB}</if>
+         <if test="USER_STATUS_GB != null and USER_STATUS_GB != ''.toString()">AND A.USER_STATUS_GB = #{USER_STATUS_GB}</if>
+         <if test="USER_NM != null and USER_NM != ''.toString()">AND (A.USER_ID LIKE CONCAT('%',#{USER_NM},'%') OR A.USER_NM LIKE CONCAT('%',#{USER_NM},'%'))</if>
+    </select>
+
+    <insert id="insertDaesang" parameterType="hashMap">
+    	INSERT INTO SMN_ALARM_DAESANG
+		(
+		     ALARM_SEQ
+           , ALARM_DAESANG_GB
+           , DAESANGJA_ID
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM
+		)
+		VALUES
+		(
+		     #{ALARM_SEQ}
+           , #{ALARM_DAESANG_GB}
+           , #{DAESANGJA_ID}
+           , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		   , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		)
+    </insert>
+
+    <update id="updateDaesang" parameterType="hashMap">
+    	UPDATE SMN_ALARM_DAESANG
+           SET ALARM_SEQ = #{ALARM_SEQ}
+             , ALARM_DAESANG_GB = #{ALARM_DAESANG_GB}
+             , DAESANGJA_ID = #{DAESANGJA_ID}
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE ALARM_SEQ = #{ALARM_SEQ}
+           AND ALARM_DAESANG_GB = #{ALARM_DAESANG_GB}
+           AND DAESANGJA_ID = #{DAESANGJA_ID}
+    </update>
+
+    <delete id="deleteDaesang" parameterType="hashMap">
+		 DELETE FROM SMN_ALARM_DAESANG
+    	  WHERE ALARM_SEQ = #{ALARM_SEQ}
+          AND ALARM_DAESANG_GB = #{ALARM_DAESANG_GB}
+          AND DAESANGJA_ID = #{DAESANGJA_ID}
+    </delete>
+
+
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                     사용자 알림 목록 관리                                                     -->
+	<!-- ***************************************************************************************************************************** -->
+
+	<select id="selectUserAlarmList" parameterType="hashMap" resultType="hashMap">
+		SELECT DISTINCT
+		       A.ALARM_SEQ
+             , A.API_SEQ
+             , A.ALARM_GB
+             , A.ALARM_DETAIL_GB
+             , A.ALARM_DAESANG_GB
+             , A.DAESANGJA_COLUMN_ID
+             , A.ALARM_CHK_GB
+             , A.TITLE
+             , A.TEXT
+             , A.USE_YN
+             , COALESCE(C.SUBSCRIBE_YN,'Y') AS SUBSCRIBE_YN
+          FROM SMN_ALARM A
+          LEFT OUTER JOIN SMN_ALARM_DAESANG B
+            ON A.ALARM_SEQ = B.ALARM_SEQ
+           AND A.ALARM_DAESANG_GB = B.ALARM_DAESANG_GB
+          LEFT OUTER JOIN SMN_USER_ALARM_SETTING C
+            ON A.ALARM_SEQ = C.ALARM_SEQ
+           AND C.USER_ID = #{USER_ID}
+         WHERE 1=1
+           AND A.USE_YN = 'Y'
+           AND A.ALARM_GB = '01'
+           AND (
+           		   (B.ALARM_DAESANG_GB = '02' AND B.DAESANGJA_ID = #{USER_ID})
+           		   OR
+           		   (B.ALARM_DAESANG_GB = '01' AND B.DAESANGJA_ID = #{AUTH_CD})
+           		   OR
+           		   A.ALARM_DAESANG_GB = '03'
+           		   OR
+	               EXISTS
+	               (
+	                   SELECT 'X'
+	                     FROM SMN_USER_AUTH SA
+	                    WHERE 1=1
+	                      AND SA.USER_ID = #{USER_ID}
+	                      AND B.ALARM_DAESANG_GB = '01'
+	                      AND B.DAESANGJA_ID = SA.AUTH_CD
+	               )
+               )
+         ORDER BY A.TITLE
+	</select>
+
+	<select id="selectUserAlarm" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+             , A.ALARM_SEQ
+             , A.SUBSCRIBE_YN
+          FROM SMN_USER_ALARM_SETTING A
+         WHERE 1=1
+           AND A.USER_ID = #{USER_ID}
+           AND A.ALARM_SEQ = #{ALARM_SEQ}
+	</select>
+
+	<insert id="insertUserAlarm" parameterType="hashMap">
+
+		<selectKey resultType="int" keyProperty="CNT" order="BEFORE">
+	        SELECT COUNT(*) AS CNT
+	          FROM SMN_USER_ALARM_SETTING
+	         WHERE 1=1
+	           AND USER_ID = #{USER_ID}
+    	       AND ALARM_SEQ = #{ALARM_SEQ}
+	    </selectKey>
+
+	    <if test="CNT > 0">
+	    DELETE FROM SMN_USER_ALARM_SETTING
+		 WHERE USER_ID = #{USER_ID}
+    	   AND ALARM_SEQ = #{ALARM_SEQ};
+	    </if>
+
+    	INSERT INTO SMN_USER_ALARM_SETTING
+    	(
+    		  USER_ID
+            , ALARM_SEQ
+            , SUBSCRIBE_YN
+            , INSERT_DTTM
+            , INSERT_ID
+            , INSERT_IP
+            , INSERT_PGM
+            , UPDATE_DTTM
+            , UPDATE_ID
+            , UPDATE_IP
+            , UPDATE_PGM
+		)
+		VALUES
+		(
+			  #{USER_ID}
+            , #{ALARM_SEQ}
+		    , #{SUBSCRIBE_YN}
+            , SYSDATE()
+            , #{SYSTEM_ID}
+            , #{SYSTEM_IP}
+            , #{SYSTEM_PGM}
+            , SYSDATE()
+            , #{SYSTEM_ID}
+            , #{SYSTEM_IP}
+            , #{SYSTEM_PGM}
+		);
+
+    </insert>
+
+     <update id="updateUserAlarm" parameterType="hashMap">
+    	UPDATE SMN_USER_ALARM_SETTING
+    	   SET SUBSCRIBE_YN = #{SUBSCRIBE_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE USER_ID = #{USER_ID}
+    	   AND ALARM_SEQ = #{ALARM_SEQ}
+    </update>
+
+    <delete id="deleteUserAlarm" parameterType="hashMap">
+    	DELETE FROM SMN_USER_ALARM_SETTING
+		 WHERE USER_ID = #{USER_ID}
+    	   AND ALARM_SEQ = #{ALARM_SEQ}
+    </delete>
+
+    <!-- ***************************************************************************************************************************** -->
+	<!--                                                     사용자 알림 데이터 관리                                                   -->
+	<!-- ***************************************************************************************************************************** -->
+
+	<select id="selectUserAlarmDataList" parameterType="hashMap" resultType="hashMap">
+	   SELECT A.USER_ID													AS USER_ID
+			, A.ALARM_SEQ												AS ALARM_SEQ
+			, A.ALARM_LIST_SEQ											AS ALARM_LIST_SEQ
+			, B.TITLE 													AS ALARM_TITLE
+			, A.TITLE													AS TITLE
+			, A.TEXT													AS TEXT
+			, A.LINK													AS LINK
+			, DATE_FORMAT(A.ALARM_DTTM, '%Y-%m-%d %H:%i:%s') 			AS ALARM_DTTM
+			, DATE_FORMAT(A.ALARM_HWAKIN_DTTM, '%Y-%m-%d %H:%i:%s') 	AS ALARM_HWAKIN_DTTM
+			, DATE_FORMAT(A.ALARM_DTTM, '%Y-%m-%d %H:%i:%s') 			AS ALARM_DTTM_MS
+			, A.ALARM_HWAKIN_YN											AS ALARM_HWAKIN_YN
+			, A.ALARM_PYOSI_YN											AS ALARM_PYOSI_YN
+			, A.ALARM_DELETE_YN											AS ALARM_DELETE_YN
+			, C.SUBSCRIBE_YN											AS SUBSCRIBE_YN
+		 FROM SMN_USER_ALARM_DATA A
+		 LEFT OUTER JOIN SMN_ALARM B
+		   ON A.ALARM_SEQ = B.ALARM_SEQ
+		 LEFT OUTER JOIN SMN_USER_ALARM_SETTING C
+		   ON A.USER_ID = C.USER_ID
+		  AND A.ALARM_SEQ = C.ALARM_SEQ
+		WHERE 1=1
+		  AND A.ALARM_DELETE_YN = 'N'
+		  AND A.USER_ID = #{USER_ID}
+	    ORDER BY ALARM_DTTM DESC
+<!--		<if test="ALARM_DTTM != null and ALARM_DTTM != ''.toString()">AND A.ALARM_DTTM &lt; DATE_FORMAT(#{ALARM_DTTM}, '%Y-%m-%d %H:%i:%s')</if>-->
+	</select>
+
+	<insert id="insertUserAlarmData" parameterType="hashMap">
+		<selectKey resultType="int" keyProperty="ALARM_LIST_SEQ" order="BEFORE">
+	        SELECT COALESCE(MAX(CAST(ALARM_LIST_SEQ AS DECIMAL)),0)+1 AS ALARM_LIST_SEQ
+	          FROM SMN_USER_ALARM_DATA SA
+	         WHERE 1=1
+	           AND SA.USER_ID = #{USER_ID}
+	           AND SA.ALARM_SEQ = #{ALARM_SEQ}
+	    </selectKey>
+
+    	INSERT INTO SMN_USER_ALARM_DATA
+    	(
+    		  USER_ID
+            , ALARM_SEQ
+            , ALARM_LIST_SEQ
+            , TITLE
+            , TEXT
+            , LINK
+            , ALARM_DTTM
+            , ALARM_HWAKIN_DTTM
+            , ALARM_HWAKIN_YN
+            , ALARM_PYOSI_YN
+            , ALARM_DELETE_YN
+            , INSERT_DTTM
+            , INSERT_ID
+            , INSERT_IP
+            , INSERT_PGM
+            , UPDATE_DTTM
+            , UPDATE_ID
+            , UPDATE_IP
+            , UPDATE_PGM
+		)
+		SELECT #{USER_ID}
+            , #{ALARM_SEQ}
+            , #{ALARM_LIST_SEQ}
+            , #{TITLE}
+            , #{TEXT}
+            , #{LINK}
+            , SYSDATE()
+            , NULL
+            , 'N'
+            , 'Y'
+            , 'N'
+            , SYSDATE()
+            , #{SYSTEM_ID}
+            , #{SYSTEM_IP}
+            , #{SYSTEM_PGM}
+            , SYSDATE()
+            , #{SYSTEM_ID}
+            , #{SYSTEM_IP}
+            , #{SYSTEM_PGM}
+         FROM DUAL
+            <!-- 알림 데이터는 들어가고, Toast 알림만 나타나지 않도록 설정함, 알림 자체 데이터를 쌓이지 않게 하려면 주석 풀면 됨-->
+         <!-- FROM SMN_ALARM A
+        WHERE 1=1
+          AND A.ALARM_SEQ = #{ALARM_SEQ}
+          AND NOT EXISTS
+              (
+                  SELECT 'X'
+                    FROM SMN_USER_ALARM_SETTING SA
+                   WHERE 1=1
+                     AND A.ALARM_SEQ = SA.ALARM_SEQ
+                     AND SA.USER_ID = #{USER_ID}
+                     AND SA.SUBSCRIBE_YN = 'N'
+              ) -->
+	</insert>
+
+	<update id="updateUserAlarmData" parameterType="hashMap">
+    	UPDATE SMN_USER_ALARM_DATA
+    	   SET ALARM_PYOSI_YN = #{ALARM_PYOSI_YN}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE USER_ID = #{USER_ID}
+    	   AND ALARM_SEQ = #{ALARM_SEQ}
+    	   AND ALARM_LIST_SEQ = #{ALARM_LIST_SEQ}
+    </update>
+
+	<update id="deleteUserAlarmData" parameterType="hashMap">
+    	UPDATE SMN_USER_ALARM_DATA
+    	   SET ALARM_DELETE_YN = 'Y'
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE USER_ID = #{USER_ID}
+    	   AND ALARM_SEQ = #{ALARM_SEQ}
+    	   AND ALARM_LIST_SEQ = #{ALARM_LIST_SEQ}
+    </update>
+
+    <update id="updateUserAlarmHwakinData" parameterType="hashMap">
+    	UPDATE SMN_USER_ALARM_DATA
+    	   SET ALARM_HWAKIN_YN = 'Y'
+    	     , ALARM_HWAKIN_DTTM = SYSDATE()
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE USER_ID = #{USER_ID}
+    	   AND ALARM_SEQ = #{ALARM_SEQ}
+    	   AND ALARM_LIST_SEQ = #{ALARM_LIST_SEQ}
+    </update>
+
+
+    <select id="selectAllAlarmList" parameterType="hashMap" resultType="hashMap">
+		SELECT TBL1.ALARM_SEQ
+		     , TBL1.API_SEQ
+			 , TBL1.ALARM_GB
+			 , TBL1.ALARM_DETAIL_GB
+			 , TBL1.ALARM_DAESANG_GB
+			 , TBL1.DAESANGJA_COLUMN_ID
+			 , TBL1.ALARM_CHK_GB
+			 , TBL1.TITLE
+			 , TBL1.TEXT
+			 , TBL2.SERVICE_CD
+			 , TBL2.API_NM
+		     , TBL2.API_URL
+		     , TBL2.METHOD_GB
+			 , TBL2.REST_API_DESC
+			 , TBL2.REMARK
+		  FROM SMN_ALARM TBL1
+		  LEFT OUTER JOIN SMN_REST_API TBL2
+		    ON TBL1.API_SEQ = TBL2.API_SEQ
+		   AND TBL2.USE_YN  = 'Y'
+		 WHERE TBL1.USE_YN  = 'Y'
+	</select>
+
+
+    <select id="getDate" parameterType="hashMap" resultType="String">
+		SELECT DATE_FORMAT(SYSDATE(), '%Y-%m-%d %H:%i:%s') AS CUR_DATE FROM DUAL
+	</select>
+
+	<select id="selectAlarmBlockList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID AS USER_ID
+		  FROM SMN_USER_ALARM_SETTING A
+		 WHERE 1=1
+		   AND A.ALARM_SEQ = #{ALARM_SEQ}
+		   AND A.SUBSCRIBE_YN = 'N'
+	</select>
+
+    <select id="selectAuthUserList" parameterType="hashMap" resultType="hashMap">
+		SELECT USER_ID
+             , USER_NM
+		     , EMAIL
+		     , REPLACE(HP_NO,'-','') AS HP_NO
+		  FROM SMN_USER_V A
+		 WHERE 1=1
+		   <!-- AND A.USER_STATUS_GB IN ('Y','1','01','02') -->
+		   AND (
+		           A.DEFAULT_AUTH_CD = #{AUTH_CD}
+				   OR
+				   EXISTS
+				   (
+				      SELECT 'X'
+					    FROM SMN_USER_AUTH SA
+					   WHERE 1=1
+					     AND A.USER_ID = SA.USER_ID
+						 AND SA.AUTH_CD = #{AUTH_CD}
+				   )
+			   )
+	</select>
+
+	<insert id="insertLog" parameterType="hashMap">
+		<selectKey resultType="int" keyProperty="LOG_LIST_SEQ" order="BEFORE">
+	        SELECT COALESCE(MAX(CAST(LOG_LIST_SEQ AS DECIMAL)),0)+1 AS LOG_LIST_SEQ
+	          FROM SMN_LOG SA
+	         WHERE 1=1
+	           AND SA.USER_ID = #{USER_ID}
+	           AND SA.ALARM_SEQ = #{ALARM_SEQ}
+	    </selectKey>
+
+    	INSERT INTO SMN_LOG
+    	(
+    		  USER_ID
+            , ALARM_SEQ
+            , LOG_LIST_SEQ
+            , TITLE
+            , TEXT
+            , LOG_DTTM
+            , INSERT_DTTM
+            , INSERT_ID
+            , INSERT_IP
+            , INSERT_PGM
+            , UPDATE_DTTM
+            , UPDATE_ID
+            , UPDATE_IP
+            , UPDATE_PGM
+		)
+		VALUES
+		(
+		      #{USER_ID}
+            , #{ALARM_SEQ}
+            , #{LOG_LIST_SEQ}
+            , #{TITLE}
+            , #{TEXT}
+            , SYSDATE()
+            , SYSDATE()
+            , #{SYSTEM_ID}
+            , #{SYSTEM_IP}
+            , #{SYSTEM_PGM}
+            , SYSDATE()
+            , #{SYSTEM_ID}
+            , #{SYSTEM_IP}
+            , #{SYSTEM_PGM}
+		)
+	</insert>
+
+	<update id="marketAlarmUpdate" parameterType="hashMap">
+		UPDATE SMN_USER
+		   SET ADD_COL7 = #{MARKET_ALRAM}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+		WHERE USER_ID = #{USER_ID}
+	</update>
+
+	<select id="marketAlarm" parameterType="hashMap" resultType="hashMap">
+		SELECT NVL(ADD_COL7,' ')	AS ADD_COL7
+		  FROM SMN_USER
+		 WHERE 1=1
+		   and USER_ID = #{USER_ID}
+	</select>
+
+</mapper>

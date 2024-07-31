@@ -1,0 +1,17 @@
+@charset "utf-8";
+.title_img_zone img {
+	max-height: 50px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    cursor:pointer;
+    opacity: 0.4;
+}
+
+.title_img_zone img:hover {
+    opacity: 1;
+}
+
+.title_img_zone img.on {
+    opacity: 1;
+	border: 3px solid #35d474;
+}

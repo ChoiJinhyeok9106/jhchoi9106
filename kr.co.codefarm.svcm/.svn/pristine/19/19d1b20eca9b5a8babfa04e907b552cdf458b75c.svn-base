@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.deptmgmt">
+	
+	<!-- 부서 조회 -->
+	<select id="getDeptMgmtList" parameterType="hashMap" resultType="hashMap" >
+	SELECT
+       A_.*
+         FROM 
+          (SELECT 
+               <if test="pPageNo != null and pPageNo != ''.toString()">
+	             ROW_NUMBER() OVER(ORDER BY A.ORGNZT_ID) AS RNUM
+	           , COUNT(*) OVER() AS CNT
+	           </if>
+               , A.ORGNZT_ID AS DEPT_CD
+               , CONCAT(C.ORGNZT_NM , CASE WHEN C.ORGNZT_NM IS NULL THEN '' ELSE '-' END , A.ORGNZT_NM) AS DEPT_NM
+               , A.ORGNZT_NM AS REAL_DEPT_NM 
+               , A.UP_DEPT_CD 
+               , A.USE_YN 
+               , CASE WHEN A.USE_YN = '1' THEN '사용' ELSE '미사용' END AS USE_YN_TEXT
+               , A.OUTPUT_SEQ  
+               , A.AGENCY_ID 
+            FROM 
+                 LETTNORGNZTINFO A 
+                 LEFT JOIN LETTNORGNZTINFO C ON A.UP_DEPT_CD = C.ORGNZT_ID AND A.AGENCY_ID = C.AGENCY_ID
+            WHERE 1=1 
+            AND A.AGENCY_ID = '00000000'
+            <!--  A.ORGNZT_ID != 'XX'  -->
+            <!--  부서 트리 조회  -->
+            <if test="pTreeDeptCd != null and pTreeDeptCd != ''.toString()">
+				<if test="pTreeDeptCd != '00'">
+					AND A.ORGNZT_ID IN ( WITH RECURSIVE CTE_CONNECT_BY AS ( 
+						SELECT 1 AS LEVEL, S.DEPT_CD, S.AGENCY_ID, S.UP_DEPT_CD  FROM VA_DEPT S WHERE S.DEPT_CD = #{pTreeDeptCd} AND S.AGENCY_ID = '00000000'
+						UNION ALL
+						SELECT LEVEL + 1 AS LEVEL, S.DEPT_CD, S.AGENCY_ID,S.UP_DEPT_CD AS ACQ_DEPT_CD FROM CTE_CONNECT_BY R INNER JOIN VA_DEPT S ON  R.DEPT_CD = S.UP_DEPT_CD  WHERE S.AGENCY_ID = '00000000' 
+						)  
+						SELECT DEPT_CD FROM  CTE_CONNECT_BY WHERE AGENCY_ID = '00000000')
+             	</if>
+             </if>
+			<!--  사용여부  -->
+			<if test="pUseYn != null and pUseYn != ''.toString()">
+				<if test="pUseYn != 'ALL'">
+					AND A.USE_YN = #{pUseYn}
+             	</if>
+             </if>
+			<!--  부서명  -->
+			<if test='pRealDeptNm != null and pRealDeptNm != ""'>
+				AND A.ORGNZT_NM LIKE CONCAT('%',#{pRealDeptNm},'%')
+			</if>
+			<!--  부서코드  -->
+			<if test='pDeptCd != null and pDeptCd != ""'>
+				AND A.ORGNZT_ID LIKE CONCAT('%',#{pDeptCd},'%')
+			</if>
+                ) A_
+	        WHERE 1=1
+			<if test="pPageNo != null and pPageNo != ''.toString()">
+      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    		</if>
+    		ORDER BY A_.DEPT_CD
+	</select>
+	
+	<!-- 부서 입력 -->
+	<insert id="insertDept" parameterType="hashMap">
+	INSERT
+	INTO LETTNORGNZTINFO
+		VALUES
+		( 	 #{DEPT_CD}
+           , #{REAL_DEPT_NM}
+           , #{ORGNZT_DC}
+           , #{UP_DEPT_CD}
+           , #{OUTPUT_SEQ}
+           , '1'
+           , #{LAST_CHGR}
+           , now()
+           , NULL
+           , '1'
+           , NULL
+           , '00000000'
+		) 
+    </insert>
+    
+    <!-- 부서 수정 -->
+    <update id="updateDept" parameterType="hashMap">
+	UPDATE LETTNORGNZTINFO	
+		SET
+			ORGNZT_NM = #{REAL_DEPT_NM},
+		   	ORGNZT_DC = #{ORGNZT_DC},
+		   	UP_DEPT_CD = #{UP_DEPT_CD},
+		   	OUTPUT_SEQ = #{OUTPUT_SEQ},
+		   	LAST_CHGR = #{LAST_CHGR},
+		   	LAST_CHG_DT = now()
+		   	
+		WHERE ORGNZT_ID = #{DEPT_CD}
+		AND   AGENCY_ID = '00000000'
+	</update>
+	
+	<!-- 부서 중복 체크 -->
+	<select id="checkDeptMgmt" parameterType="hashMap" resultType="hashMap">
+    SELECT 
+	       A.CNT
+	     , B.UPCNT 
+	     , C.DEPTNMCNT
+	     , D.DEPTSEQCNT
+	     , E.ORGNZTIDCNT
+		FROM 
+	       (SELECT 
+	              COUNT(*) AS CNT 
+	         FROM 
+	              TA_ASSET_ACQ_DTL 
+	        WHERE 
+	              DEPT_CD = #{DEPT_CD} 
+	              AND AGENCY_ID = '00000000'
+	       ) A
+	     , 
+	       (SELECT 
+	              COUNT(*) AS UPCNT 
+	         FROM 
+	              VA_DEPT 
+	        WHERE 
+	              UP_DEPT_CD = #{DEPT_CD} 
+	       ) B 
+	     ,
+	         (SELECT 
+	                COUNT(*) AS DEPTNMCNT 
+	           FROM 
+	                LETTNORGNZTINFO
+	           WHERE 
+	                ORGNZT_NM = #{ORGNZT_NM}
+	                <if test="ORGNZT_ID != null and ORGNZT_ID != ''">
+	                    AND ORGNZT_ID != #{ORGNZT_ID}
+	                </if>
+	         ) C
+	     ,
+	     <if test="OUTPUT_SEQ != null and OUTPUT_SEQ != ''">
+	         (SELECT 
+	                COUNT(*) AS DEPTSEQCNT 
+	           FROM 
+	                LETTNORGNZTINFO 
+	           WHERE 
+	                UP_DEPT_CD = #{DEPT_CD}
+	                AND OUTPUT_SEQ = #{OUTPUT_SEQ}
+	                <if test="ORGNZT_ID != null and ORGNZT_ID != ''">
+	                    AND ORGNZT_ID != #{ORGNZT_ID}
+	                </if>
+	         ) D
+	     </if>
+	     <if test="OUTPUT_SEQ == null or OUTPUT_SEQ == ''">
+	         (SELECT 0 AS DEPTSEQCNT
+	          FROM DUAL
+	         ) D
+	     </if>
+	     ,
+	     <if test="ORGNZT_ID != null and ORGNZT_ID != ''">
+	         (SELECT 
+	                COUNT(*) AS ORGNZTIDCNT 
+	           FROM 
+	                LETTNORGNZTINFO 
+	           WHERE 
+	                ORGNZT_ID = #{ORGNZT_ID}
+	         ) E
+	     </if>
+	     <if test="ORGNZT_ID == null or ORGNZT_ID == ''">
+	         (SELECT 0 AS ORGNZTIDCNT
+	          FROM DUAL
+	         ) E
+	     </if>
+	</select>
+	
+	<!-- 부서 미사용처리 -->	
+	<update id="deptUseNot" parameterType="hashMap">
+		UPDATE 
+		LETTNORGNZTINFO 
+		       SET USE_YN = 0
+		 WHERE TRIM(ORGNZT_ID) = #{deptCd} 
+		 AND AGENCY_ID = '00000000'
+	</update>
+	
+	
+		
+</mapper>

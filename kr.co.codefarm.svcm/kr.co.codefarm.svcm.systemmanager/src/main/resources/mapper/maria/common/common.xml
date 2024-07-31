@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.common">
+
+	<select id="selectList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.UP_CD
+             , A.CD
+             , A.SERVICE_CD
+             , COALESCE(A.CD_NM, '') AS CD_NM
+             , COALESCE(A.CD_ENM, '') AS CD_ENM
+             , A.LV
+             , COALESCE(A.ABBR_NM, '') AS ABBR_NM
+             , COALESCE(A.ABBR_ENM, '') AS ABBR_ENM
+             , COALESCE(A.COMMON_DESC , '') AS COMMON_DESC
+             , A.ORD
+             , COALESCE(A.USE_YN, 'N') AS USE_YN
+             , COALESCE(A.SYS_CD_YN, 'N') AS SYS_CD_YN
+             , COALESCE(A.INPUT_LMT_YN, 'N') AS INPUT_LMT_YN
+             , COALESCE(A.CD1, '') AS CD1
+             , COALESCE(A.CD2, '') AS CD2
+             , COALESCE(A.CD3, '') AS CD3
+             , COALESCE(A.CD4, '') AS CD4
+             , COALESCE(A.CD5, '') AS CD5
+             , COALESCE(A.CD6, '') AS CD6
+             , COALESCE(A.CD7, '') AS CD7
+             , COALESCE(A.CD8, '') AS CD8
+             , COALESCE(A.CD9, '') AS CD9
+             , COALESCE(A.CD10, '') AS CD10
+             , COALESCE(A.REMARK, '') AS REMARK
+             <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             </if>
+          FROM (
+			       SELECT SA.UP_CD
+		             	, SA.CD
+		             	, SA.SERVICE_CD
+		             	, SA.CD_NM
+		             	, SA.CD_ENM
+		             	, SA.LV
+		             	, SA.ABBR_NM
+		             	, SA.ABBR_ENM
+		             	, SA.COMMON_DESC
+		             	, SA.ORD
+		             	, SA.USE_YN
+		             	, SA.SYS_CD_YN
+		             	, SA.INPUT_LMT_YN
+		             	, SA.CD1
+		             	, SA.CD2
+		             	, SA.CD3
+		             	, SA.CD4
+		             	, SA.CD5
+		             	, SA.CD6
+             	 		, SA.CD7
+             	 		, SA.CD8
+             	 		, SA.CD9
+             	 		, SA.CD10
+             	 		, SA.REMARK
+			            , SA.INSERT_DTTM
+                        <if test="pPageNo != null and pPageNo != ''.toString()">
+                        , ROW_NUMBER() OVER(ORDER BY SA.ORD ASC) AS RNUM
+                        , COUNT(*) OVER() AS CNT
+                        </if>
+                     FROM SMN_COMMON SA
+                    WHERE 1=1
+                    <if test="pComCodeUpCd != null and pComCodeUpCd != ''.toString()"> AND SA.UP_CD = #{pComCodeUpCd} </if>
+                    <if test="pComCodeUpCd == null and pComCodeUpCd != ''.toString()"> AND SA.LV = 0</if>
+                    <if test="pServiceType != null and pServiceType != ''.toString()"> AND SA.SERVICE_CD = #{pServiceType}</if>
+			       	<if test="pSearchType eq '1'.toString()">AND (SA.CD LIKE CONCAT('%',#{pSearchArgv},'%') OR SA.CD_NM LIKE CONCAT('%',#{pSearchArgv},'%'))</if>
+			        <if test="pSearchType eq '2'.toString()">AND SA.CD_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSearchType eq '3'.toString()">AND COALESCE(SA.CD_ENM,'') LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			        <if test="pSysCdYn != null and pSysCdYn != ''.toString()"> AND SA.SYS_CD_YN = #{pSysCdYn}</if>
+               ) A
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+	       AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+	     ORDER BY A.RNUM
+	     </if>
+	     <if test="pPageNo == null or pPageNo eq ''.toString()">
+	     ORDER BY A.ORD ASC
+	     </if>
+    </select>
+    
+    <insert id="insertCommon" parameterType="hashMap">
+    	INSERT INTO SMN_COMMON
+     	(
+     		UP_CD
+          , CD
+          , SERVICE_CD
+          , CD_NM
+          , CD_ENM
+          , LV
+          , ABBR_NM
+          , ABBR_ENM
+          , COMMON_DESC
+          , ORD
+          , USE_YN
+          , SYS_CD_YN
+          , INPUT_LMT_YN
+          , CD1
+          , CD2
+          , CD3
+          , CD4
+          , CD5
+          , CD6
+          , CD7
+          , CD8
+          , CD9
+          , CD10
+          , REMARK
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+     	)
+     	VALUES 
+     	(
+     		CASE WHEN #{UP_CD} = 0 THEN #{SERVICE_CD} ELSE #{UP_CD} END
+          , #{CD}
+          , #{SERVICE_CD}
+          , #{CD_NM}
+          , #{CD_ENM}
+          , #{LV}
+          , #{ABBR_NM}
+          , #{ABBR_ENM}
+          , #{COMMON_DESC}
+          , #{ORD}
+          , #{USE_YN}
+          , #{SYS_CD_YN}
+          , #{INPUT_LMT_YN}
+          , #{CD1}
+          , #{CD2}
+          , #{CD3}
+          , #{CD4}
+          , #{CD5}
+          , #{CD6}
+          , #{CD7}
+          , #{CD8}
+          , #{CD9}
+          , #{CD10}
+          , #{REMARK}
+     	  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , SYSDATE()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+   		)
+    </insert>
+    
+    <update id="updateCommon" parameterType="hashMap">
+    	UPDATE SMN_COMMON
+    	   SET SERVICE_CD = #{SERVICE_CD}
+             , CD_NM = #{CD_NM}
+          	 , CD_ENM = #{CD_ENM}
+          	 , LV = #{LV}
+          	 , ABBR_NM = #{ABBR_NM}
+          	 , ABBR_ENM = #{ABBR_ENM}
+          	 , COMMON_DESC = #{COMMON_DESC}
+          	 , ORD = #{ORD}
+          	 , USE_YN = #{USE_YN}
+          	 , SYS_CD_YN = #{SYS_CD_YN}
+          	 , INPUT_LMT_YN = #{INPUT_LMT_YN}
+          	 , CD1 = #{CD1}
+          	 , CD2 = #{CD2}
+          	 , CD3 = #{CD3}
+          	 , CD4 = #{CD4}
+          	 , CD5 = #{CD5}
+          	 , CD6 = #{CD6}
+          	 , CD7 = #{CD7}
+          	 , CD8 = #{CD8}
+          	 , CD9 = #{CD9}
+          	 , CD10 = #{CD10}
+          	 , REMARK = #{REMARK}
+   		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE UP_CD = #{UP_CD}
+    	   AND CD = #{CD}
+    </update>
+    
+    <delete id="deleteCommon" parameterType="hashMap">
+    
+		 DELETE FROM SMN_COMMON
+    	 WHERE UP_CD = #{UP_CD}
+    	   AND CD = #{CD};
+
+    	DELETE FROM SMN_COMMON
+    	 WHERE UP_CD = #{CD}
+    	 	AND LV = 1;
+	
+    </delete>
+    
+    <select id="selectCustomCdList" parameterType="hashMap" resultType="hashMap">
+    	SELECT UP_CD AS UP_CD
+    	     , CD AS CD
+    		 , COALESCE(CD1, 'CD1') AS CD1
+			 , COALESCE(CD2, 'CD2') AS CD2
+			 , COALESCE(CD3, 'CD3') AS CD3
+			 , COALESCE(CD4, 'CD4') AS CD4
+			 , COALESCE(CD5, 'CD5') AS CD5
+			 , COALESCE(CD6, 'CD6') AS CD6
+			 , COALESCE(CD7, 'CD7') AS CD7
+			 , COALESCE(CD8, 'CD8') AS CD8
+			 , COALESCE(CD9, 'CD9') AS CD9
+			 , COALESCE(CD10, 'CD10') AS CD10
+         FROM SMN_COMMON
+        WHERE 1=1
+          AND LV = 0
+          AND CD = #{CD}
+    </select>
+    
+    <update id="updateCustomBtn" parameterType="hashMap">
+    	UPDATE SMN_COMMON
+    	   SET CD1 = #{CD1}
+          	 , CD2 = #{CD2}
+          	 , CD3 = #{CD3}
+          	 , CD4 = #{CD4}
+          	 , CD5 = #{CD5}
+          	 , CD6 = #{CD6}
+          	 , CD7 = #{CD7}
+          	 , CD8 = #{CD8}
+          	 , CD9 = #{CD9}
+          	 , CD10 = #{CD10}
+          	 , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE UP_CD = #{UP_CD}
+    	   AND CD = #{CD}
+    </update>
+
+</mapper>

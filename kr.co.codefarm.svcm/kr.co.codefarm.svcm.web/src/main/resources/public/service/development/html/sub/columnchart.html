@@ -1,0 +1,536 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/circle.css" />  
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/career.css" />  
+
+<h2 id="top" class="h2">Toast UI Chart-Line</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">[Column Chart] basic</h3>
+		<div class="form-group row form-row">        	
+			<ul class="list-type02" style="margin-bottom:100px;">
+	        	<li style="margin-top:10px;"><a href="http://nhn.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic" class="btn type01 size-s c-blue" style="border:0px" target="_blank">http://nhn.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic</a></li>
+	        	<li style="margin-top:10px;">사용되는 화면: 성과관리>지표코드관리>성과달성현황</li>
+	        	<li style="margin-top:10px;">1. 차트를 그릴 위치에 div를 생성하고 id 값을 설정</li>
+	        	<li style="margin-top:10px;">2. 설정한 id 값을 var container = document.getElementById('설정한 id'); 에 입력 - 아래의 예제 소스 1번줄</li>
+	        	<li style="margin-top:10px;">3. var container: 차트를 그릴 위치 지정</li>
+	        	<li style="margin-top:10px;">4. var data: 차트의 데이터</li>
+	        	<li style="margin-top:10px;">5. var options: 차트의 옵션 설정 - https://github.com/nhnent/tui.chart/blob/v3.6.0/src/js/chart.js - column chart로 검색</li>
+	        	<li style="margin-top:10px;">6. tui.chart.columnChart(container, data, options); - 차트 그리기 </li>
+			</ul>
+	        <div id="chart-area1" style="float:left;"></div>
+	        <div id="chart-area2" style="float:left;"></div>
+	        <div id="chart-area3" style="float:left;"></div>
+	        <div id="chart-area4" style="float:left;"></div>
+	        <div id="chart-area5" style="float:left;"></div>
+	        <div id="chart-area6" style="float:left;"></div>
+	        <div id="chart-area7" style="float:left;"></div>
+	        <div id="chart-area8" style="float:left;"></div>
+		</div>
+    </section>
+    
+    <section class="cont_box">
+        <textarea id="codeEditor1">
+            var container = document.getElementById('chart-area1');
+            var data = {
+                categories: ['June, 2015', 'July, 2015', 'August, 2015', 'September, 2015', 'October, 2015', 'November, 2015', 'December, 2015'],
+                series: [
+                    {
+                        name: 'Budget',
+                        data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+                    },
+                    {
+                        name: 'Income',
+                        data: [8000, 1000, 7000, 2000, 6000, 3000, 5000]
+                    },
+                    {
+                        name: 'Expenses',
+                        data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+                    },
+                    {
+                        name: 'Debt',
+                        data: [6000, 3000, 3000, 1000, 2000, 4000, 3000]
+                    }
+                ]
+            };
+            var options = {
+                chart: {
+                    width: 500,
+                    height: 650,
+                    title: 'Monthly Revenue',
+                    format: '1,000'
+                },
+                yAxis: {
+                    title: 'Amount',
+                    min: 0,
+                    max: 9000
+                },
+                xAxis: {
+                	pointOnColumn: true,
+		            tickInterval: 'auto'
+                    title: 'Month'
+                },
+                legend: {
+                    align: 'top'
+                }
+            };
+            var theme = {
+                series: {
+                    dot: {
+    			            fillColor: null,
+    			            radius: 2,
+    			            strokeWidth: 0,
+    			            hover: {
+    			              fillColor: null,
+    			              radius: 4,
+    			              strokeOpacity: 1,
+    			              strokeWidth: 2
+    			            }
+    			        },
+    			        line: {
+    			        	pointWidth: 1
+    			        },
+    			    	colors: ['#eb6686', '#6079d4', '#35c3d0', '#f8be76', '#c09fee', '#6381f0']
+                },
+    			    xAxis: {
+    			    	label: {
+    			    		fontSize: 15,
+    				    	fontFamily: 'Noto sans KR'
+    			    	}
+    			    },
+    			    yAxis: {
+    			    	label: {
+    			    		fontSize: 15,
+    				    	fontFamily: 'Noto sans KR'
+    			    	}
+    			    },
+    			    legend: {
+    			    	label: {
+    			            fontSize: 14,
+    			            fontFamily: 'Noto sans KR'
+    			        }
+    			    }
+            };
+            // For apply theme
+            tui.chart.registerTheme('myTheme', theme);
+            options.theme = 'myTheme';
+            tui.chart.columnChart(container, data, options);
+		</textarea>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+//     		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * tui script start 
+ ********************************************************************************************************************************************************************/
+ var container1 = document.getElementById('chart-area1');
+ var container2 = document.getElementById('chart-area2');
+ var container3 = document.getElementById('chart-area3');
+ var container4 = document.getElementById('chart-area4');
+ var container5 = document.getElementById('chart-area5');
+ var container6 = document.getElementById('chart-area6');
+ var container7 = document.getElementById('chart-area7');
+ var container8 = document.getElementById('chart-area8');
+ 
+ /* var data = {
+     categories: ['June, 2015', 'July, 2015', 'August, 2015', 'September, 2015', 'October, 2015', 'November, 2015', 'December, 2015'],
+     series: [
+         {
+             name: 'Budget',
+             data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+         },
+         {
+             name: 'Income',
+             data: [8000, 1000, 7000, 2000, 6000, 3000, 5000]
+         },
+         {
+             name: 'Expenses',
+             data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+         },
+         {
+             name: 'Debt',
+             data: [6000, 3000, 3000, 1000, 2000, 4000, 3000]
+         }
+     ]
+ }; */
+ var data1 = {
+     categories: ['2015년','2016년','2017년','2018년'],
+     series: [
+         {
+             name: '우아한 형제들',
+             data: [495,849,1626,3193]
+         },
+         {
+             name: '딜리버리히어로 코리아',
+             data: [366,529,953,1233]
+         }
+     ]
+ };
+ var data2 = {
+	     categories: ['2013.01','2014.02','2015.02','2016.06','2017.02','2018.01'],
+	     series: [
+	         {
+	             name: '배민',
+	             data: [58.0,45.0,55,46.0,55.5,55.7]
+	         },
+	         {
+	             name: '요기요',
+	             data: [14.0,39.0,30,40.0,33.1,33.5]
+	         },
+	         {
+	             name: '배달통',
+	             data: [16.0,16.0,15,14.0,11.4,10.8]
+	         },
+	         {
+	             name: '기타',
+	             data: [12.0,0,0,0,0,0]
+	         },
+	     ]
+	 };
+ var data3 = {
+	     categories: ['2018년'],
+	     series: [
+	         {
+	             name: '배민',
+	             data: [4000]
+	         },
+	         {
+	             name: '요기요',
+	             data: [2200]
+	         },
+	         {
+	             name: '배달통',
+	             data: [1500]
+	         }
+	     ]
+	 };
+ var data4 = {
+	     categories: ['2014','2015','2016','2017','2018'],
+	     series: [
+	         {
+	             name: '매출(억원)',
+	             data: [291,495,848,1625,3192]
+	         },
+	         {
+	             name: '영업이익(억원)절사',
+	             data: [-149,-248,24,216,585]
+	         }
+	     ]
+	 };
+ var data5 = {
+	     categories: ['매출액','시장점유율','누적다운로드수'],
+	     series: [
+	         {
+	             name: '우아한형제들',
+	             data: [72.1,55.7,51.9]
+	         },
+	         {
+	             name: '딜리버리히어로 코리아',
+	             data: [27.9,44.3,48.1]
+	         }
+	     ]
+	 };
+ var data6 = {
+	     categories: ['2014년 1월'],
+	     series: [
+	         {
+	             name: '배달의민족',
+	             data: [143]
+	         },
+	         {
+	             name: '요기요',
+	             data: [255]
+	         },
+	         {
+	             name: '배달통',
+	             data: [5]
+	         }
+	     ]
+	 };
+ 
+ var options1 = {
+     series: {
+         showLabel: true
+     },
+     chart: {
+         width: 560,
+         height: 350,
+         title: '우아한형제들 및 딜리버리히어로 코리아 매출 증가 추이(단위: 억원)',
+         //format: '1,000'
+     },
+     yAxis: {
+         title: '억원',
+         min: 0,
+         max: 3500
+     },
+     xAxis: {
+         title: '년도'
+     },
+     legend: {
+         align: 'bottom'
+     }
+ };
+ 
+ var options2 = {
+     series: {
+        showLabel: true,
+        stackType: 'normal'
+    },
+     chart: {
+         width: 560,
+         height: 350,
+         title: '국내 배달 플랫폼 시장 점유율 추이(월간 사용자수)',
+         format: '1,000'
+     },
+     yAxis: {
+         title: '%',
+         min: 0,
+         max: 100,
+         labelInterval: 5,
+     },
+     xAxis: {
+         //title: '년도'
+     },
+     legend: {
+         align: 'bottom'
+     }
+ };
+ 
+ var options3 = {
+     series: {
+         showLabel: true
+     },
+     chart: {
+         width: 560,
+         height: 350,
+         title: '국내 배달 플랫폼 누적다운로드 건수(단위: 만건)',
+         format: '1,000'
+     },
+     yAxis: {
+         title: '만건',
+         min: 0,
+         max: 4500
+     },
+     xAxis: {
+         title: '플랫폼'
+     },
+     legend: {
+         align: 'bottom'
+     }
+ };
+ 
+ var options4 = {
+     series: {
+         showLabel: true
+     },
+     chart: {
+         width: 560,
+         height: 350,
+         title: '우아한 형제들 매출 및 영업이익 현황(단위: 억원)',
+         format: '1,000'
+     },
+     yAxis: {
+         title: '억원',
+         min: -500,
+         max: 3500
+     },
+     xAxis: {
+         title: ''
+     },
+     legend: {
+         align: 'bottom'
+     }
+ };
+ 
+ var options5 = {
+     series: {
+         showLabel: true,
+         stackType: 'normal'
+     },
+     chart: {
+         width: 560,
+         height: 350,
+         title: '국내 배달 플랫폼 매출액, 누적다운로드 비율 및 시장 점유율(단위: %)',
+         format: '1,000'
+     },
+     yAxis: {
+         title: '',
+         min: 0,
+         max: 35000
+     },
+     xAxis: {
+         title: ''
+     },
+     legend: {
+         align: 'bottom'
+     }
+ };
+ 
+ var options6 = {
+     series: {
+         showLabel: true
+     },
+     chart: {
+         width: 560,
+         height: 350,
+         title: '2014년 1월 기준 배달앱 3사 누적 투자유치 금액(단위: 억원)',
+         format: '1,000'
+     },
+     yAxis: {
+         title: '억원',
+         min: 0,
+         max: 300
+     },	
+     xAxis: {
+         title: ''
+     },
+     legend: {
+         align: 'bottom'
+     }
+ };
+ 
+ var themeLine = {
+	      series: {
+	          dot: {
+	            fillColor: null,
+	            radius: 2,
+	            strokeWidth: 0,
+	            hover: {
+	              fillColor: null,
+	              radius: 4,
+	              strokeOpacity: 1,
+	              strokeWidth: 2
+	            }
+	        },
+	        line: {
+	        	pointWidth: 1
+	        },
+	    	colors: ['#6381f0', '#eb6686', '#35c3d0', '#f8be76', '#c09fee', '#6079d4']
+	      },
+	    xAxis: {
+	    	label: {
+	    		fontSize: 15,
+		    	fontFamily: 'Noto sans KR'
+	    	}
+	    },
+	    yAxis: {
+	    	label: {
+	    		fontSize: 15,
+		    	fontFamily: 'Noto sans KR'
+	    	}
+	    },
+	    legend: {
+	    	label: {
+	            fontSize: 14,
+	            fontFamily: 'Noto sans KR'
+	        }
+	    }
+	  };
+ 
+ var themeLine = {
+	      series: {
+	          dot: {
+	            fillColor: null,
+	            radius: 2,
+	            strokeWidth: 0,
+	            hover: {
+	              fillColor: null,
+	              radius: 4,
+	              strokeOpacity: 1,
+	              strokeWidth: 2
+	            }
+	        },
+	    	colors: ['#6381f0', '#eb6686', '#35c3d0', '#f8be76', '#c09fee', '#6079d4']
+	      },
+	    xAxis: {
+	    	label: {
+	    		fontSize: 15,
+		    	fontFamily: 'Noto sans KR'
+	    	}
+	    },
+	    yAxis: {
+	    	label: {
+	    		fontSize: 15,
+		    	fontFamily: 'Noto sans KR'
+	    	}
+	    },
+	    legend: {
+	    	label: {
+	            fontSize: 14,
+	            fontFamily: 'Noto sans KR'
+	        }
+	    }
+	  };
+	  // For apply theme
+	  tui.chart.registerTheme('myTheme', theme);
+	  tui.chart.registerTheme('themeLine', themeLine);
+	  
+	  options1.theme = 'themeLine';
+	  tui.chart.lineChart(container1, data1, options1);
+	  
+	  options2.theme = 'myTheme';
+	  tui.chart.columnChart(container2, data2, options2);
+	  
+	  options3.theme = 'myTheme';
+	  tui.chart.columnChart(container3, data3, options3);
+	  
+	  options4.theme = 'myTheme';
+	  tui.chart.columnChart(container4, data4, options4);
+	  
+	  options5.theme = 'myTheme';
+	  tui.chart.barChart(container5, data5, options5);
+	  
+	  options6.theme = 'myTheme';
+	  tui.chart.columnChart(container6, data6, options6);
+	  
+
+/*******************************************************************************************************************************************************************
+ * tui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 350);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

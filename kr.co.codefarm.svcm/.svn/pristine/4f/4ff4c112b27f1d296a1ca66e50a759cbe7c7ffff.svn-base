@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.restapi">
+	<select id="getRestApiList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.API_SEQ
+		     , A.SERVICE_CD
+		     , A.API_NM
+		     , A.API_URL
+		     , A.METHOD_GB
+		     , A.USE_YN
+		     , A.REST_API_DESC
+		     , A.REMARK
+             <if test="pPageNo != null and pPageNo != ''.toString()">
+             , A.CNT
+             </if>
+		  FROM ( 
+		           SELECT API_SEQ
+					    , SERVICE_CD
+					    , API_NM
+					    , API_URL
+					    , METHOD_GB
+					    , USE_YN 
+					    <![CDATA[
+					    , REPLACE(REST_API_DESC, '<br>', CHAR(10)) AS REST_API_DESC
+					    , REPLACE(REMARK, '<br>', CHAR(10)) AS REMARK
+					    ]]>
+                        <if test="pPageNo != null and pPageNo != ''.toString()">
+                        , ROW_NUMBER() OVER(ORDER BY API_SEQ DESC) AS RNUM
+                        , COUNT(*) OVER() AS CNT
+                        </if>
+				   FROM SMN_REST_API
+		          WHERE 1 = 1
+                  <if test="pSearchArgv != null">
+		            AND COALESCE(API_NM, '') LIKE CONCAT('%',#{pSearchArgv},'%') <!-- API 명-->
+                  </if>
+		       ) A
+	       WHERE 1=1
+	       <if test="pPageNo != null and pPageNo != ''.toString()">
+	         AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+	       ORDER BY A.RNUM
+	       </if>
+	       <if test="pPageNo == null or pPageNo eq ''.toString()">
+	       ORDER BY A.API_SEQ DESC
+	       </if>
+	</select>
+
+	
+	<insert id="insertRestApi" parameterType="hashMap">
+		INSERT INTO SMN_REST_API 
+		( 
+			  API_SEQ
+		    , SERVICE_CD
+		    , API_NM
+		    , API_URL
+		    , METHOD_GB
+		    , USE_YN
+		    , REST_API_DESC
+		    , REMARK
+		    , INSERT_DTTM
+		    , INSERT_ID
+		    , INSERT_IP
+		    , INSERT_PGM
+		 ) 
+		 VALUES 
+		 (
+			  (SELECT COALESCE(MAX(A.API_SEQ),0)+1 FROM SMN_REST_API A)
+			, #{SERVICE_CD}
+			, #{API_NM}
+			, #{API_URL}
+			, #{METHOD_GB}
+			, #{USE_YN}
+			, #{REST_API_DESC}
+			, #{REMARK}
+			, SYSDATE()
+			, #{SYSTEM_ID}
+			, #{SYSTEM_IP}
+			, #{SYSTEM_PGM}				
+		)
+	</insert>
+    	
+	<update id="updateRestApi" parameterType="hashMap">
+		UPDATE SMN_REST_API
+		   SET SERVICE_CD 		= #{SERVICE_CD}	
+			 , API_NM 		 	= #{API_NM}
+			 , API_URL 		 	= #{API_URL}
+			 , METHOD_GB 		= #{METHOD_GB}
+			 , USE_YN 		 	= #{USE_YN}	
+			 , REST_API_DESC	= #{REST_API_DESC}
+			 , REMARK 		 	= #{REMARK}	
+			 , UPDATE_DTTM  	= SYSDATE()
+			 , UPDATE_ID    	= #{SYSTEM_ID}
+			 , UPDATE_IP    	= #{SYSTEM_IP}
+			 , UPDATE_PGM   	= #{SYSTEM_PGM}
+		 WHERE API_SEQ 	 		= #{API_SEQ}
+	</update>
+     
+     <delete id="deleteRestApi" parameterType="hashMap">
+     
+     	DELETE FROM SMN_ALARM_DAESANG
+    	 WHERE ALARM_SEQ IN (SELECT SA.ALARM_SEQ FROM SMN_ALARM SA WHERE SA.API_SEQ = #{apiSeq});
+    	 
+    	DELETE FROM SMN_ALARM_BLOCK_LIST
+    	 WHERE ALARM_SEQ IN (SELECT SA.ALARM_SEQ FROM SMN_ALARM SA WHERE SA.API_SEQ = #{apiSeq});
+    	 
+    	DELETE FROM SMN_ALARM
+    	 WHERE API_SEQ = #{apiSeq};
+    	 
+		DELETE 
+		  FROM SMN_REST_API
+    	 WHERE API_SEQ = #{apiSeq};
+	
+    </delete>
+</mapper>

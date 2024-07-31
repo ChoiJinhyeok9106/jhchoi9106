@@ -1,0 +1,22 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+
+<h2>진단 리스트</h2>
+<section class="sub_cont_box">
+    <article class="check-statue-top">
+        <h3>[5대 핵심 역량] 간호학과 2학년 대상 핵심 역량진단</h3>
+        <p>간호학과 2학년을 대상으로 이뤄지는 대동대학교 5대 핵심 역량에 대한 진단 테스트 입니다.</p>
+        <span class="info-required">* 필수항목</span>
+        <p class="date"><span class="icon-calendar"></span>2019-02-15 ~ 2019-02-20</p>
+        <p class="time"><span class="icon-realtime"></span>09:00:00 ~ 18:00:00</p>
+    </article>
+    <article class="check-statue-box">
+        <span class="icon icon-caution3"></span>
+        <span class="txt">귀하는 2019년 3월 18일 16시 28분에<br>
+        이미 진단에 응답하셨습니다.</span>
+    </article>
+</section>
+
+            
+
+
+

@@ -1,0 +1,343 @@
+<h2>링크플러스 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!linkplusList.currentRow">
+		<h2 class="h2">링크플러스 리스트</h2>
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="링크명을 입력하세요" v-on:keyup.13="search()">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	        <div class="f-right">
+	            <input type="button" value="신규" class="btn type02 size-m" @click="newRow()">
+	        </div>
+	    </div>
+	    
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{linkplusListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{linkplusListPaging.getCurrentPage()}}</span> / {{linkplusListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="mainListLoading">
+					<caption>링크 명, 링크 주소, 순번, 사용여부를 조회 항목별 순서대로 안내하는 표입니다</caption>	
+					
+					<colgroup>
+						<col width="20%" />
+						<col width="45%" />
+						<col width="10%" />
+						<col width="15%" />
+						<col/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th class="left" scope="col">링크 명</th>
+							<th class="left" scope="col">링크 주소</th>
+							<th scope="col">순번</th>
+							<th scope="col">사용여부</th>
+							<th scope="col">삭제</th>				
+						</tr>
+					</thead>
+					<tbody v-if="linkplusList.getRowCount() > 0">
+						<tr v-for="(item, index) in linkplusList.data" v-if="linkplusList.getRowType(index) != 8">
+							<td class="left" data-header="링크 명"><a href="#!" @click="rowClick(index)">{{item.LINK_NM}}</a></td>
+							<td class="left" data-header="링크 주소"><a href="#!" @click="rowClick(index)">{{item.LINK_URL}}</a></td>
+							<td data-header="순번"><a href="#!" @click="rowClick(index)">{{item.ORD}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="삭제"><a href="#!" @click="messagePopup('LINK_PLUS_DELETE', index)"><span class="icon-trashcan"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="linkplusListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+		
+	<section class="cont_box" v-if="linkplusList.currentRow">
+		<h2 class="h2" id="detail">링크 플러스 관리 상세</h2>
+		<div class="style_set box-type01">
+            <div class="row form-row">
+            	<div class="form-group col s12 m6 l6 xl6">
+		            <label class="label-type01 required" for="linkNm">링크 명</label>
+		            <input class="size-m" type="text" id="linkNm"  name="linkNm"  placeholder="링크 명" data-vv-as="링크 명 " v-model="linkplusList.currentRow.LINK_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('linkNm')}"/>
+		            <invalid-message :visible="linkplusList.currentRow" :name="'linkNm'" :verror="errors"/>
+		        </div>
+		        <div class="form-group col s12 m6 l6 xl6">
+		            <label class="label-type01 required" for="linkUrl">링크 URL</label>
+		            <input class="size-m" type="text" id="linkUrl"  name="linkUrl"  placeholder="링크 URL" data-vv-as="링크 URL " v-model="linkplusList.currentRow.LINK_URL" v-validate="'required|max:1000'" v-bind:class="{'invalid': errors.has('linkUrl')}"/>
+		            <invalid-message :visible="linkplusList.currentRow" :name="'linkUrl'" :verror="errors"/>
+		        </div>
+		    </div>
+			<div class="row form-row">
+				<div class="form-group col s12 m6 l3 xl3">
+		            <label class="label-type01 required" for="useYn">사용여부</label>
+		            <div class="form-check">
+		        		<label class="toggle-switch">
+						<input class="size-m" type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부 " v-model="linkplusList.currentRow.USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('useYn')}"/>
+						<span class="slider round"></span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group col s12 m6 l9 xl9">
+		            <label class="label-type01" for="remark">순번</label>
+		            <input class="size-m" type="text" id="ord"  name="ord" data-vv-as="정렬순서 " v-model="linkplusList.currentRow.ORD" v-validate="'numeric|max:10'" v-bind:class="{'invalid': errors.has('ord')}"/>
+		            <invalid-message :visible="linkplusList.currentRow" :name="'ord'" :verror="errors"/>
+		        </div>
+			</div>
+			
+        </div>
+		<div class="col-inline btn-line right">
+			<div class="col-inline right">
+				<a href="#!" class="btn type01 size-m" @click="linkplusList.selectRow(-1)">목록</a>
+	    		<a href="#!" class="btn type01 size-m" v-if="linkplusList.getRowType(linkplusList.rowposition) == ROWTYPE_NORMAL || linkplusList.getRowType(linkplusList.rowposition) == ROWTYPE_UPDATE" @click="messagePopup('LINK_PLUS_DELETE', linkplusList.rowposition)">삭제</a>
+	    		<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+			</div>
+		</div>    
+	</section>
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+* vue start 
+********************************************************************************************************************************************************************/
+var rowpos='';
+var date1;
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		linkplusList: new Dataset(),
+		linkplusListPaging: new PagingSet(5, 5),
+		pSearchType: '2',
+        pSearchArgv: '',
+		updateDisabled: true,
+		messageModal: new ModalSet('linkplus-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+		sub1ListLoading: {id:'sub1ListLoading', val:false},
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	created : function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		// linkplusList(링크플러스 관리 관리) rowposition changed
+		'linkplusList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.linkplusList.enableevent){
+					var changeYn = this.linkplusList.dataCompare(oldVal);
+					var rowType = this.linkplusList.getRowType(val);
+					var oldRowType = this.linkplusList.getRowType(oldVal);
+					
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.linkplusList.setDefaultRow(oldVal);
+					}
+					
+					if(val != -1){
+						if(rowType == this.ROWTYPE_NORMAL  || rowType == this.ROWTYPE_UPDATE){
+							this.updateDisabled = true;	
+						}else{
+							this.updateDisabled = false;
+						}	
+						
+						this.$validator.reset();	
+					}
+				}
+			}
+		},
+		'linkplusList.data': {
+			handler: function (val, oldVal) {
+				if(this.linkplusList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.linkplusList.beforeData[rowposition][colNm];
+				          	vm.linkplusList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.linkplusList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'linkplusListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.linkplusList.pageChange(val, this.linkplusListPaging.getRowCnt());
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setLinkplusList();
+	},
+	//함수
+	methods: {
+		 /* 검색 */
+        search: function(){
+        	var pageNo = this.linkplusListPaging.getCurrentPage();
+        	
+        	if(pageNo == 1){
+        		this.setLinkplusList();
+        	}else{
+        		this.linkplusListPaging.movePage(1);
+        	}  
+        },
+		/* 링크 플러스 리스트 조회 */
+		setLinkplusList: function(){
+			var self = this;
+			
+            self.mainListLoading.val = true;
+			var returnVal = linkplusApi.linkpluss({'pSearchArgv':this.pSearchArgv}, false);
+			
+			returnVal.then(function(response) {
+				self.linkplusList.setRawData(response.data, self.linkplusListPaging.getRowCnt());
+				
+				if(response.data.length > 0){
+					self.linkplusListPaging.setTotalCnt(response.data.length);
+				}else{
+					self.linkplusListPaging.setTotalCnt(0);
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		/*링크 플러스 관리 신규*/
+		newRow: function(){
+			var addObj = {
+				'LINK_SEQ': '',
+				'LINK_NM': '',
+				'LINK_URL': '',
+				'USE_YN': 'Y',
+				'ORD': '',
+            };
+			
+			var newRowPosition = this.linkplusList.addRow(addObj);
+			this.linkplusListPaging.setTotalCnt(parseInt(this.linkplusListPaging.totalCnt,10)+1);
+		},
+		/* 링크 플러스 관리  저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.linkplusList.rowposition;
+					var rowType = self.linkplusList.getRowType(rowposition);
+					var returnVal = null;
+					
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = linkplusApi.linkplusInsert(self.linkplusList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = linkplusApi.linkplusUpdate(self.linkplusList.currentRow, true);
+					}else{
+						notifySubmit('info', '링크 플러스 정보 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+					
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							notifySubmit('success', '링크 플러스 정보 저장', '저장이 완료되었습니다.', 'icon-save');
+							self.setLinkplusList();
+						}).catch(function(error) {
+							notifySubmit('warning', '링크 플러스 정보 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}
+			});
+		},
+		/*링크 플러스 관리 삭제*/
+		deleteRow: function(row){
+			var self = this;
+			var rowType = self.linkplusList.getRowType(row); 
+			var returnVal = null;
+			
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = linkplusApi.linkplusDelete(self.linkplusList.getRow(row), true);
+			
+			 	returnVal.then(function(response) {
+					var data = response.data;
+					notifySubmit('success', '링크 플러스 정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+					self.setLinkplusList();
+				}).catch(function(error) {
+					notifySubmit('warning', '링크 플러스 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});	
+			}else{
+				self.linkplusList.deleteRow(row);
+				self.linkplusListPaging.setTotalCnt(parseInt(self.linkplusListPaging.totalCnt,10)-1);
+				notifySubmit('success', '링크 플러스 정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+			}
+			
+		},
+		rowClick: function(index){
+			this.linkplusList.selectRow(index); 
+			this.moveId('detail');
+		},
+		/* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            var pGb = 'confirm';
+
+            switch(pId) {
+	    		case 'LINK_PLUS_DELETE':
+	    			title = '삭제';
+	    			cont = '선택 된 링크 플러스를 삭제하시겠습니까?';
+                    break;
+	    	}
+
+	    	this.messageModal.openModal(pGb, title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'LINK_PLUS_DELETE':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    },
+	    moveId: function(id) {
+	    	this.$nextTick(function(){
+	    		location.href = '#'+id;
+          	})
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+}); 
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+
+ </script>
+
+

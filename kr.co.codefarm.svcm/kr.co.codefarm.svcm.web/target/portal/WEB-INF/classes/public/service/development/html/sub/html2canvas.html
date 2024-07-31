@@ -1,0 +1,14 @@
+var canvasTarget = $(event.target).parents('.widget_box').eq(0).get(0);
+var html2CanvasReturn = html2canvas(canvasTarget);
+var self = this;
+
+html2CanvasReturn.then(function(canvas){
+	var win = window.open();
+	var data = canvas.toDataURL('image/jpeg');
+	
+	win.document.write('<img src="'+data+'"/>');
+	
+	var pdf = new jsPDF();
+    pdf.addImage(canvas.toDataURL(), 'JPEG', 0, 0);
+    pdf.save("download.pdf");
+});

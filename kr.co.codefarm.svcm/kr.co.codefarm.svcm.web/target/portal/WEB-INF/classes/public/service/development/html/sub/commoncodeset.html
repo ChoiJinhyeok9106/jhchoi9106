@@ -1,0 +1,116 @@
+<h2 id="top">Dataset-CommcodeSet</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Method</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type02">
+	        	<li v-for="(item, index) in methodData" style="margin-top:10px;"><a :href="'#item'+index" class="btn type01 size-s c-blue" style="border:1px solid #2549b0;" >{{item.name}} {{item.param}}</a> : {{item.description}}</li>
+			</ul>
+		</div>
+    </section>
+    
+    <section class="cont_box" v-for="(item, index) in methodData" :id="'item'+index">
+        <h3 class="h3">{{item.name}} {{item.param}}</h3>
+        <div class="row form-row">
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Description</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description.split('\n').join('<br />')"></p>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description2.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Syntax</label>
+	            <!-- <p class="txt_info" v-html="item.syntax.split('\n').join('<br />')"></p> -->
+<textarea :id="'codeEditor'+index" style="line-height:30px;" v-html="item.syntax">
+</textarea>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Parameters</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.parameters.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Return</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.returnVal.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <p class="right" style="line-height:30px;"><a href="#top" class="btn type01 size-m c-sky icon-arrow-up-circle" style="border:1px; font-size:20px;"></a></p>
+	        </div>
+	    </div>
+        <br/>
+   	</section>
+</section>
+
+<style>
+html {
+    scroll-behavior: smooth;
+}
+</style>
+<script type="text/javascript">
+//{name:'',param:'()',description:'',description2:'',syntax:'',parameters:'',returnVal:''},
+//<option v-for="(item, index) in commTest.getCommcode('SMN', 'BOARD_GB', 'select', 'CD_NM', 'N', 'CD1')" :value="{'CD':item.CD,'CD1':item.CD1}" >{{item.CD_NM}}</option>
+var method = [
+	{name:'CommcodeSet',param:'()',description:'공통코드를 가지고 오는 오브젝트 입니다.',description2:'공통 코드는 시스템에서 기본적으로 모든 서비스의 공통코드셋을 전역변수로 만들어 두고 있습니다.\nVue 객체로 아래의 공통 코드셋이 선언 되어있습니다.\nVue.prototype.smnCommcode = new CommcodeSet("SMN");\nVue.prototype.jsuCommcode = new CommcodeSet("JSU"");\nVue.prototype.cmdCommcode = new CommcodeSet("CMD");\n등등.. 생략..',syntax:'new CommcodeSet();\n// Create Object\nvar ds = new CommcodeSet;',parameters:'pServiceCd(String) : 서비스코드',returnVal:'성공여부를 반환합니다.(Boolean)'},
+	{name:'getCommcode',param:'(pServiceCd, pUpCd, pFirstRow, pColumn, pInputLmtYn, pAddColumnList)',description:'가져온 공통코드에서 상위코드에 해당하는 코드를 리턴합니다.',description2:'',syntax:'CommcodeSet.getCommcode(pServiceCd, pUpCd, pFirstRow, pColumn, pInputLmtYn)',parameters:'pServiceCd(String) : 서비스코드\npUpCd(String) : 상위코드\npFirstRow(String) : 첫로우 타입 all, select, null (default : null)\npColumn(String) : 어떤 컬럼을 가져올 것인지 CD, CD1 ~ CD10 (default : CD)\npInputLmtYn(String) : 신규입력제한여부 Y,N (신규입력이 제한 되어있는것만 가지고 올것인지 아닌지)\npAddColumnList(Object) : 추가로 가져올 컬럼 종류',returnVal:'ArrayObject [{CD, CD_NM}]'},
+	{name:'getCommcodeNm',param:'(pServiceCd, pUpCd, pCd, pReturnColumnNm, pSearchColumnNm)',description:'공통코드의 key에 해당하는 정보를 받아 원하는 컬럼 값을 리턴합니다.',description2:'',syntax:'CommcodeSet.getCommcodeNm(pServiceCd, pUpCd, pCd, pReturnColumnNm)',parameters:'pServiceCd(String) : 서비스코드\npUpCd(String) : 상위코드\npCd(String) : 코드\npReturnColumnNm(String) : 리턴받을 컬럼 아이디\npSearchColumnNm(String) : 검색 할 컬럼 아이디',returnVal:'value(String)'},
+]
+
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		testDate: new Date(),
+		methodData: _.sortBy(method, ['name']),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	_.forEach(vm.methodData, function(n, key) {
+		editor('codeEditor'+key, 100);
+	});
+	
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

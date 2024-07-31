@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.havestatushist">
+
+    <!-- 자산 목록 조회 -->
+    <select id="getHaveStatusHistList"  parameterType="hashMap" resultType="hashMap">
+		SELECT /* Ta_Asset_Acq_Dtl_Hist_selectHavsStatusHistList  자산보유현황Log 목록 조회 */ 
+	       A_.*,
+		    CM_GETCODENM('GM0100', A_.STAT_CD, A_.AGENCY_ID) AS STAT_NM ,
+			CM_GETCODENM('CM0030', A_.ACNTS_SE_CD, A_.AGENCY_ID) AS ACNTS_SE_NM,
+			CM_GETDEPTNM(A_.DEPT_CD, A_.AGENCY_ID) AS DEPT_NM,
+			CM_GETCODENM('GM0010', A_.HAVE_SE_CD, A_.AGENCY_ID) AS HAVE_SE_NM ,
+			CM_GETCODENM('GM0020', A_.ASSET_STAT_CD, A_.AGENCY_ID ) AS ASSET_STAT_NM, 
+			CM_GETUSERNM(A_.USR_ID, A_.AGENCY_ID) AS USR_NM,
+			CM_GETCODENM('GM0010', A_.ACQ_SE_CD, A_.AGENCY_ID)ACQ_SE_NM,
+			CM_GETCODENM('GM0120', A_.TAG_KIND_CD, A_.AGENCY_ID) AS TAG_KIND_NM   
+	       FROM   
+				(SELECT 
+          			<if test="pPageNo != null and pPageNo != ''.toString()">
+	             		ROW_NUMBER() OVER(ORDER BY A.REG_DATE DESC) AS RNUM
+	           		 , COUNT(*) OVER() AS CNT
+	            	</if>   
+				     , DATE_FORMAT(A.REG_DATE, '%Y-%m-%d %H:%i') AS REG_DATE
+				     , A.STAT_CD
+				     , A.ASSET_MGMT_NO 
+				     , A.ASSET_ACQ_NO 
+				     , A.DEPT_CD  
+				     , A.ACNTS_SE_CD 
+				     , A.HAVE_SE_CD 
+				     , F.ACQ_SE_CD
+				     , A.ASSET_CL_NO 
+				     , B.ASSET_CL_KO_NM 
+				     , A.ASSET_STND_NO 
+				     , T.ASSET_STND_KO_NM 
+				     , CONCAT(A.ASSET_CL_NO , '-' , A.ASSET_STND_NO) AS ASSET_CL_STND_CD 
+				     , A.BUY_DT 
+				     , A.ACQ_DT 
+				     , A.BUY_UPRICE 
+				     , A.ASSET_STAT_CD 
+				     , G.BLDG_NM  
+				     , G.STAIR_NM 
+				     , A.LOC_CD 
+				     , G.LOC_NM 
+				     , A.INST_ASSET_MGMT_NO
+				     , A.PRT_ISSU_DATE 
+				     , A.USR_ID 
+				     , A.TAG_KIND_CD 
+				     , A.MNGR_ID 
+				     , A.RMK 
+				     , A.AGENCY_ID
+				     , B.USE_YYCNT  
+				     , D.REQ_CNT   																		/* 발행요청횟수 */
+				     , D.ISSU_CNT  																		/* 발행횟수 */  
+				     , DATE_FORMAT(D.ISSU_DATE, '%Y%m%d') AS ISSU_DATE 
+				     , D.ISSU_REQ_DT 
+				     , IFNULL(D.RFID_WRITE_CD, 0) AS RFID_WRITE_CD      								/* 태그발급상태  0:미발급, 1:발급요청, 2:발급요청취소, 4:발급완료 */
+				     , CASE WHEN (D.RFID_WRITE_CD IS NULL OR D.RFID_WRITE_CD = 2 OR  D.RFID_WRITE_CD = 0) THEN  '미발급'  
+				     		WHEN D.RFID_WRITE_CD = 1 THEN  '발급요청'  
+							ELSE '발급' END AS RFID_WRITE_NM 
+				  FROM TA_ASSET_ACQ_DTL_HIST A  /* 보유현황 이력 */
+				  INNER JOIN TA_ASSET_CL_CD B ON A.AGENCY_ID = B.AGENCY_ID AND A.ASSET_CL_NO = B.ASSET_CL_NO
+                  INNER JOIN TA_ASSET_STND_CD T ON A.AGENCY_ID = T.AGENCY_ID AND A.ASSET_STND_NO = T.ASSET_STND_NO AND A.ASSET_CL_NO = T.ASSET_CL_NO	
+				  LEFT OUTER JOIN TA_USE_LOC_CD G ON A.AGENCY_ID = G.AGENCY_ID AND  A.LOC_CD  = G.LOC_CD AND G.USE_AT = 'Y'
+				  LEFT OUTER JOIN	
+				  (SELECT D0.ASSET_MGMT_NO   
+                    		,MAX(D1.MAX_ISSU_REQ_DT) AS ISSU_REQ_DT   										/* 최종_발행_요청일자*/
+                    		,MAX(D1.MAX_ISSU_DATE)   AS ISSU_DATE     										/* 최종_발행_일시 */								
+                            ,MAX(D0.ISSU_SEQ)        AS ISSU_SEQ      										/* 최종_이력_순번 */
+                            ,COUNT(D0.ISSU_DATE)     AS REQ_CNT       										/* 요청횟수 */
+                            ,SUM(D1.ISSU_CNT)        AS ISSU_CNT      										/* 발행횟수(누적) */ 
+                            ,CASE WHEN ((D0.ISSU_REQUSR_AT IS NULL &amp;&amp; D0.ISSU_AT IS NULL ) || (D0.ISSU_REQUSR_AT ='N'  &amp;&amp; D0.ISSU_AT='N')) THEN 0 
+                                  WHEN (D0.ISSU_REQUSR_AT = 'N'  &amp;&amp; D0.ISSU_AT = 'Y') THEN 4 
+                                  WHEN (D0.ISSU_REQUSR_ID ='Y'  &amp;&amp; D0.ISSU_AT ='N') THEN 1 
+                                  WHEN MAX(D0.ISSU_CNCL_DT) IS NOT NULL THEN 0 
+                                  WHEN MAX(D0.ISSU_REQ_DT) IS NULL THEN 0 ELSE 1 END
+                            AS RFID_WRITE_CD
+                            ,D0.AGENCY_ID                         	 									/* 태그발급상태  0:미발급, 1:발급요청, 2:발급요청취소, 4:발급완료 */
+                       FROM TA_PRT_ISSU D0 
+                           ,(SELECT B0.ASSET_MGMT_NO
+                                   ,MAX(B0.ISSU_SEQ)    MAX_ISSU_SEQ     								  	/* 최종_이력_순번*/
+                                   ,SUM(CASE when  B0.ISSU_DATE IS NOT NULL THEN 1 ELSE 0 END  ) ISSU_CNT 	/* 발행횟수 */
+                                   ,MAX(B0.ISSU_DATE)   MAX_ISSU_DATE   								  	/* 최종_발행_일시 */
+                                   ,MAX(B0.ISSU_REQ_DT) MAX_ISSU_REQ_DT 									/* 최종_발행_요청일자 */
+                                   ,B0.AGENCY_ID
+                               FROM TA_PRT_ISSU B0 
+                               GROUP BY B0.ASSET_MGMT_NO
+                            ) D1 																			/* 발급이력최종정보 */
+                       WHERE  D0.ASSET_MGMT_NO=D1.ASSET_MGMT_NO
+                         AND  D0.ISSU_SEQ  =D1.MAX_ISSU_SEQ
+                         AND  D0.AGENCY_ID = D1.AGENCY_ID
+                     GROUP BY D0.ASSET_MGMT_NO
+                     ) D  /* 태그발급이력관련 */		
+                    ON D.ASSET_MGMT_NO = A.ASSET_MGMT_NO AND D.AGENCY_ID = A.AGENCY_ID
+                     LEFT JOIN TA_ASSET_ACQ_DTL F ON A.ASSET_MGMT_NO = F.ASSET_MGMT_NO AND A.AGENCY_ID = F.AGENCY_ID
+					WHERE A.AGENCY_ID = '00000000' 
+					<!-- 물품분류번호 -->
+					<if test="pAssetClNo != null and pAssetClNo != ''.toString()">
+						AND A.ASSET_CL_NO LIKE CONCAT('%' , #{pAssetClNo} , '%')
+					</if>
+					<!-- 물품명 -->
+					<if test="pAssetClKoNm != null and pAssetClKoNm != ''.toString()">
+						AND B.ASSET_CL_KO_NM LIKE CONCAT('%' , #{pAssetClKoNm} , '%')
+					</if>
+					<!-- 물품규격번호 -->
+					<if test="pAssetStndNo != null and pAssetStndNo != ''.toString()">
+						AND A.ASSET_STND_NO LIKE CONCAT('%' , #{pAssetStndNo} , '%')
+					</if>
+					<!-- 규격명 -->
+					<if test="pAssetStndKoNm != null and pAssetStndKoNm != ''.toString()">
+						AND T.ASSET_STND_KO_NM LIKE CONCAT('%' , #{pAssetStndKoNm} , '%')
+					</if>
+					<!-- 진행상태 -->
+					<if test="pStatCd != null and pStatCd != ''.toString()">
+						<if test="pStatCd != 'ALL'">
+							AND STAT_CD = #{pStatCd}
+						</if>
+					</if>
+					<!-- 취득구분 -->
+					<if test="pAcqSeCd != null and pAcqSeCd != ''.toString()">
+						<if test="pAcqSeCd != 'ALL'">
+							AND ACQ_SE_CD = #{pAcqSeCd}
+						</if>
+					</if>
+					<!-- 회계구분 -->
+					<if test="pAcntsSeCd != null and pAcntsSeCd != ''.toString()">
+						<if test="pAcntsSeCd != 'ALL'">
+							AND A.ACNTS_SE_CD = #{pAcntsSeCd}
+						</if>
+					</if>
+					<!-- 등록 일자 -->
+					<if test="pRegDt_S != null and pRegDt_S != ''.toString() and pRegDt_E != null and pRegDt_E != ''.toString()">
+			        	AND DATE_FORMAT(A.REG_DATE, '%Y%m%d') BETWEEN #{pRegDt_S} AND #{pRegDt_E}
+			        </if>
+					<!-- 구입 일자 -->
+					<if test="pBuyDt_S != null and pBuyDt_S != ''.toString() and pBuyDt_E != null and pBuyDt_E != ''.toString()">
+			        	AND A.BUY_DT BETWEEN #{pBuyDt_S} AND #{pBuyDt_E}
+			        </if>
+			        <!-- 취득 일자 -->
+					<if test="pAcqDt_S != null and pAcqDt_S != ''.toString() and pAcqDt_E != null and pAcqDt_E != ''.toString()">
+			        	AND A.ACQ_DT BETWEEN #{pAcqDt_S} AND #{pAcqDt_E}
+			        </if>
+			        <!-- 구입 단가 -->
+					<if test="pBuyUprice_S != null and pBuyUprice_S != ''.toString() and pBuyUprice_E != null and pBuyUprice_E != ''.toString()">
+			        	AND A.BUY_UPRICE BETWEEN #{pBuyUprice_S} AND #{pBuyUprice_E}
+			        </if>
+			        <!-- 자산 관리 번호 -->
+					<if test="pAssetMgmtNo != null and pAssetMgmtNo != ''.toString()">
+						AND A.ASSET_MGMT_NO LIKE CONCAT('%' , #{pAssetMgmtNo} , '%')
+					</if>
+					<!-- 기관 자산 번호 -->
+					<if test="pInstAssetMgmtNo != null and pInstAssetMgmtNo != ''.toString()">
+						AND A.INST_ASSET_MGMT_NO LIKE CONCAT('%' , #{pInstAssetMgmtNo} , '%')
+					</if>
+					<!-- 비고 -->
+					<if test="pRmk != null and pRmk != ''.toString()">
+						AND A.RMK LIKE CONCAT('%' , #{pRmk} , '%')
+					</if>
+					<!-- 사용자 -->
+					<if test="pUsrId != null and pUsrId != ''.toString()">
+						AND A.USR_ID = #{pUsrId}
+					</if>
+					<!-- 부서 코드 -->
+					<if test='pDeptCd != null and pDeptCd != ""'>
+						<if test='pDeptCd != "00"'>
+							AND A.DEPT_CD IN ( WITH RECURSIVE CTE_CONNECT_BY AS ( 
+							SELECT 1 AS LEVEL, S.DEPT_CD, S.AGENCY_ID, S.UP_DEPT_CD  FROM VA_DEPT S WHERE S.DEPT_CD = #{pDeptCd} AND S.AGENCY_ID = '00000000'
+							UNION ALL
+							SELECT LEVEL + 1 AS LEVEL, S.DEPT_CD, S.AGENCY_ID,S.UP_DEPT_CD AS ACQ_DEPT_CD FROM CTE_CONNECT_BY R INNER JOIN VA_DEPT S ON  R.DEPT_CD = S.UP_DEPT_CD  WHERE S.AGENCY_ID = '00000000' 
+							)  
+							SELECT DEPT_CD FROM  CTE_CONNECT_BY WHERE AGENCY_ID = '00000000')
+						</if>
+					</if>
+					
+		         ) A_ 
+				
+				WHERE 1=1
+				<if test="pPageNo != null and pPageNo != ''.toString()">
+  					AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+				</if>
+				ORDER BY A_.REG_DATE DESC
+       </select>
+       
+    
+</mapper>

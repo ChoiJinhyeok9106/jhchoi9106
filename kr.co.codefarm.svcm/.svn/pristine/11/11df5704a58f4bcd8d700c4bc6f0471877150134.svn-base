@@ -1,0 +1,174 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mileage.css" />  
+
+<h2>마일리지 취득현황</h2>
+<section class="sub_cont_box">
+	<article class="mileage-stat-box">
+		<div class="left-part">
+			<div class="user-info-box">
+                <div class="photo-line">
+                    <span class="photo"><!-- <img src="/service/design/images/mileage/counsel_main_photo04.jpg" alt=""> --></span>
+                </div>
+                <span class="name">강수민</span>
+                <div class="mileage">
+                	<p class="stit">총 누적마일리지</p>
+                	<span class="initial">M</span><span class="num">170.00</span><span class="snum">170.00</span>
+                </div>
+            </div>
+		</div>
+		<div class="right-part">
+			<ul class="detail-list">
+				<li>
+					<span class="division">이번 학기 취득 마일리지</span>
+					<span class="point">1,200</span>
+				</li>
+				<li>
+					<span class="division">장학 받은 마일리지</span>
+					<span class="point">680</span>
+				</li>
+				<li>
+					<span class="division">졸업인증 마일리지 (24점이상)</span>
+					<span class="point">18</span>
+				</li>
+				<li>
+					<span class="division">잔여마일리지</span>
+					<span class="point">5</span>
+				</li>
+			</ul>
+		</div>
+	</article>
+	
+	<h2 class="h2">학기별 취득현황</h2>
+	<div class="table-type04-wrap">
+		<table class="table-type04 response">
+			<caption>학기별 취득현황 테이블로 학년도, 학기, 장학마일리지, 졸업인증마일리지 항목별 순서대로 안내하는 표입니다</caption>
+			<colgroup>
+				<col width="15%" />
+				<col width="15%" />
+				<col />
+				<col width="30%" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col">학년도</th>
+					<th scope="col">학기</th>
+					<th scope="col">장학 마일리지</th>
+					<th scope="col">졸업인증 마일리지</th>
+				</tr>
+			</thead>
+			<tbody>	
+				<tr>
+					<td data-header="학년도">2017</td>
+					<td data-header="학기">1학기</td>
+					<td data-header="장학 마일리지">12</td>
+					<td data-header="졸업인증 마일리지">6</td>
+				</tr>
+				<tr>
+					<td data-header="학년도">2017</td>
+					<td data-header="학기">2학기</td>
+					<td data-header="장학 마일리지">13</td>
+					<td data-header="졸업인증 마일리지">7</td>
+				</tr>
+				<tr>
+					<td data-header="학년도">2018</td>
+					<td data-header="학기">1학기</td>
+					<td data-header="장학 마일리지">6</td>
+					<td data-header="졸업인증 마일리지">3</td>
+				</tr>
+				<tr>
+					<td data-header="학년도">2018</td>
+					<td data-header="학기">2학기</td>
+					<td data-header="장학 마일리지">8</td>
+					<td data-header="장학 마일리지">0</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h2 class="h2">영역별 취득현황</h2>
+	<div class="box-type03">
+		<div class="form-group">
+		    <div class="col-inline left">
+		        <label class="label-type01 size-m mileage">영역선택</label>
+		        <div class="checkbox size-m">
+                    <input type="checkbox" name="checkbox01">
+                    <label for="checkbox01">M 영역</label>
+                    <i class="icon-check"></i>
+                </div>
+                <div class="checkbox size-m">
+                    <input type="checkbox" name="checkbox01">
+                    <label for="checkbox01">C 영역</label>
+                    <i class="icon-check"></i>
+                </div>
+                <div class="checkbox size-m">
+                    <input type="checkbox" name="checkbox01">
+                    <label for="checkbox01">D 영역</label>
+                    <i class="icon-check"></i>
+                </div>
+                <div class="checkbox size-m">
+                    <input type="checkbox" name="checkbox01">
+                    <label for="checkbox01">etc 영역</label>
+                    <i class="icon-check"></i>
+                </div>
+		    </div>
+		</div>
+	</div>
+	
+	<h2 class="h2">M 영역</h2>
+	<table class="table-type01 response">
+	    <caption>영역별 취득현황 상세내용 테이블로 영역(능력단위요소), 진단문항, 우수(우수,보통,미흡) 항목별 순서대로 안내하는 표입니다</caption>
+	    <colgroup>
+	        <col width="20%" />
+	        <col>
+	        <col width="10%" />
+	        <col width="10%" />
+	        <col width="10%" />
+	    </colgroup>
+	    <thead>
+	        <tr>
+	            <th scope="col" rowspan="2">영역(능력단위요소)</th>
+	            <th scope="col" rowspan="2">진단문항</th>
+	            <th scope="col" colspan="3">우수</th>
+	        </tr>
+	        <tr>
+	            <th scope="col">우수</th>
+	            <th scope="col">보통</th>
+	            <th scope="col">미흡</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr>
+	            <td data-header="영역"></td>
+	            <td data-header="진단문항" class="left"></td>
+	            <td data-header="우수"></td>
+	            <td data-header="보통"></td>
+	            <td data-header="미흡"></td>
+	        </tr>
+	        <tr>
+	            <td data-header="영역"></td>
+	            <td data-header="진단문항" class="left"></td>
+	            <td data-header="우수"></td>
+	            <td data-header="보통"></td>
+	            <td data-header="미흡"></td>
+	        </tr>
+	        <tr>
+	            <td data-header="영역"></td>
+	            <td data-header="진단문항" class="left"></td>
+	            <td data-header="우수"></td>
+	            <td data-header="보통"></td>
+	            <td data-header="미흡"></td>
+	        </tr>
+	        <tr>
+	            <td data-header="영역"></td>
+	            <td data-header="진단문항" class="left"></td>
+	            <td data-header="우수"></td>
+	            <td data-header="보통"></td>
+	            <td data-header="미흡"></td>
+	        </tr>	       
+	    </tbody>
+	</table>
+</section>
+
+<script>
+    
+</script>
+            

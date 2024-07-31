@@ -1,0 +1,201 @@
+<h2>템플릿-태그</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">커스텀 엘리먼트</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li><a href="https://ui.toast.com/tui-editor/" target="_blank">https://ui.toast.com/tui-editor/</a> 오픈소스참고</li>
+	        	<li>선언 된 에디터 .getHtml()로 html 형태의 값을 받아올 수 있음</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1">var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+		uploadImage: function(blob) {
+			var formData = new FormData();
+			var serviceAbbrNm = 'SMN';
+			var fileId = 'EDITOR';
+			var fileHangmok = 'EDITOR_IMG';
+			var fileKey = '1';
+
+   		    formData.append('serviceAbbrNm', serviceAbbrNm);
+   		    formData.append('upload_path', serviceAbbrNm + '\\' + fileId + '\\' + fileHangmok);
+   		    formData.append('fileId', fileId);
+   		    formData.append('fileKey', fileKey);
+   		    formData.append('fileHangmok', fileHangmok);
+   		 	formData.append('file1', blob, blob.name);
+   		 	
+   		 	return axios.post('/commons/file/upload',
+   	    		formData,
+   	            {
+   	                headers: {
+   	                    'Content-Type': 'multipart/form-data'
+   	                },
+   	            }
+  	        );
+    	 }
+     }
+ });
+ 
+ $(document).ready(function(){
+    var editorEl = new tui.Editor({
+   	    el: document.querySelector('#editSection'),
+   	    initialEditType: 'wysiwyg',
+   	    previewStyle: 'vertical',
+   	    height: '300px',
+   	 	hooks: {
+	    	'addImageBlobHook': function(blob, callback){
+	    		vm.uploadImage(blob).then(function(response) {
+	    			var _protocol = window.location.protocol;
+	    			var _host = window.location.host;
+	    			var _url = _protocol + "//" + _host;
+	    			var _fileUrl = '';
+	    			
+	    			if(typeof response.data == 'object' && response.data.length > 0){
+	    				_fileUrl = response.data[0].FILE_PATH.replaceAll('\\','/');
+	    			}
+	    			
+	    	        if (_fileUrl == '') {
+	    	        	console.log('Validation error');
+	    	        }
+	    	        callback('/upload' + _fileUrl, blob.name);
+	    	    }).catch(error => {
+	    	        console.log(error);
+	    	    });	
+	    	},
+	    },
+   	});
+});
+</textarea>
+    </section>
+    <section class="cont_box" style="height:1000px;">
+        <h3 class="h3">에디터 테스트</h3>
+        <div class="form-group row form-row" id="editSection">
+		</div>
+<!-- 		<div id="summernote"></div> -->
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	imgSingleFileSet: new SingleFileSet("SMN"),	// 이미지
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+		uploadImage: function(blob) {
+			var formData = new FormData();
+			var serviceAbbrNm = 'SMN';
+			var fileId = 'EDITOR';
+			var fileHangmok = 'EDITOR_IMG';
+			var fileKey = '1';
+
+   		    formData.append('serviceAbbrNm', serviceAbbrNm);
+   		    formData.append('upload_path', serviceAbbrNm + '\\' + fileId + '\\' + fileHangmok);
+   		    formData.append('fileId', fileId);
+   		    formData.append('fileKey', fileKey);
+   		    formData.append('fileHangmok', fileHangmok);
+   		 	formData.append('file1', blob, blob.name);
+   		 	
+   		 	return axios.post('/commons/file/upload-editor',
+   	    		formData,
+   	            {
+   	                headers: {
+   	                    'Content-Type': 'multipart/form-data'
+   	                },
+   	            }
+  	        );
+    	 }
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/ 
+$(document).ready(function(){
+	editor('codeEditor1', 300);
+    
+    var editorEl = new toastui.Editor({
+   	    el: document.querySelector('#editSection'),
+   	    initialEditType: 'wysiwyg',
+   	    previewStyle: 'vertical',
+   	    height: '500px',
+        exts: [
+        	'scrollSync',
+        ],
+   	 	hooks: {
+	    	'addImageBlobHook': function(blob, callback){
+	    		try{
+	    			vm.uploadImage(blob).then(function(response) {
+		    			var _protocol = window.location.protocol;
+		    			var _host = window.location.host;
+		    			var _url = _protocol + "//" + _host;
+		    			var _fileUrl = '';
+		    			
+	    				_fileUrl = response.data;
+	    				callback('/upload' + _fileUrl, blob.name);
+		    	    }).catch(error => {
+		    	        console.log(error);
+		    	    });	
+	    		} catch(err){
+	    			console.log('tui editor fileUpload Error : '+err.message);
+	    			return false;
+	    		}
+	    	},
+	    },
+   	});
+});
+
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+
+// $('#summernote').summernote({
+//     placeholder: 'Hello Bootstrap 4',
+//     tabsize: 2,
+//     height: 500,
+//     lang: "ko-KR"
+// });
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

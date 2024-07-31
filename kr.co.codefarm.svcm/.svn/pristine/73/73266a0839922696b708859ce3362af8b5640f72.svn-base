@@ -1,0 +1,1352 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/project.css" />  
+
+<h2>프로젝트 공고</h2>
+<section class="sub_cont_box">
+	<div class="project-detail-top">
+		<div class="title-line">
+			<!-- 프로젝트개설의 project-statue는 총3가지 type02 circle clr01(진행),clr02(완료),clr03(중단) -->
+			<span class="project-statue type02 circle clr01">진행</span>
+			인터페이스 없는 인터페이스 프로젝트 참여자 모집합니다.
+		</div>
+		<div class="info-line">
+			<div class="row form-row">
+	            <div class="form-group col s12 l4">  
+	            	<div class="row form-row">     
+	            		<div class="form-group col s12 m4">
+   							<span class="tit"><span class="icon-edit-2"></span>작성자</span>
+   						</div>
+   						<div class="form-group col s12 m8">
+   							<span class="txt">최아인</span>    
+   						</div>
+   					</div>				
+	            </div>
+	            <div class="form-group col s12 l4">  
+	            	<div class="row form-row">     
+	            		<div class="form-group col s12 m4">
+   							<span class="tit"><span class="icon-time"></span>작성일</span>
+   						</div>
+   						<div class="form-group col s12 m8">
+   							<span class="txt">2019-06-18</span>    
+   						</div>
+   					</div>				
+	            </div>
+	            <div class="form-group col s12 l4">  
+	            	<div class="row form-row">     
+	            		<div class="form-group col s12 m4">
+   							<span class="tit"><span class="icon-compass"></span>국내외 구분</span>
+   						</div>
+   						<div class="form-group col s12 m8">
+   							<span class="txt">국내</span>    
+   						</div>
+   					</div>				
+	            </div>
+	       	</div>
+	       	<div class="row form-row">
+	            <div class="form-group col s12 l4">  
+	            	<div class="row form-row">     
+	            		<div class="form-group col s12 m4">
+   							<span class="tit"><span class="icon-calendar"></span>진행기간</span>
+   						</div>
+   						<div class="form-group col s12 m8">
+   							<span class="txt">2019-01-15 ~ 2019-01-19</span>    
+   						</div>
+   					</div>				
+	            </div>
+	            <div class="form-group col s12 l4">  
+	            	<div class="row form-row">     
+	            		<div class="form-group col s12 m4">
+   							<span class="tit"><span class="icon-users"></span>신청인원</span>
+   						</div>
+   						<div class="form-group col s12 m8">
+   							<span class="txt">5명 / 20명</span>    
+   						</div>
+   					</div>				
+	            </div>
+	            <div class="form-group col s12 l4">  
+	            	<div class="row form-row">     
+	            		<div class="form-group col s12 m4">
+   							<span class="tit"><span class="icon-monitor"></span>중단상태</span>
+   						</div>
+   						<div class="form-group col s12 m8">
+   							<!-- 프로젝트개설의 project-statue는 총3가지 type03 clr01(신청),clr02(승인),clr03(반려) -->
+   							<span class="txt project-statue type03 clr01">신청</span>   
+   						</div>
+   					</div>				
+	            </div>
+	       	</div>
+		</div>
+	</div>
+    <div class="tab-outter non-first">
+        <div class="tab-type04">
+            <div class="tab-inner">
+                <div rel="tab1"><a href="#!" class="active">상세정보</a></div>
+                <div rel="tab2"><a href="#!">수행계획</a></div>
+                <div rel="tab3"><a href="#!">참여자 현황</a></div>
+                <div rel="tab4"><a href="#!">결과보고</a></div>
+            </div>
+        </div>
+    </div>    
+   	   	
+   	
+   	<div class="tab-container">
+   		<div id="tab1" class="tab-content">
+   			<h3 class="h3">상세정보</h3>
+   			
+   			<ul class="detail-info-list">
+   				<li>
+   					<p class="title">프로젝트 개요 (소개 및 제안배경)</p>
+   					<p class="info-txt">너무나 이런 우는 파란 속의 청춘이 자랑처럼 봅니다. 별빛이 너무나 지나고 속의 당신은 이런 하나에 무성할 아이들의 까닭입니다. 딴은 시와 토끼, 잔디가 남은 동경과 가난한 봅니다. 이름을 아이들의 별 릴케 위에도 있습니다. 흙으로 없이 잠, 하나에 하늘에는 풀이 내 헤일 다 듯합니다. 한 경, 별들을 차 추억과 봅니다.</p>
+   				</li>
+   				<li>
+   					<p class="title">주요기능 및 예상결과물</p>
+   					<p class="info-txt">너무나 이런 우는 파란 속의 청춘이 자랑처럼 봅니다. 별빛이 너무나 지나고 속의 당신은 이런 하나에 무성할 아이들의 까닭입니다. 딴은 시와 토끼, 잔디가 남은 동경과 가난한 봅니다. 이름을 아이들의 별 릴케 위에도 있습니다. 흙으로 없이 잠, 하나에 하늘에는 풀이 내 헤일 다 듯합니다. 한 경, 별들을 차 추억과 봅니다.</p>
+   				</li>
+   				<li>
+   					<p class="title">기대효과 및 활용분야</p>
+   					<p class="info-txt">너무나 이런 우는 파란 속의 청춘이 자랑처럼 봅니다. 별빛이 너무나 지나고 속의 당신은 이런 하나에 무성할 아이들의 까닭입니다. 딴은 시와 토끼, 잔디가 남은 동경과 가난한 봅니다. 이름을 아이들의 별 릴케 위에도 있습니다. 흙으로 없이 잠, 하나에 하늘에는 풀이 내 헤일 다 듯합니다. 한 경, 별들을 차 추억과 봅니다.</p>
+   				</li>
+   				<li>
+   					<p class="title">비고</p>
+   					<p class="info-txt">너무나 이런 우는 파란 속의 청춘이 자랑처럼 봅니다. 별빛이 너무나 지나고 속의 당신은 이런 하나에 무성할 아이들의 까닭입니다. 딴은 시와 토끼, 잔디가 남은 동경과 가난한 봅니다. 이름을 아이들의 별 릴케 위에도 있습니다. 흙으로 없이 잠, 하나에 하늘에는 풀이 내 헤일 다 듯합니다. 한 경, 별들을 차 추억과 봅니다.</p>
+   				</li>
+   			</ul>
+			<div class="detail-file-box">
+				<p class="tit"><span>첨부파일</span></p>
+				<div class="file-link">
+					<a href="#!">공가리모델링 반값임대주택(햇살둥지) 입주희망자 공고.pdf</a>
+					<a href="#!">공가리모델링 반값임대주택(햇살둥지) 입주희망자 공고.pdf</a>
+				</div>
+			</div>
+			<div class="btn-line right">
+				<a href="#!" class="btn type02 size-m">수정</a>
+			</div>
+		</div>
+		
+		<div id="tab2" class="tab-content">
+			<h3 class="h3">수행계획</h3>
+			<div class="box-type03 project-box">    
+		    	<div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput1" class="label-type01 size-m">제목</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <input type="text" id="formGroupExampleInput1" class="size-m" />
+			        </div>
+			    </div>
+			    <div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput2" class="label-type01 size-m">예상 진행 기간</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <div class="row form-row">
+							<div class="col s12 l6">
+								<div class="date-form-wrap">
+									<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+									<input type="text" id="formGroupExampleInput2" class="size-m" style="width:90%"><span class="text" style="width:10%">~</span>
+								</div>
+							</div>
+							<div class="col s12 l6">
+								<div class="date-form-wrap">
+									<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+									<input type="text" id="formGroupExampleInput3" class="size-m" >
+								</div>
+							</div>
+						</div> 
+			        </div>
+			    </div>  
+			    <div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput4" class="label-type01 size-m">수행 기간</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <div class="row form-row">
+							<div class="col s12 l6">
+								<div class="date-form-wrap">
+									<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+									<input type="text" id="formGroupExampleInput4" class="size-m" style="width:90%"><span class="text" style="width:10%">~</span>
+								</div>
+							</div>
+							<div class="col s12 l6">
+								<div class="date-form-wrap">
+									<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+									<input type="text" id="formGroupExampleInput5" class="size-m" >
+								</div>
+							</div>
+						</div> 
+			        </div>
+			    </div>  
+			    <div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput55" class="label-type01 size-m">계획구분</label>
+			        </div>
+			        <div class="form-group col s12 l3">
+			            <select class="size-m" id="formGroupExampleInput55">
+				            <option value="">선택하세요</option>
+				        </select>
+			        </div>
+			    </div>
+				<div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput6" class="label-type01 size-m">수행상태</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <div class="radio size-m">
+		                    <input type="radio" name="radio" id="radio01">
+		                    <label for="radio01">등록</label>
+		                    <i class="radio-icon"></i>
+		                </div>
+		                <div class="radio size-m">
+		                    <input type="radio" name="radio" id="radio02">
+		                    <label for="radio02">진행</label>
+		                    <i class="radio-icon"></i>
+		                </div>
+		                <div class="radio size-m">
+		                    <input type="radio" name="radio" id="radio03">
+		                    <label for="radio03">완료</label>
+		                    <i class="radio-icon"></i>
+		                </div>
+		                <div class="radio size-m">
+		                    <input type="radio" name="radio" id="radio04">
+		                    <label for="radio04">취소</label>
+		                    <i class="radio-icon"></i>
+		                </div>
+			        </div>
+			    </div> 			    
+			    <div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput8" class="label-type01 size-m">수행계획 내용</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <textarea id="formGroupExampleInput8" rows="10" class="size-l project-textarea" placeholder="2000자 이내로 작성해 주세요."></textarea>
+			        </div>
+			    </div>
+			    
+			    <div class="row form-row">
+			    	<div class="form-group col s12"> 
+			    		<div class="form-group">
+			    			<label for="exampleFormControlInput1" class="label-type01">파일첨부</label> 
+			    			<div class="file-upload-type">
+			    				<div class="upload-viewer">
+			    					<span class="circlechart-text01">0</span>
+			    					<span class="circlechart-text02">10</span> 
+			    					<div class="circlechart"></div> 
+			    					<div class="info-text">파일을 <span>드래그 앤 드롭</span> 하거나 파일찾기를 눌러 선택한 후 업로드하세요</div> 
+			    					<div class="info-text" style="display: none;">저장 후 <span>파일 등록을</span> 하실 수 있습니다.</div> 
+			    					<div class="btn-line">
+			    						<input type="button" value="파일찾기" onclick="$('#files').click(); " class="btn type01 size-m" style="width: 110px;">
+			    						<input type="button" value="업로드" class="btn type02 size-m" style="width: 110px;">
+			    					</div> 
+		    						<div class="progress-zone">
+		    							<div class="percent">0%</div> 
+		    							<div class="statue-txt"></div> 
+		    							<div class="progress simple horizontal">
+		    								<div class="area">
+		    									<div class="bar striped animated" style="width: 0%;"></div>
+		    								</div>
+		    							</div>
+		    						</div> 
+		    						<input type="file" id="files" multiple="multiple">
+		    					</div> 
+		    					<div class="upload-list">
+		    						<span class="tit">파일목록</span> 
+		    						<span class="total">Total <span>0</span></span> 
+		    						<div class="list-box ps">
+		    							<div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+		    								<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+		    							</div>
+		    							<div class="ps__rail-y" style="top: 0px; right: 0px;">
+		    								<div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div>
+		    							</div>
+		    						</div>
+		    					</div>
+		    				</div> 
+		    				<div class="modal-layer-wrap common-modal" style="z-index: 99999999; display: none;">
+		    					<div id="multiFileMessageModal" class="modal-layer modal-small modal-middle modal-large" style="display: block;">
+		    						<div class="modal-container">
+		    							<div class="modal-header">
+		    								<p class="modal-title"></p>
+		    							</div> 
+		    							<div class="modal-content">
+		    								<div class="row">
+		    									<div class="col s12 message-popoup"></div>
+		    								</div>
+		    							</div> 
+		    							<div class="modal-footer center">
+		    								<a href="#!" class="btn type02 size-m layer_close">확인</a> 
+		    								<a href="#!" class="btn type02 size-m layer_close" style="display: none;">취소</a> 
+		    								<a href="#!" class="btn type02 size-m layer_close" style="display: none;">닫기</a>
+		    							</div> 
+		    							<div class="btn-r">
+		    								<a href="#!" title="닫기" class="cbtn" style="display: inline-block;"><span class="icon-exit"></span>	</a>
+		    							</div>
+		    						</div>
+		    					</div>
+		    				</div>
+		    			</div> 
+		    		</div>
+		    	</div>	    			
+		    </div>
+		    <div class="btn-line right">
+		    	<input type="button" value="취소" class="btn type01 size-m"><input type="button" value="저장" class="btn type02 size-m">
+		    </div>
+		</div>
+		<div id="tab3" class="tab-content">
+			<h3 class="h3">참여자 현황</h3>
+			<span class="entry-mark">관리자</span>
+			<div class="tab-outter">
+		        <div class="tab-type05">
+		            <div class="tab-inner">
+		                <div rel="tab101"><a href="#!" class="active">참여자</a></div>
+		                <div rel="tab102"><a href="#!">참여 신청자<span class="count">99</span></a></div>
+		                <div rel="tab103"><a href="#!">탈퇴자<span class="count">99</span></a></div>
+		            </div>
+		        </div>
+		    </div> 
+		    <div id="tab101" class="tab-content2">
+		    	<div class="project-entry-wrap">
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category01" name="category" >
+                                <label for="category01">전체</label>
+                            </div>
+		    				<div class="thumb master"><span class="master-icon icon-star"></span><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="매니저"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr01">신청</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb master on"><a href="#!" class="master-del" title="관리자 권한 삭제">관리자권한 삭제</a><span class="master-icon icon-star"></span><img src="/service/design/images/project/project_thumb02.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit on">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">길버트</p>
+		    				<p class="major">사진학과</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont on"><input type="text" class="size-s" value="매니저"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list"> <!-- 본일 일때 -->
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category03" name="category" >
+                                <label for="category03">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area me">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category04" name="category" >
+                                <label for="category04">전체</label>
+                            </div>
+		    				<div class="thumb master"><span class="master-icon icon-star"></span><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr01">신청</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category03" name="category" >
+                                <label for="category03">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb on"><a href="#!" class="master-sel" title="관리자 권한 추가">관리자권한 추가</a><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit on">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont on"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb02.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">길버트</p>
+		    				<p class="major">사진학과</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="자문 및 홍보"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category04" name="category" >
+                                <label for="category04">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">산업디자인학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="기획 및 디자인"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr01">신청</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    	</div>
+		    	<div class="btn-line right">
+			   		<input type="button" value="저장" class="btn type02 size-m">
+			   	</div>
+		    </div>
+		    <div id="tab102" class="tab-content2">
+		    	<div class="project-entry-wrap">
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category01" name="category" >
+                                <label for="category01">전체</label>
+                            </div>
+		    				<div class="thumb master"><span class="master-icon icon-star"></span><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="매니저"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb02.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">길버트</p>
+		    				<p class="major">사진학과</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list"> 
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category03" name="category" >
+                                <label for="category03">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category04" name="category" >
+                                <label for="category04">전체</label>
+                            </div>
+		    				<div class="thumb master"><span class="master-icon icon-star"></span><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category03" name="category" >
+                                <label for="category03">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb02.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">길버트</p>
+		    				<p class="major">사진학과</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="자문 및 홍보"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category04" name="category" >
+                                <label for="category04">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    				<a href="#!" class="btn-edit">수정</a>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">산업디자인학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="기획 및 디자인"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr02">신청</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont">-</span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    	</div>
+		    	<div class="btn-line right">
+			   		<input type="button" value="승인" class="btn type02 size-m">
+			   	</div>
+		    </div>
+		    <div id="tab103" class="tab-content2">
+		    	<div class="project-entry-wrap">
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category01" name="category" >
+                                <label for="category01">전체</label>
+                            </div>
+		    				<div class="thumb master"><span class="master-icon icon-star"></span><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>		    				
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="매니저"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr02">반려</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb02.jpg" alt="" /></div>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">길버트</p>
+		    				<p class="major">사진학과</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr01">신청</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category03" name="category" >
+                                <label for="category03">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr02">반려</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list out"> <!-- 탈퇴 승인한 사람 out -->
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category04" name="category" >
+                                <label for="category04">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr03">탈퇴</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr03">승인</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list out">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category03" name="category" >
+                                <label for="category03">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr03">탈퇴</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr03">승인</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list out">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb03.jpg" alt="" /></div>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">김수민</p>
+		    				<p class="major">간호학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="일반 멤버"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr03">탈퇴</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr03">승인</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category02" name="category" >
+                                <label for="category02">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb02.jpg" alt="" /></div>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">길버트</p>
+		    				<p class="major">사진학과</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="자문 및 홍보"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr01">신청</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    		<div class="entry-list">
+		    			<div class="top-area">
+		    				<div class="check-style01">
+                                <input type="checkbox" id="category04" name="category" >
+                                <label for="category04">전체</label>
+                            </div>
+		    				<div class="thumb"><img src="/service/design/images/project/project_thumb01.jpg" alt="" /></div>
+		    			</div>
+		    			<div class="cont-area">
+		    				<p class="name">최테로</p>
+		    				<p class="major">산업디자인학부</p>
+		    				<ul class="etc-wrap">
+		    					<li>
+		    						<span class="tit">역할</span>		    						
+		    						<span class="cont"><input type="text" class="size-s" value="기획 및 디자인"></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">참여상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type01 clr01">참여</span></span>
+		    					</li>
+		    					<li>
+		    						<span class="tit">탈퇴상태</span>		    						
+		    						<span class="cont"><span class="entry-statue type02 clr02">반려</span></span>
+		    					</li>
+		    				</ul>
+		    			</div>
+		    		</div>
+		    	</div>
+		    	<div class="btn-line right">
+			   		<input type="button" value="승인" onclick="modal_open('modal1');return false;" class="btn type02 size-m">
+			   		<input type="button" value="탈퇴" onclick="modal_open('modal2');return false;" class="btn type02 size-m">
+			   	</div>
+		    </div>
+		    
+		</div>
+		<div id="tab4" class="tab-content">
+			<h3 class="h3">결과보고</h3>
+			<div class="table-type04-wrap">
+	            <table class="table-type04 response">
+	                <caption>결과보고 목록 번호, 제목, 작성자, 작성일, 결과구분 항목별 순서대로 안내하는 표입니다</caption>
+	                <colgroup>
+	                    <col width="10%">
+	                    <col>
+	                    <col width="15%">
+	                    <col width="20%">
+	                    <col width="20%">
+	                </colgroup>
+	                <thead>
+	                    <tr>
+	                        <th scope="col">번호</th>
+	                        <th scope="col">제목</th>
+	                        <th scope="col">작성자</th>
+	                        <th scope="col">작성일</th>
+	                        <th scope="col">결과구분</th>
+	                    </tr>
+	                </thead>
+	                <tbody>	
+	                    <tr>	                        
+	                        <td data-header="번호">4</td>
+	                        <td data-header="제목">인터페이스 없는 인터페이스</td>
+	                        <td data-header="작성자">한선용</td>
+	                        <td data-header="작성일">2019-08-26</td>
+	                        <td data-header="결과구분">특허</td>
+	                    </tr>
+	                    <tr>	                        
+	                        <td data-header="번호">3</td>
+	                        <td data-header="제목">인터페이스 없는 인터페이스</td>
+	                        <td data-header="작성자">한선용</td>
+	                        <td data-header="작성일">2019-08-26</td>
+	                        <td data-header="결과구분">공모전</td>
+	                    </tr>
+	                    <tr>	                        
+	                        <td data-header="번호">2</td>
+	                        <td data-header="제목">인터페이스 없는 인터페이스</td>
+	                        <td data-header="작성자">한선용</td>
+	                        <td data-header="작성일">2019-08-26</td>
+	                        <td data-header="결과구분">앱 개발</td>
+	                    </tr>
+	                    <tr>	                        
+	                        <td data-header="번호">1</td>
+	                        <td data-header="제목">인터페이스 없는 인터페이스</td>
+	                        <td data-header="작성자">한선용</td>
+	                        <td data-header="작성일">2019-08-26</td>
+	                        <td data-header="결과구분">학회논문</td>
+	                    </tr>
+	                </tbody>
+	            </table>
+	        </div>
+	        <div class="paginate">
+            	<a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+					<a href="#" class="active" title="1 페이지">1</a>
+					<a href="#" title="2 페이지">2</a>
+					<a href="#" title="3 페이지">3</a>
+					<a href="#" title="4 페이지">4</a>
+					<a href="#" title="5 페이지">5</a>
+				</span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+          	</div>
+          	<div class="col-inline btn-line right">
+                <a href="#!" class="btn type02 size-m">신규</a>
+            </div>
+            
+            <!-- 신규 버튼 선택시 나타남 -->
+            <h3 class="h3">결과보고</h3>    
+		    <div class="box-type03 project-box">    
+		    	<div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput1" class="label-type01 size-m">제목</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <input type="text" id="formGroupExampleInput1" class="size-m" />
+			        </div>
+			    </div>
+			    <div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput8" class="label-type01 size-m">결과 내용</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <textarea id="formGroupExampleInput8" rows="10" class="size-l project-textarea" placeholder="2000자 이내로 작성해 주세요."></textarea>
+			        </div>
+			    </div>			      
+			      
+				<div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput6" class="label-type01 size-m">작성자</label>
+			        </div>
+			        <div class="form-group col s12 l9">			            
+		                <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox01-1" name="checkbox01">
+                            <label for="checkbox01">학생A(컴퓨터공학과)</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox01-2" name="checkbox01">
+                            <label for="checkbox02">학생B(컴퓨터공학과)</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox01-3" name="checkbox01">
+                            <label for="checkbox03">학생C(컴퓨터공학과)</label>
+                            <i class="icon-check"></i>
+                        </div>
+			        </div>
+			    </div> 
+			    <div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput6" class="label-type01 size-m">결과구분</label>
+			        </div>
+			        <div class="form-group col s12 l9">			            
+		                <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox02-1" name="checkbox02">
+                            <label for="checkbox01">특허</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox02-2" name="checkbox02">
+                            <label for="checkbox02">공모전</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox02-3" name="checkbox02">
+                            <label for="checkbox03">학회논문</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox02-4" name="checkbox02">
+                            <label for="checkbox03">졸업발표</label>
+                            <i class="icon-check"></i>
+                        </div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox02-5" name="checkbox02">
+                            <label for="checkbox03">기타</label>
+                            <i class="icon-check"></i>
+                        </div>
+			        </div>
+			    </div>
+			    
+			    <div class="row form-row">
+			        <div class="col s12 l3 col-label">
+			            <label for="formGroupExampleInput11" class="label-type01 size-m">비고</label>
+			        </div>
+			        <div class="form-group col s12 l9">
+			            <textarea id="formGroupExampleInputt11" rows="10" class="size-l" placeholder="300자 이내로 작성해 주세요."></textarea>
+			        </div>
+			    </div>
+			    <div class="row form-row">
+			    	<div class="form-group col s12"> 
+			    		<div class="form-group">
+			    			<label for="exampleFormControlInput1" class="label-type01">파일첨부</label> 
+			    			<div class="file-upload-type">
+			    				<div class="upload-viewer">
+			    					<span class="circlechart-text01">0</span>
+			    					<span class="circlechart-text02">10</span> 
+			    					<div class="circlechart"></div> 
+			    					<div class="info-text">파일을 <span>드래그 앤 드롭</span> 하거나 파일찾기를 눌러 선택한 후 업로드하세요</div> 
+			    					<div class="info-text" style="display: none;">저장 후 <span>파일 등록을</span> 하실 수 있습니다.</div> 
+			    					<div class="btn-line">
+			    						<input type="button" value="파일찾기" onclick="$('#files').click(); " class="btn type01 size-m" style="width: 110px;">
+			    						<input type="button" value="업로드" class="btn type02 size-m" style="width: 110px;">
+			    					</div> 
+		    						<div class="progress-zone">
+		    							<div class="percent">0%</div> 
+		    							<div class="statue-txt"></div> 
+		    							<div class="progress simple horizontal">
+		    								<div class="area">
+		    									<div class="bar striped animated" style="width: 0%;"></div>
+		    								</div>
+		    							</div>
+		    						</div> 
+		    						<input type="file" id="files" multiple="multiple">
+		    					</div> 
+		    					<div class="upload-list">
+		    						<span class="tit">파일목록</span> 
+		    						<span class="total">Total <span>0</span></span> 
+		    						<div class="list-box ps">
+		    							<div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+		    								<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+		    							</div>
+		    							<div class="ps__rail-y" style="top: 0px; right: 0px;">
+		    								<div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div>
+		    							</div>
+		    						</div>
+		    					</div>
+		    				</div> 
+		    				<div class="modal-layer-wrap common-modal" style="z-index: 99999999; display: none;">
+		    					<div id="multiFileMessageModal" class="modal-layer modal-small modal-middle modal-large" style="display: block;">
+		    						<div class="modal-container">
+		    							<div class="modal-header">
+		    								<p class="modal-title"></p>
+		    							</div> 
+		    							<div class="modal-content">
+		    								<div class="row">
+		    									<div class="col s12 message-popoup"></div>
+		    								</div>
+		    							</div> 
+		    							<div class="modal-footer center">
+		    								<a href="#!" class="btn type02 size-m layer_close">확인</a> 
+		    								<a href="#!" class="btn type02 size-m layer_close" style="display: none;">취소</a> 
+		    								<a href="#!" class="btn type02 size-m layer_close" style="display: none;">닫기</a>
+		    							</div> 
+		    							<div class="btn-r">
+		    								<a href="#!" title="닫기" class="cbtn" style="display: inline-block;"><span class="icon-exit"></span>	</a>
+		    							</div>
+		    						</div>
+		    					</div>
+		    				</div>
+		    			</div> 
+		    		</div>
+		    	</div>	    			
+		    </div>
+		    <div class="col-inline btn-line right">
+                <a href="#!" class="btn type01 size-m">취소</a>
+                <a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+		</div>
+	</div>
+</section>
+
+<!-- modal layer popup -->
+<div class="modal-layer-wrap">
+    <div id="modal1" class="modal-layer modal-middle">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">탈퇴 반려</p>
+            </div>
+            <div class="modal-content"> 
+            	<ul class="detail-info-list">
+	   				<li>
+	   					<p class="title">탈퇴 신청 사유</p>
+	   					<p class="info-txt">봄바람을 보이는 청춘이 되는 사막이다. 낙원을 노년에게서 거친 행복스럽고 이상이 주며, 없는 되려니와, 것은 보라. 이상, 커다란 청춘의 이 관현악이며, 지혜는 새 위하여서.<br>
+						심장의 긴지라 그것은 않는 생생하며, 아니다. 이상은 착목한는 같이, 품에 생생하며, 쓸쓸하랴?</p>
+	   				</li>
+	   				
+	   			</ul>             
+                <div class="form-group">
+			        <label for="formGroupExampleInput" class="label-type01">탈퇴 반려 사유</label>
+			        <textarea id="formGroupExampleInput8" rows="10" class="size-l" placeholder="탈퇴 반려 사유를 적어 주세요"></textarea>
+			    </div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type02 size-m">탈퇴 반려</a>
+                <a href="#!" class="btn type02 size-m">탈퇴 승인</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-layer-wrap">
+    <div id="modal2" class="modal-layer modal-middle">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">탈퇴 신청</p>
+            </div>
+            <div class="modal-content">
+                <div class="form-group">
+			        <label for="formGroupExampleInput" class="label-type01">탈퇴 신청 사유</label>
+			        <textarea id="formGroupExampleInput8" rows="10" class="size-l" placeholder="탈퇴 신청 사유를 적어 주세요"></textarea>
+			    </div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type02 size-m">탈퇴 신청</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+            
+
+<script>
+//모달레이어팝업
+function modal_open(el) {
+
+    var temp = $('#' + el); //레이어의 id를 temp변수에 저장
+    var bg = temp.prev().hasClass('bg'); //dimmed 레이어를 감지하기 위한 boolean 변수 
+
+    if (bg) {
+        $('.layer').fadeIn();
+    } else {
+        temp.fadeIn(); //bg 클래스가 없으면 일반레이어로 실행한다.
+    }
+
+    // 화면의 중앙에 레이어를 띄운다.
+
+    //if (temp.outerHeight() < $(document).height()) temp.css('margin-top', '-' + temp.outerHeight() / 2 + 'px');
+    //else temp.css('top', '0px');
+    if (temp.outerWidth() < $(document).width()) temp.css('margin-left', '-' + temp.outerWidth() / 2 + 'px');
+    else temp.css('left', '0px');
+
+    temp.find('a.cbtn, a.layer_close, .cbtn2').click(function(e) {
+        if (bg) {
+            $('.layer').fadeOut();
+        } else {
+            temp.fadeOut(); //'닫기'버튼을 클릭하면 레이어가 사라진다.
+        }
+        e.preventDefault();
+    });
+
+    $('.layer .bg').click(function(e) {
+        $('.layer').fadeOut();
+        e.preventDefault();
+    });
+
+    // Prevent mousewheel scroll
+    //$('html').on('wheel.modal mousewheel.modal', function () {
+    //	return false; 
+    //});
+    // Disable browser scrolling
+    $("html").css("overflow", "hidden");
+
+    //Show & hide dialog
+    $('.cbtn, .layer_close, .cbtn2').fadeIn().click(function() {
+        $(this).fadeOut()
+            // Enable scrollbars and mousewheel
+            //	$('html').off('wheel.modal mousewheel.modal');
+        $("html").css("overflow", "auto");
+        $('.modal-layer-wrap').removeClass('on');
+    });
+
+    //modal background dark
+    $('.modal-layer-wrap').find(temp).parent().addClass('on');
+
+
+}
+
+$(function(){
+    //탭메뉴
+    $(".tab-content").hide();
+    $(".tab-content:first").show();
+    $(".tab-type04 .tab-inner div a").click(function() {
+        $(".tab-type04 .tab-inner div a").removeClass("active");
+        $(this).addClass("active");
+        $(".tab-content").hide()
+        var activeTab = $(this).parent().attr("rel");
+        $("#"+activeTab).fadeIn()
+    });
+    
+  //2차탭메뉴
+    $(".tab-content2").hide();
+    $(".tab-content2:first").show();
+    $(".tab-type05 .tab-inner div a").click(function() {
+        $(".tab-type05 .tab-inner div a").removeClass("active");
+        $(this).addClass("active");
+        $(".tab-content2").hide()
+        var activeTab = $(this).parent().attr("rel");
+        $("#"+activeTab).fadeIn()
+    });
+});
+</script>

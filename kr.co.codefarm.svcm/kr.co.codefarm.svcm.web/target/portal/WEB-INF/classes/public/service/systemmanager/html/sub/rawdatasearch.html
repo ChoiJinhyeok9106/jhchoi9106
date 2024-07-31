@@ -1,0 +1,298 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/counseling.css" />
+
+<h2>기본 데이터 조회</h2>
+<section class="sub_cont_box counsel-list-wrap" id="app">
+	<section class="cont_box">
+		<h2 class="h2">기본 데이터 조회</h2>
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pSearchType" v-model="pSearchType" style="width:184px;" class="size-m">
+		            <option value="1">서비스 코드</option>
+		            <option value="2">서비스 명</option>
+		            <option value="3">서비스 영문 명</option>
+            </select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	        
+	        <div class="f-right">
+	            <input type="button" value="조회항목설정" class="btn type02 size-m" @click="toggleCounselingForm">
+	        </div>
+	    </div>
+	    
+		<aside class="counseling-aside" style="min-height:500px; top: 180px; width:280px;">
+			<a href="#!" class="btn-close" @click="toggleCounselingForm"><span class="icon-back"></span></a>
+			<h2 class="h2">Select an item</h2>
+			<div class="row form-row">
+				<div class="form-group col s12 l12 form-row" v-for="(item, index) in columns">
+					<div class="col s12 l10 col-label">
+			            <label for="inlineFormInputName9" class="label-type01 size-s">{{item.header}}</label>
+			        </div>
+			        <div class="col s12 l2">
+			            <label class="toggle-switch size-s">
+			                <input type="checkbox" :true-value="false" :false-value="true" v-model="item.hidden" @change="setHeader">
+			                <span class="slider round"></span>
+			            </label>
+			        </div>
+			    </div>
+			</div>
+		</aside>
+	    
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{ dataList.getRowCount() }}</span>건의 게시물이 있습니다.</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div id="grid"></div>
+		</div>
+	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+* vue start 
+********************************************************************************************************************************************************************/
+var rowpos='';
+var date1;
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		dataList: new Dataset(),
+		pSearchType: '2',
+        pSearchArgv: '',
+		messageModal: new ModalSet('program-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+		grid: '',
+		columns: [
+			{
+				header: '서비스 코드',
+				name: 'SERVICE_CD',
+				//editor: 'text'
+		        sortingType: 'asc',
+		     	minWidth: 80,
+		     	whiteSpace: 'normal',
+		        sortable: true,
+		        hidden: false,
+			},
+			{
+				header: '서비스 코드 영문명',
+				name: 'SERVICE_ENM',
+				align: 'center',
+				//className: 'clickable',
+		        sortingType: 'asc',
+		     	minWidth: 150,
+		     	whiteSpace: 'normal',
+		        sortable: true,
+		        hidden: false,
+			},
+			{
+				header: '서비스 코드명',
+				name: 'SERVICE_NM',
+				align: 'center',
+		        sortingType: 'asc',
+		     	minWidth: 120,
+		     	whiteSpace: 'normal',
+		        sortable: true,
+		        hidden: false,
+			},
+			{
+				header: '프로토콜 구분',
+				name: 'PROTOCOL_GBNM',
+		        sortingType: 'asc',
+		     	minWidth: 100,
+		     	whiteSpace: 'normal',
+		        sortable: true,
+		        hidden: false,
+			},
+			{
+				header: '도메인',
+				name: 'DOMAIN',
+				align: 'center',
+		        sortingType: 'asc',
+		     	minWidth: 150,
+		     	whiteSpace: 'normal',
+		        sortable: true,
+		        hidden: false,
+			},
+			{
+				header: '포트',
+				name: 'PORT',
+				align: 'center',
+		        sortingType: 'desc',
+		     	minWidth: 80,
+		     	whiteSpace: 'normal',
+		        sortable: true,
+		        hidden: false,
+			},
+			{
+				header: '컨텍스트',
+				name: 'CONTEXT',
+				align: 'right',
+		        sortingType: 'desc',
+		     	minWidth: 150,
+		     	whiteSpace: 'normal',
+		        sortable: true,
+		        hidden: false,
+			},
+			{
+				header: '공통코드 사용 여부',
+				name: 'COMMCODE_USE_YNNM',
+				align: 'center',
+		        sortingType: 'desc',
+		     	minWidth: 80,
+		     	whiteSpace: 'normal',
+		        hidden: false,
+				/* formatter: function(rowData) {
+					return '<a href="#!" class="btn type01 size-xs bg-sky" @click="test">취소</a>';
+			    } */
+			},
+		],
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	created : function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		// dataList(서비스관리) rowposition changed
+		'dataList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.dataList.enableevent && val > -1){
+					this.setProgramList();						
+				}
+			}
+		},
+		'dataList.data': {
+			handler: function (val, oldVal) {
+				if(this.dataList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.dataList.beforeData[rowposition][colNm];
+				          	vm.dataList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.dataList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'dataListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setDataList();
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		var self = this;
+		
+	   	this.grid = new tui.Grid({
+   		    el: document.getElementById('grid'),
+   			scrollX: true,
+   		 	bodyHeight: 300,
+   			rowHeaders: ['rowNum'],
+   			//selectionUnit: 'row',
+   			columns: self.columns,
+   		    columnOptions: {
+   		      	frozenCount: 3,
+   		      	frozenBorderWidth: 3,
+   		      	//minWidth: 300,
+   		   		resizable: true,
+   		    },
+//    			summary: {
+//    				height: 40,
+//    				position: 'bottom', // or 'top'
+//    				columnContent: {
+//    					MILEAGE_POINT: {
+//    						template: function(valueMap) {
+//    							return '합계: ' + valueMap.sum;
+//    						}
+//    					},
+//    					/* c3: {
+//    						template: function(valueMap) {
+//    							return `TOTAL: ${valueMap.sum} <br>AVG: ${valueMap.avg.toFixed(2)}`;
+//    						}
+//    					} */
+//    				}
+//    			},
+//    			onGridMounted: function(evt){
+//    			},
+   		    // 다른 옵션들 ...
+   		});
+	},
+	//함수
+	methods: {
+		 /* 검색 */
+        search: function(){
+        	this.setDataList();
+        },
+		/* 서비스관리 리스트 조회 */
+		setDataList: function(){
+			var self = this;
+			
+			if(isNull(this.pSearchArgv)) this.pSearchArgv = '';
+            if(isNull(this.pSearchType)){
+                this.pSearchType = '';
+                this.pSearchArgv = '';
+            }
+            
+            self.mainListLoading.val = true;
+			var returnVal = serviceApi.service(this.pSearchType, this.pSearchArgv, '', '', false);
+			
+			returnVal.then(function(response) {
+				self.dataList.setData(response.data);
+				if(response.data.length > 0){
+					var totalCnt = self.dataList.data[0].CNT;
+					self.grid.resetData(self.dataList.getData());
+				}else{
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		toggleCounselingForm: function(){
+		    if($('.counseling-aside').hasClass('on')){
+		    	$('.counseling-aside').removeClass('on');
+		        $('.counseling-aside').css({'transition':'.3s'});
+		    }else{
+		    	$('.counseling-aside').addClass('on');
+		        $('.counseling-aside').css({'transition':'.3s'});
+		    }
+		},
+		setHeader: function() {
+			this.grid.setColumns(this.columns);
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+}); 
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+
+ </script>
+
+

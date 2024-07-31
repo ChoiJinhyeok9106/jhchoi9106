@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.haveexcel">
+
+    <!-- 엑셀업로드 리스트 조회 -->
+    <select id="getHaveExcelList" parameterType="hashMap" resultType="hashMap">
+	SELECT 
+	   A_.*,
+	   CM_GETDEPTNM(A_.DEPT_CD,A_.AGENCY_ID) AS DEPT_NM,                                                   /* 부서명 					*/
+	   cm_getcodenm('GM0210', A_.ASSET_ITEM_SE_CD,A_.AGENCY_ID) AS ASSET_ITEM_SE_NM,                       /* 자산항목구분명(GM0210)		*/
+	   cm_getcodenm('CM0030', A_.ACNTS_SE_CD,A_.AGENCY_ID) ACNTS_SE_NM,                                    /* 회계구분명(CM0030) 		*/
+	   cm_getcodenm('GM0010', A_.ACQ_SE_CD,A_.AGENCY_ID) ACQ_SE_NM,                                        /* 취득구분명(GM0010) 		*/
+	   cm_getcodenm('CM0011', A_.GDS_RGST_KD_CD,A_.AGENCY_ID) GDS_RGST_KD_NM,                              /* 물품대장종류명(CM0011) 	*/
+	   cm_getcodenm('GM0120', A_.TAG_KIND_CD,A_.AGENCY_ID) AS TAG_KIND_NM                                  /* 태그명(GM0120)  		*/
+         FROM                                                                                         
+              (SELECT 
+                    <if test="pPageNo != null and pPageNo != ''.toString()">
+		             ROW_NUMBER() OVER(ORDER BY A.ERR_YN DESC) AS RNUM
+		           , COUNT(*) OVER() AS CNT
+		            </if>   
+			       , A.NUM                                                                            /* 순번 					*/                                  
+			       , A.RFLC_YN                                                                        /* 적용여부 					*/                                  
+			       , A.ERR_YN                                                                         /* 오류여부 					*/                                  
+			       , A.ERR_CN                                                                         /* 오류내용 					*/                                  
+			       , A.GDS_YN                                                                         /* 자산여부 					*/                              
+                   , A.EXCEL_ROW_NO                                                                   /* 엑셀ROW번호 				*/                                  
+                   , A.ASSET_MGMT_NO                                                                  /* 자산관리번호 				*/                                  
+                   , A.INST_ASSET_MGMT_NO                                                             /* 기관자산번호 				*/                                  
+                   , A.DTL_YN                                                                         /* 삭제여부 					*/                              
+                   , A.DEPT_CD                                                                        /* 부서코드 					*/                                  
+                   , A.ASSET_CL_NO                                                                    /* 물품분류코드 				*/                              
+                   , A.ASSET_CL_NM                                                                    /* 물품분류명  				*/                                  
+                   , A.ASSET_STND_NM                                                                  /* 물품규격코드  				*/                              
+                   , A.ASSET_STND_NO                                                                  /* 물품규격명  				*/                              
+                   , CONCAT(A.ASSET_CL_NO ,'-',A.ASSET_STND_NO)  AS ASSET_CL_STND_CD                  /* 물품목록번호  				*/                              
+                   , A.ASSET_ITEM_SE_CD                                                               /* 자산항목구분코드  			*/                              
+                   , A.BUY_QTY                                                                        /* 구입수량  					*/                                  
+                   , A.BUY_DT                                                                         /* 구입일자  					*/                              
+                   , A.BUY_UPRICE                                                                     /* 구입단가 					*/                                  
+                   , A.RMK                                                    	  					  /* 비고 					*/                              
+           		   , A.ACNTS_SE_CD                                                                    /* 회계구분코드 				*/                              
+           		   , A.ACQ_SE_CD                                                                      /* 취득구분코드 				*/                                  
+           		   , A.ARN_DT                                                                         /* 정리일자 					*/                              
+           		   , A.GDS_RGST_KD_CD                                                                 /* 물품대장종류코드 			*/                              
+           		   , A.REGUSER_ID                                                                     /* 등록자ID 				*/                              
+           		   , A.REG_DATE                                                                       /* 등록일시 					*/                              
+           		   , A.USE_LOC_NM                                                                     /* 사용위치 					*/                                  
+           		   , A.AGENCY_ID                                                                      /* 기관코드 					*/                              
+           		   , A.USE_YYCNT                                                                      /* 내용연수 					*/                              
+           		   , A.PRODT_CORPO_NM                                                                 /* 제조사명					*/    
+           		   , A.BUY_LOC_NM                                                                     /* 구매처명					*/   
+           		   , A.TAG_KIND_CD                                                                    /* 태그코드					*/
+                FROM  TA_ASSET_ACQ_DTL_EXCEL04 A /* 자산취득명세(엑셀업로드) */                       	    
+				WHERE A.AGENCY_ID = '00000000' 
+				<!-- 오류여부 -->
+				<if test='pErrYn != null and pErrYn != ""'>
+					<if test='pErrYn != "ALL"'>
+						AND A.ERR_YN = #{pErrYn}
+					</if>
+				</if>
+				<!-- 반영여부 -->
+				<if test='pRflcYn != null and pRflcYn != ""'>
+					<if test='pRflcYn != "ALL"'>
+						AND A.RFLC_YN = #{pRflcYn}
+					</if>
+				</if> 
+				<!-- 물품분류번호 -->
+				<if test="pAssetClNo != null and pAssetClNo != ''.toString()">
+					AND A.ASSET_CL_NO LIKE CONCAT('%' , #{pAssetClNo} , '%')
+				</if>
+				<!-- 물품규격번호 -->
+				<if test="pAssetStndNo != null and pAssetStndNo != ''.toString()">
+					AND A.ASSET_STND_NO LIKE CONCAT('%' , #{pAssetStndNo} , '%')
+				</if>
+				<!-- 자산 취득 번호 -->
+				<if test="pAssetMgmtNo != null and pAssetMgmtNo != ''.toString()">
+					AND A.ASSET_MGMT_NO LIKE CONCAT('%' , #{pAssetMgmtNo} , '%')
+				</if>
+				<!-- 구입 일자 -->
+				<if test="pBuyDt_S != null and pBuyDt_S != ''.toString() and pBuyDt_E != null and pBuyDt_E != ''.toString()">
+		        	AND BUY_DT BETWEEN #{pBuyDt_S} AND #{pBuyDt_E}
+		        </if>
+				<!-- 물품명 -->
+				<if test="pAssetClKoNm != null and pAssetClKoNm != ''.toString()">
+					AND A.ASSET_CL_KO_NM LIKE CONCAT('%' , #{pAssetClKoNm} , '%')
+				</if>
+				<!-- 규격명 -->
+				<if test="pAssetStndKoNm != null and pAssetStndKoNm != ''.toString()">
+					AND A.ASSET_STND_KO_NM LIKE CONCAT('%' , #{pAssetStndKoNm} , '%')
+				</if>
+				<!-- 비고 -->
+				<if test="pRmk != null and pRmk != ''.toString()">
+					AND A.RMK LIKE CONCAT('%' , #{pRmk} , '%')
+				</if>
+				<!-- 부서 -->
+				<if test='pDeptCd != null and pDeptCd != ""'>
+					<if test='pDeptCd != "00"'>
+						AND DEPT_CD IN (WITH RECURSIVE CTE_CONNECT_BY AS (
+							SELECT 1 AS LEVEL, S.* FROM VA_DEPT S WHERE DEPT_CD = #{DEPT_CD} AND S.AGENCY_ID = '00000000'
+							UNION ALL
+							SELECT LEVEL + 1 AS LEVEL, S.* FROM CTE_CONNECT_BY R INNER JOIN VA_DEPT S ON  R.DEPT_CD = S.UP_DEPT_CD WHERE R.AGENCY_ID = '00000000' AND S.AGENCY_ID = '00000000'
+							)
+						SELECT DEPT_CD FROM CTE_CONNECT_BY)
+					</if>
+				</if>
+				<!-- 기관 자산 취득 번호 -->
+				<if test="pInstAssetMgmtNo != null and pInstAssetMgmtNo != ''.toString()">
+					AND A.INST_ASSET_MGMT_NO LIKE CONCAT('%' , #{pInstAssetMgmtNo} , '%')
+				</if>
+              ) A_ 
+			WHERE 1=1
+			<if test="pPageNo != null and pPageNo != ''.toString()">
+      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    		</if>
+    		ORDER BY A_.ERR_YN DESC
+              
+	</select>
+    
+    
+    <!-- 보유현황(엑셀업로드) 저장 -->
+    <insert id="insertHaveExcel" parameterType="hashMap">
+	 INSERT   
+	   INTO TA_ASSET_ACQ_DTL_EXCEL04 
+           ( 
+	          NUM                          
+	         ,RFLC_YN                      
+	         ,ERR_YN                       
+	         ,ERR_CN                       
+	         ,GDS_YN                       
+	         ,EXCEL_ROW_NO                 
+	         ,ASSET_MGMT_NO                
+	         ,INST_ASSET_MGMT_NO           	         
+	         ,ASSET_CL_NO                         
+	         ,ASSET_CL_NM                  
+	         ,ASSET_STND_NO                
+	         ,ASSET_STND_NM                
+	         ,TAG_KIND_CD					
+	         ,ACQ_SE_CD
+	         ,ASSET_ITEM_SE_CD
+	         ,ACNTS_SE_CD
+	         ,BUY_DT     
+	         ,USE_LOC_NM
+	         ,BUY_UPRICE
+	         ,BUY_QTY
+	         ,GDS_RGST_KD_CD
+	         ,ARN_DT
+	         ,RMK
+	         ,REGUSER_ID
+	         ,REG_DATE  
+	         ,DEPT_CD
+	         ,DTL_YN
+	         ,AGENCY_ID	
+	         ,USE_YYCNT	
+	         ,PRODT_CORPO_NM	
+	         ,BUY_LOC_NM		
+           ) 
+           VALUES 
+           ( 
+	          IF(LENGTH(#{NUM})=0,0,#{NUM})    
+	         ,'N'                            
+	         ,#{ERR_YN}                      
+	         ,#{ERR_CN}                      
+	         ,#{GDS_YN}                      
+	         ,#{EXCEL_ROW_NO}
+	         ,#{ASSET_MGMT_NO}
+	         ,#{INST_ASSET_MGMT_NO}
+	         ,#{ASSET_CL_NO}  
+	         ,#{ASSET_CL_NM}  
+	         ,#{ASSET_STND_NO}
+	         ,#{ASSET_STND_NM}
+	         ,#{TAG_KIND_CD}
+	         ,#{ACQ_SE_CD}
+	         ,#{ASSET_ITEM_SE_CD}
+	         ,#{ACNTS_SE_CD}
+	         ,REGEXP_REPLACE(#{BUY_DT},'[^0-9]+','')  
+			 ,#{USE_LOC_NM}
+	         ,IFNULL(REGEXP_REPLACE(#{BUY_UPRICE},'[^0-9]+',''),0)  
+	         ,#{BUY_QTY}
+	 		 ,#{GDS_RGST_KD_CD}
+	 		 ,#{ARN_DT}
+	 		 ,#{RMK}
+	 		 ,'TEST'		 
+	 		 ,NOW()
+	 		 ,#{DEPT_CD}
+	 		 ,#{DTL_YN}
+	 		 ,'00000000'
+	 		 ,#{USE_YYCNT}					
+	         ,#{PRODT_CORPO_NM}				
+	         ,#{BUY_LOC_NM}					
+           )  
+
+	</insert>
+	
+	<!-- 필수값 여부 확인 -->
+	<update id="updateMdtr" parameterType="java.lang.String">
+		UPDATE 
+		  TA_ASSET_ACQ_DTL_EXCEL04 a
+		  SET  ERR_YN =
+		  case 
+		  WHEN  
+		  (0
+		  + case WHEN LENGTH(BUY_DT) = '0' THEN 1 ELSE 0 END  
+		  + case  WHEN LENGTH(DEPT_CD) = '0'   THEN 1 ELSE 0 END  /* 보유부서  체크 */
+		  + case  WHEN LENGTH(NUM) = '0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(ASSET_CL_NO) ='0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(ASSET_CL_NM) ='0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(ASSET_STND_NO) ='0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(ASSET_STND_NM) ='0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(TAG_KIND_CD) ='0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(BUY_UPRICE) ='0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(GDS_RGST_KD_CD) = '0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(USE_YYCNT) = '0' THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(ARN_DT) ='0' THEN 1 ELSE 0 END
+		  + case  WHEN GDS_RGST_KD_CD != '1' and GDS_RGST_KD_CD != 'B' AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END
+		  + case  WHEN BUY_QTY > '1'  AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END
+		  + case  WHEN INST_ASSET_MGMT_NO REGEXP('[ㄱ-ㅣ가-힇]') THEN 1 ELSE 0 END
+		  + case  WHEN LENGTH(BUY_QTY) ='0' THEN 1 ELSE 0 END		  		
+		  + case  WHEN LENGTH(DTL_YN) ='0' THEN 1 ELSE 0 END  
+		  + case  WHEN LENGTH(INST_ASSET_MGMT_NO) <![CDATA[ >  ]]> 50 AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END  /* 기관자산번호 길이 체크 */
+		  + case  WHEN LENGTH(ASSET_CL_NO) != 8 AND UPPER(DTL_YN) = 'N'  THEN 1 ELSE 0 END /* 물품번호 자릿수 체크 */
+		  + case  WHEN LENGTH(ASSET_STND_NO) != 8 AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END /* 규격번호 자릿수 체크 */
+		  + case  WHEN LENGTH(INST_ASSET_MGMT_NO) = '0' THEN 1 ELSE 0 END  /* 기관자산번호 null 체크 */
+		  + case  WHEN (LENGTH(ASSET_MGMT_NO) = '0' AND UPPER(DTL_YN) = 'Y') THEN 1 ELSE 0 END  /* RFID관리번호값 NULL + 삭제여부 값이 Y 있을 시 error 처리 */ 
+		  + case  WHEN TRIM(CONCAT(ASSET_CL_NO,ASSET_CL_NM)) IN (SELECT TTT.* FROM ( 
+						SELECT DISTINCT TRIM(CONCAT(c.ASSET_CL_NO,c.ASSET_CL_NM))
+						FROM ta_asset_acq_dtl_excel04 c
+						INNER JOIN TA_ASSET_CL_CD b ON c.ASSET_CL_NO = b.ASSET_CL_NO AND c.AGENCY_ID = b.AGENCY_ID
+						WHERE TRIM(c.ASSET_CL_NM) != TRIM(b.ASSET_CL_KO_NM)
+						AND c.AGENCY_ID = '00000000') AS TTT) AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END /* 물품분류번호와 물품명이 다를 시 Error 처리 */ 
+		  
+		  + case  WHEN TRIM(CONCAT(ASSET_STND_NO,ASSET_STND_NM)) IN (SELECT TT.* FROM (SELECT DISTINCT TRIM(CONCAT(b.ASSET_STND_NO,b.ASSET_STND_NM))
+						FROM ta_asset_acq_dtl_excel04 b 
+						INNER JOIN  ta_asset_stnd_cd bb  ON b.AGENCY_ID = bb.AGENCY_ID AND  b.ASSET_CL_NO = bb.ASSET_CL_NO AND b.ASSET_STND_NO = bb.ASSET_STND_NO
+						WHERE b.AGENCY_ID= '00000000'
+						AND TRIM(b.ASSET_STND_NM) != TRIM(bb.ASSET_STND_KO_NM))
+						AS TT) AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END /* 물품규격번호와 물품규격명이 다를 시 Error 처리 */ 	
+	  	 + case WHEN a.ASSET_CL_NO IN (SELECT TTT.*
+		  		  		  		  		FROM(
+		  								SELECT TT.ASSET_CL_NO
+		  		  		  		  		FROM(
+		  								SELECT aa.ASSET_CL_NO,aa.ASSET_CL_NM
+										FROM ta_asset_acq_dtl_excel04 aa
+										WHERE  aa.AGENCY_ID = '00000000'
+										AND aa.ASSET_CL_NO NOT IN (SELECT ASSET_CL_KO_NM FROM TA_ASSET_CL_CD WHERE AGENCY_ID=aa.AGENCY_ID)
+										) AS TT
+								        GROUP BY TT.ASSET_CL_NO
+										HAVING COUNT(DISTINCT TT.ASSET_CL_NM) >= 2) AS TTT ) AND UPPER(DTL_YN) = 'N'  THEN 1 ELSE 0 END /* 물품번호 중복 + 다른 물품명을 가지고 있는 경우 */	
+		<!-- 진혁 수정 -->									
+		+ case WHEN a.DEPT_CD NOT IN (SELECT
+								 ORGNZT_ID
+								 FROM LETTNORGNZTINFO
+								 WHERE AGENCY_ID = a.AGENCY_ID) AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END /*부서코드가 존재하지 않는 경우 */
+											
+	 	+ case WHEN a.ASSET_STND_NO IN (SELECT TTT.*
+		  		  		  		  		FROM(
+		  								SELECT TT.ASSET_STND_NO
+		  		  		  		  		FROM(
+		  							 	SELECT aa.ASSET_CL_NO,aa.ASSET_STND_NM,aa.ASSET_STND_NO
+										FROM ta_asset_acq_dtl_excel04 aa
+										WHERE  aa.AGENCY_ID = '00000000'
+										AND aa.ASSET_STND_NO NOT IN (SELECT ASSET_STND_NO FROM ta_asset_stnd_cd WHERE AGENCY_ID=aa.AGENCY_ID)
+										) AS TT
+										GROUP BY TT.ASSET_STND_NO
+										HAVING COUNT(DISTINCT TT.ASSET_CL_NO) >= 2
+										)AS TTT) AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END  /* 물품분류번호가 다른데 물품규격번호가 똑같은 경우  */											
+										
+	  + case WHEN a.ASSET_STND_NO IN (SELECT TTT.*
+		  		  		  		  		FROM(
+		  								SELECT TT.ASSET_STND_NO
+		  		  		  		  		FROM(
+		  							   SELECT  DISTINCT aa.ASSET_STND_NM,aa.ASSET_STND_NO
+										FROM ta_asset_acq_dtl_excel04 aa
+										WHERE  aa.AGENCY_ID = '00000000'
+										AND aa.ASSET_STND_NO NOT IN (SELECT ASSET_STND_NO FROM ta_asset_stnd_cd WHERE AGENCY_ID=aa.AGENCY_ID)
+										) AS TT
+										GROUP BY TT.ASSET_STND_NO
+									    HAVING COUNT(TT.ASSET_STND_NM) >= 2
+										)AS TTT) AND UPPER(DTL_YN) = 'N' THEN 1 ELSE 0 END  /* 물품규격번호 중복 + 다른 물품규격명을 가지고 있는 경우*/					 
+		 
+		 + case  WHEN INST_ASSET_MGMT_NO IN (SELECT T.INST_ASSET_MGMT_NO FROM (SELECT B.INST_ASSET_MGMT_NO FROM ta_asset_acq_dtl_excel04 B WHERE B.AGENCY_ID='00000000' AND LENGTH(B.INST_ASSET_MGMT_NO) != 0 GROUP BY B.INST_ASSET_MGMT_NO HAVING COUNT(B.INST_ASSET_MGMT_NO) > 1) AS T)
+		  THEN 1 ELSE 0 END  /* 기관자산번호 중복체크  */ 
+		 + case WHEN INST_ASSET_MGMT_NO IN (SELECT DISTINCT B.INST_ASSET_MGMT_NO FROM TA_ASSET_ACQ_DTL B WHERE AGENCY_ID = '00000000' AND LENGTH(B.INST_ASSET_MGMT_NO) != 0 ) AND UPPER(DTL_YN) = 'N' AND LENGTH(ASSET_MGMT_NO) = '0' THEN 1 ELSE 0 END  /* 기관자산번호 중복체크(보유에서)  */ 
+		 + case  WHEN ASSET_MGMT_NO IN (SELECT T.ASSET_MGMT_NO FROM (SELECT B.ASSET_MGMT_NO FROM ta_asset_acq_dtl_excel04 B WHERE B.AGENCY_ID='00000000' AND LENGTH(B.ASSET_MGMT_NO) != 0 GROUP BY B.ASSET_MGMT_NO HAVING COUNT(B.ASSET_MGMT_NO) > 1) AS T) 
+		  THEN 1 ELSE 0 END  /* RFID자산번호 중복체크  */ 
+		  ) > 0 THEN 'Y'
+		  ELSE 'N' END		  
+		, ERR_CN =
+		  CONCAT(''
+		  ,case  WHEN LENGTH(BUY_DT) = '0' THEN '(구입일자 누락)' ELSE '' END 
+		  , case  WHEN LENGTH(NUM) = '0' THEN '(순번 누락)' ELSE '' END
+		  , case  WHEN LENGTH(ASSET_CL_NO) ='0' THEN '(자산분류번호 누락)' ELSE '' END
+		  , case  WHEN LENGTH(ASSET_CL_NM) = '0'THEN '(자산물품명 누락)' ELSE '' END
+		  , case  WHEN LENGTH(ASSET_STND_NO) ='0' THEN '(자산규격번호 누락)' ELSE '' END
+		  , case  WHEN LENGTH(USE_YYCNT) = '0' THEN '(내용연수 누락)' ELSE '' END
+		  , case  WHEN LENGTH(ASSET_STND_NM) ='0' THEN '(자산규격명 누락)' ELSE '' END
+		  , case  WHEN LENGTH(TAG_KIND_CD) = '0' THEN '(태그종류코드 누락)' ELSE '' END
+		  , case  WHEN LENGTH(DEPT_CD)='0' THEN '(부서코드 누락)' ELSE '' END
+		  , case  WHEN LENGTH(GDS_RGST_KD_CD) = '0' THEN '(물품대장종류코드 누락)' ELSE '' END
+		  , case  WHEN LENGTH(DTL_YN) ='0' THEN '(삭제여부 누락)' ELSE '' END
+		  , case  WHEN LENGTH(BUY_QTY) = '0'  THEN '(구입수량 누락)' ELSE '' END
+		  , case  WHEN LENGTH(ARN_DT) = '0' THEN '(정리일자 누락)' ELSE '' END
+		  , case  WHEN ARN_DT IS NULL THEN '(정리일자 누락)' ELSE '' END
+		  , case  WHEN INST_ASSET_MGMT_NO IS NULL THEN '(기관자산번호 누락)' ELSE '' END
+		  , case  WHEN LENGTH(INST_ASSET_MGMT_NO) <![CDATA[ >  ]]> 50 AND UPPER(DTL_YN) = 'N' THEN '(기관자산번호 길이 오류 )' ELSE '' END
+		  , case  WHEN INST_ASSET_MGMT_NO REGEXP('[ㄱ-ㅣ가-힇]') AND UPPER(DTL_YN) = 'N' THEN '(기관자산번호 한글 포함 오류 )' ELSE '' END
+		  , case  WHEN LENGTH(INST_ASSET_MGMT_NO) = '0' THEN '(기관자산번호 누락)' ELSE '' END  /* 기관자산번호 null 체크 */
+	      , case  WHEN LENGTH(ASSET_CL_NO) != 8 AND UPPER(DTL_YN) = 'N' THEN '(분류번호 길이 오류)' ELSE '' END /* 물품번호 자릿수 체크 */
+		  , case  WHEN LENGTH(ASSET_STND_NO) != 8 AND UPPER(DTL_YN) = 'N' THEN '(규격번호 길이 오류)' ELSE '' END /* 규격번호 자릿수 체크 */
+		  , case  WHEN LENGTH(BUY_QTY) = '0' AND UPPER(DTL_YN) = 'N' THEN '(구입수량 누락)' ELSE '' END
+		  , case  WHEN BUY_QTY != '1' AND UPPER(DTL_YN) = 'N' THEN '(구입수량은 1보다 작거나 클 수 없습니다. )' ELSE '' END
+		  , case  WHEN GDS_RGST_KD_CD != '1' and GDS_RGST_KD_CD != 'B' AND UPPER(DTL_YN) = 'N' THEN '(물품대장 종류코드는 1 혹은 B만 입력 가능합니다)' ELSE '' END
+		  ,case  WHEN LENGTH(BUY_UPRICE) ='0' THEN '(구매단가 누락)' ELSE '' END
+		  , case  WHEN TRIM(CONCAT(ASSET_CL_NO,ASSET_CL_NM)) IN (SELECT TTT.* FROM ( 
+						SELECT DISTINCT TRIM(CONCAT(c.ASSET_CL_NO,c.ASSET_CL_NM)) 
+						FROM ta_asset_acq_dtl_excel04 c
+						INNER JOIN TA_ASSET_CL_CD b ON c.ASSET_CL_NO = b.ASSET_CL_NO AND c.AGENCY_ID = b.AGENCY_ID
+						WHERE TRIM(c.ASSET_CL_NM) != TRIM(b.ASSET_CL_KO_NM)
+						AND c.AGENCY_ID = '00000000') AS TTT) AND UPPER(DTL_YN) = 'N' THEN '(물품분류번호에 따른 물품명이 일치하지 않습니다.)' ELSE '' END 
+		  , case  WHEN TRIM(CONCAT(ASSET_STND_NO,ASSET_STND_NM)) IN (SELECT TT.* FROM (SELECT DISTINCT TRIM(CONCAT(b.ASSET_STND_NO,b.ASSET_STND_NM))
+						FROM ta_asset_acq_dtl_excel04 b 
+						INNER JOIN  ta_asset_stnd_cd bb  ON b.AGENCY_ID = bb.AGENCY_ID AND  b.ASSET_CL_NO = bb.ASSET_CL_NO AND b.ASSET_STND_NO = bb.ASSET_STND_NO
+						WHERE b.AGENCY_ID= '00000000'
+						AND TRIM(b.ASSET_STND_NM) != TRIM(bb.ASSET_STND_KO_NM))
+						AS TT) AND UPPER(DTL_YN) = 'N' THEN '(물품규격번호에 따른 물품규격명이 일치하지 않습니다.)' ELSE '' END /* 물품규격번호와 물품규격명이 다를 시 Error 처리 */ 	
+		 ,case  WHEN ASSET_MGMT_NO IN (SELECT T.ASSET_MGMT_NO FROM (SELECT B.ASSET_MGMT_NO FROM ta_asset_acq_dtl_excel04 B WHERE B.AGENCY_ID='00000000' AND LENGTH(B.ASSET_MGMT_NO) != 0  GROUP BY B.ASSET_MGMT_NO HAVING COUNT(B.ASSET_MGMT_NO) > 1) AS T) 
+		  THEN '(RFID자산번호 중복)' ELSE '' END  /* 자산관리번호 중복체크  */
+		 , case WHEN a.ASSET_CL_NO IN (SELECT TTT.*
+		  		  		  		  		FROM(
+		  								SELECT TT.ASSET_CL_NO
+		  		  		  		  		FROM(
+		  								SELECT aa.ASSET_CL_NO,aa.ASSET_CL_NM
+										FROM ta_asset_acq_dtl_excel04 aa
+										WHERE  aa.AGENCY_ID = '00000000'
+										AND aa.ASSET_CL_NO NOT IN (SELECT ASSET_CL_KO_NM FROM TA_ASSET_CL_CD WHERE AGENCY_ID=aa.AGENCY_ID)
+										) AS TT
+								        GROUP BY TT.ASSET_CL_NO
+										HAVING COUNT(DISTINCT TT.ASSET_CL_NM) >= 2) AS TTT ) AND UPPER(DTL_YN) = 'N' THEN '(같은  물품번호에 다른 물품명이 있는  오류)' ELSE '' END /* 물품번호 중복 + 다른 물품명을 가지고 있는 경우 */ 
+		<!-- 진혁 수정 -->
+		, case WHEN a.DEPT_CD NOT IN (SELECT ORGNZT_ID FROM LETTNORGNZTINFO	WHERE AGENCY_ID = a.AGENCY_ID) AND UPPER(DTL_YN) = 'N' THEN '(존재하지 않는 부서 코드)' ELSE '' END /*부서코드가 존재하지 않는 부서코드일때 */
+		
+		,case WHEN a.ASSET_STND_NO IN (SELECT TTT.*
+		  		  		  		  		FROM(
+		  								SELECT TT.ASSET_STND_NO
+		  		  		  		  		FROM(
+		  							 	SELECT aa.ASSET_CL_NO,aa.ASSET_STND_NM,aa.ASSET_STND_NO
+										FROM ta_asset_acq_dtl_excel04 aa
+										WHERE  aa.AGENCY_ID = '00000000'
+										AND aa.ASSET_STND_NO NOT IN (SELECT ASSET_STND_NO FROM ta_asset_stnd_cd WHERE AGENCY_ID=aa.AGENCY_ID)
+										) AS TT
+										GROUP BY TT.ASSET_STND_NO
+										HAVING COUNT(DISTINCT TT.ASSET_CL_NO) >= 2
+										)AS TTT) AND UPPER(DTL_YN) = 'N' THEN '(물품규격번호 중복 오류)' ELSE '' END  /* 물품분류번호가 다른데 물품규격번호가 똑같은 경우  */					
+										
+										
+		 , case WHEN a.ASSET_STND_NO IN (SELECT TTT.*
+		  		  		  		  		FROM(
+		  								SELECT TT.ASSET_STND_NO
+		  		  		  		  		FROM(
+		  							 	SELECT  DISTINCT aa.ASSET_STND_NM,aa.ASSET_STND_NO
+										FROM ta_asset_acq_dtl_excel04 aa
+										WHERE  aa.AGENCY_ID = '00000000'
+										AND aa.ASSET_STND_NO NOT IN (SELECT ASSET_STND_NO FROM ta_asset_stnd_cd WHERE AGENCY_ID=aa.AGENCY_ID)
+										) AS TT
+										GROUP BY TT.ASSET_STND_NO
+									    HAVING COUNT(TT.ASSET_STND_NM) >= 2
+										)AS TTT) AND UPPER(DTL_YN) = 'N' THEN '(같은 규격번호에 다른 규격명이 있는  오류)' ELSE '' END  /* 물품규격번호 중복  + 다른 물품규격명을 가지고 있는 경우*/										
+ 		  , case  WHEN INST_ASSET_MGMT_NO IN (SELECT T.INST_ASSET_MGMT_NO FROM (SELECT B.INST_ASSET_MGMT_NO FROM ta_asset_acq_dtl_excel04 B WHERE B.AGENCY_ID='00000000' AND LENGTH(B.INST_ASSET_MGMT_NO) != 0 GROUP BY B.INST_ASSET_MGMT_NO HAVING COUNT(B.INST_ASSET_MGMT_NO) > 1) AS T)
+ 		  	THEN '(기관자산번호 중복 오류 )' ELSE '' END 
+ 		  , case WHEN INST_ASSET_MGMT_NO IN (SELECT DISTINCT B.INST_ASSET_MGMT_NO FROM TA_ASSET_ACQ_DTL B WHERE AGENCY_ID = '00000000' AND LENGTH(B.INST_ASSET_MGMT_NO) != 0 ) AND UPPER(DTL_YN) = 'N' AND LENGTH(ASSET_MGMT_NO) = '0' THEN '(보유에서 기관자산번호 중복 오류)' ELSE '' END
+		  , case WHEN (LENGTH(ASSET_MGMT_NO) = '0' AND  UPPER(DTL_YN) = 'Y') THEN '(삭제여부 값이 Y일 시 RFID관리번호 또한  필수로 입력해야 합니다. )' ELSE '' END
+			 )  /* 값 업데이트  */
+		 , BUY_UPRICE = REGEXP_REPLACE(BUY_UPRICE, '[^0-9]+','')   /* 금액항목에서 숫만추출함 */		 
+		 WHERE AGENCY_ID = '00000000'
+		
+	</update>
+    
+    
+    
+</mapper>

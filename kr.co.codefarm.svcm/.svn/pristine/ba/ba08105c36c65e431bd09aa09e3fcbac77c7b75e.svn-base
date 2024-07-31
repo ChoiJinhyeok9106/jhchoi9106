@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.program">
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                             서비스 프로그램 관리                                              -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="selectProgramList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.SERVICE_CD
+             , A.PGM_ID
+             , A.PGM_NM
+             , A.GAEINJEONGBO_USE_YN
+             , A.GAEINJEONGBO_ITEM
+             , A.USE_YN
+             , A.REMARK
+		  FROM SMN_PGM A
+		 WHERE 1=1
+		 <if test="SERVICE_CD != ''.toString() and SERVICE_CD != null">AND A.SERVICE_CD = #{SERVICE_CD}</if>
+         <if test="pUseYn != ''.toString() and pUseYN != null">AND A.USE_YN = #{pUseYn}</if>
+         <if test="pSearchArgv != ''.toString() and pSearchArgv != null">AND A.PGM_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+         <if test="pSortYn eq 'Y'.toString()">ORDER BY A.PGM_NM</if>
+    </select>
+    
+    <insert id="insertProgram" parameterType="hashMap">
+    	INSERT INTO SMN_PGM
+		( 
+			 SERVICE_CD
+           , PGM_ID
+           , PGM_NM
+           , GAEINJEONGBO_USE_YN
+           , GAEINJEONGBO_ITEM
+           , USE_YN
+           , REMARK
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM 
+		)
+     	VALUES
+		( 
+			 #{SERVICE_CD}
+           , #{PGM_ID}
+           , #{PGM_NM}
+           , #{GAEINJEONGBO_USE_YN}
+           , #{GAEINJEONGBO_ITEM}
+           , #{USE_YN}
+           , #{REMARK}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM}
+           , SYSDATE()
+           , #{SYSTEM_ID}
+           , #{SYSTEM_IP}
+           , #{SYSTEM_PGM} 
+		)
+    </insert>
+    
+     <update id="updateProgram" parameterType="hashMap">
+    	UPDATE SMN_PGM
+    	   SET PGM_NM = #{PGM_NM}
+		     , GAEINJEONGBO_USE_YN = #{GAEINJEONGBO_USE_YN}
+		     , GAEINJEONGBO_ITEM = #{GAEINJEONGBO_ITEM}
+		     , USE_YN = #{USE_YN}
+		     , REMARK = #{REMARK}
+		     , UPDATE_DTTM = SYSDATE()
+		     , UPDATE_ID = #{SYSTEM_ID}
+		     , UPDATE_IP = #{SYSTEM_IP}
+		     , UPDATE_PGM = #{SYSTEM_PGM}
+    	 WHERE SERVICE_CD = #{SERVICE_CD}
+		   AND PGM_ID = #{PGM_ID}
+    </update>
+    
+    <delete id="deleteProgram" parameterType="hashMap">
+    	DELETE FROM SMN_PGM
+		 WHERE SERVICE_CD = #{SERVICE_CD}
+		   AND PGM_ID = #{PGM_ID}
+    </delete>
+</mapper>

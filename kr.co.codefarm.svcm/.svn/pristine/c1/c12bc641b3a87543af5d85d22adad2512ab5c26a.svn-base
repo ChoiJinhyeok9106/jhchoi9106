@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.user">
+
+	<!-- 사용자 조회 -->
+	<select id="getUserList"  parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+			 , A.USER_GB
+			 , A.USER_GROUP_GB
+			 , A.PWD
+			 , A.INTERNAL_ID
+			 , A.USER_NM
+			 , A.EMAIL
+			 , A.DEFAULT_AUTH_CD
+			 , A.DEFAULT_AUTH_NM
+			 , A.BIRTHDAY
+			 , A.GENDER_GB
+			 , A.GENDER_GBNM
+			 , A.DEPT_NM
+			 , A.TEL_NO
+			 , A.HP_NO
+			 , A.ZIPNO
+			 , A.ADDR1
+			 , A.ADDR2
+			 , A.JOIN_DT
+			 , A.USER_STATUS_GB
+			 , A.USER_STATUS_GBNM
+			 , A.USER_PIC
+			 , A.AGREE_YN
+			 , A.AGREE_DT
+		 FROM SMN_USER_V A
+		WHERE 1 = 1
+		 <if test="pUserAuth != null and pUserAuth != ''.toString()">AND A.DEFAULT_AUTH_CD  = #{pUserAuth}</if>
+		 <if test="pUserGroupGb != null and pUserGroupGb != ''.toString()">AND A.USER_GROUP_GB  = #{pUserGroupGb} </if>
+		 <if test="pUserStatusGb != null and pUserStatusGb != ''.toString()">AND A.USER_STATUS_GB  = #{pUserStatusGb}</if>
+		 <if test="pSearchArgv != null and pSearchArgv != ''.toString()">AND (UPPER(A.USER_ID)  LIKE CONCAT('%',UPPER(#{pSearchArgv}),'%')  OR UPPER(A.USER_NM)  LIKE CONCAT('%',UPPER(#{pSearchArgv}),'%'))</if>
+		 <if test="pUserTypeGb != null and pUserTypeGb != ''.toString()">AND A.USER_TYPE_GB  = #{pUserTypeGb}</if>
+		 <if test="pDeptNm != null and pDeptNm != ''.toString()">AND A.DEPT_NM  LIKE CONCAT('%',#{pDeptNm},'%')</if>
+		 ORDER BY A.USER_NM
+	</select>
+
+	<!-- 사용자 조회 -->
+	<select id="getUser"  parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_GB
+			 , A.USER_GROUP_GB
+			 , A.USER_ID
+			 , A.PWD
+			 , A.INTERNAL_ID
+			 , A.EMAIL
+			 , A.USER_NM
+			 , A.DEFAULT_AUTH_CD
+			 , A.DEFAULT_AUTH_NM
+			 , A.BIRTHDAY
+			 , A.GENDER_GB
+			 , A.GENDER_GBNM
+			 , A.DEPT_NM
+			 , A.TEL_NO
+			 , A.HP_NO
+			 , A.ZIPNO
+			 , A.ADDR1
+			 , A.ADDR2
+			 , A.JOIN_DT
+			 , A.USER_STATUS_GB
+			 , A.USER_STATUS_GBNM
+			 , A.USER_PIC
+			 , A.AGREE_YN
+			 , A.AGREE_DT
+		  FROM SMN_USER_V A
+		 WHERE 1=1
+		   AND UPPER(A.USER_ID) = UPPER(#{USER_ID})
+	</select>
+
+	<!-- 사용자 조회 -->
+	<select id="getCorpUserList"  parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+			 , A.USER_NM
+			 , A.DEPT_NM
+			 , TEL_NO
+			 , HP_NO
+			 , JOIN_DT
+			 , A.ADD_COL1
+			 , A.ADD_COL2
+		  FROM SMN_USER_V A
+		  JOIN SMN_CORP_USER B
+		    ON A.USER_ID = B.USER_ID
+		  JOIN SMN_CORP_USER C
+		    ON B.CORP_ID = C.CORP_ID
+		   AND C.USER_ID = #{SYSTEM_ID} 
+		 WHERE 1=1
+		 <if test="pSearchArgv != null and pSearchArgv != ''.toString()">AND ((A.USER_ID)  LIKE CONCAT('%',(#{pSearchArgv}),'%')  OR (A.USER_NM)  LIKE CONCAT('%',(#{pSearchArgv}),'%'))</if>
+	</select>
+
+	<update id="userSignAdmission" parameterType="hashMap">
+		UPDATE SMN_CORP_SIGNUP
+		   SET STATUS_GB = 'APPROVAL'
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE CORP_ID = #{CORP_ID};
+		 
+		INSERT INTO SMN_USER
+			 ( USER_ID
+			 , PWD
+			 , USER_NM
+			 , DEFAULT_AUTH_CD
+			 , USER_GB
+			 , DEPT_CD
+			 , DEPT_NM
+			 , TEL_NO
+			 , HP_NO
+			 , JOIN_DT
+			 , USER_STATUS_GB
+			 , ADD_COL1
+			 , ADD_COL2
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+	    SELECT A.USER_ID
+			 , A.PWD
+			 , A.USER_NM
+			 , 'S0002'
+			 , '2'
+			 , A.CORP_ID
+			 , A.CORP_NM
+			 , A.TEL_NO
+			 , A.HP_NO
+			 , DATE_FORMAT(NOW(),'%Y%m%d')
+			 , 'Y'
+			 , A.ADD_COL1
+			 , A.ADD_COL2
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+	      FROM SMN_CORP_SIGNUP A
+	     WHERE A.CORP_ID = #{CORP_ID};
+	     
+		INSERT INTO SMN_CORP
+			 ( CORP_ID
+			 , CORP_NM
+			 , CORP_CEO_NM
+			 , CORP_TEL_NO
+			 , CORP_SECTORS
+			 , CORP_STATUS
+			 , CORP_BIZ_NO
+			 , STATUS_GB
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+	    SELECT A.CORP_ID
+			 , A.CORP_NM
+			 , A.CORP_CEO_NM
+			 , A.CORP_TEL_NO
+			 , A.CORP_SECTORS
+			 , A.CORP_STATUS
+			 , A.CORP_BIZ_NO
+			 , '01'
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+	      FROM SMN_CORP_SIGNUP A
+	     WHERE A.CORP_ID = #{CORP_ID};
+	     
+		INSERT INTO SMN_CORP_USER
+			 ( CORP_ID
+			 , USER_ID
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+	    SELECT A.CORP_ID
+			 , A.USER_ID
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+	      FROM SMN_CORP_SIGNUP A
+	     WHERE A.CORP_ID = #{CORP_ID};
+	     
+		INSERT INTO SMN_USER_AUTH
+	         ( USER_ID
+	         , AUTH_CD
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+	    SELECT A.USER_ID
+	    	 , 'U0001'
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+	      FROM SMN_CORP_SIGNUP A
+	     WHERE A.CORP_ID = #{CORP_ID};
+			 
+	</update>
+	
+	<update id="userCorpSignAdmission" parameterType="hashMap">
+		UPDATE SMN_CORP_USER_SIGNUP
+		   SET STATUS_GB = 'APPROVAL'
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE CORP_ID = #{CORP_ID};
+		 
+		INSERT INTO SMN_USER
+			 ( USER_ID
+			 , PWD
+			 , USER_NM
+			 , DEFAULT_AUTH_CD
+			 , USER_GB
+			 , DEPT_CD
+			 , DEPT_NM
+			 , TEL_NO
+			 , HP_NO
+			 , JOIN_DT
+			 , USER_STATUS_GB
+			 , ADD_COL1
+			 , ADD_COL2
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+	    SELECT A.USER_ID
+			 , A.PWD
+			 , A.USER_NM
+			 , 'S0002'
+			 , '2'
+			 , A.CORP_ID
+			 , B.CORP_NM
+			 , A.TEL_NO
+			 , A.HP_NO
+			 , DATE_FORMAT(NOW(),'%Y%m%d')
+			 , 'Y'
+			 , A.ADD_COL1
+			 , A.ADD_COL2
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+	      FROM SMN_CORP_USER_SIGNUP A
+	      JOIN SMN_CORP B
+	        ON A.CORP_ID = B.CORP_ID
+	     WHERE A.CORP_ID = #{CORP_ID}
+	       AND A.USER_ID = #{USER_ID};
+	     
+		INSERT INTO SMN_CORP_USER
+			 ( CORP_ID
+			 , USER_ID
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+	    SELECT A.CORP_ID
+			 , A.USER_ID
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+	      FROM SMN_CORP_USER_SIGNUP A
+	     WHERE A.CORP_ID = #{CORP_ID}
+	       AND A.USER_ID = #{USER_ID};
+	    	
+		INSERT INTO SMN_USER_AUTH
+	         ( USER_ID
+	         , AUTH_CD
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+	    SELECT A.USER_ID
+	    	 , 'U0003'
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+	      FROM SMN_CORP_USER_SIGNUP A
+	     WHERE A.CORP_ID = #{CORP_ID}
+	       AND A.USER_ID = #{USER_ID};
+	</update>
+	
+	<update id="rejectUser" parameterType="hashMap">
+		UPDATE SMN_CORP_SIGNUP
+		   SET STATUS_GB = 'REJECT'
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE CORP_ID = #{CORP_ID}
+	</update>
+	
+	<update id="rejectCorpUser" parameterType="hashMap">
+		UPDATE SMN_CORP_USER_SIGNUP
+		   SET STATUS_GB = 'REJECT'
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE CORP_ID = #{CORP_ID}
+		   AND USER_ID = #{USER_ID}
+	</update>
+
+
+
+	<!-- 사용자 조회 -->
+	<select id="getUserPwd"  parameterType="hashMap" resultType="String">
+		SELECT A.PWD
+		  FROM SMN_USER_V A
+		 WHERE 1 = 1
+		   AND A.USER_ID = #{USER_ID}
+	</select>
+
+	<!-- 사용자 아이디 중복 체크 -->
+	<select id="getUserIdChk"  parameterType="hashMap" resultType="hashMap">
+		SELECT COUNT(*) AS CNT
+		  FROM SMN_USER_V A
+		 WHERE A.USER_ID = #{USER_ID}
+	</select>
+	
+	<select id="getUserSignList"  parameterType="hashMap" resultType="hashMap">
+		SELECT CORP_ID
+			 , CORP_NM
+			 , CORP_CEO_NM
+			 , CORP_TEL_NO
+			 , CORP_SECTORS
+			 , CORP_STATUS
+			 , CORP_BIZ_NO
+			 , USER_ID
+			 , USER_NM
+			 , ADD_COL1
+			 , ADD_COL2
+			 , TEL_NO
+			 , HP_NO
+			 , STATUS_GB
+		  FROM SMN_CORP_SIGNUP A
+		 WHERE 1 = 1
+		   AND STATUS_GB = 'WAIT'
+		 <if test="pSearchArgv != null and pSearchArgv != ''.toString()">
+		   AND CORP_NM LIKE CONCAT('%',#{pSearchArgv},'%')
+		 </if>
+	</select>
+	
+	<select id="getUserCorpSignList"  parameterType="hashMap" resultType="hashMap">
+		SELECT A.CORP_ID
+			 , A.USER_ID
+			 , A.USER_NM
+			 , A.ADD_COL1
+			 , A.ADD_COL2
+			 , A.TEL_NO
+			 , A.HP_NO
+			 , A.STATUS_GB
+		  FROM SMN_CORP_USER_SIGNUP A
+		  JOIN SMN_CORP_USER B
+		    ON A.CORP_ID = B.CORP_ID
+		   AND B.USER_ID = #{SYSTEM_ID}
+		 WHERE 1 = 1
+		   AND STATUS_GB = 'WAIT'
+		 <if test="pSearchArgv != null and pSearchArgv != ''.toString()">
+		   AND CORP_NM LIKE CONCAT('%',#{pSearchArgv},'%')
+		 </if>
+	</select>
+
+	<!-- 사용자 삽입 -->
+	<insert id="insertUser" parameterType="hashMap">
+		INSERT INTO SMN_USER (
+			   USER_ID
+			 , PWD
+			 , USER_NM
+			 , DEFAULT_AUTH_CD
+			 , USER_GB
+			 , BIRTHDAY
+			 , GENDER_GB
+			 , DEPT_CD
+			 , DEPT_NM
+			 , TEL_NO
+			 , HP_NO
+			 , ZIPNO
+			 , ADDR1
+			 , ADDR2
+			 , JOIN_DT
+			 , USER_STATUS_GB
+			 , USER_PIC
+			 , ADD_COL1
+			 , ADD_COL2
+			 , ADD_COL3
+			 , ADD_COL4
+			 , ADD_COL5
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			) VALUES (
+			   #{USER_ID}
+			 , COALESCE(#{PWD},#{BIRTHDAY})
+			 , #{USER_NM}
+			 , #{DEFAULT_AUTH_CD}
+			 , #{USER_GB}
+			 , REPLACE(#{BIRTHDAY}, '-', '')
+			 , #{GENDER_GB}
+			 , #{DEPT_CD}
+			 , #{DEPT_NM}
+			 , REPLACE(#{TEL_NO}, '-', '')
+			 , REPLACE(#{HP_NO}, '-', '')
+			 , REPLACE(#{ZIPNO}, '-', '')
+			 , #{ADDR1}
+			 , #{ADDR2}
+			 , DATE_FORMAT(NOW(), '%Y%m%d')
+			 , "N"
+			 , #{USER_PIC}
+			 , #{ADD_COL1}
+			 , #{ADD_COL2}
+			 , #{ADD_COL3}
+			 , #{DEPT_NM2}
+			 , #{EMAIL}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			)
+	</insert>
+
+	<!-- 사용자 갱신 -->
+	<update id="updateUser" parameterType="hashMap">
+		UPDATE SMN_USER
+		   SET USER_NM = #{USER_NM}
+			 , DEFAULT_AUTH_CD = #{DEFAULT_AUTH_CD}
+			 , USER_GB = #{USER_GB}
+			 , BIRTHDAY = REPLACE(#{BIRTHDAY}, '-', '')
+			 , GENDER_GB = #{GENDER_GB}
+			 , DEPT_CD = #{DEPT_CD}
+			 , DEPT_NM = #{DEPT_NM}
+			 , TEL_NO = REPLACE(#{TEL_NO}, '-', '')
+			 , HP_NO = REPLACE(#{HP_NO}, '-', '')
+			 , ZIPNO = REPLACE(#{ZIPNO}, '-', '')
+			 , ADDR1 = #{ADDR1}
+			 , ADDR2 = #{ADDR2}
+			 <!-- , JOIN_DT = #{JOIN_DT} -->
+			 , USER_STATUS_GB = COALESCE
+			   (
+				   CASE WHEN (#{USE_YN} = '81' OR #{USER_STATUS_GB} = '81') THEN 'Y'
+						WHEN (#{USE_YN} = '82' OR #{USER_STATUS_GB} = '82') THEN 'N'
+						WHEN (#{USE_YN} = '90' OR #{USER_STATUS_GB} = '90') THEN 'W'
+						WHEN (#{USE_YN} = '91' OR #{USER_STATUS_GB} = '91') THEN 'Y'
+						WHEN (#{USE_YN} = '92' OR #{USER_STATUS_GB} = '92') THEN 'D'
+						WHEN (#{USE_YN} = '93' OR #{USER_STATUS_GB} = '93') THEN 'S'
+						WHEN (#{USE_YN} = '11' OR #{USER_STATUS_GB} = '11') THEN 'Y'
+						WHEN (#{USE_YN} = '10' OR #{USER_STATUS_GB} = '10') THEN 'N'
+						ELSE 'N' END,'Y'
+			   )
+			 , USER_PIC = #{USER_PIC}
+			 , ADD_COL1 = #{ADD_COL1}
+			 , ADD_COL2 = #{ADD_COL2}
+			 , ADD_COL3 = #{ADD_COL3}
+			 , ADD_COL4 = #{DEPT_NM2}
+			 , ADD_COL5 = #{EMAIL}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID} ;
+	</update>
+
+	<update id="updateUserMy" parameterType="hashMap">
+		UPDATE SMN_USER
+		   SET TEL_NO = REPLACE(#{TEL_NO}, '-', '')
+			 , HP_NO = REPLACE(#{HP_NO}, '-', '')
+			 , ZIPNO = REPLACE(#{ZIPNO}, '-', '')
+			 , ADDR1 = #{ADDR1}
+			 , ADDR2 = #{ADDR2}
+			 <!-- , JOIN_DT = #{JOIN_DT} -->
+			 , USER_PIC = #{USER_PIC}
+			 , ADD_COL1 = #{ADD_COL1}
+			 , ADD_COL2 = #{ADD_COL2}
+			 , ADD_COL3 = #{ADD_COL3}
+			 , ADD_COL4 = #{DEPT_NM2}
+			 , ADD_COL5 = #{EMAIL}
+			 , ADD_COL9 = #{ADD_COL9}
+			 , ADD_COL10 = #{ADD_COL10}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE DEPT_CD = #{DEPT_CD};
+	</update>
+
+
+	<!--  사용자 삭제 -->
+	<delete id="deleteUser" parameterType="hashMap">
+
+		DELETE FROM SMN_LAYOUT_CONTENT
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM SMN_LAYOUT_PAGE
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM SMN_ALARM_BLOCK_LIST
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM SMN_USER_ALARM_DATA
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM SMN_USER_ALARM_SETTING
+		 WHERE USER_ID = #{USER_ID};
+		<!--
+		DELETE FROM ADD_CAL_EVENT
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM ADD_CAL
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM ADD_CAL_ENV
+		 WHERE USER_ID = #{USER_ID};
+		 -->
+		DELETE FROM SMN_USER_SORT
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM SMN_ACCOUNT
+		 WHERE USER_ID = #{USER_ID};
+
+		DELETE FROM SMN_USER
+		 WHERE USER_ID = #{USER_ID};
+
+	</delete>
+
+	<!-- 사용자 갱신 -->
+	<update id="updateUserPic" parameterType="hashMap">
+		UPDATE SMN_USER
+		   SET USER_PIC = #{USER_PIC}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+	</update>
+
+	<!-- 사용자 계정정보 조회 -->
+	<select id="getUserAccount"  parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+			 , A.USE_DOMAIN
+			 , A.LOGIN_FAIL_CNT
+			 , A.LATEST_PWD_CHG_DT
+			 , A.LATEST_LOGINSIDO_DOMAIN
+			 , DATE_FORMAT(A.LATEST_LOGIN_DTTM, '%Y-%m-%d %H:%i:%s') AS LATEST_LOGIN_DTTM
+			 , A.USE_YN
+		  FROM SMN_ACCOUNT A
+		 WHERE 1 = 1
+		   AND A.USER_ID = #{USER_ID}
+	</select>
+
+	<select id="getUserSort" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+			 , A.SORT_GB
+			 , A.SORT_TEXT
+		  FROM SMN_USER_SORT A
+		 WHERE USER_ID = #{USER_ID}
+		   AND SORT_GB = #{SORT_GB}
+	</select>
+
+	<insert id="insertUserSort" parameterType="hashMap">
+		INSERT INTO SMN_USER_SORT
+	 	(
+	 		USER_ID
+		  , SORT_GB
+		  , SORT_TEXT
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+	 	)VALUES
+	 	(
+	 		#{USER_ID}
+		  , #{SORT_GB}
+		  , #{SORT_TEXT}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+   		)
+	</insert>
+
+	<update id="updateUserSort" parameterType="hashMap">
+		UPDATE SMN_USER_SORT
+		   SET SORT_TEXT = #{SORT_TEXT}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND SORT_GB = #{SORT_GB}
+	</update>
+
+	<delete id="deleteUserSort" parameterType="hashMap">
+		DELETE FROM SMN_USER_SORT
+		 WHERE USER_ID = #{USER_ID}
+		   AND SORT_GB = #{SORT_GB}
+	</delete>
+
+	<select id="checkedIdPw" parameterType="hashMap" resultType="int">
+		SELECT COUNT(*) AS CNT
+		  FROM SMN_USER_V
+		 WHERE USER_ID = #{USER_ID}
+		   <if test="USER_PW != null and USER_PW != ''.toString()">AND PWD = #{USER_PW}</if>
+	</select>
+
+
+</mapper>

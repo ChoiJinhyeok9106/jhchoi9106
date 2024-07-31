@@ -1,0 +1,332 @@
+<script type="text/javascript" src="../../assets/js/main.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/css/portal_main.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/jobsupport.css">
+
+
+<div class="main_wrap" id="appMain">
+	<section class="main_inner">
+		<section class="top_logo">
+			<a href="#!" class="logo"><img :src="'/images/common/logo.svg'" :alt="defaultInfo.SITE_NM" onerror="this.src='/images/common/logo.svg'"></a>
+		</section>
+		<!-- //4(학생), 1,2(교수), 3(직원), 5(학사외부사용자), 9(포탈 사용자) -->
+		<section class="notice_box" :class="{'mng':  (session.USER_GB >=1 && session.USER_GB <=9), 'pro': (session.USER_GB > 10 && session.USER_GB % 10 == 1) ,'stu': (session.USER_GB > 10 && session.USER_GB % 10 != 1)}">
+			<div class="notice_box_inner">
+				<a href="#!" class="m_btn_notice" title="알림 열기"><span class="icon-chevron-right"></span></a> <a href="#!" class="m_btn_carousel" title="슬라이더 열기"><span class="icon-chevron-left"></span><span class="text">View Banner</span></a>
+				<div class="inner_cont">
+					<a href="#!" class="btn_close_m1"><span class="icon-arrow-left"></span></a>
+					<ul class="notice_list">
+						<li><a href="#!" :class="pushIljeongCount>0?'statue new':'statue'" onclick="appOpen('calendar', '01000000')"><span class="icon icon-calendar"></span>{{pushIljeongCount}}</a>
+							<p class="txt">
+								<span class="eng">Schedule</span>오늘의 일정
+							</p></li>
+						<li><a href="#!" :class="pushNotyCount>0?'statue new':'statue'" onclick="appOpen('mypage','07000000', '')"><span class="icon icon-bell"></span>{{pushNotyCount}}</a>
+							<p class="txt">
+								<span class="eng">Notification</span>새로 온 알림
+							</p></li>
+					</ul>
+				</div>
+				<div class="inner_cont">
+					<p class="main_user_photo">
+						<img :src="modiImgAddr(session.USER_PIC)" alt="" />
+					</p>
+					<p class="main_user_greeting">
+						안녕하세요? <span>{{session.USER_NM}}</span>님
+					</p>
+					<!-- <span class="user_id">{{ session.USER_ID }}</span> -->
+					<p class="main_user_info">
+						<span class="major">{{session.DEPT_NM}}</span><span class="user_id">{{ session.USER_ID }}</span>
+					</p>
+					<div class="main_user_btn">
+						<a href="#!" class="btn_edit" title="수정" onclick="appOpen('mypage', '', '')"><span class="icon-edit-2"></span></a> <a href="#!" class="btn_logout" title="로그아웃" @click="logout"><span class="icon-log-out"></span></a>
+					</div>
+				</div>
+				<div class="inner_cont">
+					<a href="#!" class="btn_close_m3"><span class="icon-arrow-right"></span></a>
+					<div class="main_carousel">
+						<div v-for="(item, index) in bannerPostList.getData()">
+							<template v-if="item.BANNER_GB == '1'">
+								<span class="image"> <img :src="addCommcode.getCommcodeNm('ADD','TEMPLATE_GB',item.TEMPLATE_GB,'CD1')" :alt="item.BANNER_TITLE" />
+								</span>
+								<div class="cont-box">
+									<p class="tit">{{item.BANNER_TITLE}}</p>
+									<p class="txt">{{item.BANNER_TEXT}}</p>
+									<a :href="item.LINK_URL" target="_blank" class="btn-detail">자세히보기</a>
+								</div>
+							</template>
+							<template v-else>
+								<a :href="item.LINK_URL" target="_blank"><img :src="'/upload'+item.FILE_PATH" :alt="item.BANNER_TITLE"></a>
+							</template>
+						</div>
+					</div>
+				</div>
+				<div class="dark_layer"></div>
+			</div>
+			<a href="#!" class="notice_box_slide"></a>
+		</section>
+
+
+		<section class="main_tab_wrap" id="mainListLoading">
+			<a href="#!" class="btn_widget_edit" title="설정" onclick="appOpen('layout', null)"><span class="icon-settings"></span></a>
+			<ul class="main_tab_box">
+				<li :class="{'on':layoutList.rowposition == index}" v-for="(item, index) in layoutList.getData()">
+					<h1 class="tit">{{item.USER_PAGE_NM}}</h1>
+					<p>
+						<a href="#!" @click="layoutList.selectRow(index)">{{item.USER_PAGE_NM}}</a>
+					</p>
+					<div class="tab_content" id="subListLoading" v-if="layoutList.rowposition == index">
+						<div class="widget_list" v-if="layoutContentList.length > 0">
+							<grid-layout :layout.sync="layoutContentList" :col-num="3" :row-height="120" :auto-size="true" :is-resizable="false" :vertical-compact="true" :is-draggable="false" :responsive="true" :use-css-transforms="true" :breakpoints="{lg: 1920, md: 1500, sm: 800, xs: 480, xxs: 0}" :cols="{lg:3, md:3, sm:2, xs:1, xxs:1}" :margin="widgetMargin" @layout-mounted="layoutMountedEvent"> <grid-item class="handle main-grid" v-for="(item, index) in layoutContentList" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" style="background:#ffffff;" :key="index"> <component :is="item.URL" :appid="item.APP_ID" :widgetseq="item.WIDGET_SEQ" :key="index" :parameter="item.PARAMETER"></component> </grid-item> </grid-layout>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</section>
+
+	</section>
+</div>
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vmPortalMain = new Vue({
+    el: '#appMain',
+    //사용할 데이터
+    data: {
+    	layoutList: new Dataset(),
+    	layoutContentList: [],
+    	bannerPostList: new Dataset(),
+    	mainListLoading: {id:'mainListLoading', val:false},
+    	subListLoading: {id:'subListLoading', val:false},
+    	widgetMargin: [0,0],
+    	
+    	pushIljeongCount: 0,
+    	pushMailCount: 0,
+    	pushNotyCount: 0,
+    	pushMsgCount: 0,	
+    	emailUseYn : false,
+
+        serviceOrder: sessionStorage.getItem('service'),
+        
+    },
+    //마운트 된 시점수행
+    watch: {
+    	'layoutList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.layoutList.enableevent){
+					this.layoutContentList = [];
+					this.setMyLayoutContent();
+				}
+			}
+		},		
+		'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'subListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.subListLoading.id), val);
+			}
+	    },
+        
+     
+    },
+    created: function(){
+       	var wwidth = $(window).width();
+       	
+       	if (wwidth < 481) {
+       		this.widgetMargin = [3,20];
+       	}else{
+       		this.widgetMargin = [30,30];
+       	}
+       	
+    	this.setBannerPostList();
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	this.setLayoutList();
+    	this.setPushCount(staticVue.pushAlarmCount);
+    	
+
+    },
+    //함수
+    methods: {
+    	setPushCount: function (pCntObj) {
+    		var cntObj = pCntObj;
+    		var headerIljeongClass = 'new';
+    		var headerNotiClass = 'new';
+
+    		this.pushIljeongCount = cntObj.iljeongCnt;
+    		this.pushMailCount = cntObj.mailCnt;
+    		this.pushNotyCount = cntObj.notyCnt;
+    		this.pushMsgCount = cntObj.msgCnt;
+    		
+    		
+    		headerNotiClass = (this.pushNotyCount > 0)?'new':'';		
+    		$('#icon-noti-circle-new').attr('class', headerNotiClass);
+    		
+    		headerIljeongClass = (this.pushIljeongCount > 0)?'new':'';		
+    		$('#icon-email-circle-new').attr('class', headerIljeongClass);
+    	},
+		setLayoutList: function(){
+			try{
+				var param = {pSearchGb:'main'};
+				var self = this;
+				//self.mainListLoading.val = true;
+				var returnVal = layoutApi.layout(param, false);
+				
+				returnVal.then(function(response) {
+					self.layoutList.setData(response.data);
+					self.layoutList.selectRow(0);
+				}).finally(function(){
+					//self.mainListLoading.val = false;
+				});
+			} catch(err){
+			};
+		},
+		setMyLayoutContent: function(){
+			try{
+				var self = this;
+				
+				if(self.layoutList.currentRow && self.layoutList.rowposition > -1){
+					self.subListLoading.val = true;
+					var returnVal = layoutApi.layoutContent(self.layoutList.currentRow, false);
+					
+					returnVal.then(function(response) {
+                        response.data.forEach(function (item) {
+                            item.x = item.X
+                            item.y = item.Y
+                            item.w = item.W
+                            item.h = item.H
+                            item.i = item.I
+                        })
+						self.layoutContentList = response.data;
+					}).finally(function(){
+						self.subListLoading.val = false;
+					});
+				}
+			} catch(err){
+			};
+		},
+		setBannerPostList: function(){
+			try{
+				var self = this;
+				var returnVal = bannerApiApi.bannerPosts({'BANNER_GROUP_SEQ':'1'}, false);
+				
+				returnVal.then(function(response) {
+					self.bannerPostList.setData(response.data);
+					//메인 carousel 슬라이더
+					// self.$nextTick(function() {
+					// 	$('.main_carousel').slick({
+					// 		autoplay: true,
+					// 		autoplaySpeed: 3000,
+					// 	});	
+					// });  
+				}).finally(function(){
+					//self.mainListLoading.val = false;
+				});
+			} catch(err){
+			};
+		},
+        layoutMountedEvent: function() {
+        	try{
+	        	var wwidth = $(window).width();
+	        	
+	        	if (wwidth < 481) {
+	                // 모바일일때 위젯 접고, 펼침
+	                // PHS: 모바일일때 위젯을 접지 않음.
+	                //mwidget()
+	            } else if (wwidth > 480) {}
+	        	
+	        	function mwidget() {
+	        		//모바일일때 위젯 접고, 펼침
+	        		$('.widget_list').css({ 'overflow': 'hidden' });
+	        	    $('.widget_list .widget_box .title_box').on('click', function() {
+	        			var that = $(this);
+	        			var pheight = $(this).parent().parent().height();
+	        	        if ($(this).hasClass('on')) {
+	        	            setTimeout(function() {
+	        	                var centerTabHeight3 = $(that).closest('.widget_list').outerHeight() + $(".main_tab_box").outerHeight() + 150;
+	        	                $(".main_tab_wrap").height(centerTabHeight3);
+	        	            }, 500);
+	        	            $(this).siblings('.content_box').slideUp();
+	        	            $(this).parent().parent().stop().animate({'maxHeight':'85px'});
+	        	            $(this).removeClass('on');
+	
+	        	        } else {
+	        	            setTimeout(function() {
+	        	            	theOffset = jQuery(that).offset();
+	        	            	jQuery('body,html').animate({ scrollTop: theOffset.top - 30 });
+	        	                var centerTabHeight3 = $(that).closest('.widget_list').outerHeight() + $(".main_tab_box").outerHeight() + 150;
+	        	                $(".main_tab_wrap").height(centerTabHeight3);
+	        	            }, 500);
+	        	            $('.widget_list .widget_box .content_box').slideUp();
+	        	            $('.widget_list .main-grid').css({'maxHeight':'85px'});
+	        	            $(this).parent().parent().stop().animate({'maxHeight':'100%'});
+	        	            $(this).parent().parent().siblings().find('.title_box').removeClass('on');
+	        	            $(this).siblings('.content_box').slideDown();
+	        	            $(this).addClass('on');
+	        	        }
+	        	    });
+	        	} 
+	        	
+	        	var delta = 200;
+	            var timer = null;
+
+	            var cachedWidth = $(window).width();
+
+	            $(window).resize(function() {
+	                var newWidth = $(window).width();
+	                if (newWidth !== cachedWidth) {
+	                    // 모바일일때 위젯 접고, 펼침
+	                    // PHS: 모바일일때 위젯을 접지 않음. 
+	                    if (newWidth < 481 && false) {
+	                        clearTimeout(timer);
+	                        timer = setTimeout(mwidget, delta);
+	                        $('.widget_list .main-grid').stop().animate({'height':'85px'});
+	                        //$('.widget_box .title_box').siblings('.content_box').slideUp();
+	                        $('.widget_box .title_box').removeClass('on');
+	                        setTimeout(function() {
+	                            var centerTabHeight3 = $('.widget_list').outerHeight() + $(".main_tab_box").outerHeight() + 150;
+	                            $(".main_tab_wrap").height(centerTabHeight3);
+	                        }, 500);
+
+	                    } else if (newWidth > 480 || true) {
+	                    	$('.widget_list .main-grid').stop().animate({'height':'auto'});
+	                        //$('.widget_box .content_box').slideDown();
+	                        $('.widget_list .widget_box .title_box').off('click');
+	                        setTimeout(function() {
+	                            var centerTabHeight3 = $('.widget_list').outerHeight() + $(".main_tab_box").outerHeight() + 150;
+	                            $(".main_tab_wrap").height(centerTabHeight3);
+	                        }, 500);
+	                    }
+	                    cachedWidth = newWidth;
+	                }
+	            });
+        	} catch(err){
+			};
+        },
+		modiImgAddr: function(pAddr){
+			var modiAddr = '';
+            
+			if(!isNull(pAddr)){
+				modiAddr = pAddr.replace(/\\/g, '/'); 
+				if(modiAddr && modiAddr.substring(1,4) == 'SMN'){
+                    modiAddr = '/upload' + modiAddr;
+				}
+			}else{
+				modiAddr = '/service/design/images/mypage/noimage.png';
+			}
+			
+			return modiAddr;
+		},
+    }
+});
+$(function() {
+	$('.main_user_photo img').on('error', function() {$(this).attr('src', '/service/design/images/mypage/noimage.png');});
+	$('.user_photo img').on('error', function() {$(this).attr('src', '/service/design/images/mypage/noimage.png');});
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+ </script>

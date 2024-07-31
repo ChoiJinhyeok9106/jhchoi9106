@@ -1,0 +1,169 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio2.css" />  
+
+<h2>페이지 보관함</h2>
+<section class="sub_cont_box portfolio-area type04" id="app">
+    <div class="portfolio-area-top type02">
+        <div class="pf-navi">        	
+            <span>포트폴리오홈</span><span>페이지 보관함</span>
+            
+        </div>
+        
+    </div>  
+         
+    <div class="pf-page-box">
+    	<div class="list-sort">
+    		<a href="#!" class="sort on">최신순</a>
+    		<a href="#!" class="sort">사용별</a>
+    	</div>
+    	<div class="page-box-list">
+    		<div class="list">
+    			<div class="list-header">    			
+    				<span class="tit">학습성과</span>
+    				<span class="stat icon-checkmark"></span>
+    			</div>
+    			<div class="list-cont">
+    				<a href="#!">
+    					<p class="title">아동간호학 실습</p>
+    					<span class="amount">+2</span>
+    					<div class="cont-bot">    
+	    					<span class="division">좌측4단 이미지</span>
+	    					<span class="date"><span class="tit">최종수정</span>2019.07.25</span>
+    					</div>						
+    					<span class="thumb"><img src="/service/design/images/portfolio/mtype_ct02.png" alt=""></span>    					
+    				</a>
+    			</div>
+    		</div>
+    		<div class="list">
+    			<div class="list-header">    			
+    				<span class="tit">기타</span>
+    				<span class="stat icon-checkmark"></span>
+    			</div>
+    			<div class="list-cont">
+    				<a href="#!">
+    					<p class="title">목차</p>
+    					<div class="cont-bot">
+	    					<span class="division">좌측제목</span>
+	    					<span class="date"><span class="tit">최종수정</span>2019.07.25</span>
+    					</div>    						
+    					<span class="thumb"><img src="/service/design/images/portfolio/mtype_li02.png" alt=""></span>    					
+    				</a>
+    			</div>
+    		</div>
+    		<div class="list">
+    			<div class="list-header">    			
+    				<span class="tit">표지</span>
+    			</div>
+    			<div class="list-cont">
+    				<a href="#!">
+    					<p class="title">포트폴리오 표지</p>
+    					<div class="cont-bot">
+	    					<span class="division">이미지</span>
+	    					<span class="date"><span class="tit">최종수정</span>2019.07.25</span>
+    					</div>    					    						
+    					<span class="thumb"><img src="/service/design/images/portfolio/mtype_cv04.png" alt=""></span>    					
+    				</a>
+    			</div>
+    		</div>
+    		<div class="list">
+    			<div class="list-header">    			
+    				<span class="tit">표지</span>
+    				<span class="stat icon-checkmark"></span>
+    			</div>
+    			<div class="list-cont">
+    				<a href="#!">
+    					<p class="title">포트폴리오 표지</p>    					
+    					<span class="amount">+2</span>
+    					<div class="cont-bot">
+    						<span class="division">상단이미지</span>
+    						<span class="date"><span class="tit">최종수정</span>2019.07.25</span>
+    					</div>  				
+    					<span class="thumb"><img src="/service/design/images/portfolio/mtype_cv01.png" alt=""></span>
+    					
+    				</a>
+    			</div>
+    		</div>
+    	</div>
+    	<!-- 페이징 -->
+	    <div class="paginate">
+	        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+	        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+	        <span>
+	            <a href="#" class="active" title="1 페이지">1</a>
+	            <a href="#" title="2 페이지">2</a>
+	            <a href="#" title="3 페이지">3</a>
+	            <a href="#" title="4 페이지">4</a>
+	            <a href="#" title="5 페이지">5</a>
+	            <a href="#" title="6 페이지">6</a>
+	            <a href="#" title="7 페이지">7</a>
+	            <a href="#" title="8 페이지">8</a>
+	            <a href="#" title="9 페이지">9</a>
+	            <a href="#" title="10 페이지">10</a>
+	        </span>
+	        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+	        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+	    </div>
+	    <div class="btn-line right">
+	    	<a href="#!" class="btn type02 size-l left-icon icon-pen">페이지 생성</a>
+	    </div>
+    </div>    
+         
+    <div class="pf-cont-bottom">
+    	
+    </div>                       
+</section>
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ /*******************************************************************************************************************************************************************
+  * javascript start 
+  ********************************************************************************************************************************************************************/
+
+	$(document).ready(function() {
+		/*왼쪽메뉴 펼치고 닫힘*/
+		$('.menu-list-wrap .depth1').on('click',function(){
+			if($(this).hasClass('on')) {
+				$(this).removeClass('on');
+				$(this).siblings('.menu-list').removeClass('on');
+			} else {
+				$(this).addClass('on');
+				$(this).siblings('.menu-list').addClass('on');
+			}
+		});
+		
+		/*왼쪽메뉴 활성화*/
+		$('.menu-list-wrap .menu a').on('click',function(){
+			$('.menu-list-wrap .menu a').removeClass('active');
+			$(this).addClass('active');
+		});
+		
+		/*전체메뉴 닫기*/
+		$('.portfolio-area-top .btn-total').on('click', function(){
+			$('.total-menu-layer').addClass('on');
+		})
+		$('.total-menu-layer .btn-close').on('click', function(){
+			$('.total-menu-layer').removeClass('on');
+		})
+		
+		/*반응형에서 왼쪽메뉴 열고 닫기*/
+		$('.left-zone .btn-mobile').on('click', function(){
+			if($('.left-zone').hasClass('on')) {
+				$('.left-zone').removeClass('on');
+			} else {
+				$('.left-zone').addClass('on');
+			}
+		})
+	});
+
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+            
+ </script>

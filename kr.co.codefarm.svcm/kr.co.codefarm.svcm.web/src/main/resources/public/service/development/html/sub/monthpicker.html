@@ -1,0 +1,147 @@
+<h2>템플릿-Month Picker</h2>
+<section class="sub_cont_box" id="app">
+   	<section class="cont_box">
+        <h3 class="h3">Month Picker</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>v-model은 하이픈이 없는 6자리 항목을 바인딩 합니다.(하이픈이 있어도 자동 제거 됩니다.)</li>
+	        	<li>invalid는 필수항목이며 저장 시 validation 체크 시 사용합니다. ex) :invalid="errors.has('targetname')"</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><month-picker v-model="[Dataset.item:String]" :invalid="[invalid:Boolean]" :disabled="[true:Boolean]" :readonly="[true:Boolean]"></month-picker></textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3" @click="saveRow()">실행 결과</h3>
+        <div class="box-type04">
+        	<div class="row form-row">
+        		<div class="form-group col s12 l3">
+		            <label class="label-type01">컴포넌트</label>
+		            <month-picker v-model="testMonth" :invalid="errors.has('targetname')"></month-picker>
+		            <input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testMonth" v-validate="'required'">
+		            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+		        </div>
+		        <div class="form-group col s12 l9">
+		            <label class="label-type01">실제값</label>
+		            <input type="text" class="size-m" v-model="testMonth">
+		        </div>
+			</div>
+        	<div class="row form-row">
+        		<div class="form-group col s12 l4">
+		            <label class="label-type01">컴포넌트 :disabled="true"</label>
+		            <month-picker v-model="testMonth" :invalid="errors.has('targetname')" :disabled="true"></month-picker>
+		            <input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testMonth" v-validate="'required'">
+		            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+		        </div>
+        		<div class="form-group col s12 l4">
+		            <label class="label-type01">컴포넌트 :readonly="true"</label>
+		            <month-picker v-model="testMonth" :invalid="errors.has('targetname')" :readonly="true"></month-picker>
+		            <input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testMonth" v-validate="'required'">
+		            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+		        </div>
+		        <div class="form-group col s12 l4">
+		            <label class="label-type01">실제값</label>
+		            <input type="text" class="size-m" v-model="testMonth">
+		        </div>
+			</div>
+		</div>
+		</br>
+        <textarea id="codeEditor2"><div class="box-type04">
+	<div class="row form-row">
+		<div class="form-group col s12 l3">
+            <label class="label-type01">컴포넌트</label>
+            <month-picker v-model="testMonth" :invalid="errors.has('targetname')"></month-picker>
+            <input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testMonth" v-validate="'required'">
+            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+        </div>
+        <div class="form-group col s12 l9">
+            <label class="label-type01">실제값</label>
+            <input type="text" class="size-m" v-model="testMonth">
+        </div>
+	</div>
+      	<div class="row form-row">
+      		<div class="form-group col s12 l4">
+            <label class="label-type01">컴포넌트 :disabled="true"</label>
+            <month-picker v-model="testMonth" :invalid="errors.has('targetname')" :disabled="true"></month-picker>
+            <input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testMonth" v-validate="'required'">
+            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+        </div>
+      		<div class="form-group col s12 l4">
+            <label class="label-type01">컴포넌트 :readonly="true"</label>
+            <month-picker v-model="testMonth" :invalid="errors.has('targetname')" :readonly="true"></month-picker>
+            <input type="hidden" name="targetname" data-vv-as="날짜 " v-model="testMonth" v-validate="'required'">
+            <invalid-message :visible="true" :name="'targetname'" :verror="errors"/>
+        </div>
+        <div class="form-group col s12 l4">
+            <label class="label-type01">실제값</label>
+            <input type="text" class="size-m" v-model="testMonth">
+        </div>
+	</div>
+</div></textarea>
+   	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	testMonth : null
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	this.saveRow();
+    },
+    //함수
+    methods: {
+    	saveRow: function(){
+    		var validate = this.$validator.validateAll();
+            
+            validate.then(function(response) {
+            	if(response){
+            		
+            	}
+            });
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 60);
+	editor('codeEditor2', 420);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

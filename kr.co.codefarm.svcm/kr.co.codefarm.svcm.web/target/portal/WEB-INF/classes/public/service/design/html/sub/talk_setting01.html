@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>대동대학교 포탈</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/reset.css" />
+
+
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/jui/jui-grid.classic.css">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/jui/jui-ui.classic.css">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/iframe_layout.css" />
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/feather.css" />
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/xcloud-icon.css" />
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" type="text/css" href="..//service/design/assets/css/slick.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/talk.css">
+
+    <script type="text/javascript" src="../../../assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/slick.min.js"></script>
+    <script type="text/javascript" src="../../../assets/js/iframe.js"></script>
+    <script type="text/javascript" src="../../../assets/js/modal.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script type="text/javascript" src="../../../assets/js/vendor/progresscircle.js"></script>
+</head>
+
+<body class="jui feather">
+    <div id="wrap">
+        <!-- header 배경색은 학생일때.stu, 교수일때.pro, 직원일때.mng  -->
+        <header id="sub_header" class="stu">
+            <a href="#!" class="btn_menu"><span class="icon-menu"></span></a>
+            <div class="sub_title">
+                <span class="icon icon-xcloud001 app_color_blue"></span>
+                <h1 class="txt">스마트 캠퍼스 서비스</h1>
+            </div>
+        </header>
+        <nav id="snb">
+            <!-- 해당 메뉴가 활성화 되어있을때 ul에 'display:block' li에 클래스 .on을 넣어준다 -->
+            <ul class="snb_list">
+                <li class="on"><a href="#!">강의 시간표 및 정보</a>
+                    <ul style="display:block;">
+                        <li class="on"><a href="#!">교육과정표</a>
+                            <ul style="display:block;">
+                                <li><a href="#!" class="on">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">교육과정이수과목</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">진단평가</a></li>
+                        <li><a href="#!">중간강의평가</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#!">교육과정표</a></li>
+                <li><a href="#!">교육과정이수과목</a>
+                    <ul>
+                        <li><a href="#!">교육과정표</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">교육과정이수과목</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#!">진단평가</a></li>
+                        <li><a href="#!">중간강의평가</a>
+                            <ul>
+                                <li><a href="#!">교육과정표</a></li>
+                                <li><a href="#!">교육과정이수과목</a></li>
+                                <li><a href="#!">진단평가</a></li>
+                                <li><a href="#!">중간강의평가</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#!">진단평가</a></li>
+                <li><a href="#!">중간강의평가</a></li>
+            </ul>
+        </nav>
+        <article class="sub_content">
+            <div class="sub_cont_wrap">
+                <h2>톡</h2>
+                <section class="sub_cont_box">
+
+                </section>
+            </div>
+        </article>
+        <div id="header">
+            <div class="talk_layer theme_red" style="right: 100px; opacity: 1;">
+                <!-- 톡 메인 -->
+                <div class="talk-main talk-setting">
+                    <div class="talk-header">
+                        <a href="#!" class="btn-search icon-search">검색</a>
+                        <div class="title">
+                            <h3>Setting</h3>
+                        </div>
+                        <a href="#!" class="btn-close icon-close">닫기</a>
+                    </div>
+                    <div class="talk-content">
+                        <p class="profile">
+                            <i class="pic"><img src="images/profile-img01.jpg" alt=""></i>
+                            <a href="#!" class="icon-camera">사진변경</a>
+                        </p>
+                        <p class="name">수라임</p>
+                        <p class="state-message">유통기한 지난 제품은 드시지 마십시오.</p>
+                        <div class="btn-list">
+                            <a href="#!">
+                                <span class="icon-message-square"></span>
+                                <p>상태메시지</p>
+                                <span class="icon-chevron-right"></span>
+                            </a>
+                            <a href="#!">
+                                <span class="icon-gear"></span>
+                                <p>채팅방 설정</p>
+                                <span class="icon-chevron-right"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="talk-footer">
+                        <a href="#!" class="btn-members talk-btn">
+                            <svg width="31" height="35" viewBox="0 0 42 48" class="talk-icon-bg">
+                                <path d="M42,20.849A21,21,0,1,0,21,41.7v6.3S32.908,41.4,38.164,32.851l-0.026.009A20.619,20.619,0,0,0,42,20.849Z" fill="#fff"/>
+                            </svg>
+                            <span class="icon-users c_primary"></span>
+                        </a>
+                        <a href="#!" class="btn-chats talk-btn">
+                            <svg width="31" height="35" viewBox="0 0 42 48" class="talk-icon-bg">
+                                <path d="M42,20.849A21,21,0,1,0,21,41.7v6.3S32.908,41.4,38.164,32.851l-0.026.009A20.619,20.619,0,0,0,42,20.849Z" fill="#fff"/>
+                            </svg>
+                            <span class="icon-message c_primary"></span>
+                        </a>
+                        <a href="#!" class="btn-setting talk-btn active">
+                            <svg width="31" height="35" viewBox="0 0 42 48" class="talk-icon-bg">
+                                <path d="M42,20.849A21,21,0,1,0,21,41.7v6.3S32.908,41.4,38.164,32.851l-0.026.009A20.619,20.619,0,0,0,42,20.849Z" fill="#fff"/>
+                            </svg>
+                            <span class="icon-gear c_primary"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

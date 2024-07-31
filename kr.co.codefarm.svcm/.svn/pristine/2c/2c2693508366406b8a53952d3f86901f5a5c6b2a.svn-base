@@ -1,0 +1,1260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.additional.maria.board">
+
+	<select id="selectBoardList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.BOARD_SEQ
+			 , A.BOARD_NM
+			 , A.BOARD_GB
+			 , A.SKIN_GB
+			 , A.WIDTH
+			 , COALESCE(A.PAGE_BOARD_CNT, 0) AS PAGE_BOARD_CNT
+			 , A.JAKSEONGJA_GB
+			 , COALESCE(A.CHEOMBU_FILE_CNT, 0) AS CHEOMBU_FILE_CNT
+			 , A.FILE_SIZE_LMT
+			 , A.NEW_ICON_PYOSI_GB
+			 , COALESCE(A.HOT_ICON_HIT_CNT, 0) AS HOT_ICON_HIT_CNT
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.LINK_USE_YN, 'N') AS LINK_USE_YN
+			 , COALESCE(A.RE_USE_YN, 'N') AS RE_USE_YN
+			 , COALESCE(A.CM_USE_YN, 'N') AS CM_USE_YN
+			 , A.CATEGORY
+			 , COALESCE(A.LIKE_USE_YN, 'N') AS LIKE_USE_YN
+			 , COALESCE(A.CATEGORY_USE_YN, 'N') AS CATEGORY_USE_YN
+			 , COALESCE(A.BIMILGEUL_USE_YN, 'N') AS BIMILGEUL_USE_YN
+			 , COALESCE(A.TITLE_READ_YN, 'N') AS TITLE_READ_YN
+			 , COALESCE(A.TEXT_READ_YN, 'N') AS TEXT_READ_YN
+			 , COALESCE(A.HASH_USE_YN, 'N') AS HASH_USE_YN
+			 , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS REG_DATE
+			 , A.SORT_GB
+		 	 <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , A.CNT
+			 </if>
+		  FROM (
+				   SELECT AB.BOARD_SEQ
+						, AB.BOARD_NM
+						, AB.BOARD_GB
+						, AB.SKIN_GB
+						, AB.WIDTH
+						, AB.PAGE_BOARD_CNT
+						, AB.JAKSEONGJA_GB
+						, AB.CHEOMBU_FILE_CNT
+						, AB.FILE_SIZE_LMT
+						, AB.NEW_ICON_PYOSI_GB
+						, AB.HOT_ICON_HIT_CNT
+						, AB.USE_YN
+						, AB.LINK_USE_YN
+						, AB.RE_USE_YN
+						, AB.CM_USE_YN
+						, AB.CATEGORY_USE_YN
+						, COALESCE(AB.CATEGORY, '') AS CATEGORY
+						, AB.LIKE_USE_YN
+						, AB.BIMILGEUL_USE_YN
+						, AB.TITLE_READ_YN
+						, AB.TEXT_READ_YN
+						, AB.HASH_USE_YN
+						, AB.SORT_GB
+						, AB.INSERT_DTTM
+		 				<if test="pPageNo != null and pPageNo != ''.toString()">
+						, ROW_NUMBER() OVER(ORDER BY AB.INSERT_DTTM DESC) AS RNUM
+						, COUNT(*) OVER() AS CNT
+						</if>
+					 FROM ADD_BOARD AB 
+					WHERE 1=1
+					<if test="pSearchType eq '1'.toString()">AND AB.BOARD_NM LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+					<if test="pBoardGb != null and pBoardGb != ''">AND AB.BOARD_GB = #{pBoardGb}</if>
+					<if test="pUseYn != null and pUseYn != ''">AND AB.USE_YN = #{pUseYn}</if>				
+			   ) A
+		 WHERE 1=1
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		 ORDER BY A.RNUM
+		 </if>
+		 <if test="pPageNo == null or pPageNo eq ''.toString()">
+		 ORDER BY A.INSERT_DTTM DESC
+		 </if> 
+	</select>
+	
+	<select id="selectBoard" parameterType="hashMap" resultType="hashMap">
+		SELECT A.BOARD_SEQ
+			 , A.BOARD_NM
+			 , A.BOARD_GB
+			 , A.SKIN_GB
+			 , A.WIDTH
+			 , COALESCE(A.PAGE_BOARD_CNT, 0) AS PAGE_BOARD_CNT
+			 , A.JAKSEONGJA_GB
+			 , COALESCE(A.CHEOMBU_FILE_CNT, 0) AS CHEOMBU_FILE_CNT
+			 , A.FILE_SIZE_LMT
+			 , A.NEW_ICON_PYOSI_GB
+			 , COALESCE(A.HOT_ICON_HIT_CNT, 0) AS HOT_ICON_HIT_CNT
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.LINK_USE_YN, 'N') AS LINK_USE_YN
+			 , COALESCE(A.RE_USE_YN, 'N') AS RE_USE_YN
+			 , COALESCE(A.CM_USE_YN, 'N') AS CM_USE_YN
+			 , COALESCE(A.CATEGORY, '') AS CATEGORY
+			 , COALESCE(A.LIKE_USE_YN, 'N') AS LIKE_USE_YN
+			 , COALESCE(A.CATEGORY_USE_YN, 'N') AS CATEGORY_USE_YN
+			 , COALESCE(A.BIMILGEUL_USE_YN, 'N') AS BIMILGEUL_USE_YN
+			 , COALESCE(A.TITLE_READ_YN, 'N') AS TITLE_READ_YN
+			 , COALESCE(A.TEXT_READ_YN, 'N') AS TEXT_READ_YN
+			 , COALESCE(A.HASH_USE_YN, 'N') AS HASH_USE_YN
+			 , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS REG_DATE
+			 , A.SORT_GB
+		  FROM ADD_BOARD A 
+		 WHERE A.BOARD_SEQ = #{BOARD_SEQ}
+	</select>
+	
+	
+	<insert id="insertBoard" parameterType="hashMap">
+		<selectKey keyProperty="BOARD_SEQ" resultType="int" order="BEFORE">
+		 	SELECT COALESCE(MAX(BOARD_SEQ), 0) + 1
+			  FROM ADD_BOARD 
+			 WHERE 1=1
+  		</selectKey>
+  		
+		INSERT INTO ADD_BOARD
+		(
+			BOARD_SEQ
+		  , BOARD_NM
+		  , BOARD_GB
+		  , SKIN_GB
+		  , WIDTH
+		  , PAGE_BOARD_CNT
+		  , JAKSEONGJA_GB
+		  , CHEOMBU_FILE_CNT
+		  , FILE_SIZE_LMT
+		  , NEW_ICON_PYOSI_GB
+		  , HOT_ICON_HIT_CNT
+		  , USE_YN
+		  , LINK_USE_YN
+		  , RE_USE_YN
+		  , CM_USE_YN
+		  , CATEGORY_USE_YN
+		  , CATEGORY
+		  , LIKE_USE_YN
+		  , BIMILGEUL_USE_YN
+		  , TITLE_READ_YN
+		  , TEXT_READ_YN
+		  , HASH_USE_YN
+		  , SORT_GB
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM 
+		)
+		VALUES
+		( 
+			#{BOARD_SEQ}
+		  , #{BOARD_NM}
+		  , #{BOARD_GB}
+		  , #{SKIN_GB}
+		  , #{WIDTH}
+		  , #{PAGE_BOARD_CNT}
+		  , #{JAKSEONGJA_GB}
+		  , #{CHEOMBU_FILE_CNT}
+		  , #{FILE_SIZE_LMT}
+		  , #{NEW_ICON_PYOSI_GB}
+		  , #{HOT_ICON_HIT_CNT}
+		  , #{USE_YN}
+		  , #{LINK_USE_YN}
+		  , #{RE_USE_YN}
+		  , #{CM_USE_YN}
+		  , #{CATEGORY_USE_YN}
+		  , #{CATEGORY}
+		  , #{LIKE_USE_YN}
+		  , #{BIMILGEUL_USE_YN}
+		  , #{TITLE_READ_YN}
+		  , #{TEXT_READ_YN}
+		  , #{HASH_USE_YN}
+		  , '01'
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM} 
+		)
+	</insert>
+	
+	 <update id="updateBoard" parameterType="hashMap">
+		UPDATE ADD_BOARD
+		   SET BOARD_NM= #{BOARD_NM}
+			 , BOARD_GB = #{BOARD_GB}
+			 , SKIN_GB = #{SKIN_GB}
+			 , WIDTH = #{WIDTH}
+			 , PAGE_BOARD_CNT= #{PAGE_BOARD_CNT}
+			 , JAKSEONGJA_GB = #{JAKSEONGJA_GB}
+			 , CHEOMBU_FILE_CNT= #{CHEOMBU_FILE_CNT}
+			 , FILE_SIZE_LMT= #{FILE_SIZE_LMT}
+			 , NEW_ICON_PYOSI_GB= #{NEW_ICON_PYOSI_GB}
+			 , HOT_ICON_HIT_CNT= #{HOT_ICON_HIT_CNT}
+			 , USE_YN= #{USE_YN}
+			 , LINK_USE_YN= #{LINK_USE_YN}
+			 , RE_USE_YN = #{RE_USE_YN}
+			 , CM_USE_YN = #{CM_USE_YN}
+			 , CATEGORY_USE_YN = #{CATEGORY_USE_YN}
+			 , CATEGORY = #{CATEGORY}
+			 , LIKE_USE_YN = #{LIKE_USE_YN}
+			 , BIMILGEUL_USE_YN = #{BIMILGEUL_USE_YN}
+			 , TITLE_READ_YN= #{TITLE_READ_YN}
+		   	 , TEXT_READ_YN = #{TEXT_READ_YN}
+			 , HASH_USE_YN = #{HASH_USE_YN}
+		   	 , SORT_GB = #{SORT_GB}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE BOARD_SEQ = #{BOARD_SEQ}
+	</update>
+	
+	<delete id="deleteBoardMain" parameterType="hashMap">
+	
+		DELETE FROM ADD_BOARD
+		 WHERE BOARD_SEQ = #{BOARD_SEQ};
+		
+		DELETE FROM ADD_BOARD_AUTH
+		 WHERE BOARD_SEQ = #{BOARD_SEQ};
+	
+	</delete>
+	
+	<delete id="deleteBoardSub" parameterType="hashMap">
+	
+		DELETE FROM ADD_POST_CM
+		 WHERE 1=1
+		   AND EXISTS 
+			   ( 
+				   SELECT * 
+					 FROM ADD_POST_CM TA 
+					INNER JOIN ADD_BOARD_POST TB
+					   ON TB.POST_NO = TA.POST_NO
+					  AND TB.BOARD_SEQ = #{BOARD_SEQ}
+			   );
+
+		DELETE FROM ADD_FILE
+		 WHERE FILE_ID = 'ADD_BOARD'
+		   AND FILE_KEY LIKE CONCAT(#{BOARD_SEQ},'#','%') collate utf8mb4_unicode_ci;
+		
+		DELETE FROM ADD_BOARD_POST
+		 WHERE BOARD_SEQ = #{BOARD_SEQ};
+	
+	</delete>
+
+	<select id="selectBoardPostList" parameterType="hashMap" resultType="hashMap">
+		SELECT CAST(A.POST_NO AS VARCHAR(70)) AS POST_NO
+			 , A.BOARD_SEQ
+			 , A.LV
+			 , CAST(A.UP_POST_NO AS VARCHAR(70)) AS UP_POST_NO
+			 , COALESCE(A.GONGJI_YN, 'N') AS GONGJI_YN
+			 , A.TITLE
+			 , A.JAKSEONGJA_ID
+			 , A.JAKSEONGJA_NM
+			 , A.PWD
+			 , A.CONTENTS_PREVIEW
+			 , A.CONTENTS
+			 , A.CONTENTS_HTML
+			 , A.CATEGORY_NM
+			 , A.HASHTAG
+			 , COALESCE(A.CM_CNT, 0) AS CM_CNT
+			 , COALESCE(A.SEARCH_CNT, 0) AS SEARCH_CNT
+			 , COALESCE(A.LIKE_CNT, 0) AS LIKE_CNT
+			 , COALESCE(A.DELETE_YN, 'N') AS DELETE_YN
+			 , COALESCE(A.LINK_YN, 'N') AS LINK_YN
+			 , COALESCE(A.LINK_URL, '') AS LINK_URL
+			 , COALESCE(A.BIMILGEUL_YN, 'N') AS BIMILGEUL_YN
+			 , A.IMG_FILE_NO
+			 , A.TITLE_IMG_URL
+			 , A.INSERT_DTTM
+			 , A.BOARD_NM
+			 , A.BOARD_GB
+			 , A.SKIN_GB
+			 , A.WIDTH
+			 , COALESCE(A.PAGE_BOARD_CNT, 0) AS PAGE_BOARD_CNT
+			 , A.JAKSEONGJA_GB
+			 , COALESCE(A.CHEOMBU_FILE_CNT, 0) AS CHEOMBU_FILE_CNT
+			 , A.FILE_SIZE_LMT
+			 , A.NEW_ICON_PYOSI_GB
+			 , COALESCE(A.HOT_ICON_HIT_CNT, 0) AS HOT_ICON_HIT_CNT
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.LINK_USE_YN, 'N') AS LINK_USE_YN
+			 , COALESCE(A.RE_USE_YN, 'N') AS RE_USE_YN
+			 , COALESCE(A.CM_USE_YN, 'N') AS CM_USE_YN
+			 , COALESCE(A.CATEGORY_USE_YN, 'N') AS CATEGORY_USE_YN
+			 , A.CATEGORY
+			 , COALESCE(A.LIKE_USE_YN, 'N') AS LIKE_USE_YN
+			 , COALESCE(A.BIMILGEUL_USE_YN, 'N') AS BIMILGEUL_USE_YN
+			 , COALESCE(A.TITLE_READ_YN, 'N') AS TITLE_READ_YN
+			 , COALESCE(A.TEXT_READ_YN, 'N') AS TEXT_READ_YN
+			 , COALESCE(A.HASH_USE_YN, 'N') AS HASH_USE_YN
+			 , A.SORT_GB
+			 , A.JAKSEONGJA
+			 , A.INSERT_DT
+			 , A.DIFF_MIN
+			 , A.FILE_NO
+			 , CASE WHEN COALESCE(COALESCE(A.TITLE_IMG_URL, A.PREV_IMG), '') = '' THEN '/service/additional/images/common/board_noimage.jpg'
+					ELSE COALESCE(A.TITLE_IMG_URL, CONCAT('/upload' , A.PREV_IMG)) END AS PREV_IMG_PATH
+			 , CASE WHEN COALESCE(COALESCE(A.TITLE_IMG_URL, A.PREV_IMG_NM), '') = '' THEN 'board_noimage.jpg'
+					ELSE COALESCE(A.TITLE_IMG_URL, PREV_IMG_NM) END AS PREV_IMG_NM
+			 , CASE WHEN A.NEW_ICON_PYOSI_GB = '02' AND A.DIFF_MIN &lt;= (0.5*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '03' AND A.DIFF_MIN &lt;= (1*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '04' AND A.DIFF_MIN &lt;= (12*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '05' AND A.DIFF_MIN &lt;= (24*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '06' AND A.DIFF_MIN &lt;= (3*24*60) THEN 'Y'
+					ELSE 'N' END AS NEW_ICON_PYOSI_YN
+		 	 <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , COALESCE(A.CNT, 0) AS CNT
+			 </if>
+			 , A.ANSWER_CHK
+			 , A.GONGJI_FR_DT
+			 , A.GONGJI_TO_DT
+			 , A.RESERVE_FR_TM
+			 , A.RESERVE_TO_TM
+		  FROM (	
+				   SELECT TA.POST_NO
+						, TA.BOARD_SEQ
+						, TA.LV
+						, TA.UP_POST_NO
+						, TA.GONGJI_YN
+						, TA.TITLE
+						, TA.JAKSEONGJA_ID
+						, TA.JAKSEONGJA_NM
+						, TA.PWD
+						, TA.CONTENTS_PREVIEW
+						, TA.CONTENTS
+						, TA.CONTENTS_HTML
+						, TA.CATEGORY_NM
+						, TA.HASHTAG
+						, TA.CM_CNT
+						, TA.SEARCH_CNT
+						, TA.LIKE_CNT
+						, TA.DELETE_YN
+						, TA.LINK_YN
+						, TA.LINK_URL
+						, TA.BIMILGEUL_YN
+						, TA.IMG_FILE_NO
+						, TA.TITLE_IMG_URL
+						, DATE_FORMAT(TA.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS INSERT_DTTM
+						, TB.BOARD_NM
+						, TB.BOARD_GB
+						, TB.SKIN_GB
+						, TB.WIDTH
+						, TB.PAGE_BOARD_CNT
+						, TB.JAKSEONGJA_GB
+						, TB.CHEOMBU_FILE_CNT
+						, TB.FILE_SIZE_LMT
+						, TB.NEW_ICON_PYOSI_GB
+						, TB.HOT_ICON_HIT_CNT
+						, TB.USE_YN
+						, TB.LINK_USE_YN
+						, TB.RE_USE_YN
+						, TB.CM_USE_YN
+						, TB.CATEGORY_USE_YN
+						, TB.CATEGORY
+						, TB.LIKE_USE_YN
+						, TB.BIMILGEUL_USE_YN
+						, TB.TITLE_READ_YN
+						, TB.TEXT_READ_YN
+						, TB.HASH_USE_YN
+						, TB.SORT_GB
+						, CASE WHEN TB.JAKSEONGJA_GB = '01' THEN TA.JAKSEONGJA_NM
+					   		   WHEN TB.JAKSEONGJA_GB = '02' THEN TA.JAKSEONGJA_ID
+  					   		   ELSE '' END AS JAKSEONGJA
+						, DATE_FORMAT(TA.INSERT_DTTM, '%Y%m%d') AS INSERT_DT
+						, (NOW() - STR_TO_DATE(DATE_FORMAT(TA.INSERT_DTTM, '%Y-%m-%d %H:%i'), '%Y-%m-%d %H:%i')) * 24 * 60 AS DIFF_MIN
+						, TC.FILE_NO
+						, REPLACE(TD.FILE_PATH, '\\', '/') AS PREV_IMG
+						, TD.FILE_NM AS PREV_IMG_NM
+		 				<if test="pPageNo != null and pPageNo != ''.toString()">
+						, ROW_NUMBER() OVER(ORDER BY CASE WHEN TA.GONGJI_YN = 'Y' THEN 0 ELSE 1 END, TA.POST_NO DESC) AS RNUM
+						, COUNT(*) OVER() AS CNT
+						</if>
+				   		, TF.POST_NO AS ANSWER_CHK
+						, TA.GONGJI_FR_DT
+						, TA.GONGJI_TO_DT
+						, TA.RESERVE_FR_TM
+						, TA.RESERVE_TO_TM
+					 FROM ADD_BOARD_POST TA 
+					 LEFT OUTER JOIN ADD_BOARD TB 
+					   ON TA.BOARD_SEQ = TB.BOARD_SEQ
+					 LEFT OUTER JOIN 
+						  ( 
+							  SELECT MAX(T1.FILE_NO) AS FILE_NO
+								   , T1.FILE_KEY
+								FROM ADD_FILE T1 
+							   WHERE T1.FILE_ID = 'ADD_BOARD'
+							   GROUP BY T1.FILE_KEY
+						  ) TC
+					   ON TC.FILE_KEY = CONCAT(CAST(TA.BOARD_SEQ AS VARCHAR(10)),'#',CAST(TA.POST_NO AS VARCHAR(66))) collate utf8mb4_unicode_ci
+					 LEFT OUTER JOIN ADD_FILE TD 
+					   ON TC.FILE_NO = TD.FILE_NO
+					  AND TD.FILE_ID = 'ADD_BOARD'
+					  AND TD.FILE_KEY = CONCAT(CAST(TA.BOARD_SEQ AS VARCHAR(10)),'#',CAST(TA.POST_NO AS VARCHAR(66))) collate utf8mb4_unicode_ci
+					 LEFT JOIN ADD_BOARD_POST TF
+					   ON TA.POST_NO = TF.UP_POST_NO
+					  AND TA.BOARD_SEQ = TF.BOARD_SEQ
+					  AND TF.DELETE_YN = 'N'
+					WHERE 1=1
+					  <if test="pBoardGb eq '03'.toString()">AND TA.LV = 0</if>
+					  AND TA.BOARD_SEQ = #{pBoardSeq}
+					  AND (TA.DELETE_YN = 'N' OR TA.DELETE_YN IS NULL) 
+					<if test="pSearchType eq '1'.toString()">AND TA.TITLE LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+					<if test="pSearchType eq '2'.toString()">AND TA.CONTENTS LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+					<if test="pSearchType eq '3'.toString()">AND (TA.TITLE LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci OR TA.CONTENTS LIKE CONCAT('%',#{pSearchArgv},'%')) collate utf8mb4_unicode_ci</if>
+					<if test="pSearchType eq '4'.toString()">AND TA.JAKSEONGJA_NM LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+					<if test="pSearchType eq '5'.toString()">AND TA.HASHTAG LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+					<if test="pPostNo != null and pPostNo != ''.toString()">AND TA.POST_NO = #{pPostNo}</if>
+					GROUP BY TA.POST_NO
+			   ) A
+		 WHERE 1=1
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		 ORDER BY A.RNUM
+		 </if>
+		 <if test="pPageNo == null or pPageNo eq ''.toString()">
+		 ORDER BY CASE WHEN A.GONGJI_YN = 'Y' THEN 0 ELSE 1 END, A.POST_NO DESC
+		 </if>
+	</select>
+	
+	<select id="selectBoardPostListDate" parameterType="hashMap" resultType="hashMap">
+		SELECT CAST(A.POST_NO AS VARCHAR(70)) AS POST_NO
+			 , A.BOARD_SEQ
+			 , A.LV
+			 , CAST(A.UP_POST_NO AS VARCHAR(70)) AS UP_POST_NO
+			 , COALESCE(A.GONGJI_YN, 'N') AS GONGJI_YN
+			 , A.TITLE
+			 , A.JAKSEONGJA_ID
+			 , A.JAKSEONGJA_NM
+			 , A.PWD
+			 , A.CONTENTS
+			 , A.CONTENTS_HTML
+			 , A.CONTENTS_PREVIEW
+			 , A.CATEGORY_NM
+			 , A.HASHTAG
+			 , COALESCE(A.CM_CNT, 0) AS CM_CNT
+			 , COALESCE(A.SEARCH_CNT, 0) AS SEARCH_CNT
+			 , COALESCE(A.LIKE_CNT, 0) AS LIKE_CNT
+			 , COALESCE(A.DELETE_YN, 'N') AS DELETE_YN
+			 , COALESCE(A.LINK_YN, 'N') AS LINK_YN
+			 , COALESCE(A.LINK_URL, '') AS LINK_URL
+			 , COALESCE(A.BIMILGEUL_YN, 'N') AS BIMILGEUL_YN
+			 , A.IMG_FILE_NO
+			 , A.TITLE_IMG_URL
+			 , A.INSERT_DTTM
+			 , A.BOARD_NM
+			 , A.BOARD_GB
+			 , A.SKIN_GB
+			 , A.WIDTH
+			 , COALESCE(A.PAGE_BOARD_CNT, 0) AS PAGE_BOARD_CNT
+			 , A.JAKSEONGJA_GB
+			 , COALESCE(A.CHEOMBU_FILE_CNT, 0) AS CHEOMBU_FILE_CNT
+			 , A.FILE_SIZE_LMT
+			 , A.NEW_ICON_PYOSI_GB
+			 , COALESCE(A.HOT_ICON_HIT_CNT, 0) AS HOT_ICON_HIT_CNT
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.LINK_USE_YN, 'N') AS LINK_USE_YN
+			 , COALESCE(A.RE_USE_YN, 'N') AS RE_USE_YN
+			 , COALESCE(A.CM_USE_YN, 'N') AS CM_USE_YN
+			 , COALESCE(A.CATEGORY_USE_YN, 'N') AS CATEGORY_USE_YN
+			 , A.CATEGORY
+			 , COALESCE(A.BIMILGEUL_USE_YN, 'N') AS BIMILGEUL_USE_YN
+			 , COALESCE(A.TITLE_READ_YN, 'N') AS TITLE_READ_YN
+			 , COALESCE(A.TEXT_READ_YN, 'N') AS TEXT_READ_YN
+			 , A.SORT_GB
+			 , A.JAKSEONGJA
+			 , A.INSERT_DT
+			 , A.DIFF_MIN
+			 , A.FILE_NO
+			 , CASE WHEN COALESCE(COALESCE(A.TITLE_IMG_URL, A.PREV_IMG), '') = '' THEN '/service/additional/images/common/board_noimage.jpg'
+					ELSE COALESCE(A.TITLE_IMG_URL, CONCAT('/upload' , A.PREV_IMG)) END AS PREV_IMG_PATH
+			 , CASE WHEN COALESCE(COALESCE(A.TITLE_IMG_URL, A.PREV_IMG_NM), '') = '' THEN 'board_noimage.jpg'
+					ELSE COALESCE(A.TITLE_IMG_URL, PREV_IMG_NM) END AS PREV_IMG_NM
+			 , CASE WHEN A.NEW_ICON_PYOSI_GB = '02' AND A.DIFF_MIN &lt;= (0.5*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '03' AND A.DIFF_MIN &lt;= (1*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '04' AND A.DIFF_MIN &lt;= (12*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '05' AND A.DIFF_MIN &lt;= (24*60) THEN 'Y'
+					WHEN A.NEW_ICON_PYOSI_GB = '06' AND A.DIFF_MIN &lt;= (3*24*60) THEN 'Y'
+					ELSE 'N' END AS NEW_ICON_PYOSI_YN
+			 <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , COALESCE(A.CNT, 0) AS CNT
+			 </if>
+			 , TF.POST_NO AS ANSWER_CHK
+			 , A.GONGJI_FR_DT
+			 , A.GONGJI_TO_DT
+			 , A.RESERVE_FR_TM
+			 , A.RESERVE_TO_TM
+		  FROM (	
+				   SELECT TA.POST_NO
+						, TA.BOARD_SEQ
+						, TA.LV
+						, TA.UP_POST_NO
+						, TA.GONGJI_YN
+						, TA.TITLE
+						, TA.JAKSEONGJA_ID
+						, TA.JAKSEONGJA_NM
+						, TA.PWD
+						, TA.CONTENTS
+						, TA.CONTENTS_HTML
+						, TA.CONTENTS_PREVIEW
+						, TA.CATEGORY_NM
+						, TA.HASHTAG
+						, TA.CM_CNT
+						, TA.SEARCH_CNT
+						, TA.LIKE_CNT
+						, TA.DELETE_YN
+						, TA.LINK_YN
+						, TA.LINK_URL
+						, TA.BIMILGEUL_YN
+						, TA.IMG_FILE_NO
+						, TA.TITLE_IMG_URL
+						, DATE_FORMAT(TA.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS INSERT_DTTM
+						, TB.BOARD_NM
+						, TB.BOARD_GB
+						, TB.SKIN_GB
+						, TB.WIDTH
+						, TB.PAGE_BOARD_CNT
+						, TB.JAKSEONGJA_GB
+						, TB.CHEOMBU_FILE_CNT
+						, TB.FILE_SIZE_LMT
+						, TB.NEW_ICON_PYOSI_GB
+						, TB.HOT_ICON_HIT_CNT
+						, TB.USE_YN
+						, TB.LINK_USE_YN
+						, TB.RE_USE_YN
+						, TB.CM_USE_YN
+						, TB.CATEGORY_USE_YN
+						, TB.CATEGORY
+						, TB.BIMILGEUL_USE_YN
+						, TB.TITLE_READ_YN
+						, TB.TEXT_READ_YN
+						, TB.SORT_GB
+						, CASE WHEN TB.JAKSEONGJA_GB = '01' THEN TA.JAKSEONGJA_NM
+							   WHEN TB.JAKSEONGJA_GB = '02' THEN TA.JAKSEONGJA_ID
+							   ELSE '' END AS JAKSEONGJA
+						, DATE_FORMAT(TA.INSERT_DTTM, '%Y%m%d') AS INSERT_DT
+						, (NOW() - STR_TO_DATE(DATE_FORMAT(TA.INSERT_DTTM, '%Y-%m-%d %H:%i'), '%Y-%m-%d %H:%i')) * 24 * 60 AS DIFF_MIN
+						, TC.FILE_NO
+						, REPLACE(TD.FILE_PATH, '\\', '/') AS PREV_IMG
+						, TD.FILE_NM AS PREV_IMG_NM
+						<if test="pPageNo != null and pPageNo != ''.toString()">
+						, CASE WHEN TB.RE_USE_YN = 'N' THEN ROW_NUMBER() OVER(ORDER BY CASE WHEN TA.GONGJI_YN = 'Y' THEN 0 ELSE 1 END, TA.WRITE_DT DESC, TA.LV ASC, TA.POST_NO DESC) 
+							   ELSE ROW_NUMBER() OVER(ORDER BY CASE WHEN TA.GONGJI_YN = 'Y' THEN 0 ELSE 1 END, TA.WRITE_DT DESC, TA.LV ASC, TA.POST_NO DESC) 
+						  END AS RNUM
+						, COUNT(*) OVER() AS CNT
+						</if>
+						, TF.POST_NO AS ANSWER_CHK
+						, TA.GONGJI_FR_DT
+						, TA.GONGJI_TO_DT
+						, TA.RESERVE_FR_TM
+						, TA.RESERVE_TO_TM
+					 FROM (
+						  SELECT A.*
+							   , B.WRITE_DT
+							FROM (
+								  SELECT CEIL(A.POST_NO) AS POST_NUM
+									   , A.*
+									FROM ADD_BOARD_POST A
+								   WHERE 1=1
+								 <if test="pBoardGb eq '03'.toString()">AND TA.LV = 0</if>
+									 AND A.BOARD_SEQ = #{pBoardSeq}
+									 AND (A.DELETE_YN = 'N' OR A.DELETE_YN IS NULL) 
+								 <if test="pSearchType eq '1'.toString()">AND A.TITLE LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+								 <if test="pSearchType eq '2'.toString()">AND A.CONTENTS LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+								 <if test="pSearchType eq '3'.toString()">AND (A.TITLE LIKE CONCAT('%',#{pSearchArgv},'%') OR A.CONTENTS LIKE CONCAT('%',#{pSearchArgv},'%')) collate utf8mb4_unicode_ci</if>
+								 <if test="pSearchType eq '4'.toString()">AND TA.JAKSEONGJA_NM LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci</if>
+								 <if test="pPostNo != null and pPostNo != ''.toString()">AND A.POST_NO = #{pPostNo}</if>   
+								 ) A
+							LEFT 
+							JOIN (
+								  SELECT F.POST_NUM
+									   , MAX(F.INSERT_DT) AS WRITE_DT
+									FROM (
+											SELECT CEIL(A.POST_NO) AS POST_NUM
+												  , A.POST_NO
+												  , A.BOARD_SEQ
+												  , A.UP_POST_NO
+												  , A.LV
+												  , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS INSERT_DT
+											   FROM ADD_BOARD_POST A
+											  WHERE BOARD_SEQ = #{pBoardSeq}
+												AND (A.DELETE_YN = 'N' OR A.DELETE_YN IS NULL) 
+										 ) F
+								   WHERE F.LV = 0
+								   GROUP BY F.POST_NUM
+								 ) B
+							  ON A.POST_NUM = B.POST_NUM			
+						  ) TA 
+					 LEFT OUTER JOIN ADD_BOARD TB 
+					   ON TA.BOARD_SEQ = TB.BOARD_SEQ
+					 LEFT OUTER JOIN 
+						  ( 
+							  SELECT MAX(T1.FILE_NO) AS FILE_NO
+								   , T1.FILE_KEY
+								FROM ADD_FILE T1 
+							   WHERE T1.FILE_ID = 'ADD_BOARD'
+							   GROUP BY T1.FILE_KEY
+						  ) TC
+					   ON TC.FILE_KEY = CONCAT(CAST(TA.BOARD_SEQ AS VARCHAR(10)),'#',CAST(TA.POST_NO AS VARCHAR(66))) collate utf8mb4_unicode_ci
+					 LEFT OUTER JOIN ADD_FILE TD 
+					   ON TC.FILE_NO = TD.FILE_NO
+					  AND TD.FILE_ID = 'ADD_BOARD'
+					  AND TD.FILE_KEY = CONCAT(CAST(TA.BOARD_SEQ AS VARCHAR(10)),'#',CAST(TA.POST_NO AS VARCHAR(66))) collate utf8mb4_unicode_ci
+					 LEFT JOIN ADD_BOARD_POST TF
+					   ON TA.POST_NO = TF.UP_POST_NO
+					  AND TA.BOARD_SEQ = TF.BOARD_SEQ
+					  AND TF.DELETE_YN = 'N'
+			   ) A
+		 WHERE 1=1
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		 ORDER BY A.RNUM
+		 </if>
+		 <if test="pPageNo == null or pPageNo eq ''.toString()">
+		 ORDER BY CASE WHEN A.GONGJI_YN = 'Y' THEN 0 ELSE 1 END, TA.WRITE_DT DESC, TA.LV ASC, A.POST_NO DESC
+		 </if>
+	</select>
+	
+	<select id="selectBoardPostContents" parameterType="hashMap" resultType="hashMap">
+		SELECT A.CONTENTS
+			 , A.CONTENTS_HTML
+		  FROM ADD_BOARD_POST A
+		 WHERE A.POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+	</select>
+	
+	<insert id="insertBoardPost" parameterType="hashMap">
+		<selectKey keyProperty="POST_NO" resultType="string" order="BEFORE">
+	  		<if test="LV == 0">
+		  		SELECT COALESCE(MAX(POST_NO), 0) + 1
+				  FROM ADD_BOARD_POST 
+				 WHERE 1=1
+			</if>
+			<if test="LV != 0">
+		  		SELECT COALESCE(MIN(CAST(POST_NO AS DECIMAL(38,28))), CAST(#{UP_POST_NO} AS DECIMAL(38,28))) - CAST(CONCAT('0.',LPAD('1',#{LV}*3,'0')) AS DECIMAL(38,28))
+				  FROM ADD_BOARD_POST
+				 WHERE 1=1
+				   AND BOARD_SEQ = #{BOARD_SEQ}
+				   AND LV = #{LV}
+				   AND UP_POST_NO= CAST(#{UP_POST_NO} AS DECIMAL(38,28))
+			</if>
+  		</selectKey>
+  		
+		INSERT INTO ADD_BOARD_POST
+		( 
+			POST_NO
+		  , BOARD_SEQ
+		  , LV
+		  , UP_POST_NO
+		  , GONGJI_YN
+		  , TITLE
+		  , JAKSEONGJA_ID
+		  , JAKSEONGJA_NM
+		  , PWD
+		  , CONTENTS
+		  , CONTENTS_HTML
+		  , CONTENTS_PREVIEW
+		  , CATEGORY_NM
+		  , HASHTAG
+		  , CM_CNT
+		  , SEARCH_CNT
+		  , LIKE_CNT
+		  , DELETE_YN
+		  , LINK_YN
+		  , LINK_URL
+		  , BIMILGEUL_YN
+		  , IMG_FILE_NO 
+		  , TITLE_IMG_URL
+		  , GONGJI_FR_DT
+		  , GONGJI_TO_DT
+		  , RESERVE_FR_TM
+		  , RESERVE_TO_TM
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM 
+		)
+	 	VALUES
+		(		   
+			CAST(#{POST_NO} AS DECIMAL(38,28))
+		  , #{BOARD_SEQ}
+		  , #{LV}
+		  , CAST(#{UP_POST_NO} AS DECIMAL(38,28))
+		  , #{GONGJI_YN}
+		  , #{TITLE}
+		  , #{JAKSEONGJA_ID}
+		  , #{JAKSEONGJA_NM}
+		  , #{PWD}
+		  , #{CONTENTS}
+		  , #{CONTENTS_HTML}
+		  , #{CONTENTS_PREVIEW}
+		  , #{CATEGORY_NM}
+	 	  , #{HASHTAG}
+		  , #{CM_CNT}
+		  , #{SEARCH_CNT}
+		  , #{LIKE_CNT}
+		  , #{DELETE_YN}
+		  , #{LINK_YN}
+		  , #{LINK_URL}
+		  , #{BIMILGEUL_YN}
+		  , #{IMG_FILE_NO}
+		  , #{TITLE_IMG_URL}
+	 	  , #{GONGJI_FR_DT}
+	 	  , #{GONGJI_TO_DT}
+		  , #{RESERVE_FR_TM}
+		  , #{RESERVE_TO_TM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM} 
+		)
+	</insert>
+	
+	 <update id="updateBoardPost" parameterType="hashMap">
+		UPDATE ADD_BOARD_POST
+		   SET BOARD_SEQ = #{BOARD_SEQ}
+			 , LV = #{LV}
+			 , UP_POST_NO = CAST(#{UP_POST_NO} AS DECIMAL(38,28))
+			 , GONGJI_YN = #{GONGJI_YN}
+			 , TITLE = #{TITLE}
+			 , JAKSEONGJA_ID = #{JAKSEONGJA_ID}
+			 , JAKSEONGJA_NM = #{JAKSEONGJA_NM}
+			 , PWD = #{PWD}
+			 , CONTENTS = #{CONTENTS}
+			 , CONTENTS_HTML = #{CONTENTS_HTML}
+			 , CONTENTS_PREVIEW = #{CONTENTS_PREVIEW}
+			 , CATEGORY_NM = #{CATEGORY_NM}
+			 , HASHTAG = #{HASHTAG}
+			 , DELETE_YN = #{DELETE_YN}
+			 , LINK_YN = #{LINK_YN}
+			 , LINK_URL = #{LINK_URL}
+			 , BIMILGEUL_YN = #{BIMILGEUL_YN}
+			 , IMG_FILE_NO = #{IMG_FILE_NO}
+			 , TITLE_IMG_URL = #{TITLE_IMG_URL}
+			 <if test="INSERT_DT != null and INSERT_DT != ''.toString()">
+			 , INSERT_DTTM = STR_TO_DATE(CONCAT(#{INSERT_DT},DATE_FORMAT(INSERT_DTTM, '%H%i%s')), '%Y%m%d%H%i%s')
+			 </if>
+			 , GONGJI_FR_DT = #{GONGJI_FR_DT}
+			 , GONGJI_TO_DT = #{GONGJI_TO_DT}
+			 , RESERVE_FR_TM = #{RESERVE_FR_TM} 
+			 , RESERVE_TO_TM = #{RESERVE_TO_TM}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+	</update>
+	
+	<update id="updateBoardPostCnt" parameterType="hashMap">
+		UPDATE ADD_BOARD_POST
+		   SET SEARCH_CNT = COALESCE(SEARCH_CNT, 0) + 1
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+	</update>
+	
+	<update id="updateBoardPostCmCnt" parameterType="hashMap">
+		UPDATE ADD_BOARD_POST
+		   SET CM_CNT = 
+			   (
+				   SELECT COUNT(*) 
+					 FROM ADD_POST_CM 
+		   			WHERE DELETE_YN != 'Y' 
+		   			  AND POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+		   	   )
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+	</update>
+
+	<update id="updateBoardPostLikeCnt" parameterType="hashMap">
+		UPDATE ADD_BOARD_POST
+		SET LIKE_CNT =
+			(
+				SELECT COUNT(*)
+				FROM ADD_POST_LIKE
+				WHERE 1=1
+				  AND POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+			)
+		WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+	</update>
+	
+	<delete id="deleteBoardPost" parameterType="hashMap">
+	
+		UPDATE ADD_BOARD_POST
+		   SET DELETE_YN = 'Y'
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28));
+		 
+		UPDATE ADD_POST_CM
+		   SET DELETE_YN = 'Y'
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28));
+	
+	</delete>
+	
+	<delete id="removeBoardPost" parameterType="hashMap">
+	
+		DELETE FROM ADD_BOARD_POST
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28));
+		 
+		DELETE FROM ADD_POST_CM
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28));
+	
+	</delete>
+	
+	<select id="selectPostCmList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.POST_NO
+			 , A.CM_SEQ
+			 , A.PWD
+			 , A.TEXT
+			 , A.JAKSEONGJA_ID
+			 , A.JAKSEONGJA_NM
+			 , A.DELETE_YN
+			 , A.USER_PIC
+			 , A.INSERT_DTTM
+			 , A.INSERT_DT
+		 	 <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , A.CNT
+			 </if>
+		  FROM (	
+				   SELECT CAST(TA.POST_NO AS VARCHAR(70)) AS POST_NO
+						, TA.CM_SEQ
+						, TA.PWD
+						, TA.TEXT
+						, TA.JAKSEONGJA_ID
+						, TA.JAKSEONGJA_NM
+						, TA.DELETE_YN
+						, TA.INSERT_DTTM	
+						, TB.USER_PIC					  
+						, DATE_FORMAT(TA.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS INSERT_DT
+		 				<if test="pPageNo != null and pPageNo != ''.toString()">
+						, ROW_NUMBER() OVER(ORDER BY TA.INSERT_DTTM DESC) AS RNUM
+						, COUNT(*) OVER() AS CNT
+						</if>
+					 FROM ADD_POST_CM TA 
+					 LEFT JOIN SMN_USER_V TB
+					   ON TA.JAKSEONGJA_ID = TB.USER_ID collate utf8mb4_unicode_ci
+					WHERE 1=1
+   					  AND TA.POST_NO = CAST(#{pPostNo} AS DECIMAL(38,28)) collate utf8mb4_unicode_ci
+					  AND (TA.DELETE_YN = 'N' OR TA.DELETE_YN IS NULL)			
+			   ) A
+		 WHERE 1=1
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		 ORDER BY A.RNUM
+		 </if>
+		 <if test="pPageNo == null or pPageNo eq ''.toString()">
+		 ORDER BY A.INSERT_DTTM DESC
+		 </if>
+	</select>
+	
+	<insert id="insertPostCm" parameterType="hashMap">
+		INSERT INTO ADD_POST_CM
+		( 
+			POST_NO
+		  , CM_SEQ
+		  , PWD
+		  , TEXT
+		  , JAKSEONGJA_ID
+		  , JAKSEONGJA_NM
+		  , DELETE_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM 
+		)
+	 	VALUES
+		( 
+			CAST(#{POST_NO} AS DECIMAL(38,28))
+		  , (
+				SELECT COALESCE(MAX(A.CM_SEQ), 0) + 1
+				  FROM ADD_POST_CM A
+				 WHERE A.POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+			)
+		  , #{PWD}
+		  , #{TEXT}
+		  , #{JAKSEONGJA_ID}
+		  , #{JAKSEONGJA_NM}
+		  , #{DELETE_YN}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM} 
+		)
+	</insert>
+	
+	<delete id="deletePostCm" parameterType="hashMap">
+		UPDATE ADD_POST_CM
+		   SET DELETE_YN = 'Y'
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+		   AND CM_SEQ = #{CM_SEQ}
+	</delete>
+	
+	<delete id="removePostCm" parameterType="hashMap">
+		DELETE FROM ADD_POST_CM
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+		   AND CM_SEQ = #{CM_SEQ}
+	</delete>
+
+	<!-- QnA 답변 조회 -->
+	<select id="answerPostList" parameterType="hashMap" resultType="hashMap">
+		SELECT POST_NO
+			 , BOARD_SEQ
+			 , UP_POST_NO
+			 , LV
+			 , GONGJI_YN
+			 , TITLE
+			 , JAKSEONGJA_ID
+			 , JAKSEONGJA_NM
+			 , PWD
+			 , CONTENTS
+			 , CONTENTS_HTML
+			 , CONTENTS_PREVIEW
+			 , CATEGORY_NM
+			 , HASHTAG
+			 , CM_CNT
+			 , SEARCH_CNT
+			 , LIKE_CNT
+			 , DELETE_YN
+			 , LINK_YN
+			 , LINK_URL
+			 , TITLE_IMG_URL
+			 , BIMILGEUL_YN
+			 , IMG_FILE_NO
+			 , OLD_BBS_NO
+			 , TOP_GONGJI_YN
+			 , RESERVE_YN
+			 , RESERVE_FR_DT
+			 , RESERVE_FR_TM
+			 , RESERVE_TO_DT
+			 , RESERVE_TO_TM
+			 , GONGJI_FR_DT
+			 , GONGJI_TO_DT
+			 , BOGWAN_TO_DT
+			 , REPLY_ORD
+			 , LOGIN_POST_YN
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+		  FROM ADD_BOARD_POST
+		 WHERE 1=1
+		   AND LV = 1
+		   AND DELETE_YN = 'N'
+		   AND UP_POST_NO = #{POST_NO}
+	</select>
+
+	<!-- 게시물 좋아요 체크 -->
+	<select id="checkPostLike" parameterType="hashMap" resultType="hashMap">
+		SELECT POST_NO
+			 , USER_ID
+		  FROM ADD_POST_LIKE
+		 WHERE 1=1
+		   AND POST_NO = #{POST_NO}
+		   AND USER_ID = #{SYSTEM_ID}
+	</select>
+
+	<!-- 게시물 좋아요 등록 -->
+	<insert id="insertPostLike" parameterType="hashMap">
+		INSERT INTO ADD_POST_LIKE
+		(
+			  POST_NO
+			, USER_ID
+			, INSERT_DTTM
+			, INSERT_ID
+			, INSERT_IP
+			, INSERT_PGM
+		)
+		VALUES
+			(
+			  CAST(#{POST_NO} AS DECIMAL(38,28))
+			, #{SYSTEM_ID}
+			, NOW()
+			, #{SYSTEM_ID}
+			, #{SYSTEM_IP}
+			, #{SYSTEM_PGM}
+			)
+	</insert>
+
+	<!-- 게시물 좋아요 취소 -->
+	<delete id="deleteBoardLike" parameterType="hashMap">
+		DELETE FROM ADD_POST_LIKE
+		 WHERE POST_NO = CAST(#{POST_NO} AS DECIMAL(38,28))
+		   AND USER_ID = #{SYSTEM_ID}
+	</delete>
+	
+	<!-- 게시판 권한 관리 - 게시판 목록 조회 -->
+	<select id="selectBoardAuthList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.BOARD_SEQ
+			 , A.BOARD_NM
+			 , A.BOARD_GB
+			 , A.SKIN_GB
+			 , A.WIDTH
+			 , COALESCE(A.PAGE_BOARD_CNT, 0) AS PAGE_BOARD_CNT
+			 , A.JAKSEONGJA_GB
+			 , COALESCE(A.CHEOMBU_FILE_CNT, 0) AS CHEOMBU_FILE_CNT
+			 , A.FILE_SIZE_LMT
+			 , A.NEW_ICON_PYOSI_GB
+			 , COALESCE(A.HOT_ICON_HIT_CNT, 0) AS HOT_ICON_HIT_CNT
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.LINK_USE_YN, 'N') AS LINK_USE_YN
+			 , COALESCE(A.RE_USE_YN, 'N') AS RE_USE_YN
+			 , COALESCE(A.CM_USE_YN, 'N') AS CM_USE_YN
+			 , A.CATEGORY
+			 , COALESCE(A.CATEGORY_USE_YN, 'N') AS CATEGORY_USE_YN
+			 , COALESCE(A.BIMILGEUL_USE_YN, 'N') AS BIMILGEUL_USE_YN
+			 , COALESCE(A.TITLE_READ_YN, 'N') AS TITLE_READ_YN
+			 , COALESCE(A.TEXT_READ_YN, 'N') AS TEXT_READ_YN
+			 , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS REG_DATE
+		 	 <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , A.CNT
+			 </if>
+		  FROM (
+				   SELECT AB.BOARD_SEQ
+						, AB.BOARD_NM
+						, AB.BOARD_GB
+						, AB.SKIN_GB
+						, AB.WIDTH
+						, AB.PAGE_BOARD_CNT
+						, AB.JAKSEONGJA_GB
+						, AB.CHEOMBU_FILE_CNT
+						, AB.FILE_SIZE_LMT
+						, AB.NEW_ICON_PYOSI_GB
+						, AB.HOT_ICON_HIT_CNT
+						, AB.USE_YN
+						, AB.LINK_USE_YN
+						, AB.RE_USE_YN
+						, AB.CM_USE_YN
+						, AB.CATEGORY_USE_YN
+						, COALESCE(AB.CATEGORY, '') AS CATEGORY
+						, AB.BIMILGEUL_USE_YN
+						, AB.TITLE_READ_YN
+						, AB.TEXT_READ_YN
+						, AB.INSERT_DTTM
+		 				<if test="pPageNo != null and pPageNo != ''.toString()">
+						, ROW_NUMBER() OVER(ORDER BY AB.INSERT_DTTM DESC) AS RNUM
+						, COUNT(*) OVER() AS CNT
+						</if>
+					 FROM ADD_BOARD AB
+					WHERE 1=1
+					<if test="pSearchArgv != null and pSearchArgv != ''">AND AB.BOARD_NM LIKE CONCAT('%' , #{pSearchArgv} , '%') collate utf8mb4_unicode_ci</if>
+					<if test="pBoardGb != null and pBoardGb != ''">AND AB.BOARD_GB = #{pBoardGb}</if>
+			   ) A
+		 WHERE 1=1
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		 ORDER BY A.RNUM
+		 </if>
+		 <if test="pPageNo == null or pPageNo eq ''.toString()">
+		 ORDER BY A.INSERT_DTTM DESC
+		 </if> 
+	</select>
+	
+	<!-- 게시판 권한 관리 - 게시판 구분별 권한 목록 조회 -->
+	<select id="selectBoardAuthGbList" parameterType="hashMap" resultType="hashMap">
+	SELECT A.AUTH_CD
+		 , A.AUTH_GB
+		 , A.AUTH_NM
+		 , A.ORD
+		 , A.GAEINJEONGBO_HIT_YN
+		 , A.USE_YN
+		 , A.AUTH_DESC
+		 , A.REMARK
+		 , A.INSERT_DTTM
+		 , A.AUTH_YN
+	 	 <if test="pPageNo != null and pPageNo != ''.toString()">
+		 , A.CNT
+		 </if>
+	  FROM (
+		  		SELECT A.AUTH_CD
+					 , A.AUTH_GB
+					 , A.AUTH_NM
+					 , A.ORD
+					 , A.GAEINJEONGBO_HIT_YN
+					 , A.USE_YN
+					 , A.AUTH_DESC
+					 , A.REMARK
+					 , A.INSERT_DTTM
+					 , (
+						 SELECT CASE WHEN COUNT(0) > 0 THEN 'Y' ELSE 'N' END APP_AUTH_YN	
+						   FROM ADD_BOARD_AUTH
+						  WHERE BOARD_SEQ 	  = #{pBoardSeq}
+							AND BOARD_AUTH_GB = #{pBoardAuthGb}
+							AND AUTH_CD 	  = A.AUTH_CD
+					   ) AS AUTH_YN
+					 <if test="pPageNo != null and pPageNo != ''.toString()">
+					 , ROW_NUMBER() OVER(ORDER BY A.AUTH_CD) AS RNUM
+					 , COUNT(*) OVER() AS CNT
+					 </if>
+				  FROM SMN_AUTH A
+			 ) A
+		 WHERE 1=1
+		 <if test="pPageNo != null and pPageNo != ''.toString()">
+		   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+		 ORDER BY A.RNUM
+		 </if>
+		 <if test="pPageNo == null or pPageNo eq ''.toString()">
+		 ORDER BY A.AUTH_CD
+		 </if> 
+	</select>
+	
+	<!-- 게시판 권한 관리 - 게시판 구분별 권한 추가 -->
+	<insert id="insertBoardAuthCd" parameterType="hashMap">
+		INSERT INTO ADD_BOARD_AUTH
+		(
+   		  BOARD_SEQ
+		, BOARD_AUTH_GB
+		, AUTH_CD
+		, INSERT_DTTM
+		, INSERT_ID
+		, INSERT_IP
+		, INSERT_PGM
+		) VALUES
+		(
+		  #{pBoardSeq}
+		, #{pBoardAuthGb}
+		, #{pAuthCd}
+		, NOW()
+		, #{SYSTEM_ID}
+		, #{SYSTEM_IP}
+		, #{SYSTEM_PGM} 
+		)
+	</insert>
+	
+	<!-- 게시판 권한 관리 - 게시판 구분별 권한 삭제 -->
+	<delete id="deleteBoardAuthCd" parameterType="hashMap">
+		DELETE FROM ADD_BOARD_AUTH
+		 WHERE BOARD_SEQ 	 = #{pBoardSeq}
+		   AND BOARD_AUTH_GB = #{pBoardAuthGb}
+		   AND AUTH_CD		 = #{pAuthCd}
+	</delete>
+	
+	<!-- 커뮤니티 - 게시판에 부여된 권한을 조회 -->
+	<select id="selectBoardAuthInfo" parameterType="hashMap" resultType="hashMap">
+		SELECT SUM(A.CNT) OVER()  AS SUM_CNT
+		 	 , CASE WHEN AUTH_GB_CNT = 0 THEN 1 ELSE A.CNT END AS AUTH_GB
+			 , A.*
+		  FROM (
+				SELECT ( SELECT COUNT(*) 
+						   FROM ADD_BOARD_AUTH 
+						  WHERE BOARD_SEQ = #{pBoardSeq} 
+							AND BOARD_AUTH_GB = A.CD 
+							AND AUTH_CD IN (
+								SELECT SA.AUTH_CD 
+						  		  FROM SMN_USER_AUTH SA
+						 		 WHERE SA.USER_ID = #{pUserId}
+						   		 UNION 
+						   		SELECT #{pUserAuthCd} AS AUTH_CD
+					  		  	  FROM DUAL
+							) ) AS CNT
+					 , ( SELECT COUNT(*) FROM ADD_BOARD_AUTH WHERE BOARD_SEQ = #{pBoardSeq} AND BOARD_AUTH_GB = A.CD ) AS AUTH_GB_CNT
+					 , A.*
+				  FROM ADD_COMMON A
+				 WHERE A.UP_CD = 'BOARD_AUTH_GB'
+			   ) A
+		 ORDER BY A.CD
+	</select>
+
+	<resultMap id="BoardList" type="hashMap">
+		<result property="POST_NO" column="POST_NO" />
+		<result property="BOARD_SEQ" column="BOARD_SEQ" />
+		<result property="BOARD_GB" column="BOARD_GB" />
+		<result property="LV" column="LV" />
+		<result property="BOARD_NM" column="BOARD_NM" />
+		<result property="TITLE" column="TITLE" />
+		<result property="CONTENTS" column="CONTENTS" jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="JAKSEONGJA_ID" column="JAKSEONGJA_ID" />
+		<result property="INSERT_DTTM" column="INSERT_DTTM" />
+	</resultMap>
+
+	<select id="totSearch" parameterType="hashMap" resultMap="BoardList">
+		SELECT A.POST_NO
+			, A.BOARD_SEQ
+			, B.BOARD_GB
+			, A.LV
+			, B.BOARD_NM
+			, A.TITLE
+			, A.CONTENTS_HTML	AS CONTENTS
+			, A.JAKSEONGJA_ID
+			, A.INSERT_DTTM
+		FROM KREN.ADD_BOARD_POST A
+		INNER
+		JOIN KREN.ADD_BOARD B
+		ON A.BOARD_SEQ = B.BOARD_SEQ
+		WHERE 1=1
+		AND COALESCE(A.DELETE_YN,'N') = 'N'
+		AND ((B.BOARD_GB = '03' AND A.LV='0') OR B.BOARD_GB != '03')
+		<choose>
+			<when test="pSearchGbcd == '01'">
+				AND BINARY(A.TITLE) LIKE CONCAT('%',#{pSearchData},'%')
+			</when>
+			<when test="pSearchGbcd == '02'">
+				AND BINARY(A.CONTENTS_HTML) LIKE CONCAT('%',#{pSearchData},'%')
+			</when>
+			<when test="pSearchGbcd == '03'">
+				AND BINARY(A.JAKSEONGJA_ID)  LIKE CONCAT('%',#{pSearchData},'%')
+			</when>
+		</choose>
+		ORDER BY BOARD_SEQ
+	</select>
+	
+	<select id="selectNotice" parameterType="hashMap" resultType="hashMap">
+		SELECT A.POST_NO
+		 	 , A.BOARD_SEQ
+		 	 , A.UP_POST_NO
+		 	 , A.LV
+		 	 , A.GONGJI_YN
+		 	 , A.TITLE
+		 	 , A.JAKSEONGJA_ID
+		 	 , A.JAKSEONGJA_NM
+		 	 , A.PWD
+		 	 , A.CONTENTS
+		 	 , A.CONTENTS_HTML
+		 	 , A.CONTENTS_PREVIEW
+		 	 , A.CATEGORY_NM
+		 	 , A.HASHTAG
+		 	 , A.CM_CNT
+		 	 , COALESCE(A.SEARCH_CNT, 0) AS SEARCH_CNT
+		 	 , A.LIKE_CNT
+		 	 , A.DELETE_YN
+		 	 , A.LINK_YN
+		 	 , A.LINK_URL
+		 	 , A.TITLE_IMG_URL
+		 	 , A.BIMILGEUL_YN
+		 	 , A.IMG_FILE_NO
+		 	 , A.OLD_BBS_NO
+		 	 , A.TOP_GONGJI_YN
+		 	 , A.RESERVE_YN
+		 	 , A.RESERVE_FR_DT
+		 	 , A.RESERVE_FR_TM
+		 	 , A.RESERVE_TO_DT
+		 	 , A.RESERVE_TO_TM
+		 	 , A.GONGJI_FR_DT
+		 	 , A.GONGJI_TO_DT
+		 	 , A.BOGWAN_TO_DT
+		 	 , A.REPLY_ORD
+		 	 , A.LOGIN_POST_YN
+			 , DATE_FORMAT(A.INSERT_DTTM, '%Y.%m.%d') AS REG_DATE
+		 FROM ADD_BOARD_POST A
+		WHERE 1=1
+		  AND BOARD_SEQ = #{pBoardSeq}
+		  AND DELETE_YN = 'N'
+	 ORDER BY INSERT_DTTM DESC
+        LIMIT 2
+	</select>
+
+</mapper>

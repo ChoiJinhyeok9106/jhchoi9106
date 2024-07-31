@@ -1,0 +1,106 @@
+<h2>팝업-전국 초·중·고 검색 팝업</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">전국 초·중·고 검색 팝업</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>전국 초·중·고 검색 팝업 활용법</li>
+	        	<li>ref를 통한 오픈함수를 이용해 팝업을 오픈합니다.</br>ex) this.$refs.popupallschool.showAllSchoolPopup();</li>
+	        	<li>'id'를 지정하여 사용합니다.</li>
+	        	<li>:gubun 은 초등학교, 중학교, 고등학교를 구분합니다.</br>ex) elem_list : 초등학교, midd_list : 중학교, high_list : 고등학교</li>
+	        	<li>:region 은 지역을 나타냅니다.</br>ex) 100260 : 서울특별시, 100267 : 부산광역시, 100269 : 인천광역시, 100271 : 대전광역시, 100272 : 대구광역시, 100273 : 울산광역시, 100275 : 광주광역시, 100276 : 경기도, 100278 : 강원도, 100280 : 충청북도, 100281 : 충청남도, 100282 : 전라북도, 100283 : 전라남도, 100285 : 경상북도, 100291 : 경상남도, 100292 : 제주도</li>
+	        	<li>:searchargv 을 검색어를 나타냅니다.</li>
+	        	<li>:sender 에 보내는 사람 메일 주소를 입력하여 미리 셋팅할 수 있습니다.</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><popup-all-school ref="[popupallschool:String]" ></popup-all-school>
+
+var vm = new Vue({
+	el: '#app',
+    data: {
+		returnMessage : ''
+    },
+	methods: {
+		callback(message){
+			this.returnMessage = JSON.stringify(message);
+		}
+	}
+});</textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3" @click="openPopup">실행</h3>
+        <div class="row form-row">
+	  		<div class="form-group col s12 l12">
+				<label for="appNm" class="label-type01">전국 초·중·고 검색 팝업 테스트</label>
+				<input type="button" value="팝업 열기" class="btn type02 size-m" @click="openPopup">
+			</div>
+		</div>
+        <popup-all-school id="allschoolpopoup1" @callback="callback" ref="popupallschool" :gubun="'elem_list'" :region="100260" :searchargv="''" :lovcomp="false" :setting="'schoolName'"></popup-all-school>
+        <br/>
+        <textarea id="codeEditor2"><popup-all-school id="allschoolpopoup1" @callback="callback" ref="popupallschool" :gubun="'elem_list'" :region="100260" :searchargv="''" :lovcomp="false"></popup-all-school></textarea>
+    </section>
+    
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage}}
+   		</div>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     data: {
+         returnMessage : ''
+     },
+     methods: {
+    	 callback: function(message){
+         	this.returnMessage = JSON.stringify(message);
+         },
+         openPopup: function(){
+        	 this.$refs.popupallschool.showAllSchoolPopup();	 
+         }
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 300, 'javascript');
+	editor('codeEditor2', 80, 'javascript');
+});
+
+function editor(id, height, dataGb) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: dataGb,
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

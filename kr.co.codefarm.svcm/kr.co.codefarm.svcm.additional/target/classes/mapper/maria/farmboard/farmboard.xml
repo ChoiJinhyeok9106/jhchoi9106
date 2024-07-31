@@ -1,0 +1,1260 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.additional.maria.farmboard">
+	<select id="getInvitedCnt" parameterType="hashMap" resultType="hashMap">
+		SELECT COUNT(0) AS INVITED_CNT
+		  FROM ADD_FB_CHAMYEOJA 
+		 WHERE USER_ID != #{USER_ID}
+		   AND CHAMYEOJA_ID = #{USER_ID}
+		   AND CHAMYEO_STATUS_GB = '01'
+	</select>
+
+	<select id="getFarmBoardMainList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+			 , A.USER_NM
+			 , A.FB_SEQ
+			 , A.FB_GB
+			 , A.FB_NM
+			 , A.FB_DESC
+			 , A.MAPPING_TABLE
+			 , A.MAPPING_KEY
+			 , A.FB_THEME_GB
+			 , A.USE_YN
+			 , A.BOOKMARK_YN
+			 , A.LIST_GWANRI_AUTH_YN
+			 , A.CHAMYEOJA_YN
+			 , A.CHAMYEOJA_NM
+			 , COALESCE(REPLACE(A.USER_PIC, '\\', '/'), '/service/design/images/mypage/noimage.png') AS USER_PIC
+			 , COALESCE(A.CHAMYEOJA_CNT, 0) AS CHAMYEOJA_CNT
+			 , COALESCE(A.LIST_CNT, 0) AS LIST_CNT
+			 , COALESCE(A.CARD_CNT, 0) AS CARD_CNT
+			 , A.INSERT_DTTM
+		  FROM (
+			SELECT FB.USER_ID
+				 , USER_V.USER_NM
+				 , FB.FB_SEQ
+				 , FB.FB_GB
+				 , FB.FB_NM
+				 , FB.FB_DESC
+				 , FB.MAPPING_TABLE
+				 , FB.MAPPING_KEY
+				 , FB.FB_THEME_GB
+				 , FB.USE_YN
+				 , FBC.BOOKMARK_YN
+				 , FBC.LIST_GWANRI_AUTH_YN
+				 , 'N' AS CHAMYEOJA_YN
+				 , SUBSTR(USER_V.USER_NM,2, 3) AS CHAMYEOJA_NM
+				 , USER_V.USER_PIC
+				 , TBL2.CHAMYEOJA_CNT
+				 , TBL1.LIST_CNT
+				 , TBL3.CARD_CNT
+				 , FB.INSERT_DTTM
+			  FROM ADD_FB FB
+			  JOIN ADD_FB_CHAMYEOJA FBC
+				ON FB.USER_ID = FBC.USER_ID
+			   AND FB.FB_SEQ = FBC.FB_SEQ
+			  JOIN SMN_USER_V USER_V
+   	  			ON FB.USER_ID = USER_V.USER_ID
+			  LEFT OUTER JOIN (
+				SELECT FBL.USER_ID
+					 , FBL.FB_SEQ
+					 , COUNT(0) AS LIST_CNT
+				  FROM ADD_FB_LIST FBL
+				 WHERE FBL.USE_YN  = 'Y'
+				 GROUP BY FBL.USER_ID, FBL.FB_SEQ
+			  ) TBL1
+				ON FB.USER_ID = TBL1.USER_ID
+			   AND FB.FB_SEQ = TBL1.FB_SEQ
+			  LEFT OUTER JOIN (
+				SELECT FBC.USER_ID
+					 , FBC.FB_SEQ
+					 , COUNT(0) AS CHAMYEOJA_CNT
+				  FROM ADD_FB_CHAMYEOJA FBC 
+				 WHERE FBC.CHAMYEO_STATUS_GB = '02'
+				   AND FBC.CHAMYEOJA_ID != #{USER_ID}
+				 GROUP BY FBC.USER_ID, FBC.FB_SEQ
+			  ) TBL2
+				ON FB.USER_ID = TBL2.USER_ID
+			   AND FB.FB_SEQ = TBL2.FB_SEQ
+			  LEFT OUTER JOIN (
+				SELECT FBC.USER_ID
+					 , FBC.FB_SEQ
+					 , COUNT(0) AS CARD_CNT
+				  FROM ADD_FB_CARD FBC
+				 GROUP BY FBC.USER_ID, FBC.FB_SEQ
+			  ) TBL3
+				ON FB.USER_ID = TBL3.USER_ID
+			   AND FB.FB_SEQ = TBL3.FB_SEQ
+			 WHERE FB.USER_ID = #{USER_ID}
+			   AND FBC.CHAMYEOJA_ID = #{USER_ID}
+			 UNION 
+			SELECT FB.USER_ID
+				 , USER_V.USER_NM
+				 , FB.FB_SEQ
+				 , FB.FB_GB
+				 , FB.FB_NM
+				 , FB.FB_DESC
+				 , FB.MAPPING_TABLE
+				 , FB.MAPPING_KEY
+				 , FB.FB_THEME_GB
+				 , FB.USE_YN
+				 , FBC.BOOKMARK_YN  
+				 , FBC.LIST_GWANRI_AUTH_YN
+				 , 'Y' AS CHAMYEOJA_YN
+				 , SUBSTR(USER_V.USER_NM,2, 3) AS CHAMYEOJA_NM
+				 , USER_V.USER_PIC
+				 , TBL2.CHAMYEOJA_CNT
+				 , TBL1.LIST_CNT
+				 , TBL3.CARD_CNT
+				 , FB.INSERT_DTTM
+			  FROM ADD_FB FB
+			  JOIN ADD_FB_CHAMYEOJA FBC
+				ON FB.USER_ID = FBC.USER_ID
+			   AND FB.FB_SEQ = FBC.FB_SEQ
+			  JOIN SMN_USER_V USER_V
+   	  			ON FB.USER_ID = USER_V.USER_ID
+			  LEFT OUTER JOIN (
+				SELECT FBL.USER_ID
+					 , FBL.FB_SEQ
+					 , COUNT(0) AS LIST_CNT
+				  FROM ADD_FB_LIST FBL
+				 WHERE FBL.USE_YN  = 'Y'
+				 GROUP BY FBL.USER_ID, FBL.FB_SEQ
+			  ) TBL1
+				ON FB.USER_ID = TBL1.USER_ID
+			   AND FB.FB_SEQ = TBL1.FB_SEQ
+			  LEFT OUTER JOIN (
+				SELECT FBC.USER_ID
+					 , FBC.FB_SEQ
+					 , COUNT(0) AS CHAMYEOJA_CNT
+				  FROM ADD_FB_CHAMYEOJA FBC 
+				 WHERE FBC.CHAMYEO_STATUS_GB = '02'
+				   AND FBC.CHAMYEOJA_ID != #{USER_ID}
+				 GROUP BY FBC.USER_ID, FBC.FB_SEQ
+			  ) TBL2
+				ON FB.USER_ID = TBL2.USER_ID
+			   AND FB.FB_SEQ = TBL2.FB_SEQ
+			  LEFT OUTER JOIN (
+				SELECT FBC.USER_ID
+					 , FBC.FB_SEQ
+					 , COUNT(0) AS CARD_CNT
+				  FROM ADD_FB_CARD FBC
+				 GROUP BY FBC.USER_ID, FBC.FB_SEQ
+			  ) TBL3
+				ON FB.USER_ID = TBL3.USER_ID
+			   AND FB.FB_SEQ = TBL3.FB_SEQ
+			 WHERE FB.USER_ID != #{USER_ID}
+			   AND FBC.CHAMYEOJA_ID = #{USER_ID}
+			   AND FBC.CHAMYEO_STATUS_GB = '02'
+			   AND FB.USE_YN = 'Y'
+		   ) A
+		 WHERE 1=1
+		<if test="pSearchType != null and pSearchType != '' and pSearchType != ''.toString()">
+			AND A.FB_GB = #{pSearchType}
+		</if>
+		<if test="pSearchArgv != null and pSearchArgv != '' and pSearchArgv != ''.toString()">
+			AND A.FB_NM LIKE CONCAT('%' , #{pSearchArgv} , '%')
+		</if>
+		  ORDER BY A.INSERT_DTTM DESC
+	</select>
+	
+	<insert id="insertFarmBoard" parameterType="hashMap">
+		<selectKey resultType="string" keyProperty="FB_SEQ" order="BEFORE">
+			SELECT COALESCE(MAX(FB_SEQ), 0 ) + 1 AS FB_SEQ
+	 		   FROM ADD_FB
+	 		  WHERE USER_ID = #{USER_ID}
+		</selectKey>
+	
+		INSERT INTO ADD_FB
+   		(
+   			USER_ID
+		  , FB_SEQ
+		  , FB_GB
+		  , FB_NM
+		  , FB_DESC
+		  , MAPPING_TABLE
+		  , MAPPING_KEY
+		  , FB_THEME_GB
+		  , USE_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+   		)
+		VALUES (
+	 		#{USER_ID} 
+	 	  ,	CAST( #{FB_SEQ} AS BIGINT)
+		  , #{FB_GB}
+		  , #{FB_NM}
+		  , #{FB_DESC}
+		  , #{MAPPING_TABLE}
+		  , #{MAPPING_KEY}
+		  , SUBSTR(#{FB_THEME_GB}, 10, 10)
+		  , #{USE_YN}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<update id="updateFarmBoard" parameterType="hashMap">
+		UPDATE ADD_FB
+		   SET FB_GB = #{FB_GB}
+			 , FB_NM = #{FB_NM}
+			 , FB_DESC = #{FB_DESC}
+			 , FB_THEME_GB = #{FB_THEME_GB}
+			 , USE_YN = #{USE_YN}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT) 
+	</update>
+	
+	<delete id="deleteFarmBoard" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+	</delete>
+	
+	<select id="getLabelList" parameterType="hashMap" resultType="hashMap">
+		SELECT USER_ID
+			 , FB_SEQ
+			 , LABEL_SEQ
+			 , LABEL_COLOR_GB
+			 , LABEL_NM
+		  FROM ADD_FB_LABEL
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+	</select>
+	
+	<insert id="insertLabel" parameterType="hashMap">
+		<selectKey resultType="string" keyProperty="LABEL_SEQ" order="BEFORE">
+			SELECT COALESCE(MAX(LABEL_SEQ), 0) + 1 AS LABEL_SEQ 
+	 		   FROM ADD_FB_LABEL
+	 		  WHERE USER_ID = #{USER_ID}
+	 			AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		</selectKey>
+	
+		INSERT INTO ADD_FB_LABEL
+   		(
+   			USER_ID
+		  , FB_SEQ
+		  , LABEL_SEQ
+		  , LABEL_COLOR_GB
+		  , LABEL_NM
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+   		)
+		VALUES (
+	 		#{USER_ID} 
+	 	  ,	CAST( #{FB_SEQ} AS BIGINT)
+		  , CAST(#{LABEL_SEQ} AS BIGINT)
+		  , #{LABEL_COLOR_GB}
+		  , #{LABEL_NM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<delete id="deleteLabel" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_LABEL
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="LABEL_SEQ != null and LABEL_SEQ != '' and LABEL_SEQ != ''.toString()">
+   	  	   AND LABEL_SEQ = CAST(#{LABEL_SEQ} AS BIGINT)
+   	   </if>
+	</delete>
+	
+	<select id="getFarmBoardChamyeojaList" parameterType="hashMap" resultType="hashMap">
+		SELECT FB.USER_ID
+			 , USER_V.USER_NM
+			 , USER_V.USER_PIC
+			 , SUBSTR(USER_V.USER_NM, 2, 3) AS SHORT_USER_NM
+			 , USER_V.DEPT_NM
+			 , FC.FB_SEQ
+			 , FB.FB_NM
+			 , FB.FB_DESC
+			 , FB.FB_GB
+			 , FC.CHAMYEOJA_ID
+			 , FC.LIST_GWANRI_AUTH_YN
+			 , FC.CHAMYEO_STATUS_GB
+			 , FC.CHODAE_TITLE
+			 , FC.CHAMYEOJA_DESC
+			 , FC.INSERT_DTTM
+		  FROM ADD_FB FB
+		  JOIN ADD_FB_CHAMYEOJA FC
+			ON FB.USER_ID = FC.USER_ID
+		   AND FB.FB_SEQ = FC.FB_SEQ
+		  JOIN SMN_USER_V USER_V
+   	  		ON FC.CHAMYEOJA_ID = USER_V.USER_ID
+		 WHERE 1=1
+   	   <if test="USER_ID != null and USER_ID != '' and USER_ID != ''.toString()">
+   	  	   AND FB.USER_ID = #{USER_ID}
+   	   </if>
+   	   <if test="GB != null and GB == 'CHAMYEOJA' and GB == 'CHAMYEOJA'.toString()">
+		   AND FB.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   		   AND FC.CHAMYEO_STATUS_GB = '02'
+	   </if>
+   	   <if test="CHAMYEOJA_ID != null and CHAMYEOJA_ID != '' and CHAMYEOJA_ID != ''.toString()">
+   	  	   AND FC.CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+   	   </if>
+   	   ORDER BY CASE WHEN FC.CHAMYEOJA_ID = #{USER_ID} THEN 0 ELSE 1 END, FC.CHAMYEO_STATUS_GB DESC, FC.INSERT_DTTM DESC
+	</select>
+	
+	<insert id="insertFarmBoardChamyeoja" parameterType="hashMap">
+		INSERT INTO ADD_FB_CHAMYEOJA
+		(
+			USER_ID
+		  , FB_SEQ
+		  , CHAMYEOJA_ID
+		  , LIST_GWANRI_AUTH_YN
+		  , CHAMYEO_STATUS_GB
+		  , CHODAE_TITLE
+		  , CHAMYEOJA_DESC
+		  , BOOKMARK_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES (
+			#{FB_USER_ID}
+		  , CAST( #{FB_SEQ} AS BIGINT)
+		  , #{USER_ID}
+		  , #{LIST_GWANRI_AUTH_YN}
+		  , #{CHAMYEO_STATUS_GB}
+		  , #{CHODAE_TITLE}
+		  , #{CHAMYEOJA_DESC}
+		  , #{BOOKMARK_YN}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	  	 ON CONFLICT ON CONSTRAINT add_fb_chamyeoja_pkey   
+		 DO UPDATE 
+		SET BOOKMARK_YN = #{BOOKMARK_YN}
+		 , UPDATE_DTTM = NOW()
+		 , UPDATE_ID = #{SYSTEM_ID}
+		 , UPDATE_IP = #{SYSTEM_IP}
+		 , UPDATE_PGM = #{SYSTEM_PGM}
+	</insert>
+	
+	<update id="updateFarmBoardChamyeoja" parameterType="hashMap">
+		UPDATE ADD_FB_CHAMYEOJA
+		   SET LIST_GWANRI_AUTH_YN = #{LIST_GWANRI_AUTH_YN}
+			 , CHAMYEO_STATUS_GB = #{CHAMYEO_STATUS_GB}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+	</update>
+	
+	<delete id="deleteFarmBoardChamyeoja" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_CHAMYEOJA
+		 WHERE 1=1
+	   <if test="USER_ID != null and USER_ID != '' and USER_ID != ''.toString()">
+		   AND USER_ID = #{USER_ID}
+	   </if>
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="CHAMYEOJA_ID != null and CHAMYEOJA_ID != '' and CHAMYEOJA_ID != ''.toString()">
+   	  	   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+   	   </if>
+	</delete>
+	
+	<select id="getFarmBoardListChamyeojaList" parameterType="hashMap" resultType="hashMap">
+		SELECT FL.USER_ID
+			 , FB_USER_V.USER_NM AS FB_USER_NM
+			 , USER_V.USER_NM
+			 , SUBSTR(USER_V.USER_NM , 2, 3) AS SHORT_USER_NM
+			 , USER_V.USER_PIC
+			 , USER_V.DEPT_NM
+			 , FLC.FB_SEQ
+			 , FL.LIST_SEQ
+			 , FL.LIST_NM
+			 , FL.USE_YN
+			 , FC.CHAMYEOJA_ID
+			 , FC.CHAMYEO_STATUS_GB
+			 , FLC.CARD_GWANRI_AUTH_YN
+			 , FC.CHAMYEO_STATUS_GB
+			 , FC.CHODAE_TITLE
+			 , FC.CHAMYEOJA_DESC
+			 , FC.INSERT_DTTM
+		  FROM ADD_FB_LIST FL
+		  JOIN ADD_FB_CHAMYEOJA FC
+			ON FL.USER_ID = FC.USER_ID
+		   AND FL.FB_SEQ = FC.FB_SEQ
+		  JOIN SMN_USER_V USER_V
+   	  		ON FC.CHAMYEOJA_ID = USER_V.USER_ID
+		  JOIN ADD_FB_LIST_CHAMYEOJA FLC
+			ON FL.USER_ID = FLC.USER_ID
+		   AND FL.FB_SEQ = FLC.FB_SEQ
+		   AND FL.LIST_SEQ = FLC.LIST_SEQ
+		   AND FC.CHAMYEOJA_ID = FLC.CHAMYEOJA_ID
+		  JOIN SMN_USER_V FB_USER_V
+   	  		ON FL.USER_ID = FB_USER_V.USER_ID
+		 WHERE 1=1
+   	  	   AND FLC.USER_ID = #{USER_ID}
+		   AND FLC.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+	   <if test="LIST_SEQ != null and LIST_SEQ != '' and LIST_SEQ != ''.toString()">
+		   AND FLC.LIST_SEQ = #{LIST_SEQ}
+	   </if>
+   	   <if test="CHAMYEOJA_ID != null and CHAMYEOJA_ID != '' and CHAMYEOJA_ID != ''.toString()">
+   	  	   AND FLC.CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+   	   </if>
+   	   <if test="CHAMYEO_STATUS_GB != null and CHAMYEO_STATUS_GB != '' and CHAMYEO_STATUS_GB != ''.toString()">
+   	  	   AND FC.CHAMYEO_STATUS_GB = #{CHAMYEO_STATUS_GB}
+   	   </if>
+   	   ORDER BY FC.CHAMYEO_STATUS_GB DESC, FC.INSERT_DTTM DESC
+	</select>
+	
+	<insert id="insertFarmBoardListChamyeoja" parameterType="hashMap">
+		INSERT INTO ADD_FB_LIST_CHAMYEOJA
+		(
+			USER_ID
+		  , FB_SEQ
+		  , LIST_SEQ
+		  , CHAMYEOJA_ID
+		  , CARD_GWANRI_AUTH_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES (
+			#{USER_ID}
+		  , CAST( #{FB_SEQ} AS BIGINT)
+		  , #{LIST_SEQ}
+		  , #{CHAMYEOJA_ID}
+		  , #{CARD_GWANRI_AUTH_YN}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<update id="updateFarmBoardListChamyeoja" parameterType="hashMap">
+		UPDATE ADD_FB_LIST_CHAMYEOJA
+		   SET CARD_GWANRI_AUTH_YN = #{CARD_GWANRI_AUTH_YN}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND LIST_SEQ = #{LIST_SEQ}
+		   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+	</update>
+	
+	<update id="updateBookmark" parameterType="hashMap">
+		UPDATE ADD_FB_CHAMYEOJA
+		   SET BOOKMARK_YN = #{BOOKMARK_YN}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+	</update>
+	
+	<update id="updateAnswInvitiation" parameterType="hashMap">
+		UPDATE ADD_FB_CHAMYEOJA
+		   SET LIST_GWANRI_AUTH_YN = #{LIST_GWANRI_AUTH_YN}
+			 , CHAMYEO_STATUS_GB = #{CHAMYEO_STATUS_GB}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+	</update>
+	
+	<select id="getFarmBoardList" parameterType="hashMap" resultType="hashMap">
+		SELECT TBL.USER_ID
+			 , TBL.FB_SEQ
+			 , TBL.FB_NM
+			 , TBL.FB_DESC
+			 , TBL.LIST_GWANRI_AUTH_YN
+			 , TBL.LIST_SEQ
+			 , TBL.LIST_NM
+			 , TBL.USE_YN
+			 , TBL.ORD
+			 , TBL.CARD_GWANRI_AUTH_YN
+			 , TBL.LIST_CHAMYEOJA_CNT
+			 , TBL.USER_NM
+			 , TBL.USER_PIC
+			 , SUBSTR(TBL.USER_NM, 2, 3) AS SHORT_USER_NM
+			 , TBL.INSERT_ID
+		  FROM (
+			SELECT FB.USER_ID
+				 , FB.FB_SEQ
+				 , FB.FB_NM
+				 , FB.FB_DESC
+				 , FC.LIST_GWANRI_AUTH_YN
+				 , FBL.LIST_SEQ
+				 , FBL.LIST_NM
+				 , FBL.USE_YN
+				 , FBL.ORD
+				 , (SELECT CARD_GWANRI_AUTH_YN FROM ADD_FB_LIST_CHAMYEOJA WHERE USER_ID = FB.USER_ID AND FB_SEQ = FB.FB_SEQ AND LIST_SEQ = FBL.LIST_SEQ AND CHAMYEOJA_ID = #{INTERNAL_ID}) AS CARD_GWANRI_AUTH_YN
+				 , (SELECT COUNT(0) FROM ADD_FB_LIST_CHAMYEOJA WHERE USER_ID = FB.USER_ID AND FB_SEQ = FB.FB_SEQ AND LIST_SEQ = FBL.LIST_SEQ) AS LIST_CHAMYEOJA_CNT
+				 , (SELECT USER_NM 
+					  FROM ADD_FB_LIST_CHAMYEOJA FLC 
+					  JOIN SMN_USER_V USER_V
+   	  					ON FLC.CHAMYEOJA_ID = USER_V.USER_ID
+					 WHERE FLC.USER_ID = FB.USER_ID 
+					   AND FLC.FB_SEQ = FB.FB_SEQ 
+					   AND FLC.LIST_SEQ = FBL.LIST_SEQ
+					 LIMIT 1) AS USER_NM
+				 , (SELECT USER_PIC 
+					  FROM ADD_FB_LIST_CHAMYEOJA FLC 
+					  JOIN SMN_USER_V USER_V
+   	  					ON FLC.CHAMYEOJA_ID = USER_V.USER_ID
+					 WHERE FLC.USER_ID = FB.USER_ID 
+					   AND FLC.FB_SEQ = FB.FB_SEQ 
+					   AND FLC.LIST_SEQ = FBL.LIST_SEQ
+					 LIMIT 1) AS USER_PIC
+				  , FBL.INSERT_ID
+			  FROM ADD_FB FB
+			  JOIN ADD_FB_CHAMYEOJA FC
+				ON FB.USER_ID = FC.USER_ID
+			   AND FB.FB_SEQ = FC.FB_SEQ
+			  JOIN ADD_FB_LIST FBL
+				ON FB.USER_ID = FBL.USER_ID
+			   AND FB.FB_SEQ = FBL.FB_SEQ
+			 WHERE FB.USER_ID = #{USER_ID}
+			   AND FB.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+			   AND FC.CHAMYEOJA_ID = #{INTERNAL_ID}
+		   ) TBL
+		 ORDER BY TBL.ORD
+	</select>
+	
+	<insert id="insertFarmBoardList" parameterType="hashMap">
+		<selectKey keyProperty="LIST_SEQ,ORD" resultType="hashMap" order="BEFORE">
+			SELECT COALESCE(MAX(LIST_SEQ), 0) + 1 AS LIST_SEQ
+				 , COALESCE(MAX(ORD), 0) + 1 AS ORD
+	 		   FROM ADD_FB_LIST
+	 		  WHERE USER_ID = #{USER_ID}
+	 			AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		</selectKey>
+		
+		INSERT INTO ADD_FB_LIST
+		(
+			USER_ID
+		  , FB_SEQ
+		  , LIST_SEQ
+		  , LIST_NM
+		  , USE_YN
+		  , ORD
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES (
+			#{USER_ID}
+		  , CAST( #{FB_SEQ} AS BIGINT)
+		  , #{LIST_SEQ}
+		  , #{LIST_NM}
+		  , #{USE_YN}
+		  , #{ORD}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<update id="updateFarmBoardList" parameterType="hashMap">
+		UPDATE ADD_FB_LIST
+		   SET LIST_NM = #{LIST_NM}
+			 , USE_YN = #{USE_YN}
+			 , ORD = #{ORD}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND LIST_SEQ = #{LIST_SEQ}
+	</update>
+	
+	<delete id="deleteFarmBoardList" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_LIST
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="LIST_SEQ != null and LIST_SEQ != '' and LIST_SEQ != ''.toString()">
+   	  	   AND LIST_SEQ = #{LIST_SEQ}
+   	   </if>
+	</delete>
+	
+	<delete id="deleteFarmBoardListChamyeoja" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_LIST_CHAMYEOJA
+		 WHERE 1=1
+	   <if test="USER_ID != null and USER_ID != '' and USER_ID != ''.toString()">
+		   AND USER_ID = #{USER_ID}
+	   </if>
+	   <if test="CHAMYEOJA_ID != null and CHAMYEOJA_ID != '' and CHAMYEOJA_ID != ''.toString()">
+		   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+	   </if>
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="LIST_SEQ != null and LIST_SEQ != '' and LIST_SEQ != ''.toString()">
+   	  	   AND LIST_SEQ = #{LIST_SEQ}
+   	   </if>
+   	   <if test="CHAMYEOJA_ID != null and CHAMYEOJA_ID != '' and CHAMYEOJA_ID != ''.toString()">
+   	  	   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+   	   </if>
+	</delete>
+	
+	<select id="getFarmBoardCardList" parameterType="hashMap" resultType="hashMap">
+		SELECT FC.USER_ID
+			 , FC.FB_SEQ
+			 , FC.LIST_SEQ
+			 , FC.CARD_SEQ
+			 , FC.CARD_TITLE
+			 , FC.CARD_DESC
+			 , FC.ORD
+			 , TBL.LINK_URL
+			 , AF.FILE_PATH
+			 , REPLACE(AF.FILE_PATH, '\\', '/') AS REAL_FILE_PATH
+			 , FC.INSERT_DTTM
+			 , FC.INSERT_ID
+			 , USER_V.USER_NM AS INSERT_NM
+			 , (SELECT COUNT(0) FROM ADD_FB_CARD_CHAMYEOJA WHERE USER_ID = FC.USER_ID AND FB_SEQ = FC.FB_SEQ AND LIST_SEQ = FC.LIST_SEQ AND CARD_SEQ = FC.CARD_SEQ) AS CARD_CHAMYEOJA_CNT
+			 , (SELECT COUNT(0) FROM ADD_FB_CARD_CHAMYEOJA WHERE USER_ID = FC.USER_ID AND FB_SEQ = FC.FB_SEQ AND LIST_SEQ = FC.LIST_SEQ AND CARD_SEQ = FC.CARD_SEQ AND CHAMYEOJA_ID = #{INTERNAL_ID}) AS OWN_CARD_AUTH_CNT
+			 , CASE WHEN FC.USER_ID = #{INTERNAL_ID} THEN '1'
+					ELSE '0'
+					END OWN_BOARD_CNT
+			 , (SELECT COUNT(0) 
+				  FROM ADD_FB_CARD_DETAIL FCD1 
+				 WHERE FCD1.USER_ID = FC.USER_ID 
+				   AND FCD1.FB_SEQ = FC.FB_SEQ 
+				   AND FCD1.LIST_SEQ = FC.LIST_SEQ 
+				   AND FCD1.CARD_SEQ = FC.CARD_SEQ 
+				   AND FCD1.CARD_DETAIL_GB = '04') AS CARD_IMG_CNT
+			 , (SELECT COUNT(0) 
+				  FROM ADD_FB_CARD_DETAIL FCD1 
+				 WHERE FCD1.USER_ID = FC.USER_ID 
+				   AND FCD1.FB_SEQ = FC.FB_SEQ 
+				   AND FCD1.LIST_SEQ = FC.LIST_SEQ 
+				   AND FCD1.CARD_SEQ = FC.CARD_SEQ 
+				   AND FCD1.CARD_DETAIL_GB = '05') AS CARD_CMT_CNT 
+			 , (SELECT COUNT(0) 
+				  FROM ADD_FB_CARD_DETAIL FCD1 
+				 WHERE FCD1.USER_ID = FC.USER_ID 
+				   AND FCD1.FB_SEQ = FC.FB_SEQ 
+				   AND FCD1.LIST_SEQ = FC.LIST_SEQ 
+				   AND FCD1.CARD_SEQ = FC.CARD_SEQ 
+				   AND FCD1.CARD_DETAIL_GB = '03') AS CARD_FIL_CNT 
+			 , (SELECT COUNT(0) 
+				  FROM ADD_FB_CARD_DETAIL FCD1 
+				  JOIN ADD_FB_CARD_DETAIL_ITEM FCDI
+					ON FCD1.USER_ID = FCDI.USER_ID
+				   AND FCD1.FB_SEQ = FCDI.FB_SEQ
+				   AND FCD1.LIST_SEQ = FCDI.LIST_SEQ
+				   AND FCD1.CARD_SEQ = FCDI.CARD_SEQ
+				   AND FCD1.CARD_DETAIL_SEQ = FCDI.CARD_DETAIL_SEQ
+				 WHERE FCD1.USER_ID = FC.USER_ID 
+				   AND FCD1.FB_SEQ = FC.FB_SEQ 
+				   AND FCD1.LIST_SEQ = FC.LIST_SEQ 
+				   AND FCD1.CARD_SEQ = FC.CARD_SEQ 
+				   AND FCD1.CARD_DETAIL_GB = '02') AS CARD_CHK_TOT_CNT 
+			 , (SELECT COUNT(0) 
+				  FROM ADD_FB_CARD_DETAIL FCD1 
+				  JOIN ADD_FB_CARD_DETAIL_ITEM FCDI
+					ON FCD1.USER_ID = FCDI.USER_ID
+				   AND FCD1.FB_SEQ = FCDI.FB_SEQ
+				   AND FCD1.LIST_SEQ = FCDI.LIST_SEQ
+				   AND FCD1.CARD_SEQ = FCDI.CARD_SEQ
+				   AND FCD1.CARD_DETAIL_SEQ = FCDI.CARD_DETAIL_SEQ
+				 WHERE FCD1.USER_ID = FC.USER_ID 
+				   AND FCD1.FB_SEQ = FC.FB_SEQ 
+				   AND FCD1.LIST_SEQ = FC.LIST_SEQ 
+				   AND FCD1.CARD_SEQ = FC.CARD_SEQ 
+				   AND FCD1.CARD_DETAIL_GB = '02'
+				   AND FCDI.WANRYO_YN = 'Y') AS CARD_CHK_CNT 
+		  FROM ADD_FB_CARD FC
+		  LEFT OUTER JOIN (
+		  	SELECT USER_ID
+				 , FB_SEQ
+				 , LIST_SEQ
+				 , CARD_SEQ
+				 , CARD_DETAIL_SEQ
+				 , CARD_DETAIL_GB
+				 , LABEL_SEQ
+				 , DAEPYO_IMG_YN
+				 , LINK_URL
+				 , CONCAT(COALESCE(FCD.USER_ID,''),'#',COALESCE(FCD.FB_SEQ,''),'#',COALESCE(FCD.LIST_SEQ,''),'#',COALESCE(FCD.CARD_SEQ,''),'#',COALESCE(FCD.CARD_DETAIL_SEQ,'')) AS FILE_KEY
+			  FROM ADD_FB_CARD_DETAIL FCD
+			 WHERE 1=1
+			   AND FCD.USER_ID = #{USER_ID}
+			   AND FCD.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+			   AND CARD_DETAIL_GB = '04'
+			   AND FCD.DAEPYO_IMG_YN = 'Y'
+		  ) TBL
+			ON FC.USER_ID = TBL.USER_ID
+		   AND FC.FB_SEQ = TBL.FB_SEQ
+		   AND FC.LIST_SEQ = TBL.LIST_SEQ
+		   AND FC.CARD_SEQ = TBL.CARD_SEQ
+		  JOIN SMN_USER_V USER_V
+			ON FC.INSERT_ID = USER_V.USER_ID
+		  LEFT OUTER JOIN ADD_FILE AF
+			ON TBL.FILE_KEY = AF.FILE_KEY
+		 WHERE FC.USER_ID = #{USER_ID}
+		   AND FC.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		 ORDER BY FC.ORD
+	</select>
+	
+	<!-- 리스트에 보이는 카드 라벨 -->
+	<select id="getFarmBoardCardLabelList" parameterType="hashMap" resultType="hashMap">
+		SELECT FCD.USER_ID
+			 , FCD.FB_SEQ
+			 , FCD.LIST_SEQ
+			 , FCD.CARD_SEQ
+			 , FCD.CARD_DETAIL_SEQ
+			 , FCD.LABEL_SEQ
+			 , FL.LABEL_COLOR_GB
+			 , FL.LABEL_NM
+		  FROM ADD_FB_CARD_DETAIL FCD
+		  JOIN ADD_FB_LABEL FL
+			ON FCD.USER_ID = FL.USER_ID
+		   AND FCD.FB_SEQ = FL.FB_SEQ
+		   AND FCD.LABEL_SEQ = FL.LABEL_SEQ
+		 WHERE 1=1
+		   AND FCD.USER_ID = #{USER_ID}
+		   AND FCD.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND FCD.CARD_DETAIL_GB = '01'
+	</select>
+	
+	<insert id="insertFarmBoardCard" parameterType="hashMap">
+		<selectKey keyProperty="CARD_SEQ,ORD" resultType="hashmap" order="BEFORE">
+			SELECT COALESCE(MAX(CARD_SEQ), 0) + 1 AS CARD_SEQ
+				 , COALESCE(MAX(ORD), 0) + 1 AS ORD
+	 		   FROM ADD_FB_CARD
+	 		  WHERE USER_ID = #{USER_ID}
+	 			AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+	 			AND LIST_SEQ = #{LIST_SEQ}
+		</selectKey>
+		
+		INSERT INTO ADD_FB_CARD
+		(
+			USER_ID
+		  , FB_SEQ
+		  , LIST_SEQ
+		  , CARD_SEQ
+		  , CARD_TITLE
+		  , CARD_DESC
+		  , ORD
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES (
+			#{USER_ID}
+		  , CAST( #{FB_SEQ} AS BIGINT)
+		  , #{LIST_SEQ}
+		  , #{CARD_SEQ}
+		  , #{CARD_TITLE}
+		  , #{CARD_DESC}
+		  , #{ORD}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<update id="updateFarmBoardCard" parameterType="hashMap">
+		UPDATE ADD_FB_CARD
+		   SET CARD_TITLE = #{CARD_TITLE}
+			 , CARD_DESC = #{CARD_DESC}
+			 , ORD = #{ORD}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND LIST_SEQ = #{LIST_SEQ}
+		   AND CARD_SEQ = #{CARD_SEQ}
+	</update>
+	
+	<delete id="deleteFarmBoardCard" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_CARD
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="LIST_SEQ != null and LIST_SEQ != '' and LIST_SEQ != ''.toString()">
+   	  	   AND LIST_SEQ = #{LIST_SEQ}
+   	   </if>
+   	   <if test="CARD_SEQ != null and CARD_SEQ != '' and CARD_SEQ != ''.toString()">
+   	  	   AND CARD_SEQ = #{CARD_SEQ}
+   	   </if>
+	</delete>
+	
+	<!-- 팜보드 카드 참여자 리스트 -->
+	<select id="getFarmBoardCardChamyeojaList" parameterType="hashMap" resultType="hashMap">
+		SELECT FCC.USER_ID
+			 , FCC.FB_SEQ
+			 , FCC.LIST_SEQ
+			 , FCC.CARD_SEQ
+			 , FCC.CHAMYEOJA_ID
+			 , USER_V.USER_NM
+			 , SUBSTR(USER_V.USER_NM , 2, 3) AS SHORT_USER_NM
+			 , USER_V.USER_PIC
+			 , USER_V.DEPT_NM
+		  FROM ADD_FB_CARD_CHAMYEOJA FCC
+		  JOIN ADD_FB_CHAMYEOJA FC
+			ON FCC.USER_ID = FC.USER_ID
+		   AND FCC.FB_SEQ = FC.FB_SEQ
+		   AND FCC.CHAMYEOJA_ID = FC.CHAMYEOJA_ID
+		  JOIN SMN_USER_V USER_V
+   	  		ON FCC.CHAMYEOJA_ID = USER_V.USER_ID
+		 WHERE 1=1
+		   AND FCC.USER_ID = #{USER_ID}
+		   AND FCC.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND FCC.LIST_SEQ = #{LIST_SEQ}
+		   AND FCC.CARD_SEQ = #{CARD_SEQ}
+	</select>
+	
+	<insert id="insertFarmBoardCardChamyeoja" parameterType="hashMap">
+		INSERT INTO ADD_FB_CARD_CHAMYEOJA
+		(
+			USER_ID
+		  , FB_SEQ
+		  , LIST_SEQ
+		  , CARD_SEQ
+		  , CHAMYEOJA_ID
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES (
+			#{USER_ID}
+		  , CAST( #{FB_SEQ} AS BIGINT)
+		  , #{LIST_SEQ}
+		  , #{CARD_SEQ}
+		  , #{CHAMYEOJA_ID}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<delete id="deleteFarmBoardCardChamyeoja" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_CARD_CHAMYEOJA
+		 WHERE 1=1
+	   <if test="USER_ID != null and USER_ID != '' and USER_ID != ''.toString()">
+		   AND USER_ID = #{USER_ID}
+	   </if>
+	   <if test="CHAMYEOJA_ID != null and CHAMYEOJA_ID != '' and CHAMYEOJA_ID != ''.toString()">
+		   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+	   </if>
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="LIST_SEQ != null and LIST_SEQ != '' and LIST_SEQ != ''.toString()">
+   	  	   AND LIST_SEQ = #{LIST_SEQ}
+   	   </if>
+   	   <if test="CARD_SEQ != null and CARD_SEQ != '' and CARD_SEQ != ''.toString()">
+   	  	   AND CARD_SEQ = #{CARD_SEQ}
+   	   </if>
+   	   <if test="CHAMYEOJA_ID != null and CHAMYEOJA_ID != '' and CHAMYEOJA_ID != ''.toString()">
+   	  	   AND CHAMYEOJA_ID = #{CHAMYEOJA_ID}
+   	   </if>
+	</delete>
+	
+	<select id="getFarmBoardCardDetailList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+			 , A.FB_SEQ
+			 , A.LIST_SEQ
+			 , A.CARD_SEQ
+			 , A.CARD_DETAIL_SEQ
+			 , A.CARD_DETAIL_GB
+			 , A.LABEL_SEQ
+			 , A.DAEPYO_IMG_YN
+			 , A.JAKSEONGJA_ID
+			 , A.JAKSEONGJA_NM
+			 , A.SHORT_JAKSEONGJA_NM
+			 , A.USER_PIC
+			 , A.LINK_URL
+			 , A.TITLE
+			 , A.TEXT
+			 , A.INSERT_DTTM
+			 , A.FILE_KEY
+			 , CASE WHEN A.TOTAL_COUNT != 0 THEN ROUND(CAST(A.YES_COUNT AS INTEGER) / CAST(A.TOTAL_COUNT AS INTEGER) * 100, 0)
+					ELSE 0
+					END AS CHECK_LIST_PERCENTAGE
+			 , B.FILE_ID
+			 , B.FILE_HANGMOK
+			 , B.FILE_NO
+			 , B.FILE_NM
+			 , B.FILE_SIZE
+			 , B.FILE_PATH
+			 , REPLACE(B.FILE_PATH, '\\', '/') AS REAL_FILE_PATH
+		  FROM (
+			SELECT FCD.USER_ID
+				 , FCD.FB_SEQ
+				 , FCD.LIST_SEQ
+				 , FCD.CARD_SEQ
+				 , FCD.CARD_DETAIL_SEQ
+				 , FCD.CARD_DETAIL_GB
+				 , FCD.LABEL_SEQ
+	  			 , FCD.DAEPYO_IMG_YN
+	 			 , FCD.JAKSEONGJA_ID
+	 			 , USER_V.USER_NM AS JAKSEONGJA_NM
+	 			 , SUBSTR(USER_V.USER_NM, 2, 3) AS SHORT_JAKSEONGJA_NM
+	 			 , USER_V.USER_PIC
+				 , FCD.LINK_URL
+				 , FCD.TITLE
+				 , FCD.TEXT
+				 , FCD.INSERT_DTTM
+				 , CONCAT(COALESCE(FCD.USER_ID,''),'#',COALESCE(FCD.FB_SEQ,''),'#',COALESCE(FCD.LIST_SEQ,''),'#',COALESCE(FCD.CARD_SEQ,''),'#',COALESCE(FCD.CARD_DETAIL_SEQ,'')) AS FILE_KEY
+				 , ( SELECT COUNT(*)
+					   FROM ADD_FB_CARD_DETAIL_ITEM
+					  WHERE USER_ID	 		= FCD.USER_ID
+						AND FB_SEQ 			= FCD.FB_SEQ
+						AND LIST_SEQ	 	= FCD.LIST_SEQ
+						AND CARD_SEQ	 	= FCD.CARD_SEQ
+						AND CARD_DETAIL_SEQ = FCD.CARD_DETAIL_SEQ) 	AS TOTAL_COUNT
+				 , ( SELECT COUNT(*)
+					   FROM ADD_FB_CARD_DETAIL_ITEM
+					  WHERE USER_ID	 		= FCD.USER_ID
+						AND FB_SEQ 			= FCD.FB_SEQ
+						AND LIST_SEQ	 	= FCD.LIST_SEQ
+						AND CARD_SEQ	 	= FCD.CARD_SEQ
+						AND CARD_DETAIL_SEQ = FCD.CARD_DETAIL_SEQ
+						AND WANRYO_YN = 'Y') 					AS YES_COUNT
+			  FROM ADD_FB_CARD_DETAIL FCD
+			  JOIN SMN_USER_V USER_V
+   	  			ON FCD.JAKSEONGJA_ID = USER_V.USER_ID
+			 WHERE FCD.USER_ID = #{USER_ID}
+			   AND FCD.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+			   AND FCD.LIST_SEQ = #{LIST_SEQ}
+			   AND FCD.CARD_SEQ = #{CARD_SEQ}
+   	   <if test="CARD_DETAIL_GB != null and CARD_DETAIL_GB != '' and CARD_DETAIL_GB != ''.toString()">
+		   AND FCD.CARD_DETAIL_GB = #{CARD_DETAIL_GB}
+   	   </if>
+		) A LEFT JOIN ADD_FILE B
+		 ON A.FILE_KEY = B.FILE_KEY
+	  ORDER BY A.INSERT_DTTM DESC
+	</select>
+	
+	<insert id="insertFarmBoardCardDetail" parameterType="hashMap">
+		<selectKey keyProperty="CARD_DETAIL_SEQ" resultType="string" order="BEFORE">
+			SELECT COALESCE(MAX(CARD_DETAIL_SEQ), 0) + 1 AS CARD_DETAIL_SEQ
+	 		   FROM ADD_FB_CARD_DETAIL
+	 		  WHERE USER_ID = #{USER_ID}
+	 			AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+	 			AND LIST_SEQ = #{LIST_SEQ}
+	 			AND CARD_SEQ = #{CARD_SEQ}
+		</selectKey>
+		
+		INSERT INTO ADD_FB_CARD_DETAIL
+		(
+			USER_ID
+		  , FB_SEQ
+		  , LIST_SEQ
+		  , CARD_SEQ
+		  , CARD_DETAIL_SEQ
+		  , CARD_DETAIL_GB
+		  <if test="LABEL_SEQ != null and LABEL_SEQ != '' and LABEL_SEQ != ''.toString()">
+		  , LABEL_SEQ
+		  </if>
+		  , DAEPYO_IMG_YN
+		  , JAKSEONGJA_ID
+		  , LINK_URL
+		  , TITLE
+		  , TEXT
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES (
+			#{USER_ID}
+		  , CAST( #{FB_SEQ} AS BIGINT)
+		  , #{LIST_SEQ}
+		  , #{CARD_SEQ}
+		  , #{CARD_DETAIL_SEQ}
+		  , #{CARD_DETAIL_GB}
+		  <if test="LABEL_SEQ != null and LABEL_SEQ != '' and LABEL_SEQ != ''.toString()">
+		  , CAST(#{LABEL_SEQ} AS BIGINT)
+		  </if>
+		  , #{DAEPYO_IMG_YN}
+		  , #{JAKSEONGJA_ID}
+		  , #{LINK_URL}
+		  , #{TITLE}
+		  , #{TEXT}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<update id="updateFarmBoardCardDetail" parameterType="hashMap">
+		UPDATE ADD_FB_CARD_DETAIL
+		   SET CARD_DETAIL_GB = #{CARD_DETAIL_GB}
+		   <if test="LABEL_SEQ != null and LABEL_SEQ != '' and LABEL_SEQ != ''.toString()">
+		  	 , LABEL_SEQ = CAST(#{LABEL_SEQ} AS BIGINT)
+		   </if>
+			 , DAEPYO_IMG_YN = #{DAEPYO_IMG_YN}
+			 , JAKSEONGJA_ID = #{JAKSEONGJA_ID}
+			 , LINK_URL = #{LINK_URL}
+			 , TITLE = #{TITLE}
+			 , TEXT = #{TEXT}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND LIST_SEQ = #{LIST_SEQ}
+		   AND CARD_SEQ = #{CARD_SEQ}
+		   AND CARD_DETAIL_SEQ = #{CARD_DETAIL_SEQ}
+	</update>
+	
+	<update id="updateFarmBoardCardDaepyoImg" parameterType="hashMap">
+		UPDATE ADD_FB_CARD_DETAIL
+		   SET DAEPYO_IMG_YN = #{DAEPYO_IMG_YN}
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND LIST_SEQ = #{LIST_SEQ}
+		   AND CARD_SEQ = #{CARD_SEQ}
+	   <if test="CARD_DETAIL_SEQ != null and CARD_DETAIL_SEQ != '' and CARD_DETAIL_SEQ != ''.toString()">		   
+		   AND CARD_DETAIL_SEQ = #{CARD_DETAIL_SEQ}
+	   </if>
+		   AND CARD_DETAIL_GB = '04'
+	</update>
+	
+	<delete id="deleteFarmBoardCardDetail" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_CARD_DETAIL
+		 WHERE 1=1
+	   <if test="USER_ID != null and USER_ID != '' and USER_ID != ''.toString()">
+		   AND USER_ID = #{USER_ID}
+	   </if>
+	   <if test="JAKSEONGJA_ID != null and JAKSEONGJA_ID != '' and JAKSEONGJA_ID != ''.toString()">
+		   AND JAKSEONGJA_ID = #{JAKSEONGJA_ID}
+	   </if>
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="LIST_SEQ != null and LIST_SEQ != '' and LIST_SEQ != ''.toString()">
+   	  	   AND LIST_SEQ = #{LIST_SEQ}
+   	   </if>
+   	   <if test="CARD_SEQ != null and CARD_SEQ != '' and CARD_SEQ != ''.toString()">
+   	  	   AND CARD_SEQ = #{CARD_SEQ}
+   	   </if>
+   	   <if test="CARD_DETAIL_SEQ != null and CARD_DETAIL_SEQ != '' and CARD_DETAIL_SEQ != ''.toString()">
+   	  	   AND CARD_DETAIL_SEQ = #{CARD_DETAIL_SEQ}
+   	   </if>
+   	   <if test="LABEL_SEQ != null and LABEL_SEQ != '' and LABEL_SEQ != ''.toString()">
+   	  	   AND LABEL_SEQ = CAST(#{LABEL_SEQ} AS BIGINT)
+   	   </if>
+	</delete>
+	
+	<!-- 사진, 파일이 tempKey로 생성이 되어있는 경우 tempKey를 실제 키 값으로 변경-->
+	<update id="updateAddCardDetailFile" parameterType="hashMap">
+		UPDATE ADD_FILE 
+		   SET FILE_KEY = CONCAT(COALESCE(FCD.USER_ID,''),'#',COALESCE(FCD.FB_SEQ,''),'#',COALESCE(FCD.LIST_SEQ,''),'#',COALESCE(FCD.CARD_SEQ,''),'#',COALESCE(FCD.CARD_DETAIL_SEQ,''))
+		 WHERE FILE_KEY = #{TEMP_KEY}
+	</update>
+	
+	<select id="getFarmBoardCardDetailItemList" parameterType="hashMap" resultType="hashMap">
+		SELECT FCDI.USER_ID
+			 , FCDI.FB_SEQ
+			 , FCDI.LIST_SEQ
+			 , FCDI.CARD_SEQ
+			 , FCDI.CARD_DETAIL_SEQ
+			 , FCDI.CARD_DETAIL_ITEM_SEQ
+			 , FCDI.ITEM_NM
+			 , FCDI.WANRYO_YN
+			 , FCDI.WANRYOJA_ID
+			 , COALESCE(USER_V.USER_NM, '이름없음') AS USER_NM
+			 , USER_V.USER_PIC
+		  FROM ADD_FB_CARD_DETAIL_ITEM FCDI
+		  LEFT OUTER JOIN SMN_USER_V USER_V
+   	  		ON FCDI.WANRYOJA_ID = USER_V.USER_ID
+		 WHERE FCDI.USER_ID = #{USER_ID}
+		   AND FCDI.FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND FCDI.LIST_SEQ = #{LIST_SEQ}
+		   AND FCDI.CARD_SEQ = #{CARD_SEQ}
+		 ORDER BY FCDI.CARD_DETAIL_ITEM_SEQ
+	</select>
+	
+	<insert id="insertFarmBoardCardDetailItem" parameterType="hashMap">
+		<selectKey keyProperty="CARD_DETAIL_ITEM_SEQ" resultType="string" order="BEFORE">
+			SELECT COALESCE(MAX(CARD_DETAIL_ITEM_SEQ), 0) + 1 AS CARD_DETAIL_ITEM_SEQ
+	 		   FROM ADD_FB_CARD_DETAIL_ITEM
+	 		  WHERE USER_ID = #{USER_ID}
+	 			AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+	 			AND LIST_SEQ = #{LIST_SEQ}
+	 			AND CARD_SEQ = #{CARD_SEQ}
+	 			AND CARD_DETAIL_SEQ = #{CARD_DETAIL_SEQ}
+		</selectKey>
+		
+		INSERT INTO ADD_FB_CARD_DETAIL_ITEM
+		(
+			USER_ID
+		  , FB_SEQ
+		  , LIST_SEQ
+		  , CARD_SEQ
+		  , CARD_DETAIL_SEQ
+		  , CARD_DETAIL_ITEM_SEQ
+		  , ITEM_NM
+		  , WANRYO_YN
+		  , INSERT_DTTM
+		  , INSERT_ID
+		  , INSERT_IP
+		  , INSERT_PGM
+		  , UPDATE_DTTM
+		  , UPDATE_ID
+		  , UPDATE_IP
+		  , UPDATE_PGM
+		)
+		VALUES (
+			#{USER_ID}
+		  , CAST( #{FB_SEQ} AS BIGINT)
+		  , #{LIST_SEQ}
+		  , #{CARD_SEQ}
+		  , #{CARD_DETAIL_SEQ}
+		  , #{CARD_DETAIL_ITEM_SEQ}
+		  , #{ITEM_NM}
+		  , #{WANRYO_YN}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		  , NOW()
+		  , #{SYSTEM_ID}
+		  , #{SYSTEM_IP}
+		  , #{SYSTEM_PGM}
+		)
+	</insert>
+	
+	<update id="updateFarmBoardCardDetailItem" parameterType="hashMap">
+		UPDATE ADD_FB_CARD_DETAIL_ITEM
+		   SET ITEM_NM = #{ITEM_NM}
+			 , WANRYO_YN = #{WANRYO_YN}
+		 <if test='WANRYO_YN == "Y"'>
+			 , WANRYOJA_ID = #{INTERNAL_ID}
+		 </if>
+			 , UPDATE_DTTM = NOW()
+			 , UPDATE_ID = #{SYSTEM_ID}
+			 , UPDATE_IP = #{SYSTEM_IP}
+			 , UPDATE_PGM = #{SYSTEM_PGM}
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+		   AND LIST_SEQ = #{LIST_SEQ}
+		   AND CARD_SEQ = #{CARD_SEQ}
+		   AND CARD_DETAIL_SEQ = #{CARD_DETAIL_SEQ}
+		   AND CARD_DETAIL_ITEM_SEQ = #{CARD_DETAIL_ITEM_SEQ}
+	</update>
+	
+	<delete id="deleteFarmBoardCardDetailItem" parameterType="hashMap">
+		DELETE 
+		  FROM ADD_FB_CARD_DETAIL_ITEM
+		 WHERE USER_ID = #{USER_ID}
+		   AND FB_SEQ = CAST( #{FB_SEQ} AS BIGINT)
+   	   <if test="LIST_SEQ != null and LIST_SEQ != '' and LIST_SEQ != ''.toString()">
+   	  	   AND LIST_SEQ = #{LIST_SEQ}
+   	   </if>
+   	   <if test="CARD_SEQ != null and CARD_SEQ != '' and CARD_SEQ != ''.toString()">
+   	  	   AND CARD_SEQ = #{CARD_SEQ}
+   	   </if>
+   	   <if test="CARD_DETAIL_SEQ != null and CARD_DETAIL_SEQ != '' and CARD_DETAIL_SEQ != ''.toString()">
+   	  	   AND CARD_DETAIL_SEQ = #{CARD_DETAIL_SEQ}
+   	   </if>
+   	   <if test="CARD_DETAIL_ITEM_SEQ != null and CARD_DETAIL_ITEM_SEQ != '' and CARD_DETAIL_ITEM_SEQ != ''.toString()">
+   	  	   AND CARD_DETAIL_ITEM_SEQ = #{CARD_DETAIL_ITEM_SEQ}
+   	   </if>
+	</delete>
+</mapper>

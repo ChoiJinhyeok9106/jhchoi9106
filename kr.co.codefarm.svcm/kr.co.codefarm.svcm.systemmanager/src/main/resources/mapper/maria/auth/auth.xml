@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.auth">
+
+	<select id="selectAllAuthList" parameterType="hashMap" resultType="hashMap">
+		SELECT DISTINCT 
+	           AUTH_CD
+	         , APP_ID
+	         , MENU_CD
+		     , PGM_ID
+		     , PGM_ID_SUB
+	      FROM (
+			       SELECT AUTH_CD
+					    , APP_ID
+					    , MENU_CD
+					    , PGM_ID
+					    , PGM_ID_SUB
+	  				 FROM (
+						      SELECT TBL1.AUTH_CD
+	     						   , TBL2.APP_ID
+		 						   , TBL2.MENU_CD
+		 						   , TBL2.PGM_ID
+		 						   , TBL2.PGM_ID_SUB
+	  						 	FROM SMN_AUTH TBL1
+	     						   , (
+		   							     SELECT TBL1.APP_ID
+											  , TBL1.MENU_CD
+				                              , TBL1.PGM_ID
+											  , TBL2.PGM_ID AS PGM_ID_SUB
+			 							   FROM SMN_APP_MENU TBL1 
+			 							   LEFT OUTER JOIN SMN_APP_MENU_SUBPGM TBL2
+			   								 ON TBL1.APP_ID  = TBL2.APP_ID
+			  								AND TBL1.MENU_CD = TBL2.MENU_CD
+									   	  WHERE TBL1.USE_YN  = 'Y'
+		   							 ) TBL2
+	 							 WHERE TBL1.USE_YN = 'Y'
+	   							   AND NOT EXISTS
+	   							       (
+	       							       SELECT 0
+		     								 FROM SMN_APP_MENU_AUTH
+											WHERE APP_ID  = TBL2.APP_ID
+			  								  AND MENU_CD = TBL2.MENU_CD
+	       							   )
+	 							 UNION ALL
+	                            SELECT TBL1.AUTH_CD
+								     , TBL1.APP_ID
+									 , TBL1.MENU_CD
+									 , TBL2.PGM_ID
+									 , TBL2.PGM_ID_SUB
+  								  FROM SMN_APP_MENU_AUTH TBL1 
+  								 INNER JOIN 
+  								       (
+		   							       SELECT TBL1.APP_ID
+												, TBL1.MENU_CD
+												, TBL1.PGM_ID
+												, TBL2.PGM_ID AS PGM_ID_SUB
+			 								 FROM SMN_APP_MENU TBL1 
+			 								 LEFT OUTER JOIN SMN_APP_MENU_SUBPGM TBL2
+			   								   ON TBL1.APP_ID  = TBL2.APP_ID
+			                                  AND TBL1.MENU_CD = TBL2.MENU_CD
+		    								WHERE TBL1.USE_YN  = 'Y'
+	       							   ) TBL2
+	    							ON TBL1.APP_ID  = TBL2.APP_ID
+	   							   AND TBL1.MENU_CD = TBL2.MENU_CD
+						  ) TBL
+	 				WHERE EXISTS 
+	 				      (
+	       				      SELECT 0
+	     						FROM (
+									     SELECT TBL1.AUTH_CD
+											  , TBL2.APP_ID
+										   FROM SMN_AUTH TBL1
+			   								  , SMN_APP  TBL2
+		   								  WHERE TBL1.USE_YN         = 'Y'
+			 								AND TBL2.DEFAULT_APP_YN = 'Y'
+		   								  UNION ALL
+		  								 SELECT AUTH_CD
+			   								  , APP_ID
+										   FROM SMN_APP_AUTH
+			     					 ) T
+		                       WHERE T.APP_ID  = TBL.APP_ID
+		                         AND T.AUTH_CD = TBL.AUTH_CD
+	       				  )
+                    UNION ALL
+	               SELECT AUTH_CD
+					    , APP_ID
+						, NULL
+						, NULL
+						, NULL
+	                 FROM (
+	                          SELECT TBL1.AUTH_CD
+		                           , TBL2.APP_ID
+	                            FROM SMN_AUTH TBL1
+                                   , SMN_APP  TBL2
+	                           WHERE TBL1.USE_YN         = 'Y'
+	                             AND TBL2.DEFAULT_APP_YN = 'Y'
+	                           UNION ALL
+	                          SELECT AUTH_CD
+	                               , APP_ID
+	                            FROM SMN_APP_AUTH
+		                  ) T
+		       ) TB
+	     ORDER BY AUTH_CD, APP_ID, MENU_CD
+	</select>
+
+    <select id="selectAuthList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.AUTH_CD
+			 , A.AUTH_GB
+			 , A.AUTH_NM
+			 , A.ORD
+			 , COALESCE(A.GAEINJEONGBO_HIT_YN, 'N') AS GAEINJEONGBO_HIT_YN
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.SIGNUP_USE_YN, 'N') AS SIGNUP_USE_YN
+			 , A.AUTH_DESC
+			 , A.REMARK
+			 , A.DATA_GB
+			 , A.CD1
+			 , A.CD2
+			 , A.CD3
+			 , A.CD4
+			 , A.CD5
+			 , A.INSERT_DTTM
+			 , (SELECT COUNT(*) FROM SMN_USER_AUTH WHERE AUTH_CD = A.AUTH_CD)	AS AUTH_USE_CNT
+			 <if test="pPageNo != null and pPageNo != ''.toString()">
+			 , A.CNT
+			 </if>
+		FROM (
+                 SELECT SA.AUTH_CD
+		              , SA.AUTH_GB
+		              , SA.AUTH_NM
+		              , SA.ORD
+		              , SA.GAEINJEONGBO_HIT_YN
+		              , SA.USE_YN
+		              , SA.SIGNUP_USE_YN
+		              , SA.AUTH_DESC
+		              , SA.REMARK 
+		              , SA.DATA_GB
+		              , SA.CD1
+		              , SA.CD2
+		              , SA.CD3
+		              , SA.CD4
+		              , SA.CD5
+		              , SA.INSERT_DTTM
+		              <if test="pPageNo != null and pPageNo != ''.toString()">
+		              , ROW_NUMBER() OVER(ORDER BY SA.AUTH_GB DESC, SA.ORD, SA.AUTH_CD ASC) AS RNUM
+		              , COUNT(*) OVER() AS CNT
+		              </if>
+		           FROM SMN_AUTH SA
+		          WHERE 1=1
+                  <if test="pUseYn != ''.toString()">AND SA.USE_YN = #{pUseYn}</if>
+                  <if test="pAuthGb != ''.toString()">AND SA.AUTH_GB = #{pAuthGb}</if>
+                  <if test="pSearchType eq '1'.toString()">AND SA.AUTH_CD LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			      <if test="pSearchType eq '2'.toString()">AND SA.AUTH_NM LIKE CONCAT('%',#{pSearchArgv},'%')</if>
+			 ) A
+	   WHERE 1=1
+       <if test="pPageNo != null and pPageNo != ''.toString()">
+         AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+       ORDER BY A.RNUM
+	   </if>
+       <if test="pPageNo == null or pPageNo eq ''.toString()">
+       ORDER BY A.AUTH_GB DESC, A.ORD, A.AUTH_CD <!-- A.ORD -->
+       </if> 
+	</select>
+
+	<select id="selectAppAllAuthList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.AUTH_CD
+			 , A.AUTH_GB
+			 , A.AUTH_NM
+			 , A.ORD
+			 , COALESCE(A.GAEINJEONGBO_HIT_YN, 'N') AS GAEINJEONGBO_HIT_YN
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.SIGNUP_USE_YN, 'N') AS SIGNUP_USE_YN
+			 , A.AUTH_DESC
+	         , A.AUTH_YN
+			 , A.REMARK
+			 , A.DATA_GB
+			 , A.CD1
+			 , A.CD2
+			 , A.CD3
+			 , A.CD4
+			 , A.CD5
+			 , A.INSERT_DTTM
+		  FROM (
+				SELECT SA.AUTH_CD
+					 , SA.AUTH_GB
+					 , SA.AUTH_NM
+					 , SA.ORD
+					 , SA.GAEINJEONGBO_HIT_YN
+					 , SA.USE_YN
+					 , SA.SIGNUP_USE_YN
+					 , SA.AUTH_DESC
+			         , CASE WHEN (
+			               SELECT CAST(COUNT(*) AS INTEGER)
+			                 FROM SMN_APP_MENU
+			                WHERE APP_ID = #{APP_ID}
+			                LIMIT 1
+			              ) - (
+			               SELECT CAST(COUNT(*) AS INTEGER)
+			                 FROM SMN_APP_MENU_AUTH
+			                WHERE APP_ID = #{APP_ID}
+			                  AND AUTH_CD = SA.AUTH_CD
+			                LIMIT 1
+			              ) > 0 THEN 'N'
+			              ELSE 'Y'
+			           END AS AUTH_YN
+					 , SA.REMARK
+					 , SA.DATA_GB
+					 , SA.CD1
+					 , SA.CD2
+					 , SA.CD3
+					 , SA.CD4
+					 , SA.CD5
+					 , SA.INSERT_DTTM
+				  FROM SMN_AUTH SA
+				 WHERE 1=1
+				   AND SA.USE_YN = 'Y'
+			   ) A
+		 WHERE 1=1
+		 ORDER BY A.AUTH_GB DESC, A.ORD, A.AUTH_CD
+	</select>
+    
+    <insert id="insertAuth" parameterType="hashMap">
+    	INSERT INTO SMN_AUTH
+		(
+		     AUTH_CD
+           , AUTH_GB
+           , AUTH_NM
+           , ORD
+           , GAEINJEONGBO_HIT_YN
+           , USE_YN
+           , SIGNUP_USE_YN
+           , AUTH_DESC
+           , REMARK
+           , DATA_GB
+           , CD1
+           , CD2
+           , CD3
+           , CD4
+           , CD5
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM
+		)
+		VALUES
+		( 
+		     #{AUTH_CD}
+           , #{AUTH_GB}
+           , #{AUTH_NM}
+           , #{ORD}
+           , #{GAEINJEONGBO_HIT_YN}
+           , #{USE_YN}
+           , #{SIGNUP_USE_YN}
+           , #{AUTH_DESC}
+           , #{REMARK}
+           , #{DATA_GB}
+           , #{CD1}
+           , #{CD2}
+           , #{CD3}
+           , #{CD4}
+           , #{CD5}
+           , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		   , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		 )
+    </insert>
+    
+    <select id="getAuthSeq" parameterType="hashMap" resultType="hashMap">
+    	SELECT CONCAT(MAX(SUBSTR(A.AUTH_CD, 1, 1)),LPAD(MAX(CAST(SUBSTR(A.AUTH_CD, 2) AS INTEGER))+1, 4, 0)) AS NEW_SEQ
+		  FROM SMN_AUTH A
+		 WHERE 1=1
+		   AND A.AUTH_GB = #{AUTH_GB}
+		   AND SUBSTR(A.AUTH_CD, 2) != '9999'
+    </select>
+    
+    <select id="getSortSeq" parameterType="hashMap" resultType="hashMap">
+    	SELECT (MAX(A.ORD)+1) AS ORD
+		  FROM SMN_AUTH A
+		 WHERE 1=1
+		   AND A.AUTH_GB = #{AUTH_GB}
+		   AND A.ORD != '99'
+    </select>
+    
+    <update id="updateAuth" parameterType="hashMap">
+    	UPDATE SMN_AUTH
+           SET AUTH_CD = #{AUTH_CD}
+             , AUTH_GB = #{AUTH_GB}
+             , AUTH_NM = #{AUTH_NM}
+             , ORD = #{ORD}
+             , GAEINJEONGBO_HIT_YN = #{GAEINJEONGBO_HIT_YN}
+             , USE_YN = #{USE_YN}
+             , SIGNUP_USE_YN = #{SIGNUP_USE_YN}
+             , AUTH_DESC = #{AUTH_DESC}
+             , REMARK = #{REMARK}
+             , DATA_GB = #{DATA_GB}
+             , CD1 = #{CD1}
+             , CD2 = #{CD2}
+             , CD3 = #{CD3}
+             , CD4 = #{CD4}
+             , CD5 = #{CD5}
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE AUTH_CD = #{AUTH_CD}
+    </update>
+    
+    <delete id="deleteAuth" parameterType="hashMap">
+    
+         DELETE FROM SMN_USER_AUTH
+    	 WHERE AUTH_CD = #{AUTH_CD};
+    	 
+         DELETE FROM SMN_APP_MENU_AUTH
+    	 WHERE AUTH_CD = #{AUTH_CD};
+    	 
+         DELETE FROM SMN_APP_AUTH
+    	 WHERE AUTH_CD = #{AUTH_CD};
+    	 
+		 DELETE FROM SMN_AUTH
+    	 WHERE AUTH_CD = #{AUTH_CD};
+	
+    </delete>
+
+    <select id="selectAppAuthList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+		     , A.AUTH_CD
+		     , A.INSERT_DTTM
+		     <if test="pPageNo != null and pPageNo != ''.toString()">
+		     , A.CNT
+		     </if>
+	      FROM (
+                   SELECT SA.APP_ID
+                        , SA.AUTH_CD 
+                        , SA.INSERT_DTTM
+                        <if test="pPageNo != null and pPageNo != ''.toString()">
+                        , ROW_NUMBER() OVER(ORDER BY SA.INSERT_DTTM ASC) AS RNUM
+                        , COUNT(*) OVER() AS CNT
+                        </if>
+                     FROM SMN_APP_AUTH SA
+                    WHERE 1=1
+                    <if test="APP_ID != null">AND SA.APP_ID = #{APP_ID}</if>
+                    <if test="AUTH_CD != null">AND SA.AUTH_CD = #{AUTH_CD}</if>
+        	   ) A
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+       	   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+       	 ORDER BY A.RNUM
+         </if>
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.INSERT_DTTM ASC
+         </if>
+    </select>
+    
+    <insert id="insertAppAuth" parameterType="hashMap">
+    	INSERT INTO SMN_APP_AUTH
+		(
+		     APP_ID
+           , AUTH_CD
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM
+		)
+		VALUES
+		( 
+		     #{APP_ID}
+           , #{AUTH_CD}
+           , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		   , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		)
+    </insert>
+    
+    <update id="updateAppAuth" parameterType="hashMap">
+    	UPDATE SMN_APP_AUTH
+           SET APP_ID = #{APP_ID}
+             , AUTH_CD = #{AUTH_CD}
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE APP_ID = #{APP_ID}
+           AND AUTH_CD = #{AUTH_CD}
+    </update>
+    
+    <delete id="deleteAppAuth" parameterType="hashMap">
+		 DELETE FROM SMN_APP_AUTH
+    	  WHERE APP_ID = #{APP_ID}
+          AND AUTH_CD = #{AUTH_CD}
+    </delete>
+
+
+
+
+    <select id="selectUserAddAuthList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+		     , A.AUTH_CD
+		     , B.AUTH_NM
+		     , A.INSERT_DTTM
+		     , DATE_FORMAT(A.INSERT_DTTM, '%Y-%m-%d %H:%i:%s') AS INSERT_DT
+		     <if test="pPageNo != null and pPageNo != ''.toString()">
+		     , A.CNT
+		     </if>
+	      FROM (
+                    SELECT SA.USER_ID
+                         , SA.AUTH_CD 
+                         , SA.INSERT_DTTM
+                         <if test="pPageNo != null and pPageNo != ''.toString()">
+                         , ROW_NUMBER() OVER(ORDER BY SA.INSERT_DTTM ASC) AS RNUM
+                         , COUNT(*) OVER() AS CNT
+                         </if>
+                      FROM SMN_USER_AUTH SA
+                     WHERE 1=1
+                     <if test="USER_ID != null">AND SA.USER_ID = #{USER_ID}</if>
+                     <if test="AUTH_CD != null">AND SA.AUTH_CD = #{AUTH_CD}</if>
+               ) A
+         INNER JOIN SMN_AUTH B
+            ON A.AUTH_CD = B.AUTH_CD
+         WHERE 1=1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+       	   AND A.RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+       	 ORDER BY A.RNUM
+         </if>      
+         <if test="pPageNo == null or pPageNo eq ''.toString()">
+         ORDER BY A.INSERT_DTTM ASC
+         </if>
+    </select>
+    
+    <insert id="insertUserAddAuth" parameterType="hashMap">
+    	INSERT INTO SMN_USER_AUTH
+		(
+		     USER_ID
+           , AUTH_CD
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM
+		)
+		VALUES
+		( 
+		     #{USER_ID}
+           , #{AUTH_CD}
+           , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		   , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		)
+    </insert>
+    
+    <update id="updateUserAddAuth" parameterType="hashMap">
+    	UPDATE SMN_USER_AUTH
+           SET USER_ID = #{USER_ID}
+             , AUTH_CD = #{AUTH_CD}
+             , UPDATE_DTTM = SYSDATE()
+             , UPDATE_ID = #{SYSTEM_ID}
+             , UPDATE_IP = #{SYSTEM_IP}
+             , UPDATE_PGM = #{SYSTEM_PGM}
+         WHERE USER_ID = #{USER_ID}
+           AND AUTH_CD = #{AUTH_CD}
+    </update>
+    
+    <delete id="deleteUserAddAuth" parameterType="hashMap">
+		 DELETE FROM SMN_USER_AUTH
+    	  WHERE USER_ID = #{USER_ID}
+            AND AUTH_CD = #{AUTH_CD}
+    </delete>
+
+    <select id="selectUserAddDaesangList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.AUTH_CD
+			 , A.DEFAULT_AUTH_CD
+			 , A.DEFAULT_AUTH_NM
+			 , A.USER_ID
+			 , A.INSERT_DTTM
+			 , A.USER_NM
+			 , A.DEPT_NM
+			 , A.BIRTHDAY
+			 , A.USER_STATUS_GBNM
+        	 , C.TF
+        	 , D.TFM
+	      FROM (
+	      			SELECT A.AUTH_CD
+	      			     , B.DEFAULT_AUTH_CD
+						 , B.DEFAULT_AUTH_NM
+	      			     , A.USER_ID
+						 , A.INSERT_DTTM
+						 , B.USER_NM
+						 , B.DEPT_NM
+						 , B.BIRTHDAY
+						 , B.USER_STATUS_GBNM
+						 , B.USER_GROUP_GB
+						 , B.USER_STATUS_GB
+					  FROM SMN_USER_AUTH A
+					  LEFT OUTER JOIN SMN_USER_V B
+					    ON A.USER_ID = B.USER_ID
+					 WHERE 1=1
+			           AND A.AUTH_CD = #{AUTH_CD}
+	           ) A
+		  LEFT JOIN
+					(SELECT USER_ID
+						  , 'T' AS TF
+					   FROM SMN_USER_AUTH
+					  WHERE AUTH_CD = 'U0006'
+					) C
+			ON A.USER_ID = C.USER_ID
+		  LEFT JOIN
+					(SELECT USER_ID
+						  , 'T' AS TFM
+					   FROM SMN_USER_AUTH
+					  WHERE AUTH_CD = 'U0007'
+					) D
+		    ON A.USER_ID = D.USER_ID
+	     WHERE 1=1
+         <if test="USER_GROUP_GB != null and USER_GROUP_GB != ''.toString()">AND A.USER_GROUP_GB = #{USER_GROUP_GB}</if>
+         <if test="USER_STATUS_GB != null and USER_STATUS_GB != ''.toString()">AND A.USER_STATUS_GB = #{USER_STATUS_GB}</if>
+         <if test="USER_NM != null and USER_NM != ''.toString()">AND (A.USER_ID LIKE CONCAT(#{USER_NM},'%') OR A.USER_NM LIKE CONCAT(#{USER_NM},'%'))</if>
+		 <if test="DEPT_NM != null and DEPT_NM != ''.toString()">AND (A.DEPT_NM LIKE CONCAT(#{DEPT_NM},'%') OR A.DEPT_NM LIKE CONCAT(#{DEPT_NM},'%'))</if>
+    </select>
+
+
+    <select id="selectUserAddDaesangOrgList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.AUTH_CD
+			 , A.USER_ID
+			 , A.INSERT_DTTM
+			 , A.USER_NM
+			 , A.BIRTHDAY
+			 , A.USER_STATUS_GBNM
+	      FROM (
+	      			SELECT A.AUTH_CD
+						 , A.USER_ID
+						 , A.INSERT_DTTM
+						 , B.USER_NM
+						 , B.BIRTHDAY
+						 , B.USER_STATUS_GBNM
+						 , B.USER_GROUP_GB
+						 , B.USER_STATUS_GB
+					  FROM SMN_USER_AUTH A
+					  LEFT OUTER JOIN SMN_USER_V B
+					    ON A.USER_ID = B.USER_ID
+					 WHERE 1=1
+			           AND A.AUTH_CD = #{AUTH_CD}
+	       			   AND B.DEPT_CD = #{ORG_CD}
+	           ) A 
+	     WHERE 1=1
+         <if test="USER_STATUS_GB != null and USER_STATUS_GB != ''.toString()">AND A.USER_STATUS_GB = #{USER_STATUS_GB}</if>
+         <if test="USER_NM != null and USER_NM != ''.toString()">AND (A.USER_ID LIKE CONCAT(#{USER_NM},'%') OR A.USER_NM LIKE CONCAT(#{USER_NM},'%'))</if>
+    </select>
+
+    <select id="menuAuthCheck" parameterType="hashMap" resultType="int">
+        SELECT COUNT(*) AS CNT
+		  FROM SMN_APP_MENU_AUTH A
+		 WHERE 1=1
+		   AND A.APP_ID = #{APP_ID}
+		   AND A.MENU_CD = #{MENU_CD}
+		   AND (
+		           EXISTS
+		           (
+			           SELECT 'X'
+				         FROM SMN_USER_AUTH SA
+					    WHERE 1=1
+					      AND SA.USER_ID = #{USER_ID}
+					      AND SA.AUTH_CD = A.AUTH_CD
+			       )
+				   OR
+				   EXISTS
+				   (
+				       SELECT 'X'
+					     FROM SMN_USER_V SA
+						WHERE 1=1
+						  AND SA.USER_ID = #{USER_ID}
+						  AND SA.DEFAULT_AUTH_CD = A.AUTH_CD
+				   )
+		       )
+    </select>
+    
+    <insert id="insertWidgetAuth" parameterType="hashMap">
+    	INSERT INTO SMN_WIDGET_AUTH
+		(
+		     APP_ID
+		   , WIDGET_SEQ
+           , AUTH_CD
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM
+		)
+		VALUES
+		( 
+		     #{APP_ID}
+		   , #{WIDGET_SEQ} 
+           , #{AUTH_CD}
+           , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		   , SYSDATE()
+		   , #{SYSTEM_ID}
+		   , #{SYSTEM_IP}
+		   , #{SYSTEM_PGM}
+		)
+    </insert>
+    
+    <delete id="deleteWidgetAuth" parameterType="hashMap">
+		 DELETE FROM SMN_WIDGET_AUTH
+    	  WHERE APP_ID 	   = #{APP_ID}
+            AND WIDGET_SEQ = #{WIDGET_SEQ}
+            AND AUTH_CD    = #{AUTH_CD}
+    </delete>
+    
+    <!-- ############################################################################################################### 
+     ################################################ IP접근제한관리 ################################################
+     ############################################################################################################### -->
+     <!-- 접근허용 IP 리스트 조회 -->
+     <select id="selectIpRestrictedAccessMngList" parameterType="hashMap" resultType="hashMap">
+        SELECT TBL.USER_ID
+             , TBL.USER_NM
+             , TBL.ALLOW_IP
+        <if test="pPageNo != null and pPageNo != ''.toString()">
+             , TBL.CNT
+        </if>
+          FROM (
+               SELECT TBL1.USER_ID
+                    , TBL2.USER_NM
+                    , TBL1.ALLOW_IP
+               <if test="pPageNo != null and pPageNo != ''.toString()">
+                    , COUNT(1) OVER() AS CNT
+                    , ROW_NUMBER() OVER(ORDER BY TBL1.USER_ID ASC) AS ROW_NUM
+               </if>
+                 FROM SMN_IP_LMT TBL1 /* IP 접근 제한 */
+                INNER JOIN SMN_USER_V TBL2 /* 사용자 정보 */
+                   ON TBL1.USER_ID = TBL2.INTERNAL_ID
+                WHERE 1 = 1
+                <if test="pUserId != null and pUserId != ''.toString()">
+                  AND TBL1.USER_ID = #{pUserId} /* 사용자 ID */
+                </if>
+                <if test="pAllowIp != null and pAllowIp != ''.toString()">
+                  AND TBL1.ALLOW_IP = #{pAllowIp} /* 허용 IP */
+                </if>
+                <if test="pUserIdNm != null and pUserIdNm != ''.toString()">
+                  AND (TBL1.USER_ID = #{pUserIdNm} OR TBL2.USER_NM LIKE CONCAT('%',#{pUserIdNm},'%')) /* 사용자ID OR 사용자 명 */
+                </if>
+               ) TBL
+         WHERE 1 = 1
+         <if test="pPageNo != null and pPageNo != ''.toString()">
+           AND TBL.ROW_NUM BETWEEN (CAST(COALESCE(#{pPageNo},'1') AS INTEGER) - 1) * #{pRowCnt} + 1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER) * #{pRowCnt}
+         ORDER BY TBL.ROW_NUM ASC
+         </if>
+         <if test="pPageNo == null or pPageNo == ''.toString()">
+         ORDER BY TBL.USER_ID ASC
+         </if>
+     </select>
+     
+     <!-- 접근허용 IP 삽입 -->
+     <insert id="insertIpRestrictedAccessMngList" parameterType="hashMap">
+        INSERT INTO SMN_IP_LMT (
+               USER_ID
+             , ALLOW_IP
+             , INSERT_DTTM
+             , INSERT_ID
+             , INSERT_IP
+             , INSERT_PGM
+             , UPDATE_DTTM
+             , UPDATE_ID
+             , UPDATE_IP
+             , UPDATE_PGM
+             ) VALUES (
+               #{USER_ID}
+             , #{ALLOW_IP}
+             , SYSDATE()
+             , #{SYSTEM_ID}
+             , #{SYSTEM_IP}
+             , #{SYSTEM_PGM}
+             , SYSDATE()
+             , #{SYSTEM_ID}
+             , #{SYSTEM_IP}
+             , #{SYSTEM_PGM}
+        	 )
+     </insert>
+
+     <!-- 접근허용 IP 삭제 -->
+     <delete id="deleteIpRestrictedAccessMngList" parameterType="hashMap">
+         DELETE FROM SMN_IP_LMT
+          WHERE USER_ID = #{USER_ID} /* 사용자 ID */
+            AND ALLOW_IP = #{ALLOW_IP} /* 허용 IP */
+     </delete>
+     
+	<select id="selectSubAuthList" parameterType="hashMap"  resultType="hashMap">
+		SELECT A.AUTH_CD
+			 , A.AUTH_GB
+			 , A.AUTH_NM
+			 , A.ORD
+			 , COALESCE(A.GAEINJEONGBO_HIT_YN, 'N') AS GAEINJEONGBO_HIT_YN
+			 , COALESCE(A.USE_YN, 'N') AS USE_YN
+			 , COALESCE(A.SIGNUP_USE_YN, 'N') AS SIGNUP_USE_YN
+			 , A.AUTH_DESC
+			 , A.REMARK
+			 , A.DATA_GB
+			 , A.CD1
+			 , A.CD2
+			 , A.CD3
+			 , A.CD4
+			 , A.CD5
+			 , A.INSERT_DTTM
+		  FROM SMN_AUTH A
+		 WHERE A.CD1 IN (SELECT TBL.ROLE_CD
+					       FROM (
+					     SELECT DEFAULT_AUTH_CD AS ROLE_CD 
+					       FROM SMN_USER_V
+					      WHERE USER_ID = #{USER_ID}
+					      UNION ALL
+					     SELECT AUTH_CD
+					       FROM SMN_USER_AUTH
+					      WHERE USER_ID = #{USER_ID}
+					            ) TBL
+				 		  GROUP BY TBL.ROLE_CD)
+		 <if test="pSearchType eq '1'.toString()">
+		   AND A.AUTH_CD LIKE CONCAT('%',#{pSearchArgv},'%') 
+		 </if>
+		 <if test="pSearchType eq '2'.toString()">
+		   AND A.AUTH_NM LIKE CONCAT('%',#{pSearchArgv},'%') 
+		 </if>
+		   AND USE_YN = 'Y'
+	</select>
+	<select id="selectAuthCount" parameterType="hashMap" resultType="hashMap">
+		SELECT COUNT(*) AS CNT
+		  FROM ( SELECT A.AUTH_CD
+		  		   FROM SMN_USER_AUTH A
+		  	   ) A
+		  JOIN SMN_AUTH B
+		    ON A.AUTH_CD = B.CD1
+		 WHERE B.AUTH_CD = #{AUTH_CD}
+	</select>
+	
+</mapper>

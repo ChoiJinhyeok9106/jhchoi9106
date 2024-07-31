@@ -1,0 +1,762 @@
+<h2>알림대상 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!alarmList.currentRow"> 
+		<h2 class="h2">알림 리스트</h2>
+		<div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pAlarmGb" v-model="pAlarmGb" style="width:184px;" class="size-m">
+		        <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'ALARM_GB', 'all')" :value="item.CD">{{item.CD_NM}}</option>
+            </select>
+            
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="알림 제목을 입력하세요" v-on:keyup.13="search">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search">
+	    </div>
+	    
+	    <div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{alarmListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{alarmListPaging.getCurrentPage()}}</span> / {{alarmListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+	        	<table class="table-type04 response" id="mainListLoading">
+					<caption></caption>
+					<colgroup>
+	                    <!-- <col width="10%" /> -->
+	                    <col />
+						<col width="30%" />
+	                    <col width="10%" />
+	                    <col width="15%" />
+						<col width="10%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<!-- <th scope="col">알림구분 </th> -->
+							<th scope="col" class="left">REST API</th>
+	                        <th scope="col" class="left">제목 </th>
+	                        <th scope="col">알림대상 </th>
+	                        <th scope="col">알림처리구분 </th>
+							<th scope="col">사용여부</th>
+						</tr>
+					</thead>
+					<tbody v-if="alarmList.getRowCount() > 0">
+						<tr v-for="(item, index) in alarmList.data" v-if="alarmList.getRowType(index) != '8' && item.ALARM_DAESANG_GB != '03'">
+	                        <!-- <td class="center" data-header="알림구분">{{smnCommcode.getCommcodeNm('SMN','ALARM_GB',item.ALARM_GB,'CD_NM')}}</td> -->
+	                        <td class="left" data-header="REST API"><a href="#!" @click="rowClick(index)">{{ getApiTitle(item.API_SEQ) }}</a></td>
+	                        <td class="left" data-header="제목"><a href="#!" @click="rowClick(index)">{{item.TITLE}}</a></td>
+	                        <td data-header="알림대상"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','ALARM_DAESANG_GB',item.ALARM_DAESANG_GB,'CD_NM')}}</a></td>
+	                        <td data-header="알림처리구분"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','ALARM_CHK_GB',item.ALARM_CHK_GB,'CD_NM')}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="alarmListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+	
+	<!-- 알림 대상 권한 -->
+	<section class="cont_box board-view-page nonsubject-info" v-if="alarmList.currentRow">
+   		<div class="row form-row head-box">
+   			<div class="form-group col s12 l8">
+	   			<p class="title">[{{smnCommcode.getCommcodeNm('SMN','ALARM_GB',alarmList.currentRow.ALARM_GB,'CD_NM')}}] {{alarmList.currentRow.TITLE}}</p>
+	        	<p class="description">API : {{ restApiCodeSet.getCustomcodeNm('API_SEQ', alarmList.currentRow.API_SEQ, 'API_NM') }} ({{ restApiCodeSet.getCustomcodeNm('API_SEQ', alarmList.currentRow.API_SEQ, 'API_URL') }})</p>
+   			</div>
+    		<div class="form-group col s12 l4 right">
+	    		<a href="#!" class="btn type01 size-m left-icon icon-corner-left-up" @click="alarmList.selectRow(-1); tabPage = 1; userList.clear(); userListPaging.setTotalCnt(0);">목록</a>
+    		</div>
+   		</div>
+   		
+   		<template v-if="alarmList.currentRow.ALARM_DAESANG_GB == '01'">
+	   		<div class="col s12 l12">
+			    <span class="board-info-txt size-m">총 <span>{{authListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{authListPaging.getCurrentPage()}}</span> / {{authListPaging.getTotalPage()}})</span>
+			</div>
+	        <div class="table-type04-wrap">
+	            <table class="table-type04 response">
+	                <caption></caption>
+	                <colgroup>
+	                    <col width="20%" />
+	                 <col width="20%" />
+	                    <col width="45%" />
+	                    <col width="15%" />
+	                </colgroup>
+	                <thead>
+	                    <tr>
+	                        <th scope="col">권한구분</th>
+	                     <th scope="col">권한코드</th>
+	                        <th scope="col">권한명</th>
+	                        <th scope="col">등록</th>
+	                    </tr>
+	                </thead>
+	                <tbody v-if="authList.getRowCount() > 0">
+	                    <tr v-for="(item, index) in authList.getData()" v-if="authList.getRowType(index) != '8'"> 
+	                        <td data-header="권한구분">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</td>
+	                        <td data-header="권한코드">{{item.AUTH_CD}}</td>
+	                        <td class="left" data-header="권한명">{{item.AUTH_NM}}</td>
+	                        <td data-header="등록">
+								<label class="toggle-switch size-m" v-show="item.ALARM_YN!=null">
+									<input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.ALARM_YN" @change="authList.selectRow(index); regAlarmDaesang(item.AUTH_CD)"/>
+	                                <span class="slider bg-red round"></span>
+	                            </label>
+	                        </td>
+	     				</tr>
+	                </tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+	            </table>
+	        </div>
+	        <paging :pagingset="authListPaging" :type="'normal'"></paging>
+	    </template>
+	    
+	    <template v-if="alarmList.currentRow.ALARM_DAESANG_GB == '02'">
+	    	<div class="tab-outter" style="margin-top:30px;">
+				<div class="tab-type04">
+					<div class="tab-inner">
+						<div rel="tab2"><a href="#!" @click="tabPage = 1" :class="{'active':tabPage == 1}">알림등록 된 대상자 검색</a></div>
+						<div rel="tab1"><a href="#!" @click="tabPage = 2" :class="{'active':tabPage == 2}">전체 사용자 검색</a></div>
+					</div>
+				</div>
+			</div>
+			<div class="tab-container">
+				<div id="tab1" class="tab-content" v-show="tabPage == 2">
+			   		<div class="box-type03 col-inline">
+						<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+				        <select name="pUserGroupGb" class="size-m" id="pUserGroupGb" v-model="pUserGroupGb" data-vv-as="사용자 구분" v-validate="'required'" v-bind:class="{'invalid':errors.has('pUserGroupGb')}">
+			                <option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'USER_GROUP_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+			            </select>
+			            <select name="pUserStatusGb" class="size-m" id="pUserStatusGb" v-model="pUserStatusGb">
+			                <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'USER_STATUS_GB', 'all', 'CD_NM', 'N', 'all'), function(e){return e.CD1 == pUserGroupGb || e.CD == '';})" :value="item.CD">{{item.CD_NM}}</option>
+			            </select>
+			   			<input type="text" name="pUserSearchArgv" class="size-m" id="pUserSearchArgv" v-model="pUserSearchArgv" :placeholder="searchPlaceHolder('text')" @keyup.13="setUserList"  data-vv-as="사용자 명/아이디 " v-validate="searchPlaceHolder('validate')" v-bind:class="{'invalid':errors.has('pUserSearchArgv')}">
+				        <input type="button" value="검색" class="btn type01 size-m" @click="setUserList('default')">
+				        <div class="f-right">
+				            <input type="button" value="상세검색" class="btn type01 size-m" @click="detailSearch = !detailSearch">
+				        </div>
+				    </div>
+				    
+				    <transition name=slidedown>
+					    <div class="box-type03" v-if="detailSearch">
+					        <div class="row form-row">
+					            <div class="form-group col s12 l4">
+					                <label for="pDeptCd" class="label-type01">{{changeText('부서','search')}}</label>
+					                <input v-if="pUserGroupGb == '5' || pUserGroupGb == '9'" type="text" name="pDeptNm" class="size-m" id="pDeptNm" v-model="pDeptNm" :placeholder="changeText('부서','search')" @keyup.13="setUserList">
+					                <select name="pDeptCd" class="size-m" id="pDeptCd" v-model="pDeptCd" v-if="pUserGroupGb != '5' && pUserGroupGb != '9'">
+						                <option v-for="(item, index) in pUserGroupGb == '1'? deptCodeSet.getCustomcode('DEPT_CD', 'DEPT_NM', 'all'):hakgwaCodeSet.getCustomcode('DEPT_CD', 'DEPT_NM', 'all')" :value="item.CD">{{item.CD_NM}}</option>
+						            </select>
+					            </div>
+					            <div class="form-group col s12 l4">
+					                <label for="pUserTypeGb" class="label-type01">{{changeText('종류 구분','search')}}</label>
+					                <input v-if="pUserGroupGb == '5' || pUserGroupGb == '9'" class="size-m" type="text" placeholder="해당사항 없음" disabled>
+					                <select name="pUserGroupGb" class="size-m" id="pUserTypeGb" v-model="pUserTypeGb" v-if="pUserGroupGb != '5' && pUserGroupGb != '9'">
+						                <option v-for="(item, index) in pUserGroupGb == '1'? jikjongCodeSet.getCustomcode('JIKJONG_CD', 'JIKJONG_NM', 'all') : bouCommcode.getCommcode('BOU', 'HAKNYEON', 'all', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+						            </select>
+					            </div>
+					        </div>
+					    </div>
+				    </transition>
+			
+					<div class="col s12 l12">
+					    <span class="board-info-txt size-m">총 <span>{{userListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{userListPaging.getCurrentPage()}}</span> / {{userListPaging.getTotalPage()}})</span>
+					</div>		
+					<div class="table-type04-wrap">
+			            <table class="table-type04 response" id="userListLoading">
+							<caption>사용자 아이디, 사용자 명, 부서 코드, 권한 코드, 성별 구분, 생년월일, 사용 여부를 조회 항목별 순서대로 안내하는 표입니다</caption>	
+							<colgroup>
+								<col width="30%" />
+								<col width="15%" />
+								<col width="15%" />
+								<col width="20%" />
+								<col width="10%" />
+								<col width="10%" />
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="left">사용자 아이디</th>
+									<th scope="col" class="left">사용자 명</th>
+									<th scope="col" class="left">직종</th>
+									<th scope="col">생년월일</th>
+									<th scope="col">상태</th>
+									<th scope="col">등록</th>
+								</tr>
+							</thead>
+							<tbody v-if="userList.getRowCount() > 0">
+								<tr v-for="(item, index) in userList.data" v-if="userList.getRowType(index) != 8">
+									<td class="left" data-header="사용자 아이디">{{item.USER_ID}}</td>
+									<td class="left" data-header="사용자 명">{{item.USER_NM}}</td>
+									<td class="left" data-header="직종">{{item.USER_TYPE_GBNM}}</td>
+									<td class="center" data-header="생년월일">{{item.BIRTHDAY}}</td>
+									<td class="center" data-header="상태">{{item.USER_STATUS_GBNM}}</td>
+									<td class="center" data-header="등록">
+										<label class="toggle-switch size-m" v-show="item.ALARM_YN!=null">
+											<input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.ALARM_YN" @click="userList.selectRow(index); regAlarmDaesang(item.USER_ID)"/>
+			                                <span class="slider bg-red round"></span>
+			                            </label>
+									</td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<paging :pagingset="userListPaging" :type="'normal'"></paging>
+				</div>
+				
+				<div id="tab1" class="tab-content" v-show="tabPage == 1">
+			   		<div class="box-type03 col-inline">
+						<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+			   			<input type="text" class="size-m" v-model="pUserSearchArgvSec" placeholder="사용자 명/아이디(2자이상)" @keyup.13="setUserList('daesangja')">
+				        <input type="button" value="검색" class="btn type01 size-m" @click="setUserList('daesangja')">
+				    </div>
+			
+					<div class="col s12 l12">
+					    <span class="board-info-txt size-m">총 <span>{{userListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{userListPaging.getCurrentPage()}}</span> / {{userListPaging.getTotalPage()}})</span>
+					</div>		
+					<div class="table-type04-wrap">
+			            <table class="table-type04 response" id="userListLoadingSec">
+							<caption>사용자 아이디, 사용자 명, 부서 코드, 권한 코드, 성별 구분, 생년월일, 사용 여부를 조회 항목별 순서대로 안내하는 표입니다</caption>	
+							<colgroup>
+								<col width="30%" />
+								<col width="15%" />
+								<col width="15%" />
+								<col width="20%" />
+								<col width="10%" />
+								<col width="10%" />
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="left">사용자 아이디</th>
+									<th scope="col" class="left">사용자 명</th>
+									<th scope="col" class="left">직종</th>
+									<th scope="col">생년월일</th>
+									<th scope="col">상태</th>
+									<th scope="col">등록</th>
+								</tr>
+							</thead>
+							<tbody v-if="userList.getRowCount() > 0">
+								<tr v-for="(item, index) in userList.data" v-if="userList.getRowType(index) != 8">
+									<td class="left" data-header="사용자 아이디">{{item.USER_ID}}</td>
+									<td class="left" data-header="사용자 명">{{item.USER_NM}}</td>
+									<td class="left" data-header="직종">{{item.USER_TYPE_GBNM}}</td>
+									<td class="center" data-header="생년월일">{{item.BIRTHDAY}}</td>
+									<td class="center" data-header="상태">{{item.USER_STATUS_GBNM}}</td>
+									<td class="center" data-header="등록">
+										<label class="toggle-switch size-m" v-show="item.ALARM_YN!=null">
+											<input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.ALARM_YN" @click="userList.selectRow(index); regAlarmDaesang(item.USER_ID)"/>
+			                                <span class="slider bg-red round"></span>
+			                            </label>
+									</td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<paging :pagingset="userListPaging" :type="'normal'"></paging>
+				</div>
+			</div>
+	    </template>
+	</section>
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+    
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	/* 사용할 데이터 */
+	data: {
+		/* 알림 관련 */
+		pAlarmGb: '', /* 검색조건 */
+        pSearchArgv: '', /* 검색조건 */
+        alarmList: new Dataset(),				// 실적 목록(상하위 공용))
+        alarmListPaging: new PagingSet(5, 5),	// 페이징
+        /* 권한 관련 */
+        authList: new Dataset(),				//
+        authListPaging: new PagingSet(5, 5),	// 페이징(page, row)
+        /* 사용자 관련 */
+        pUserGroupGb: '1', /* 검색조건 */
+	    pUserStatusGb: '11',/* 검색조건 */
+	    pUserSearchArgv: '', /* 검색조건 */
+	    pUserSearchArgvSec: '', /* 검색조건 */
+	    pUserTypeGb: '',
+	    pDeptCd: '',
+	    pDeptNm: '',
+	    pAlarmYn: 'Y', /* 검색조건 */
+        userList: new Dataset(),
+        userListPaging: new PagingSet(10, 5),
+	    tabPage: 1,
+        /* 알림 대상자 관련 */
+        alarmDaesangList: new Dataset(),
+        /* 기타 */
+        messageModal: new ModalSet('alarm-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+		userListLoading: {id:'userListLoading', val:false},
+		userListLoadingSec: {id:'userListLoadingSec', val:false},
+		restApiCodeSet: new CustomcodeSet('/system-manager/rest-api'),
+		detailSearch: false,
+	},
+	/* 생성 될 때 */ 
+	beforeCreate: function(){
+		
+	},
+	/* 계산된 속성 표현 시 */
+	computed: {
+		
+	},
+	/* 데이터 감시 */
+	watch: {
+		'alarmList.rowposition': {
+			handler: function (val, oldVal) {
+				if(val != -1){
+					var alarmDaesangGb = this.alarmList.getColumn(val, 'ALARM_DAESANG_GB');
+					
+					this.initToggle();
+	                this.setAlarmDaesangList();
+	                
+	                if(alarmDaesangGb == '02'){
+	                	this.setUserList('daesangja');
+	                }
+				}
+			}
+		},		
+		'alarmList.data': {
+			handler: function (val, oldVal) {                
+				if(this.alarmList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data ).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.alarmList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.alarmList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+                }
+			},
+			deep: true
+	    },	
+		'alarmListPaging.currentPage': {
+			handler: function (val, oldVal) {
+                this.alarmList.pageChange(val, this.alarmListPaging.getRowCnt());
+                this.setAlarmDaesangInfo();
+			}
+        },
+        'authListPaging.currentPage': {
+			handler: function (val, oldVal) {
+                this.authList.pageChange(val, this.authListPaging.getRowCnt());
+                this.setAlarmDaesangList();
+			}
+	    },	
+	    'userListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.userList.pageChange(val, this.userListPaging.getRowCnt());
+				this.setAlarmDaesangInfo();
+			}
+	    },
+	    'pUserGroupGb': {
+	    	handler: function (val, oldVal) {
+	    		/* 교원 */
+	    		if(val == '1'){
+	    			this.pUserStatusGb = '11';
+	    		}
+	    		/* 학생 */
+	    		else if(val == '4'){
+	    			this.pUserStatusGb = '31';
+	    		}
+	    		/* 기간계 외부사용자 */
+	    		else if(val == '5'){
+	    			this.pUserStatusGb = '91';
+	    		}
+	    		/* 외부사용자 */
+				else if(val == '9'){
+					this.pUserStatusGb = '81';
+	    		}else{
+	    			this.pUserStatusGb = '';
+	    		}
+	    		
+	    		this.pUserTypeGb = '';
+	    	    this.pDeptCd = '';
+	    	    this.pDeptNm = '';
+	    		this.$validator.reset();
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'userListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userListLoading.id), val);
+			}
+	    },
+	    'userListLoadingSec.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userListLoadingSec.id), val);
+			}
+	    },
+	    'tabPage': {
+	    	handler: function (val, oldVal) {
+				/* this.userList.clear(); */
+			}
+	    },
+	},
+	/* 마운트 된 시점수행 */
+	mounted: function(){
+		this.setAlarmList();
+		this.setAuthList();
+	},
+	/* 함수 */
+	methods: {
+		/* 알림 리스트 조회 */
+		setAlarmList: function(){
+            var self = this;
+			var param = {
+				ALARM_GB: this.pAlarmGb, 
+				TITLE: this.pSearchArgv, 
+				NOT_ALARM_DAESANG_GB: '03',
+			}
+			
+			self.mainListLoading.val = true;
+            var returnVal = alertApi.alert(param, false);
+            
+            returnVal.then(function(response) {
+                self.alarmList.setRawData(response.data, self.alarmListPaging.getRowCnt());
+                
+                if(self.alarmList.getRowCount() > 0){
+                    self.alarmListPaging.setTotalCnt(self.alarmList.getRowCount());
+                }else{
+                    self.alarmListPaging.setTotalCnt(0);
+                }
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		/* 권한목록 리스트 */
+		setAuthList: function(){
+			var self = this;
+			var returnVal = authApi.auth();
+           
+			returnVal.then(function(response) {
+				self.authList.setRawData(response.data, self.authListPaging.getRowCnt());
+               	if(self.authList.getRowCount() > 0){
+					self.authListPaging.setTotalCnt(self.authList.getRowCount());
+               	}else{
+                   	self.authListPaging.setTotalCnt(0);
+               	}
+			});
+        },
+        /* 알람 대상자 리스트를 가져온다. */
+        setAlarmDaesangList: function(){
+			var self = this;
+			var returnVal = alertApi.daesang(this.alarmList.currentRow.ALARM_SEQ, this.alarmList.currentRow.ALARM_DAESANG_GB);
+               
+			returnVal.then(function(response) {
+				self.alarmDaesangList.setData(response.data);
+				self.setAlarmDaesangInfo();
+			});
+        },
+        /* 사용자 리스트 조회 */
+		setUserList: function(pGubun){
+			var self = this;
+			//var validate = this.$validator.validateAll();
+			var validate = null;
+			
+			if(pGubun == 'daesangja'){
+				validate = Promise.all([true]);
+			}else{
+				validate = Promise.all([
+					this.$validator.validate('pUserGroupGb'),
+					this.$validator.validate('pUserSearchArgv'),
+				]);	
+			}
+			
+			validate.then(function(response) {
+				if(response[0] && response[1] || pGubun == 'daesangja'){
+					
+					if(pGubun == 'daesangja'){
+						self.userListLoadingSec.val = true;
+						var param = {
+							ALARM_SEQ: self.alarmList.currentRow.ALARM_SEQ, 
+							ALARM_DAESANG_GB: self.alarmList.currentRow.ALARM_DAESANG_GB, 
+							USER_NM: self.pUserSearchArgvSec,
+						}
+						
+						var returnVal = alertApi.daesangUser(param, false);
+					}else{
+						self.userListLoading.val = true;
+						var param = {
+							pUserGroupGb: self.pUserGroupGb, 
+							pUserStatusGb: self.pUserStatusGb, 
+							pSearchArgv: self.pUserSearchArgv,
+							pUserTypeGb: self.pUserTypeGb,
+							pDeptCd: self.pDeptCd,
+							pDeptNm: self.pDeptNm,
+							pPageNo: self.userListPaging.currentPage, 
+							pRowCnt: self.userListPaging.getRowCnt(),
+						}
+						
+						var returnVal = userApi.user(param, false);
+					}
+					
+					self.userListPaging.currentPage = 1;
+					
+					returnVal.then(function(response) {
+						self.userList.setRawData(response.data, self.userListPaging.getRowCnt());
+						self.setAlarmDaesangList();	
+						
+						if(response.data.length > 0){
+							self.userListPaging.setTotalCnt(response.data.length);
+						}else{
+							self.userListPaging.setTotalCnt(0);
+						}
+					}).finally(function(){
+						self.userListLoading.val = false;
+						self.userListLoadingSec.val = false;
+					});
+				}
+			});
+		},
+		/* 알림 검색 */
+		search: function(){
+			var pageNo = this.alarmListPaging.getCurrentPage();
+
+			if(pageNo == 1){
+				this.setAlarmList();
+			}else{
+				this.alarmListPaging.movePage(1);
+			}  
+		},
+        /* 토글을 초기화 한다. */
+        initToggle: function(){
+        	var alarmDaesangGb = this.alarmList.currentRow.ALARM_DAESANG_GB;
+        	var self = this;
+        	/* 권한 */
+            if(alarmDaesangGb == '01'){
+            	this.authList.data.forEach(function(authObj, idx) {
+            		self.authList.data[idx].ALARM_YN = 'N';
+                });	
+            }
+            /* 사용자 */
+            else if(alarmDaesangGb == '02'){
+            	this.userList.data.forEach(function(userObj, idx) {
+            		self.userList.data[idx].ALARM_YN = 'N';
+                });
+            }
+            
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'ID_SAVE':
+	    			this.saveRow();
+	    			break;
+	    		case 'ID_DELETE':
+	    			this.deleteRow();
+	    			break;
+	    	}
+	    },
+	    /* 대상자 리스트 획득 후 권한, 사용자 테이블에 정보 셋팅 */
+	    setAlarmDaesangInfo: function(){
+	    	if(this.alarmList.rowposition > -1){
+	    		var alarmSeq = this.alarmList.currentRow.ALARM_SEQ;
+	            var alarmDaesangGb = this.alarmList.currentRow.ALARM_DAESANG_GB;
+	            
+	            /* 권한 */
+	            if(alarmDaesangGb == '01'){
+	            	this.authList.data.forEach(function(authObj, idx) {
+	                    authObj.ALARM_YN = vm.isAlarmDaesangInfo(alarmSeq, alarmDaesangGb, authObj.AUTH_CD);
+	                    Vue.set(vm.authList.data, idx, authObj);  
+	                    //vue.set(객체명, 인덱스, newVal) -> 객체의 값을 직접 변경. 객체명[idx] = newVal 로 변경시 vue가 감지하지 못함. 해당 함수를 이용해서 변경하면 감지 가능.
+	                });
+	            }
+	            /* 사용자 */
+	            else if(alarmDaesangGb == '02'){
+	            	this.userList.data.forEach(function(userObj, idx) {
+	                    userObj.ALARM_YN = vm.isAlarmDaesangInfo(alarmSeq, alarmDaesangGb, userObj.USER_ID);
+	                    Vue.set(vm.userList.data, idx, userObj);  
+	                    //vue.set(객체명, 인덱스, newVal) -> 객체의 값을 직접 변경. 객체명[idx] = newVal 로 변경시 vue가 감지하지 못함. 해당 함수를 이용해서 변경하면 감지 가능.
+	                });
+	            }	
+	    	}
+        },
+	    regAlarmDaesang: function(pDaesangjaId){
+	    	var alarmSeq = this.alarmList.currentRow.ALARM_SEQ;
+	    	var alarmDaesangGb = this.alarmList.currentRow.ALARM_DAESANG_GB;
+            var dataObj = {
+                'ALARM_SEQ': alarmSeq,
+                'ALARM_DAESANG_GB': alarmDaesangGb,
+                'DAESANGJA_ID': pDaesangjaId,
+            }
+			
+	    	/* 권한 */
+	    	if(alarmDaesangGb == '01'){
+	    		switch(this.authList.currentRow.ALARM_YN) {
+	                case 'Y':   //현재 상태가 'N'인 경우 등록(insert)
+	                    this.saveAlarmDaesang(dataObj);
+	                    break;
+	                case 'N':   //현재 상태가 'Y'인 경우 삭제(delete)
+	                    this.deleteAlarmDaesang(dataObj);
+	                    break;
+	                default:
+	                    break;
+	            }
+	    	}
+            /* 사용자 */
+            else if(alarmDaesangGb == '02'){
+            	switch(this.userList.currentRow.ALARM_YN) {
+	                case 'N':   //현재 상태가 'N'인 경우 등록(insert)
+	                    this.saveAlarmDaesang(dataObj);
+	                    break;
+	                case 'Y':   //현재 상태가 'Y'인 경우 삭제(delete)
+	                    this.deleteAlarmDaesang(dataObj);
+	                    break;
+	                default:
+	                    break;
+	            }
+            }
+        },
+        //알람 대상자에 해당 정보가 존재하는지 확인
+        isAlarmDaesangInfo: function(alarmSeq, alarmDaesangGb, daesangjaId) {			
+			if(isNull(alarmSeq) || isNull(alarmDaesangGb) || isNull(daesangjaId)) return;
+            
+			var findObj = _.filter(this.alarmDaesangList.data, function(daesang) {return  daesang.ALARM_SEQ == alarmSeq && daesang.ALARM_DAESANG_GB == alarmDaesangGb && daesang.DAESANGJA_ID == daesangjaId;});
+			try {
+                return isNull(findObj[0].ALARM_SEQ) ? 'N':'Y';
+			} catch (err) {
+                return 'N';
+			}
+		},
+        saveAlarmDaesang: function(pAlarmDaesangInfo) {
+            var self = this;
+
+            var returnVal = alertApi.daesangInsert(pAlarmDaesangInfo, true);
+                    
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+                    var data = response.data;    
+
+                    if(data == '1'){									
+                         notifySubmit('success', '앱권한 등록', '등록이 완료되었습니다.', 'icon-save');
+                         self.setAlarmDaesangList();     //저장 후 앱권한 리스트 갱신
+                    }else{
+                        notifySubmit('warning', '앱권한 등록', '등록에 실패하였습니다.', 'icon-caution');
+                    }
+				});
+			}
+        },
+        deleteAlarmDaesang: function(pAlarmDaesangInfo) {
+            var self = this;
+
+			var returnVal = alertApi.daesangDelete(pAlarmDaesangInfo, true);
+						
+			if(!isNull(returnVal)){
+			    returnVal.then(function(response) {
+				    var data = response.data;
+					
+					if(data == '1'){									
+                        notifySubmit('success', '앱권한 해제', '해제가 완료되었습니다.', 'icon-save');
+                        self.setAlarmDaesangList();      //삭제 후 앱권한 리스트 갱신
+					}else{
+						notifySubmit('warning', '앱권한 해제', '해제에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+        },
+        getApiTitle: function(pApiSeq) {
+	    	var methodGb = this.restApiCodeSet.getCustomcodeNm('API_SEQ', pApiSeq, 'METHOD_GB');
+	    	var apiNm = this.restApiCodeSet.getCustomcodeNm('API_SEQ', pApiSeq, 'API_NM');
+	    	var apiUrl = this.restApiCodeSet.getCustomcodeNm('API_SEQ', pApiSeq, 'API_URL');
+	    	var methodGbNm = this.smnCommcode.getCommcodeNm('SMN','METHOD_GB',methodGb,'CD_NM');
+	    	
+	    	//return '['+methodGbNm+'] '+apiNm+' ('+apiUrl+')';
+	    	return '['+methodGbNm+'] '+apiNm;
+	    },
+	    changeText: function(pText, pGb){
+			var userGroupGb = this.pUserGroupGb;
+			
+			if(pText == '가입 일자'){
+				if(userGroupGb == '1') return '입사일자';
+				else if(userGroupGb == '4') return '입학 일자';
+			}else if(pText == '내부 아이디'){
+				if(userGroupGb == '1') return '사번';
+				else if(userGroupGb == '4') return '학번';
+			}else if(pText == '부서'){
+				if(userGroupGb == '1') return '부서';
+				else if(userGroupGb == '4') return '학과';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속';
+			}else if(pText == '부서 코드'){
+				if(userGroupGb == '1') return '부서 코드';
+				else if(userGroupGb == '4') return '학과 코드';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속 코드';
+			}else if(pText == '부서 명'){
+				if(userGroupGb == '1') return '부서 명';
+				else if(userGroupGb == '4') return '학과 명';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속 명';
+			}else if(pText == '상태 구분'){
+				if(userGroupGb == '1') return '재직 구분';
+				else if(userGroupGb == '4') return '학적상태';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '사용 여부';
+			}else if(pText == '종류 구분'){
+				if(userGroupGb == '1') return '직종';
+				else if(userGroupGb == '4') return '학년';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '해당 없음';
+			}else if(pText == '등급 구분'){
+				if(userGroupGb == '1') return '직급';
+				else if(userGroupGb == '4') return '분반';
+			}
+			
+			return pText;
+		},
+	    searchPlaceHolder: function(pGb) {
+	    	if(pGb == 'text'){
+	    		if(this.pUserGroupGb == '4' && isNull(this.pDeptCd) && isNull(this.pUserTypeGb)){
+		    		return '사용자 명/아이디(2자이상)';	
+		    	}else{
+		    		return '사용자 명/아이디';
+		    	}
+	    	}else if(pGb == 'validate'){
+	    		if(this.pUserGroupGb == '4' && isNull(this.pDeptCd) && isNull(this.pUserTypeGb)){
+		    		return 'required|min:2';	
+		    	}else{
+		    		return '';	
+		    	}
+	    	}
+	    },
+		rowClick: function(index){
+			this.alarmList.selectRow(index); 
+			this.setAuthList;
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

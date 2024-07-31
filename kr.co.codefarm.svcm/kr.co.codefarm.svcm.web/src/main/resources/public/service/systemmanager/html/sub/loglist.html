@@ -1,0 +1,358 @@
+<h2>로그 목록</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">알림 상세 구분</label> 
+			        <select class="size-m" name="pAlarmDetailGb" id="pAlarmDetailGb">
+			        	<option value="">- 전체 -</option>
+						<option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'ALARM_DETAIL_GB', 'all', '', '', 'CD1'), function(e){return e.CD1 == '02';})" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				<div class="form-group col s12 l2">
+					<label for="pServiceType" class="label-type01">메소드 구분</label> 
+			        <select class="size-m" name="pMethodGb" id="pMethodGb">
+						<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'LOG_METHOD_GB', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				<div class="form-group col s12 l8">
+					<label for="pSearchType" class="label-type01">검색 구분</label> 
+					<div class="row form-row">
+						<div class="form-group col s12 l4">
+					        <select class="size-m" name="pSearchType" id="pSearchType">
+								<option value="1">로그 제목</option>
+						    	<option value="2">로그 내용</option>
+						    	<option value="3">사용자 아이디</option>
+							</select>
+						</div>
+						<div class="form-group col s12 l8">
+							<input type="text" name="pSearchArgv" class="size-m" id="pSearchArgv" @keyup.enter="search($event);" placeholder="검색어를 입력하세요.">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row form-row">
+				<div class="form-group col s12 l4">
+					<label for="frdt" class="label-type01">검색 기간</label>
+					<div class="row form-row">
+						<div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="strDate" @input="function(value){ strDate = value }" ></date-picker>
+	                            <input id="pStartDt" type="hidden" name="targetname" data-vv-as="날짜 " v-model="strDate">
+	                        </div>
+	                    </div>
+	                    <div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="endDate" @input="function(value){ endDate = value }"></date-picker>
+	                            <input id="pEndDt" type="hidden" name="targetname" data-vv-as="날짜 " v-model="endDate">
+	                        </div>
+	                    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-inline btn-line right">
+			 <a href="#!" class="btn type01 size-m" @click="search($event);">검색</a>
+		</div>
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{logListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{logListPaging.getCurrentPage()}}</span> / {{logListPaging.getTotalPage()}})</span>
+		</div>
+		
+		
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type05 response" summary="공통코드 번호, 공통 코드, 공통코드명, 공통코드영문명, 사용여부를 조회 항목별 순서대로 안내하는 표입니다">
+					<caption>로그 목록</caption>
+					<colgroup>
+						<col width="12%" />
+						<col width="" />
+						<col width="15%" />
+						<col width="12%" />
+						<col width="24%" />
+						<col width="12%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">알림 상세 구분</th>
+							<th scope="col">제목</th>
+							<th scope="col">일자</th>
+							<th scope="col">사용자 이름</th>
+							<th scope="col">사용자 아이디</th>
+							<th scope="col">사용자 아이피</th>
+						</tr>
+					</thead>
+					<tbody v-for="(item, index) in logList.data" v-if="logList.getRowCount() > 0 && logList.getRowType(index) != '8'">
+						<tr :ref="'table-tr'+index" :id="'table-tr'+index">
+							<td data-header="알림 상세 구분"><a href="#!" @click="rowClick(index, $event.target)">{{getGbNm(item.ALARM_DETAIL_GB)}}</a></td>
+							<td class="left" data-header="제목"><a href="#!" @click="rowClick(index, $event.target)">{{item.TITLE}}</a></td>
+							<td data-header="로그 시간"><a href="#!" @click="rowClick(index, $event.target)">{{item.LOG_DTTM}}</a></td>
+							<td data-header="사용자"><a href="#!" @click="rowClick(index, $event.target)">{{item.USER_NM}}</a></td>
+							<td data-header="사용자 아이디"><a href="#!" @click="rowClick(index, $event.target)" >{{item.USER_ID}}</a></td>
+							<td data-header="사용자 아이피"><a href="#!" @click="rowClick(index, $event.target)" >{{item.INSERT_IP}}</a></td>
+						</tr>
+						<tr class="hidden-tr" :ref="'hidden-tr'+index">
+							<td colspan="7" class="one-col">
+								<div class="row form-row">
+									<div class="form-group col s12 l3 xl2">
+							            <label class="label-type01" for="alarmDetailGb">알림 구분</label>
+							            <select class="size-m" name="alarmDetailGb" id="alarmDetailGb" v-model="item.ALARM_GB" disabled="disabled">
+											<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'ALARM_GB')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+										</select>
+							        </div>
+							        <div class="form-group col s12 l12 xl3">
+							    		<label class="label-type01" for="logMethodGb">메소드 구분</label>
+							            <select class="size-m" name="logMethodGb" id="logMethodGb" v-model="item.LOG_METHOD_GB" disabled="disabled">
+											<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'LOG_METHOD_GB')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+										</select>
+							    	</div>
+									<div class="form-group col s12 l3 xl3">
+							            <label class="label-type01" for="alarmDetailGb">알림 상세 구분</label>
+							            <select class="size-m" name="alarmDetailGb" id="alarmDetailGb" v-model="item.ALARM_DETAIL_GB" disabled="disabled">
+											<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'ALARM_DETAIL_GB')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+										</select>
+							        </div>
+							        <div class="form-group col s12 l3 xl2">
+							    		<label class="label-type01" for="cdNm">알림 순번</label>
+					   					<input class="size-m" type="text" id="alarmSeq"  name="alarmSeq" data-vv-as="로그 제목 " v-model="item.ALARM_SEQ" disabled="disabled"/>
+							    	</div>
+							        <div class="form-group col s12 l3 xl2">
+							    		<label class="label-type01" for="cdNm">로그 목록 순번</label>
+					   					<input class="size-m" type="text" id="logListSeq"  name="logListSeq" data-vv-as="로그 제목 " v-model="item.LOG_LIST_SEQ" disabled="disabled"/>
+							    	</div>
+								</div>
+								<div class="row form-row">
+							        <div class="form-group col s12 l3 xl3">
+							    		<label class="label-type01" for="cdNm">로그 제목</label>
+					   					<input class="size-m" type="text" id="title"  name="title" data-vv-as="로그 제목 " v-model="item.TITLE" disabled="disabled"/>
+							    	</div>
+							        <div class="form-group col s12 l3 xl3">
+							            <label class="label-type01" for="logDttm">로그 일시</label>
+					   					<input class="size-m" type="text" id="logDttm"  name="logDttm" data-vv-as="로그 일시 " v-model="item.LOG_DTTM" disabled="disabled"/>
+								    </div>
+									<div class="form-group col s12 l3 xl3">
+							            <label class="label-type01" for="userNm">사용자 이름</label>
+							            <input class="size-m" type="text" id="userNm"  name="userNm" data-vv-as="사용자 이름 " v-model="item.USER_NM" disabled="disabled"/>
+							        </div>
+							        <div class="form-group col s12 l3 xl3">
+							            <label class="label-type01" for="userId">사용자 아이디</label>
+					   					<input class="size-m" type="text" id="userId"  name="userId" data-vv-as="사용자 아이디 " v-model="item.USER_ID" disabled="disabled"/>
+								    </div>
+							    </div>
+							    <div class="row form-row">
+							        <div class="form-group col s12 l3 xl3">
+							    		<label class="label-type01" for="userIp">사용자 아이피</label>
+					   					<input class="size-m" type="text" id="userIp"  name="userIp" data-vv-as="사용자 아이피 " v-model="item.INSERT_IP" disabled="disabled"/>
+							    	</div>
+							    </div>
+							    <div class="row form-row">
+							        <div class="form-group col s12 l12 xl12">
+							    		<label class="label-type01" for="cdNm">로그 내용</label>
+					   					<textarea rows="10" class="size-m" type="text" id="text"  name="text" data-vv-as="로그 내용 " v-model="item.TEXT" disabled="disabled"></textarea>
+							    	</div>
+							    </div>
+							</td>
+						</tr>
+					</tbody>
+					<tbody v-if="logList.getRowCount() == 0">
+						<tr>
+							<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="logListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		strDate:moment().add(-3,'month').format('YYYYMMDD'),	// 검색조건 - 로그 검색 기간
+		endDate:moment().format('YYYYMMDD'),					// 검색조건 - 로그 검색 기간
+		logList: new Dataset(),									// 로그 목록
+		logListPaging: new PagingSet(5, 5),						// 로그 목록 페이징
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+	},
+	//계산된 속성 표현 시
+	computed: {
+	},
+	//데이터 감시
+	watch: {
+		'logList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.logList.enableevent){
+					var changeYn = this.logList.dataCompare(oldVal);
+					var rowType = this.logList.getRowType(val);
+					var oldRowType = this.logList.getRowType(oldVal);
+					
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.logList.setDefaultRow(oldVal);
+					}
+					
+					this.$validator.reset();
+					this.$nextTick(function(){
+						this.toggleTr();	
+					});
+				}
+			}
+		},		
+		'logList.data': {
+			handler: function (val, oldVal) {
+				if(this.logList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.logList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.logList.beforeData[rowposition][colNm] = data[colNm];
+				          		vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'logListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setLogList(null, val);
+			}
+	    }
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setLogList();
+	},
+	//함수
+	methods: {
+		/* 검색 */
+		search: function(e, pPageNo){
+		   var pageNo = this.logListPaging.getCurrentPage();
+
+		   if(pageNo == 1){
+		       this.setLogList(e, pPageNo);
+		   }else{
+		       this.logListPaging.movePage(1);
+		   }  
+		},
+		/* 로그 목록 조회 */
+		setLogList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				var pAlarmDetailGb 	= $('#pAlarmDetailGb option:selected').val();
+				var pMethodGb 		= $('#pMethodGb option:selected').val();
+				var pSearchType 	= $('#pSearchType option:selected').val();
+				var pSearchArgv 	= $('#pSearchArgv').val();
+				var pLogFrDt 		= this.strDate
+				var pLogToDt 		= this.endDate;
+				var pServiceType 	= $('#pServiceType option:selected').val();
+                var pageNo 			= pPageNo;
+                var rowCount 		= this.logListPaging.getRowCnt();
+
+				if(isNull(pAlarmDetailGb)) 	pAlarmDetailGb 	= '';
+				if(isNull(pMethodGb)) 		pMethodGb 	= '';
+				if(isNull(pSearchType)) 	pSearchType 	= '';
+				if(isNull(pSearchArgv)) 	pSearchArgv 	= '';
+				if(isNull(pLogFrDt)) 		pLogFrDt 		= '';
+				if(isNull(pLogToDt)) 		pLogToDt		= '';
+				if(isNull(pSearchArgv)) 	pSearchArgv 	= '';
+				if(isNull(pageNo)) 			pageNo 			= 1;
+				if(isNull(rowCount)) 		rowCount 		= 5;
+				
+				var param = {
+					'pAlarmDetailGb': pAlarmDetailGb,
+					'pMethodGb': pMethodGb,
+					'pSearchType': pSearchType,
+					'pSearchArgv': pSearchArgv,
+					'pLogFrDt': pLogFrDt,
+					'pLogToDt': pLogToDt,
+					'pSearchArgv': pSearchArgv, 
+					'pPageNo': pageNo,
+					'pRowCount': rowCount
+				};
+				
+				var self = this;
+				
+				var returnVal = loglistApi.getLogList(param, true);	
+				
+				returnVal.then(function(response) {
+					self.logList.setData(response.data);
+					
+					if(self.logList.getRowCount() > 0){
+						var totalCnt = self.logList.data[0].CNT;
+						self.logListPaging.setTotalCnt(totalCnt);
+					} else {
+						self.logListPaging.setTotalCnt(0);
+					}
+				});
+			}			
+		},
+		componentStateChange: function(){
+		},		
+		rowClick: function(index, target){
+			var paretnTr = $(target).parents('tr').eq(0);
+			if(index == this.logList.rowposition) this.toggleTr();
+			this.logList.selectRow(index);
+		},
+		toggleTr: function(){
+			var hiddenTr = this.$refs['hidden-tr'+this.logList.rowposition];
+			var tableTr = this.$refs['table-tr'+this.logList.rowposition];
+			
+			if ($(tableTr).hasClass('active')) {
+				$(tableTr).next('.hidden-tr').removeClass('on');
+				$(tableTr).removeClass('active');
+			} else {
+				$('.table-type05 tr').removeClass('active');
+			    $('.table-type05 .hidden-tr').removeClass('on');
+				$(tableTr).next('.hidden-tr').addClass('on');
+				$(tableTr).not('.hidden-tr').addClass('active');
+				this.moveId('table-tr'+this.logList.rowposition);
+			}
+		},
+	    moveId: function(id) {
+	    	this.$nextTick(function(){
+	    		location.href = '#'+id;
+          	})
+	    },
+		/* 알람 상세 구분 명칭 매핑 */
+		getGbNm: function(pCd) {
+			if(isNull(pCd)) return;
+			var list = this.smnCommcode.data;
+			var findObj =_.filter(list, function(uplist) {
+				  			return  uplist.UP_CD == 'ALARM_DETAIL_GB' && uplist.CD == pCd;
+						});	
+			try {
+				return isNull(findObj[0].CD_NM)?'':findObj[0].CD_NM;
+			} catch (err) {
+				return '';
+			}
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

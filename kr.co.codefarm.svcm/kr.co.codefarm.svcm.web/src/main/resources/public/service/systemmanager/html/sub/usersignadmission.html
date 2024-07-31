@@ -1,0 +1,321 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/user.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/menu.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/appstore.css" />
+
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!applyUserList.currentRow">
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+			<input type="text" name="pSearchArgv" class="size-m" id="pSearchArgv" v-model="pSearchArgv" placeholder="기업 / 기관 명" @keyup.13="setApplyUserList" data-vv-as="기업 / 기관 명" v-bind:class="{'invalid':errors.has('pSearchArgv')}">
+			<input type="button" value="검색" class="btn type01 size-m" @click="setApplyUserList">
+		</div>
+		<div class="col s12 l12">
+			<span class="board-info-txt size-m">총 <span>{{applyUserListPaging.totalCnt}}</span>건의 내용이 있습니다. (<span>{{applyUserListPaging.getCurrentPage()}}</span> / {{applyUserListPaging.getTotalPage()}})
+			</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="applyUserListLoading">
+					<colgroup>
+						<col width="10%" />
+						<col width="35%" />
+						<col width="30%" />
+						<col width="25%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">신청번호</th>
+							<th scope="col">기관명</th>
+							<th scope="col">이메일</th>
+							<th scope="col">담당자명</th>
+						</tr>
+					</thead>
+					<tbody v-if="applyUserList.getRowCount() > 0">
+						<tr style="cursor: pointer;" v-for="(item, index) in applyUserList.data">
+							<td data-header="신청번호" @click="rowClick(index)">{{item.CORP_ID}}</td>
+							<td class="left" data-header="기관명" @click="rowClick(index)">{{item.CORP_NM}}</td>
+							<td data-header="이메일" @click="rowClick(index)">{{item.USER_ID}}</td>
+							<td data-header="담당자명" @click="rowClick(index)">{{item.USER_NM}}</td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">가입신청자가 현재 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="applyUserListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+	<section class="cont_box" v-if="applyUserList.currentRow" id="applyLoading">
+		<h3 class="h2">기관 정보</h3>
+		<div class="style_set box-type01">
+			<div class="row form-row">
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">기관명</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.CORP_NM" disabled />
+				</div>
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">사업자등록번호</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.CORP_BIZ_NO.replaceAll('-','').replace(/([0-9]{3})([0-9]{2})([0-9]{5})$/, '$1-$2-$3')" disabled />
+				</div>
+			</div>
+			<div class="row form-row">
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">대표자명</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.CORP_CEO_NM" disabled />
+				</div>
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">전화번호</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.CORP_TEL_NO.replaceAll('-','').replace(/([0-9]{2,3})([0-9]{3,4})([0-9]{4})$/, '$1-$2-$3')" disabled />
+				</div>
+			</div>
+			<div class="right">
+				<div class="col-inline" v-if="fileSet.fileList.length > 0">
+					<label class="label-type01">첨부파일</label>
+					<input class="size-m" type="text" :value="fileSet.fileList[0]['FILE_NM']" disabled/>
+					<input class="btn type01 size-m" type="button" value="다운로드" @click="downloadFile" />
+				</div>
+				<div class="col-inline" v-else>
+					<label class="label-type01">첨부파일</label>
+					<input class="size-m" type="text" value="파일없음" disabled/>
+					<input class="btn type01 size-m" type="button" value="다운로드" disabled />
+				</div>
+			</div>
+		</div>
+		<h3 class="h2">담당자 정보</h3>
+		<div class="style_set box-type01">
+			<div class="row form-row">
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">담당자명</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.USER_NM" disabled />
+				</div>
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">이메일주소</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.USER_ID" disabled />
+				</div>
+			</div>
+			<div class="row form-row">
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">전화번호</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.TEL_NO.replaceAll('-','').replace(/([0-9]{2,3})([0-9]{3,4})([0-9]{4})$/, '$1-$2-$3')" disabled />
+				</div>
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">휴대폰번호</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.HP_NO.replaceAll('-','').replace(/([0-9]{2,3})([0-9]{3,4})([0-9]{4})$/, '$1-$2-$3')" disabled />
+				</div>
+			</div>
+			<div class="row form-row">
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">부서명</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.ADD_COL1" disabled />
+				</div>
+				<div class="form-group col s12 m6 l6 xl6">
+					<label class="label-type01">직책명</label>
+					<input class="size-m" type="text" :value="applyUserList.currentRow.ADD_COL2" disabled />
+				</div>
+			</div>
+		</div>
+		<div class="btn-line right">
+			<input type="button" class="btn type01 size-m" value="목록" @click="applyUserList.selectRow(-1)">
+			<input type="button" class="btn bg-red size-m" value="반려" onclick="modal_open('rejectModal');" @click="rejectText = '';">
+			<input type="button" class="btn type02 size-m" value="승인" @click="messageModal.openModal('confirm','회원가입 승인',applyUserList.currentRow.USER_NM + '님의 회원가입을 승인하시겠습니까?','middle','admission',applyUserList.currentRow)">
+		</div>
+	</section>
+
+	<div class="modal-layer-wrap">
+		<div id="rejectModal" class="modal-layer modal-small">
+			<div class="modal-container">
+				<div class="modal-header">
+					<p class="modal-title">회원가입 승인 반려</p>
+				</div>
+				<div class="modal-content">
+					<div class="row">
+						<div class="col s12 m12 l12">
+						<label class="label-type01">반려사유</label>
+							<textarea class="size-m" v-model="rejectText"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer center">
+					<a href="#!" class="btn type02 size-m layer_close" @click="rejectUser">반려</a>
+					<a href="#!" class="btn type01 size-m layer_close" onclick="modal_close('rejectModal')">닫기</a>
+				</div>
+				<div class="btn-r">
+					<a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		applyUserList: new Dataset(),
+		applyUserListPaging: new PagingSet(20, 10),
+		componentKey: 0,
+		errorBag: { 
+			name: '', 
+		},
+	    pUserGroupGb: '1',
+	    pUserStatusGb: '11',
+	    pSearchArgv: '',
+	    pUserTypeGb: '',
+	    pDeptCd: '',
+	    pDeptNm: '',
+	    rejectText: '',
+	    applyUserListLoading: {id:'applyUserListLoading', val:false},
+	    applyLoading: {id:'applyLoading', val:false},
+		fileSet: new SingleFileSet('SMN',null,null,true),
+	    authCodeSet: new CustomcodeSet('/system-manager/auth',{pUseYn:'Y',pAuthGb:'02'}),
+        messageModal: new ModalSet('common-msg-modal'),	// confirm 모달
+//         rejectModal: new ModalSet('rejectModal'),	// confirm 모달
+	},
+	//데이터 감시
+	watch: {
+		'applyUserList.data': {
+			handler: function(val, oldVal) {
+				if(this.applyUserList.enableevent) {
+					var vm = this;
+					val.filter(function(data, rowposition) {
+						return Object.keys(data).some(function(colNm) {
+							var diff = data[colNm] !== vm.applyUserList.beforeData[rowposition][colNm];
+							if(diff) {
+								vm.applyUserList.beforeData[rowposition][colNm] = data[colNm];
+							}
+						});
+					});
+				}
+			},
+			deep: true
+		},
+		'applyUserListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.applyUserList.pageChange(val, this.applyUserListPaging.getRowCnt());
+			}
+		},
+	    'applyUserListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.applyUserListLoading.id), val);
+			}
+	    },
+	    'applyLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.applyLoading.id), val);
+			}
+	    }
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setApplyUserList();
+	},
+	//함수
+	methods: {
+		/* 사용자 리스트 조회 */
+		setApplyUserList: function(){
+			var self = this;
+			self.applyUserListLoading.val = true;
+			var param = {
+				pSearchArgv: self.pSearchArgv,
+			}
+			
+			var returnVal = userApi.userSign(param, false);
+			self.applyUserListPaging.currentPage = 1;
+			
+			returnVal.then(function(response) {
+				self.applyUserList.setRawData(response.data, self.applyUserListPaging.getRowCnt());
+				if(response.data.length > 0){
+					self.applyUserListPaging.setTotalCnt(response.data.length);
+				}else{
+					self.applyUserListPaging.setTotalCnt(0);
+				}
+				vm.$forceUpdate();
+			}).finally(function(){
+				self.applyUserListLoading.val = false;
+			});
+		},
+		updateUser: function(pData){
+			var self = this;
+			var validate = this.$validator.validateAll();
+			
+			validate.then(function(response) {
+				if(response){
+					self.applyLoading.val = true;
+			
+					var params = pData;
+					var returnVal = userApi.userSignAdmission(params);
+					returnVal.then(function(response) {
+						self.applyLoading.val = false;
+						if(response.data > 0){
+							notifySubmit('success', '회원가입 승인', '회원가입 승인에 성공하였습니다.', 'icon-save');
+							self.setApplyUserList();                                                                      
+						}
+						else{
+							notifySubmit('warning', '회원가입 승인', '회원가입 승인에 실패하였습니다.', 'icon-caution');
+						}
+					});
+				}
+			});
+		},
+		rejectUser: function(){
+			var self = this;
+			var params = self.applyUserList.currentRow;
+			params['MSG'] = self.rejectText;
+			var returnVal = userApi.rejectUser(params);
+			self.applyLoading.val = true;
+			
+			returnVal.then(function(response) {
+				self.applyLoading.val = false;
+				if(response.data > 0){
+					notifySubmit('success', '회원가입 반려', '회원가입이 반려되었습니다.', 'icon-save');
+					self.applyUserList.selectRow(-1);
+					self.setApplyUserList();
+				}
+				else{
+					notifySubmit('warning', '회원가입 반려', '회원가입 반려에 실패했습니다.', 'icon-caution');
+				}
+			});	
+		},
+		rowClick: function(rowposition){
+			var self = this;
+			self.applyUserList.selectRow(rowposition);
+			self.fileSet.getFiles('CORP_ID',self.applyUserList.currentRow.CORP_ID,'file');
+		},
+		downloadFile: function(){
+			var self = this;
+			self.fileSet.download('CORP_ID',self.applyUserList.currentRow.CORP_ID,'file','1',self.fileSet.fileList[0].FILE_NM,self.fileSet.fileList[0].FILE_PATH);
+		},
+        messagePopupCallback: function(pGb, pId, pData) {	
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    	case 'admission' :
+	    		this.updateUser(pData);
+	    		break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

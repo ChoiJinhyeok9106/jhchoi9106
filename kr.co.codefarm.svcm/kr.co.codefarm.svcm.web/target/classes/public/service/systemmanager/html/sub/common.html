@@ -1,0 +1,807 @@
+<h2>공통코드 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<div class="box-type03 col-inline" v-if="comCodeLv==0">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+	        <select class="size-m" name="pServiceType" v-model="pServiceType" :disabled="pServiceTypeDisabled" v-if="serviceCodeSet != null">
+				<option v-for="(item, index) in serviceCodeSet.getCustomcode('service_CD', 'service_NM')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+			</select>
+	        <select class="size-m" name="pSearchType" v-model="pSearchType">
+				<option value="1">공통 코드/명</option>
+		    	<!-- <option value="2">공통 코드명</option> -->
+		    	<option value="3">공통 코드 영문명</option>
+			</select>
+   			<input type="text" name="pSearchArgv" class="size-m" v-model="pSearchArgv" @keyup.enter="setCommonList(event);" placeholder="검색어를 입력하세요.">
+
+	        <input type="button" value="검색" class="btn type01 size-m" @click="setCommonList">
+	        <div class="f-right">
+	            <!-- <input type="button" value="상세검색" class="btn type01 size-m" @click="detailSearch = !detailSearch"> -->
+	            <input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+	        </div>
+	    </div>
+
+		<section class="cont_box board-view-page nonsubject-info" v-if="comCodeLv==1">
+			<div class="row form-row head-box">
+	   			<div class="form-group col s12 l8">
+		   			<p class="title">[{{upCodeInfo.CD}}] {{upCodeInfo.CD_NM}}</p>
+		        	<p class="description"  v-if="serviceCodeSet != null">서비스명: {{serviceCodeSet.getCustomcodeNm('service_CD', upCodeInfo.SERVICE_CD, 'service_NM')}}</p>
+	   			</div>
+	    		<div class="form-group col s12 l4 right">
+		    		<a href="#!" class="btn type01 size-m left-icon icon-corner-left-up" @click="changeParentComCode">목록</a>
+		    		<input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+	    		</div>
+	   		</div>
+   		</section>
+
+		<div class="col s12 l12" v-if="comCodeLv == 0">
+		    <span class="board-info-txt size-m">총 <span>{{commonParentListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{commonParentListPaging.getCurrentPage()}}</span> / {{commonParentListPaging.getTotalPage()}})</span>
+		</div>
+
+		<div class="col s12 l12" v-if="comCodeLv == 1">
+		    <span class="board-info-txt size-m">총 <span>{{commonChildListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{commonChildListPaging.getCurrentPage()}}</span> / {{commonChildListPaging.getTotalPage()}})</span>
+		</div>
+
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type05 response" summary="공통코드 번호, 공통 코드, 공통코드명, 공통코드영문명, 사용여부를 조회 항목별 순서대로 안내하는 표입니다"  id="mainListLoading">
+					<caption>공통코드 목록</caption>
+					<colgroup>
+						<col width="7%" />
+						<col withd="10%" />
+						<col width="20%" />
+						<col width="20%"/>
+						<col width="12%" />
+						<col withd="7%" />
+						<col withd="7%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">상태</th>
+							<th class="left" scope="col">공통코드</th>
+							<th class="left" scope="col">서비스명</th>
+							<th class="left" scope="col">공통코드명</th>
+							<th class="left" scope="col">공통코드약어</th>
+							<th scope="col">사용여부</th>
+							<th scope="col">정렬순서</th>
+						</tr>
+					</thead>
+					<tbody v-for="(item, index) in commonList.data" v-if="commonList.getRowCount() > 0 && commonList.getRowType(index) != '8'">
+						<tr :ref="'table-tr'+index" :id="'table-tr'+index">
+							<td :class="commonList.getRowType(index, 'class')" data-header="">&nbsp;</td>
+							<td class="left" data-header="공통코드"><a href="#!" @click="rowClick(index, $event.target)">{{item.CD}}</a></td>
+							<td class="left" data-header="서비스명"><a href="#!" @click="rowClick(index, $event.target)"  v-if="serviceCodeSet != null">{{ serviceCodeSet.getCustomcodeNm('service_CD', item.SERVICE_CD, 'service_NM') }}</a></td>
+							<td class="left" data-header="공통코드명"><a href="#!" @click="rowClick(index, $event.target)">{{item.CD_NM}}</a></td>
+							<td class="left" data-header="공통코드약어"><a href="#!" @click="rowClick(index, $event.target)">{{item.ABBR_NM}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index, $event.target)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="정렬순서"><a href="#!" @click="rowClick(index, $event.target)">{{item.ORD}}</a></td>
+						</tr>
+						<tr class="hidden-tr" :ref="'hidden-tr'+index">
+							<td colspan="7" class="one-col">
+								<div class="row form-row">
+									<div class="form-group col s12 l6 xl6">
+							            <label class="label-type01 required" :for="'cd'+index">공통 코드</label>
+							            <input class="size-m" type="text" :id="'cd'+index"  :name="'cd'+index" data-vv-as="공통 코드 " v-model="item.CD" v-validate="'required|max:50'" :disabled="updateDisabled" v-bind:class="{'invalid': errors.has('cd'+index)}"/>
+							            <invalid-message :visible="true" :name="'cd'+index" :verror="errors"/>
+							        </div>
+							        <div class="form-group col s12 l6 xl6">
+							            <label class="label-type01 required" :for="'serviceCd'+index">서비스 코드</label>
+								        <select class="size-m"  :id="'serviceCd'+index" @change="vaildateCheck('serviceCd'+index)" :name="'serviceCd'+index" v-model="item.SERVICE_CD" data-vv-as="서비스 코드 " v-validate="'required'" :disabled="updateDisabledSvrcCd" v-bind:class="{'invalid': errors.has('serviceCd'+index)}"  v-if="serviceCodeSet != null">
+						            		<option v-for="(item2, index2) in serviceCodeSet.getCustomcode('service_CD', 'service_NM', 'select')" v-bind:value="item2.CD">
+						            			{{item2.CD_NM}}
+						            		</option>
+					   					</select>
+					   					<invalid-message :visible="true" :name="'serviceCd'+index" :verror="errors"/>
+								    </div>
+								</div>
+								<div class="row form-row">
+							        <div class="form-group col s12 l6 xl6">
+							    		<label class="label-type01 required" :for="'cdNm'+index">공통코드 명</label>
+							    		<input class="size-m" type="text" :id="'cdNm'+index"  :name="'cdNm'+index" data-vv-as="공통코드 명 " v-model="item.CD_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('cdNm'+index)}"/>
+							    		<invalid-message :visible="true" :name="'cdNm'+index" :verror="errors"/>
+							    	</div>
+							    	<div class="form-group col s12 l6 xl6">
+							            <label class="label-type01" :for="'cdEnm'+index">공통코드 영문명</label>
+							            <input class="size-m" type="text" :id="'cdEnm'+index"  :name="'cdEnm'+index" data-vv-as="공통코드 영문명 " v-model="item.CD_ENM" v-validate="'max:10'" v-bind:class="{'invalid': errors.has('cdEnm'+index)}"/>
+							            <invalid-message :visible="true" :name="'cdEnm'+index" :verror="errors"/>
+							        </div>
+							    </div>
+							    <div class="row form-row">
+							    	<div class="form-group col s12 l4 xl4">
+							            <label class="label-type01" :for="'abbrNm'+index">약어</label>
+							            <input class="size-m" type="text" :id="'abbrNm'+index"  :name="'abbrNm'+index" data-vv-as="공통코드 약어 " v-model="item.ABBR_NM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('abbrNm'+index)}"/>
+							            <invalid-message :visible="true" :name="'abbrNm'+index" :verror="errors"/>
+							        </div>
+							        <div class="form-group col s12 l4 xl4">
+							    		<label class="label-type01" :for="'abbrEnm'+index">영문약어</label>
+							    		<input class="size-m" type="text" :id="'abbrEnm'+index"  :name="'abbrEnm'+index" data-vv-as="공통코드 영문약어 " v-model="item.ABBR_ENM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('abbrEnm'+index)}"/>
+							    		<invalid-message :visible="true" :name="'abbrEnm'+index" :verror="errors"/>
+							    	</div>
+							    	<div class="form-group col s12 l4 xl4">
+							    		<label class="label-type01" :for="'ord'+index">정렬순서</label>
+							    		<input class="size-m" type="text" :id="'ord'+index"  :name="'ord'+index" data-vv-as="정렬순서 " v-model="item.ORD" v-validate="'numeric|max:10'" v-bind:class="{'invalid': errors.has('ord'+index)}"/>
+							    		<invalid-message :visible="true" :name="'ord'+index" :verror="errors"/>
+							    	</div>
+							    </div>
+							    <div class="row form-row">
+									<div class="form-group col s12 l4">
+										<div class="row form-row">
+											<div class="col s8 m6 l8 col-label">
+												<label :for="'useYn'+index" class="label-type01 size-m">사용여부</label>
+											</div>
+											<div class="col s4 m6 l4">
+												<label class="toggle-switch size-m">
+													<input class="size-m" type="checkbox" :id="'useYn'+index" :name="'useYn'+index" data-vv-as="사용여부 " v-model="item.USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('useYn'+index)}"/>
+													<span class="slider round"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="form-group col s12 l4">
+										<div class="row form-row">
+											<div class="col s8 m6 l8 col-label">
+												<label :for="'sysCdYn'+index" class="label-type01 size-m">시스템코드여부</label>
+											</div>
+											<div class="col s4 m6 l4">
+												<label class="toggle-switch size-m">
+													<input class="size-m" type="checkbox" :id="'sysCdYn'+index" :name="'sysCdYn'+index" data-vv-as="시스템코드여부 " v-model="item.SYS_CD_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('sysCdYn'+index)}" :disabled="pServiceTypeDisabled"/>
+													<span class="slider round"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="form-group col s12 l4">
+										<div class="row form-row">
+											<div class="col s8 m6 l8 col-label">
+												<label :for="'inputLmtYn'+index" class="label-type01 size-m">입력제한여부</label>
+											</div>
+											<div class="col s4 m6 l4">
+												<label class="toggle-switch size-m">
+													<input class="size-m" type="checkbox" :id="'inputLmtYn'+index" :name="'inputLmtYn'+index" data-vv-as="입력제한여부 " v-model="item.INPUT_LMT_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('inputLmtYn'+index)}"/>
+													<span class="slider round"></span>
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row form-row">
+							    	<div class="form-group col s12 m12 l12 xl12">
+							            <label class="label-type01" :for="'commonDesc'+index">공통코드 설명</label>
+							            <input class="size-m" type="text" :id="'commonDesc'+index"  :name="'commonDesc'+index" data-vv-as="공통코드 설명" v-model="item.COMMON_DESC" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('commonDesc'+index)}"/>
+							            <invalid-message :visible="true" :name="'commonDesc'+index" :verror="errors"/>
+							        </div>
+							    </div>
+							    <div class="row form-row">
+							    	<div class="form-group col s12 m12 l12 xl12">
+							            <label class="label-type01" :for="'Remark'+index">Remark</label>
+							            <input class="size-m" type="text" :id="'Remark'+index"  :name="'Remark'+index" data-vv-as="Remark " v-model="item.REMARK" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('Remark'+index)}"/>
+							            <invalid-message :visible="true" :name="'Remark'+index" :verror="errors"/>
+							        </div>
+							    </div>
+							    <template v-if="item.LV==1">
+								    <div class="row form-row">
+								    	<div class="form-group col s12 l6 xl6">
+								            <label class="label-type01" :for="'cd1'+'-'+index"><a href="#!" @click="setCdBtnName('CD1')">{{upCodeInfo.CD1 == 'CD1' || upCodeInfo.CD1 == '' ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD1}}</a></label>
+								            <input class="size-m" type="text" :id="'cd1'+'-'+index"  :name="'cd1'+'-'+index" data-vv-as="코드1" v-model="item.CD1" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd1'+'-'+index)}"/>
+								            <invalid-message :visible="true" :name="'cd1'+'-'+index" :verror="errors"/>
+								        </div>
+								        <div class="form-group col s12 l6 xl6">
+								    		<label class="label-type01" :for="'cd2'+'-'+index"><a href="#!" @click="setCdBtnName('CD2')">{{upCodeInfo.CD2 == 'CD2' || upCodeInfo.CD2 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD2}}</a></label>
+								    		<input class="size-m" type="text" :id="'cd2'+'-'+index"  :name="'cd2'+'-'+index" data-vv-as="코드2" v-model="item.CD2" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd2'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd2'+'-'+index" :verror="errors"/>
+								    	</div>
+							    	</div>
+							    	<div class="row form-row">
+								    	<div class="form-group col s12 l6 xl6">
+								            <label class="label-type01" :for="'cd3'+'-'+index"><a href="#!" @click="setCdBtnName('CD3')">{{upCodeInfo.CD3 == 'CD3' || upCodeInfo.CD3 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD3}}</a></label>
+								            <input class="size-m" type="text" :id="'cd3'+'-'+index"  :name="'cd3'+'-'+index" data-vv-as="코드3" v-model="item.CD3" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd3'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd3'" :verror="errors"/>
+								        </div>
+								        <div class="form-group col s12 l6 xl6">
+								    		<label class="label-type01" :for="'cd4'+'-'+index"><a href="#!" @click="setCdBtnName('CD4')">{{upCodeInfo.CD4 == 'CD4' || upCodeInfo.CD4 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD4}}</a></label>
+								    		<input class="size-m" type="text" :id="'cd4'+'-'+index"  :name="'cd4'+'-'+index" data-vv-as="코드4" v-model="item.CD4" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd4'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd4'+'-'+index" :verror="errors"/>
+								    	</div>
+							    	</div>
+							    	<div class="row form-row">
+								    	<div class="form-group col s12 l6 xl6">
+								            <label class="label-type01" :for="'cd5'+'-'+index"><a href="#!" @click="setCdBtnName('CD5')">{{upCodeInfo.CD5 == 'CD5' || upCodeInfo.CD5 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD5}}</a></label>
+								            <input class="size-m" type="text" :id="'cd5'+'-'+index"  :name="'cd5'+'-'+index" data-vv-as="코드5" v-model="item.CD5" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd5'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd5'+'-'+index" :verror="errors"/>
+								        </div>
+								        <div class="form-group col s12 l6 xl6">
+								    		<label class="label-type01" :for="'cd6'+'-'+index"><a href="#!" @click="setCdBtnName('CD6')">{{upCodeInfo.CD6 == 'CD6' || upCodeInfo.CD6 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD6}}</a></label>
+								    		<input class="size-m" type="text" :id="'cd6'+'-'+index"  :name="'cd6'+'-'+index" data-vv-as="코드6" v-model="item.CD6" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd6'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd6'+'-'+index" :verror="errors"/>
+								    	</div>
+							    	</div>
+							    	<div class="row form-row">
+								    	<div class="form-group col s12 l6 xl6">
+								            <label class="label-type01" :for="'cd7'+'-'+index"><a href="#!" @click="setCdBtnName('CD7')">{{upCodeInfo.CD7 == 'CD7' || upCodeInfo.CD7 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD7}}</a></label>
+								            <input class="size-m" type="text" :id="'cd7'+'-'+index"  :name="'cd7'+'-'+index" data-vv-as="코드7" v-model="item.CD7" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd7'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd7'+'-'+index" :verror="errors"/>
+								        </div>
+								        <div class="form-group col s12 l6 xl6">
+								    		<label class="label-type01" :for="'cd8'+'-'+index"><a href="#!" @click="setCdBtnName('CD8')">{{upCodeInfo.CD8 == 'CD8' || upCodeInfo.CD8 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD8}}</a></label>
+								    		<input class="size-m" type="text" :id="'cd8'+'-'+index"  :name="'cd8'+'-'+index" data-vv-as="코드8" v-model="item.CD8" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd8'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd8'+'-'+index" :verror="errors"/>
+								    	</div>
+							    	</div>
+							    	<div class="row form-row">
+								    	<div class="form-group col s12 l6 xl6">
+								            <label class="label-type01" :for="'cd9'+'-'+index"><a href="#!" @click="setCdBtnName('CD9')">{{upCodeInfo.CD9 == 'CD9' || upCodeInfo.CD9 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD9}}</a></label>
+								            <input class="size-m" type="text" :id="'cd9'+'-'+index"  :name="'cd9'+'-'+index" data-vv-as="코드9" v-model="item.CD9" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd9'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd9'+'-'+index" :verror="errors"/>
+								        </div>
+								        <div class="form-group col s12 l6 xl6">
+								    		<label class="label-type01" :for="'cd10'+'-'+index"><a href="#!" @click="setCdBtnName('CD10')">{{upCodeInfo.CD10 == 'CD10' || upCodeInfo.CD10 == ''  ? '사용시 클릭 후 코드명을 등록해주세요' : upCodeInfo.CD10}}</a></label>
+								    		<input class="size-m" type="text" :id="'cd10'+'-'+index"  :name="'cd10'+'-'+index" data-vv-as="코드10" v-model="item.CD10" v-validate="'max:45'" v-bind:class="{'invalid': errors.has('cd10'+'-'+index)}"/>
+								    		<invalid-message :visible="true" :name="'cd10'+'-'+index" :verror="errors"/>
+								    	</div>
+							    	</div>
+						    	</template>
+
+						    	<div class="row form-row">
+									<div class="form-group col s12 l12 xl12">
+										<div class="col-inline right">
+											<a href="#!" class="btn type01 size-m" @click="messagePopup('ID_DELETE')">삭제</a>
+											<a href="#!" class="btn type01 size-m" v-if="comCodeLv==0&&commonList.getRowType(index)!='2'" @click="changeChildComCode(item);">하위코드 관리</a>
+											<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+					<tbody v-if="commonList.getRowCount() == 0">
+						<tr>
+							<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="commonParentListPaging" :type="'normal'" v-if="comCodeLv==0"></paging>
+			<paging :pagingset="commonChildListPaging" :type="'normal'" v-if="comCodeLv==1"></paging>
+		</div>
+	</section>
+
+	<!-- modal layer popup  -->
+	<transition name="fade">
+		<div class="modal-layer-wrap on" v-if="modalShow">
+		    <div id="cd_name_modal" class="modal-layer" style="display:block;">
+		        <div class="modal-container">
+		            <div class="modal-header">
+		                    <p class="modal-title">코드명 변경</p>
+		                </div>
+		                <div class="modal-content">
+		                    <div class="row">
+		                        <div class="col s12">
+		                           	 <input class="size-m" type="text" v-model="btnCdNm" id="cdBtn" name="cdBtn" data-vv-as="코드명" v-validate="'min:1|max:20'" v-bind:class="{'invalid': errors.has('cdBtn')}"/>
+		                           	 <invalid-message :visible="true" :name="'cdBtn'" :verror="errors"/>
+		                        </div>
+		                    </div>
+		                </div>
+		                <div class="modal-footer center">
+		                	<a href="#!" class="btn type02 size-m layer_close" @click="cdBtnSave()">저장</a>
+		                    <a href="#!" class="btn type02 size-m layer_close" @click="cdBtnClose()">취소</a>
+		                </div>
+		                <div class="btn-r">
+		                    <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+		                </div>
+		            </div>
+		        </div>
+		 </div>
+	 </transition>
+	 <modal-message :modalset="editModal"></modal-message>
+	 <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+
+
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		commonList: new Dataset(),		//공통코드 목록(상하위 공용))
+		updateDisabled: false,			//공통코드 입력 available
+		updateDisabledSvrcCd: false,	//서비스코드 입력 available(하위코드인 경우 false)
+		//srvcs: [],						//서비스코드 목록
+		comCodeUpCd: '',				//상위코드의 UP_CD
+		comCodeLv: 0,				//코드의 LV
+		subTitle: '공통코드 리스트[상위코드]',	//서브타이틀 텍스트
+		btnCdId: '',					//하위 커스텀 버튼의 ID
+		btnCdNm: '',					//하위 커스텀 버튼의 명칭
+		cdBtns: [],						//하위 커스텀 버튼의 명칭이 저장된 배열(상위코드의 CDx 값)
+		pageNoBK: -1,					//상위 페이지 인덱스 백업용
+		upCodeInfo: new Object(),			//상위 코드 정보(하위코드 리스트에서 보여줄 상위 코드 정보)
+		editModal: new ModalSet('common-modal'),		//모달(커스텀 코드명 입력용)
+		commonParentListPaging: new PagingSet(5, 5),	//상위 리스트 페이징 객체
+		commonChildListPaging: new PagingSet(5, 5),		//하위 리스트 페이징 객체
+		modalShow: false,				//커스텀 모달 버튼 visible flag
+		messageModal: new ModalSet('common-msg-modal'),	// confirm 모달
+		serviceCodeSet: null,
+		tabPage: 1,
+		pServiceTypeDisabled: false,
+		pServiceType: 'SMN',
+		pSearchType: '1',
+	    pSearchArgv: '',
+	    pSysCdYn: '',
+		mainListLoading: {id:'mainListLoading', val:false},
+	},
+	//생성 될 때
+	beforeCreate: function(){
+
+	},
+	//계산된 속성 표현 시
+	computed: {
+
+	},
+	//데이터 감시
+	watch: {
+		'commonList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.commonList.enableevent){
+					var changeYn = this.commonList.dataCompare(oldVal);
+					var rowType = this.commonList.getRowType(val);
+					var oldRowType = this.commonList.getRowType(oldVal);
+
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.commonList.setDefaultRow(oldVal);
+					}
+
+					if(val != -1){
+						if(rowType == this.ROWTYPE_NORMAL  || rowType == this.ROWTYPE_UPDATE){
+							this.updateDisabled = true;
+						}else{
+							this.updateDisabled = false;
+						}
+
+						if(this.comCodeLv == 1 || rowType != ROWTYPE_INSERT){
+							this.updateDisabledSvrcCd = true;
+						}else{
+							this.updateDisabledSvrcCd = false;
+						}
+					}
+
+					this.$validator.reset();
+					this.$nextTick(function(){
+						this.toggleTr();
+					});
+				}
+			}
+		},
+		'commonList.data': {
+			handler: function (val, oldVal) {
+				if(this.commonList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.commonList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.commonList.beforeData[rowposition][colNm] = data[colNm];
+				          		//colNm, rosposition 
+
+				          		vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'commonParentListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setCommonList(null, val, 'CHANGE_PARENT')
+			}
+	    },
+	    'commonChildListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setCommonList(null, val, 'CHANGE_CHILD')
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		if(typeof globalParam.SERVICE_CD == 'string'){
+			this.serviceCodeSet = new CustomcodeSet('/system-manager/service/initList', {'pCommcodeUseYn':'Y', 'pServiceCd':globalParam.SERVICE_CD});
+        	this.pServiceType = globalParam.SERVICE_CD;
+        	this.pServiceTypeDisabled = true;
+        	this.pSysCdYn = 'N';
+        }else{
+			this.serviceCodeSet = new CustomcodeSet('/system-manager/service/initList', {'pCommcodeUseYn':'Y'});
+        }
+		var self = this;
+		this.$nextTick(function(){
+			self.setCommonList();
+
+		});
+		//this.getSvrcList()
+	},
+	//함수
+	methods: {
+		/* 서비스 리스트 조회 */
+		setCommonList: function(e, pPageNo, pMode){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				var self = this;
+                var pageNo = pPageNo;
+                var rowCount = this.commonChildListPaging.getRowCnt();
+
+                if(typeof globalParam.SERVICE_CD == 'string'){
+                	this.pServiceType = globalParam.SERVICE_CD;
+                	this.pServiceTypeDisabled = true;
+                	this.pSysCdYn = 'N';
+                }
+
+				if(isNull(this.pServiceType)) {
+					this.messagePopup('ID_SEARCH_SERVICE_NOT_SELECT');
+					//alert("조회할 서비스명을 설정해 주십시오.");
+					return;
+				}
+
+				//자식 공통코드 검색이 아닌 경우
+				if(pMode!='CHANGE_CHILD') 	{
+					this.comCodeUpCd = this.pServiceType;		//UP_CD를 상위코드용으로 재설정
+                    rowCount = this.commonParentListPaging.getRowCnt();
+					this.pageNoBK = pageNo;			//상위 리스트 페이지 번호 백업
+					this.setSubTitle();				//타이틀 변경
+				}
+
+
+				if(isNull(this.pSearchType) || pMode=='CHANGE_CHILD'){
+					this.pSearchArgv = '';
+				}
+
+				if(isNull(pageNo)) pageNo = 1;
+				self.mainListLoading.val = true;
+				var returnVal = commonApi.common(this.pServiceType, this.pSearchType, this.pSearchArgv, pageNo, rowCount, this.comCodeUpCd, this.pSysCdYn, false);
+
+				returnVal.then(function(response) {
+					self.commonList.setData(response.data);
+
+					if(self.commonList.getRowCount() > 0){
+						var totalCnt = self.commonList.data[0].CNT;
+
+						if(self.comCodeLv == 0){			//상위코드인 경우
+							if(pMode=='CHANGE_PARENT') {		//모드 변경일 경우는 페이징만 변경
+								//self.commonParentListPaging.movePage(pPageNo);
+								return;
+							}
+							self.commonParentListPaging.setTotalCnt(totalCnt);
+							//self.commonParentListPaging.movePage(1);
+						} else {
+							self.commonChildListPaging.setTotalCnt(totalCnt);
+							//self.commonChildListPaging.movePage(1);
+						}
+					} else {
+						if(self.comCodeLv == 0){			//상위코드인 경우
+							self.commonParentListPaging.setTotalCnt(0);
+						} else {
+							self.commonChildListPaging.setTotalCnt(0);
+						}
+					}
+				}).finally(function(){
+					self.mainListLoading.val = false;
+				});
+			}
+		},
+		/* 서비스 리스트 신규행 추가 */
+		newRow: function(){
+
+			if(this.isListInInsertRow(this.commonList)) return;
+
+            var addObj = {
+                'UP_CD':  this.comCodeLv==0?this.pServiceType:this.comCodeUpCd,
+                'CD': '',
+                'SERVICE_CD': this.comCodeLv==0?this.pServiceType:this.upCodeInfo.SERVICE_CD,
+                'CD_NM': '',
+                'CD_ENM': '',
+                'LV': this.comCodeLv,
+                'ABBR_NM': '',
+                'ABBR_ENM': '',
+                'COMMON_DESC': '',
+                'ORD': 0,
+                'USE_YN': 'Y',
+                'SYS_CD_YN': 'N',
+                'INPUT_LMT_YN': 'N',
+                'CD1': this.comCodeLv==0?'CD1':'',
+                'CD2': this.comCodeLv==0?'CD2':'',
+                'CD3': this.comCodeLv==0?'CD3':'',
+                'CD4': this.comCodeLv==0?'CD4':'',
+                'CD5': this.comCodeLv==0?'CD5':'',
+                'CD6': this.comCodeLv==0?'CD6':'',
+                'CD7': this.comCodeLv==0?'CD7':'',
+                'CD8': this.comCodeLv==0?'CD8':'',
+                'CD9': this.comCodeLv==0?'CD9':'',
+                'CD10': this.comCodeLv==0?'CD10':'',
+                'REMARK': ''
+            };
+
+            var newRowPosition = this.commonList.addRow(addObj);
+
+			//var newRowPosition = this.commonList.addRow();
+			//this.commonList.setColumn(newRowPosition, 'UP_CD', this.comCodeLv==0?$('#pServiceType option:selected').val():this.comCodeUpCd);		//상위 코드일 경우는 -1, 하위인 경우 상위 코드의 CD를 설정
+			//this.commonList.setColumn(newRowPosition, 'LV', this.comCodeLv);
+			//this.commonList.setColumn(newRowPosition, 'SERVICE_CD', this.comCodeLv==0?$('#pServiceType option:selected').val():this.upCodeInfo.SERVICE_CD);
+		},
+		/* 서비스 리스트 저장,수정 */
+		saveRow: function(){
+
+			var self = this;
+			var validate = this.$validator.validateAll();
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.commonList.rowposition;
+					var rowType = self.commonList.getRowType(rowposition);
+					var returnVal = null;
+
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = commonApi.commonInsert(self.commonList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = commonApi.commonUpdate(self.commonList.currentRow, true);
+					}else{
+						notifySubmit('info', '공통코드 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							//alert(JSON.stringify(data));
+							if(data == '1'){
+									if(self.comCodeLv==0) {	//상위 코드
+										self.setCommonList(null, self.commonParentListPaging.currentPage);
+									} else {				//하위 코드
+										self.setCommonList(null, self.commonChildListPaging.currentPage, 'CHANGE_CHILD');
+									}
+								notifySubmit('success', '공통코드 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '공통코드 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						});
+					}
+				}else{
+					notifySubmit('warning', '공통코드 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		/* 서비스 리스트 삭제  - SQL맵에서 하위 코드도 삭제 처리*/
+		deleteRow: function(){
+			var self = this;
+			var row = this.commonList.rowposition;
+
+			var rowType = this.commonList.getRowType(row);
+			var returnVal = null;
+
+			if(rowType==ROWTYPE_INSERT) {
+				this.commonList.deleteRow(row);
+			} else {
+				this.commonList.selectRow(row);
+				returnVal = commonApi.commonDelete(this.commonList.currentRow, true);
+				returnVal.then(function(response) {
+					var data = response.data;
+
+					notifySubmit('success', '공통코드 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+					if(self.comCodeLv==0) {	//상위 코드
+						self.setCommonList(null, null);
+					} else {	//하위 코드
+						self.setCommonList(null, null,'CHANGE_CHILD');
+					}
+				}).catch(function(error) {
+					notifySubmit('warning', '공통코드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});
+			}
+
+		},
+		/* 서비스 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+			var rowposition = this.commonList.rowposition;
+			var rowType = this.commonList.getRowType(rowposition);
+
+			if(rowType == ROWTYPE_NORMAL || rowType == ROWTYPE_UPDATE){
+				$('#cd').attr('disabled', true);
+			}else{
+				$('#cd').attr('disabled', false);
+			}
+		},
+		usePrint: function(bYn) {		//그리트 테이블에서 사용/미사용 표시 (bYn : 'Y' or 'N')
+			return bYn=='Y'?'사용':'미사용';
+		},
+		setSubTitle: function(pCdNm) {	//서브 타이틀 변경
+			//this.subTitle = (this.comCodeLv==0?"공통코드 리스트[상위코드]":"공통코드 리스트[하위코드] - '" + pCdNm + "(" + this.comCodeUpCd + ")'");
+			this.subTitle = (this.comCodeLv==0?"공통코드 리스트[상위코드]":"공통코드 리스트[하위코드]");
+		},
+		changeChildComCode: function(pItems) {	//하위코드 모드 변경
+			this.comCodeLv = 1;
+			this.upCodeInfo = pItems;
+			this.comCodeUpCd = pItems.CD;
+			//this.getCdBtnList(pItems.CD);
+
+			this.commonChildListPaging.movePage(1);
+			this.setCommonList(null,null,'CHANGE_CHILD');
+			this.setSubTitle(pItems.CD_NM);
+
+			this.$nextTick(function(){
+				this.commonList.selectRow(-1);
+			});
+		},
+		changeParentComCode: function() {			//상위코드 모드 변경
+			this.comCodeLv = 0;
+			this.comCodeUpCd = this.upCodeInfo.SERVICE_CD;
+			this.setCommonList(null, this.pageNoBK,'CHANGE_PARENT');
+
+			this.$nextTick(function(){
+				this.commonList.selectRow(-1);
+			});
+		},
+		/* getSvrcList() {					//서비스 코드 목록 조회
+			var returnVal = commonApi.service(true);
+
+			returnVal.then(function(response) {
+				this.srvcs = response.data;
+			});
+		},
+		getSvrcNm(srvcId) {			//서비스 리스트에서 코드에 대항하는 명칭 검색
+			if(isNull(srvcId)) return;
+
+			var findObj =_.filter(this.srvcs, function(srvc) {
+				  			return  srvc.SERVICE_CD == srvcId;
+						});
+
+			try {
+				return isNull(findObj[0].SERVICE_NM)?'':findObj[0].SERVICE_NM;
+			} catch (err) {
+				return '';
+			}
+
+		}, */
+		isListInInsertRow: function(dataList) {
+			if(isNull(dataList)) return;
+
+			var findObj =_.filter(dataList.data, function(obj) {
+				  			return  obj.ROW_TYPE == ROWTYPE_INSERT;
+						});
+
+			try {
+				return findObj.length==0?false:true;
+			} catch (err) {
+				return '';
+			}
+		},
+		setCdBtnName: function(pBtnId) {			//커스텀 코드 명칭 변경 처리(모달)
+			this.btnCdId = pBtnId;
+
+			this.btnCdNm = this.upCodeInfo[this.btnCdId];
+			//modal_open('cd_name_modal');
+			this.modalShow = modal_open('cd_name_modal');
+
+			//this.editModal.openModal('confirm', 'TEST TITLE', 'contents', 'small');
+			return false;
+		},
+		/* getCdBtnList(pCd) {			//커스텀 코드 명칭 조회
+			var returnVal = commonApi.cd(pCd ,true);
+
+			returnVal.then(function(response) {
+				this.cdBtns = response.data;
+			});
+
+		}, */
+		cdBtnSave: function(){			//커스텀 버튼 수정 사항 저장
+			var self = this;
+
+			this.upCodeInfo[this.btnCdId] = this.btnCdNm;
+
+			var valid = this.$validator.validate('cdBtn', this.btnCdNm);
+
+			valid.then(function(response) {
+				if(response){
+					//var returnVal = commonApi.cdUpdate(this.upCodeInfo ,true);
+					var returnVal = commonApi.commonUpdate(self.upCodeInfo ,true);
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+
+							if(data == '1'){
+								notifySubmit('success', '커스텀 코드명저장', '저장이 완료되었습니다.', 'icon-save');
+								self.cdBtnClose();
+							}else{
+								notifySubmit('warning', '커스텀 코드명 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						});
+					}
+				} else {
+					notifySubmit('warning', '커스텀 코드명 저장', '입력 길이를 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		cdBtnClose: function(){			//커스텀 버튼 수정 모달 닫기
+			this.modalShow = false;
+			 $("html").css("overflow", "auto");
+		},
+		vaildateCheck: function(pId) {
+			if(isNull(pId)) this.$validator.validateAll();
+			else this.$validator.validate(pId);
+		},
+		rowClick: function(index, target){
+			var paretnTr = $(target).parents('tr').eq(0);
+			if(index == this.commonList.rowposition) this.toggleTr();
+			this.commonList.selectRow(index);
+		},
+		toggleTr: function(){
+			var hiddenTr = this.$refs['hidden-tr'+this.commonList.rowposition];
+			var tableTr = this.$refs['table-tr'+this.commonList.rowposition];
+
+			if ($(tableTr).hasClass('active')) {
+				$(tableTr).next('.hidden-tr').removeClass('on');
+				$(tableTr).removeClass('active');
+			} else {
+				$('.table-type05 tr').removeClass('active');
+			    $('.table-type05 .hidden-tr').removeClass('on');
+				$(tableTr).next('.hidden-tr').addClass('on');
+				$(tableTr).not('.hidden-tr').addClass('active');
+				this.moveId('table-tr'+this.commonList.rowposition);
+			}
+		},
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            var pGb = 'confirm';
+
+            switch(pId) {
+	    		case 'ID_DELETE':
+	    			title = '삭제';
+	    			cont = '해당 항목을 삭제하시겠습니까? ' + (this.comCodeLv==0?"<br />(해당 공통 코드의 하위 코드도 삭제됩니다.)":"");
+                    break;
+	    		case 'ID_SEARCH_SERVICE_NOT_SELECT':
+	    			cont = '서비스명 선택은 필수 입니다.';
+	    			pGb = 'message';
+                    break;
+	    	}
+
+	    	this.messageModal.openModal(pGb, title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+
+	    	switch(pId) {
+	    		case 'ID_DELETE':
+	    			this.deleteRow();
+	    			break;
+	    	}
+	    },
+	    moveId: function(id) {
+	    	this.$nextTick(function(){
+	    		location.href = '#'+id;
+          	})
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>
+

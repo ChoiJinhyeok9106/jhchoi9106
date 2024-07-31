@@ -1,0 +1,486 @@
+<h2>위젯 권한 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!authList.currentRow">
+		<h3 class="h2">권한 리스트</h3>
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+	        <select class="size-m" name="pAuthGb" id="pAuthGb">
+				<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'AUTH_GB', 'all')" :value="item.CD">{{item.CD_NM}}</option>
+			</select>
+	        <select class="size-m" name="pSearchType" id="pSearchType">
+				<option value="1">권한코드</option>
+				<option value="2">권한명</option>
+			</select>
+   			<input type="text" name="pSearchArgv" class="size-m" id="pSearchArgv" @keyup.enter="search($event);" placeholder="검색어를 입력하세요.">
+            
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search">
+	    </div>
+		
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{authListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{authListPaging.getCurrentPage()}}</span> / {{authListPaging.getTotalPage()}})</span>
+		</div>
+		
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" summary=""  id="mainListLoading">
+					<caption></caption>
+					<colgroup>
+						<!-- <col width="5%" /> -->
+						<col width="10%" />
+						<col width="10%" />
+						<col width="" />
+						<col width="7%" />
+						<col width="10%" />
+						<col width="13%" />
+						<col width="13%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<!-- <th scope="col">상태</th> -->
+							<th scope="col">권한구분</th>
+							<th scope="col">권한코드</th>
+							<th scope="col">권한명</th>
+							<th scope="col">순서</th>
+							<th scope="col">사용여부</th>
+							<th scope="col">개인정보 열람여부</th>
+							<th scope="col">회원가입 사용여부</th>
+						</tr>
+					</thead>
+					<tbody v-if="authList.getRowCount() > 0">
+						<tr v-for="(item, index) in authList.data" v-if="authList.getRowType(index) != '8'">
+							<!-- <td :class="authList.getRowType(index, 'class')" data-header="">&nbsp;</td> -->
+							<td data-header="권한구분"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</a></td>
+							<td data-header="권한코드"><a href="#!" @click="rowClick(index)">{{item.AUTH_CD}}</a></td>
+							<td class="left" data-header="권한명"><a href="#!" @click="rowClick(index)">{{item.AUTH_NM}}</a></td>
+							<td data-header="순서"><a href="#!" @click="rowClick(index)">{{item.ORD}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="개인정보 열람여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.GAEINJEONGBO_HIT_YN == 'Y', 'btn-table-type01':item.GAEINJEONGBO_HIT_YN == 'N'}"><span :class="{'icon-checkmark':item.GAEINJEONGBO_HIT_YN == 'Y', 'icon-minus-circle':item.GAEINJEONGBO_HIT_YN == 'N'}"></span></a></td>
+							<td data-header="회원가입 사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.SIGNUP_USE_YN == 'Y', 'btn-table-type01':item.SIGNUP_USE_YN == 'N'}"><span :class="{'icon-checkmark':item.SIGNUP_USE_YN == 'Y', 'icon-minus-circle':item.SIGNUP_USE_YN == 'N'}"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="authListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+	
+	<section class="cont_box board-view-page nonsubject-info" v-if="authList.currentRow">
+		<div class="row form-row head-box">
+			<div class="form-group col s12 l8">
+				<p class="title">{{ authList.getColumn(authList.rowposition, 'AUTH_NM') }}</p>
+				<p class="description">{{ authList.getColumn(authList.rowposition, 'AUTH_DESC') }}</p>
+			</div>
+			<div class="form-group col s12 l4 right">
+				<a href="#!" class="btn type01 size-m left-icon icon-corner-left-up" @click="authList.selectRow(-1)">목록</a>
+			</div>
+		</div>
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+			 <select name="pAppUseYn" v-model="pAppUseYn" style="width:184px;" class="size-m">
+                <option value="">- 앱 권한 여부 -</option>
+                <option value="Y">예</option>
+                <option value="N">아니오</option>
+            </select>
+            <select name="pWidgetSearchType" v-model="pWidgetSearchType" style="width:184px;" class="size-m">
+                <option value="1">위젯 명</option>
+                <option value="2">위젯 영문명</option>
+                <option value="3">설명</option>
+            </select>
+            <input type="text" v-model="pWidgetSearchArgv" name="pWidgetSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="searchAuth($event)">
+			<input type="button" value="검색" class="btn type01 size-m" @click="searchAuth">
+		</div>
+		
+		<div class="col s12 l12">
+			<span class="board-info-txt size-m">총 <span>{{widgetAuthLListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{widgetAuthLListPaging.getCurrentPage()}}</span> / {{widgetAuthLListPaging.getTotalPage()}})</span>
+		</div>
+		
+		<div class="table-type04-wrap">
+			<table id="sub1ListLoading" class="table-type05 response" summary="공통코드 번호, 공통 코드, 공통코드명, 공통코드영문명, 사용여부를 조회 항목별 순서대로 안내하는 표입니다">
+				<caption>공통코드 목록</caption>
+				<colgroup>
+					<col width="25%" />
+					<col width="10%" />
+					<col width="25%" />
+					<col width="20%" />
+					<col width="20%" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col">앱 명</th>
+						<th scope="col">앱 권한</th>
+						<th class="left" scope="col">위젯 명</th>
+						<th class="left" scope="col">위젯 컴퍼넌트명</th>
+						<th scope="col">권한 설정</th>
+					</tr>
+				</thead>
+				<tbody v-if="widgetAuthList.getRowCount() > 0" v-for="(item, index) in widgetAuthList.data" v-if="widgetAuthList.getRowType(index) != '8'">
+					<tr :ref="'table-tr'+index" :id="'table-tr'+index">
+						<td class="left" data-header="앱 명"><a href="#!" @click="subRowClick(index, $event.target)">{{item.APP_NM}}</a></td>
+						<td data-header="앱 권한 여부"><a href="#!" @click="subRowClick(index, $event.target)" :class="{'btn-table-type02':item.APP_AUTH_YN == 'Y', 'btn-table-type01':item.APP_AUTH_YN == 'N'}"><span :class="{'icon-checkmark':item.APP_AUTH_YN == 'Y', 'icon-minus-circle':item.APP_AUTH_YN == 'N'}"></span></a></td>
+						<td class="left" data-header="위젯 명"><a href="#!" @click="subRowClick(index, $event.target)">{{item.WIDGET_NM}}</a></td>
+						<td class="left" data-header="위젯 컴퍼넌트명"><a href="#!" @click="subRowClick(index, $event.target)">{{item.URL}}</a></td>
+						<td data-header="권한설정">
+							<div class="form-check" v-if="item.APP_AUTH_YN == 'Y'">
+	                    		<label class="toggle-switch">
+	                                <input type="checkbox" id="widgetAuthYn" name="widgetAuthYn" data-vv-as="사용여부 " v-model="item.WIDGET_AUTH_YN" @click="regWidgetAuth($event.target.checked, index)" true-value="Y" false-value="N">>
+	                                <span class="slider bg-red round"></span>
+	                            </label>
+	                    	</div>
+	                    	<template v-if="item.APP_AUTH_YN == 'N'">
+	                    		앱 권한이 없습니다.
+	                    	</template>
+						</td>
+					</tr>
+					<tr class="hidden-tr" :ref="'hidden-tr'+index">
+						<td colspan="5" class="one-col">
+							<div class="row form-row">
+								<div class="form-group col s12 l12 xl12">
+						            <label class="label-type01 required" for="widgetEnm">위젯 설명</label>
+						            <textarea v-html="item.WIDGET_DESC" readonly class="form-plaintxt size-m"></textarea>
+						        </div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+				<tbody v-if="widgetAuthList.getRowCount() == 0">
+					<tr>
+						<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		
+		<!-- <div class="app-list" id="sub1ListLoading">
+			<div class="title-line">
+				<span style="width:20%;" class="left">앱 명</span>
+				<span style="width:20%;" class="left">앱 권한 여부</span>
+				<span style="width:20%;" class="left">위젯 명</span>
+				<span style="width:20%;" class="left">위젯 컴퍼넌트명</span>
+				<span style="width:20%;" class="left">권한 설정</span>
+			</div>
+			
+			<div v-for="(item, index) in widgetAuthList.data" v-if="widgetAuthList.getRowCount() > 0">
+				<div class="app-list-box">
+					<div style="width:20%;">
+                        <span><span><span class="tit left">{{item.APP_NM}}</span></span></span>
+                    </div>
+                    
+                    <div style="width:20%;">
+                        <span>
+                        	<span class="left">
+                        		<span class="text" v-if="item.APP_AUTH_YN == 'Y'">예</span>
+                        		<span class="text" v-if="item.APP_AUTH_YN == 'N'">아니오</span>
+                        	</span>
+                        </span>
+                    </div>
+                    
+                    <div style="width:20%;">
+                        <span><span class="left"><span class="text">{{item.WIDGET_NM}}</span></span></span>
+                    </div>
+                    
+                    <div style="width:20%;">
+                        <span><span class="left"><span class="text">{{item.URL}}</span></span></span>
+                    </div>
+                    
+                    <div style="width:20%;">
+                    	<div class="form-check">
+                    		<label class="toggle-switch">
+                                <input v-if="item.APP_AUTH_YN == 'Y'" type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부 " v-model="item.WIDGET_AUTH_YN" @click="regWidgetAuth(item.WIDGET_AUTH_YN, index)" true-value="Y" false-value="N">
+                                <input v-if="item.APP_AUTH_YN == 'N'" type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부 " v-model="item.WIDGET_AUTH_YN" @click="warningAppAuth" true-value="Y" false-value="N" disabled>
+                                <span class="slider bg-red round"></span>
+                            </label>
+                    	</div>
+                        <span><span class="left"><span class="text">{{item.WIDGET_ENM}}</span></span></span>
+                    </div>
+				</div>
+			</div>
+		</div> -->
+		<paging :pagingset="widgetAuthLListPaging" :type="'normal'"></paging>
+	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	/* 사용할 데이터 */
+	data: {
+        authList: new Dataset(),				// 실적 목록(상하위 공용))
+        authListPaging: new PagingSet(5, 5),	// 페이징
+        updateDisabled : false,
+		mainListLoading: {id:'mainListLoading', val:false},
+	    pWidgetSearchType: '1',
+	    pWidgetSearchArgv: '',
+	    pAppUseYn : 'Y',
+	    sub1ListLoading: {id:'sub1ListLoading', val:false},
+	    widgetAuthList: new Dataset(),
+	    widgetAuthLListPaging: new PagingSet(5, 20),
+	    sendWidgetAuth : new Dataset(),
+	},
+	/* 생성 될 때 */ 
+	beforeCreate: function(){
+	},
+	/* 계산된 속성 표현 시 */
+	computed: {
+	},
+	/* 데이터 감시 */
+	watch: {
+		'authList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.authList.enableevent){
+					this.pAppUseYn = 'Y';
+					this.pWidgetSearchType = '1';
+					this.pWidgetSearchArgv = '';
+					
+					if(val != -1){
+						this.setWidgetAuth();						
+					}
+                }
+			}
+		},		
+		'authList.data': {
+			handler: function (val, oldVal) {                
+				if(this.authList.enableevent){
+// 					var vm = this;
+// 				  	val.filter( function( data, rowposition ) {
+// 				      	return Object.keys(data ).some( function( colNm ) {
+// 				          	var diff = data[colNm] !== vm.authList.beforeData[rowposition][colNm];
+// 				          	if(diff) {
+// 				          		vm.authList.beforeData[rowposition][colNm] = data[colNm];
+// 				          		vm.componentStateChange();
+// 				          	}
+// 				      	})
+// 				  	});
+                }
+			},
+			deep: true
+	    },	
+	    'widgetAuthList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.widgetAuthList.enableevent){
+					/* this.$nextTick(function(){
+						this.toggleTr();	
+					}); */
+				}
+			}
+		},		
+		'authListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setAuthList(null, val)
+			}
+	    },
+	    'widgetAuthLListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setWidgetAuth(null, val)
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'sub1ListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.sub1ListLoading.id), val);
+			}
+	    },
+	},
+	/* 마운트 된 시점수행 */
+	mounted: function(){
+		this.setAuthList();
+	},
+	/* 함수 */
+	methods: {
+		/* 서비스 리스트 조회 */
+		setAuthList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+                var pUseYn = '';                                  //USE_YN
+				var pAuthGb 		= $('#pAuthGb').val();
+				var pSearchType 	= $('#pSearchType').val();
+				var pSearchArgv = $('#pSearchArgv').val();
+				var pPageNo 	= pPageNo;
+                var pRowCount 	= this.authListPaging.getRowCnt();
+                var self = this;
+
+                if(isNull(pUseYn)) pUseYn = '';
+				if(isNull(pAuthGb)) pAuthGb = '';
+				if(isNull(pSearchType)) pSearchType = '';
+				if(isNull(pSearchArgv)) pSearchArgv = '';
+				if(isNull(pPageNo)) pPageNo = 1;
+				if(isNull(pRowCount)) pRowCount = 5;
+				
+				self.mainListLoading.val = true;
+				var returnVal = authApi.auth(pUseYn, pAuthGb, pSearchType, pSearchArgv, this.authListPaging.currentPage, this.authListPaging.getRowCnt(), false);
+				
+				returnVal.then(function(response) {
+					self.authList.setData(response.data);
+
+					if(self.authList.getRowCount() > 0){
+                        var totalCnt = self.authList.data[0].CNT;
+						self.authListPaging.setTotalCnt(totalCnt);
+						//self.authList.selectRow(0);
+					}else{
+						self.authListPaging.setTotalCnt(0);
+					}
+				}).finally(function(){
+					self.mainListLoading.val = false;
+				});
+			}			
+		},
+		/* 검색 */
+		search: function(e, pPageNo){
+		   var pageNo = this.authListPaging.getCurrentPage();
+
+		   if(pageNo == 1){
+		       this.setAuthList(e, pPageNo);
+		   }else{
+		       this.authListPaging.movePage(1);
+		   }  
+		},
+		/*앱 검색*/
+		searchAuth : function(e, pPageNo){
+		   var pageNo = this.widgetAuthLListPaging.getCurrentPage();
+
+		   if(pageNo == 1){
+		       this.setWidgetAuth(e, pPageNo);
+		   }else{
+		       this.widgetAuthLListPaging.movePage(1);
+		   }  
+		},
+		/* 서비스 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+			var rowposition = this.authList.rowposition;
+			var rowType = this.authList.getRowType(rowposition);
+		},
+		//rowClick
+		rowClick : function(row){
+			this.widgetAuthLListPaging.movePage(1);
+			this.authList.selectRow(row);
+		},
+		setWidgetAuth : function(){
+			var self = this;
+			
+			if(isNull(this.pAppUseYn)) this.pAppUseYn = '';
+			if(isNull(this.pWidgetSearchArgv)) this.pWidgetSearchArgv = '';
+            if(isNull(this.pWidgetSearchType)){
+                this.pWidgetSearchType = '';
+                this.pWidgetSearchArgv = '';
+            }
+            self.sub1ListLoading.val = true;
+			var returnVal = widgetApi.widgetAuth(this.pAppUseYn, this.pWidgetSearchType, this.pWidgetSearchArgv, this.authList.currentRow.AUTH_CD ,this.widgetAuthLListPaging.currentPage, this.widgetAuthLListPaging.getRowCnt(), false);
+			
+            returnVal.then(function(response) {
+            	self.widgetAuthList.setData(response.data);
+                if(self.widgetAuthList.getRowCount() > 0){
+                    var totalCnt = self.widgetAuthList.data[0].CNT;
+                    self.widgetAuthLListPaging.setTotalCnt(totalCnt);
+                }else{
+                	self.widgetAuthLListPaging.setTotalCnt(0);
+                }
+            }).finally(function(){
+				self.sub1ListLoading.val = false;
+			});
+		},
+		//위젯 권한 등록
+		regWidgetAuth : function(widgetAuthChecked, row){
+			this.widgetAuthList.selectRow(row);
+			if(!widgetAuthChecked){
+                this.deleteWidgetAuth();
+			}else{
+                this.saveWidgetAuth();
+			}
+		},
+		saveWidgetAuth : function(){
+			var self = this;
+			//전달용 데이터 셋 clear
+			this.sendWidgetAuth.clear();
+			
+			var obj = {
+					'APP_ID' : this.widgetAuthList.currentRow.APP_ID,
+					'WIDGET_SEQ' : this.widgetAuthList.currentRow.WIDGET_SEQ,
+					'AUTH_CD' : this.authList.currentRow.AUTH_CD
+			}
+			
+			this.sendWidgetAuth.addRow(obj);
+			var returnVal = widgetApi.widgetAuthInsert(this.sendWidgetAuth.currentRow);
+			
+			
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					var data = response.data;  
+					if(data == '1'){
+						notifySubmit('success', '위젯권한 등록', '등록이 완료되었습니다.', 'icon-save');
+					}else{
+						notifySubmit('warning', '위젯권한 등록', '등록에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+		},
+		//위젯 권한 삭제
+		deleteWidgetAuth : function(){
+			var self = this;
+			
+			var returnVal = widgetApi.widgetAuthDelete(this.widgetAuthList.currentRow.APP_ID, this.widgetAuthList.currentRow.WIDGET_SEQ, this.authList.currentRow.AUTH_CD);
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					var data = response.data;
+					
+					if(data == '1'){
+						notifySubmit('success', '위젯권한 삭제', '해제가 완료되었습니다.', 'icon-trashcan');
+					}else{
+						notifySubmit('warning', '위젯권한 삭제', '해제에 실패하였습니다.', 'icon-caution');
+					}
+				});
+				
+			}
+		},
+		subRowClick: function(index, target){
+			var paretnTr = $(target).parents('tr').eq(0);
+			this.widgetAuthList.selectRow(index);
+			this.toggleTr();
+		},
+		toggleTr: function(){
+			var hiddenTr = this.$refs['hidden-tr'+this.widgetAuthList.rowposition];
+			var tableTr = this.$refs['table-tr'+this.widgetAuthList.rowposition];
+			
+			if ($(tableTr).hasClass('active')) {
+				$(tableTr).next('.hidden-tr').removeClass('on');
+				$(tableTr).removeClass('active');
+			} else {
+				$('.table-type05 tr').removeClass('active');
+			    $('.table-type05 .hidden-tr').removeClass('on');
+				$(tableTr).next('.hidden-tr').addClass('on');
+				$(tableTr).not('.hidden-tr').addClass('active');
+				this.moveId('table-tr'+this.widgetAuthList.rowposition);
+			}
+		},
+		moveId: function(id) {
+	    	this.$nextTick(function(){
+	    		location.href = '#'+id;
+          	})
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

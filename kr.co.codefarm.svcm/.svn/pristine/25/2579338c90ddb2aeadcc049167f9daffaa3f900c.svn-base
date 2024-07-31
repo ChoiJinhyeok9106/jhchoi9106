@@ -1,0 +1,1315 @@
+<script type="text/javascript" src="/app-assets/js/api/amanager/gdscdmgmt.api.js"></script>
+<script type="text/javascript" src="/app-assets/js/api/amanager/commonsearch.api.js"></script>
+
+
+<h3 style="margin-top:-20px;">자산관리 > 설정 > 물품코드 > <strong>물품코드관리</strong></h3>
+<section class="sub_cont_box" id="app" style="margin-top:10px;">
+	<section class="cont_box" v-if="!mainList1.currentRow && !mainList2.currentRow">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l2">
+			        <label for="pSearchType" class="label-type01" for="pAssetClNo">물품분류번호</label>
+		        	<input type="text" v-model="pAssetClNo" id="pAssetClNo" name="pAssetClNo"  class="size-m" v-on:keyup.13="search()">
+			    </div>
+			
+				<div class="form-group col s12 l2">
+				    <label for="pSearchType" class="label-type01" for="pAssetClKoNm">물품명</label>
+				    <input type="text" v-model="pAssetClKoNm" id="pAssetClKoNm" name="pAssetClKoNm" class="size-m" v-on:keyup.13="search()">
+				</div>
+				
+				<div class="form-group col s12 l2">
+				    <label for="pSearchType" class="label-type01" for="pAssetStndKoNm">규격명</label>
+				    <input type="text" v-model="pAssetStndKoNm" id="pAssetStndKoNm" name="pAssetStndKoNm"class="size-m" v-on:keyup.13="search()">
+				</div>
+				<div class="form-group col s12 l2">
+				    <label for="pServiceType" class="label-type01" for="pTagKindCd">태그종류</label>
+					<div class="select-group" style="display: flex; align-items: center;">
+				        <select class="size-m" v-model="pTagKindCd" name="pTagKindCd" id="pTagKindCd">
+				            <option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0120', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+				        </select>
+					</div>	
+				</div>
+				
+				<div class="form-group col s12 l2">
+				    <label for="pServiceType" class="label-type01" for="pIntAt">정수여부</label>
+					<div class="select-group" style="display: flex; align-items: center;">
+						<select class="size-m" v-model="pIntAt" name="pIntAt" id="pIntAt">
+						    <option value="ALL">-전체-</option>
+						    <option value="Y">정수</option>
+						    <option value="N">비정수</option>
+						</select>
+					</div>	
+				</div>
+			</div>
+				
+			<div class="row form-row">
+				<div class="form-group col s12 l2">
+					<label for="pSearchType" class="label-type01" for="pAssetStndNo">물품규격변호</label>
+					<input type="text" v-model="pAssetStndNo" id="pAssetStndNo" name="pAssetStndNo"  class="size-m" v-on:keyup.13="search()">
+				</div>
+			</div>
+		</div>	
+			<div>
+			    <div class="col-inline btn-line right" style="display: flex; justify-content: flex-end;">
+					<a href="#!" class="btn type02 size-m center-icon" @click="resetFields"><span class="icon-refresh"></span></a> 
+					<a href="#!" class="btn type04 size-m left-icon icon-search" @click="search()" style="margin-right: 5px;">조회</a>
+					<a href="https://www.g2b.go.kr:8053/main/main.do" target='_blank' class="btn type04 size-m left-icon icon-external-link" style="margin-right: 5px;">목록정보시스템</a>
+			    </div>
+			</div>
+	
+			<!-- 테이블 영역 -->
+			<section class="row">
+				
+				<!-- 물품분류조회 테이블 -->
+				<div class="form-group col s12 l5">
+					<div class="box-type03">
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1;">
+							    <span class="board-info-txt size-s">총 <span>{{mainListPaging1.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging1.getCurrentPage()}}</span> / {{mainListPaging1.getTotalPage()}})</span>
+							</div>
+							<div class="col-inline btn-line right">
+								<a href="#!" class="btn type04 size-s left-icon icon-more" @click="newRow1" style="margin-right: 5px;">입력</a>
+								<a href="#!" class="btn type04 size-s left-icon icon-edit" @click="rowCheckClick1()" style="margin-right: 5px;">수정</a>
+								<a href="#!" class="btn type04 size-s left-icon icon-trashcan" @click="rowCheckUse1()" style="margin-right: 5px;">삭제</a>
+								<a href="#!" class="btn type02 size-s left-icon icon-report" @click="excelDownload1()" style="margin-right: 5px;">엑셀</a>
+							</div>
+						</div>
+						<perfect-scrollbar style="max-height: 700px;">
+						<table class="table-type01 response" id="datas-reponsive">
+							<caption></caption>
+							<thead class="thead-fixed">
+								<tr>
+									<th><input type="checkbox" v-model="selectAll1" @change="toggleSelectAll1"/></th>
+									<th scope="col">No</th>
+									<th scope="col">물품분류번호</th>
+									<th scope="col">물품명</th>
+									<th scope="col">태그종류</th>
+									<th scope="col">내용연수</th>
+									<th scope="col">정수여부</th>
+									<th scope="col">비고</th>
+								</tr>
+							</thead>
+							<tbody v-if="mainList1.data.length > 0">
+								<tr v-for="(item, index) in mainList1.data" v-if="mainList1.getRowType(index) != 8" :key="index">
+									<td><input type="checkbox" v-model="selectedRows1[index]"/></td>
+									<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ index + 1 }}</a></td>
+									<td data-header="물품분류번호" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.ASSET_CL_NO }}</a></td>
+									<td data-header="물품명" style="text-align: left;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.ASSET_CL_KO_NM }}</a></td>
+									<td data-header="태그종류" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.TAG_KIND_NM }}</a></td>
+									<td data-header="내용연수" style="text-align: right;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.USE_YYCNT }}</a></td>
+									<td data-header="정수여부" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.INT_AT_NM }}</a></td>
+									<td data-header="비고" style="text-align: left;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.RMK }}</a></td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						</perfect-scrollbar>
+						<paging :pagingset="mainListPaging1" :type="'normal'"></paging>
+					</div>
+				</div>
+				
+				<!-- 규격분류조회 테이블 -->
+				<div class="form-group col s12 l5">
+					<div class="box-type03">
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1;">
+							    <span class="board-info-txt size-s">총 <span>{{mainListPaging2.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging2.getCurrentPage()}}</span> / {{mainListPaging2.getTotalPage()}})</span>
+							</div>
+							<div class="col-inline btn-line right">
+								<a href="#!" class="btn type04 size-s left-icon icon-more" @click="newRow2" style="margin-right: 5px;">입력</a>
+								<a href="#!" class="btn type04 size-s left-icon icon-edit" @click="rowCheckClick2()" style="margin-right: 5px;">수정</a>
+								<a href="#!" class="btn type04 size-s left-icon icon-trashcan" @click="rowCheckUse2()" style="margin-right: 5px;">삭제</a>
+								<a href="#!" class="btn type02 size-s left-icon icon-report" @click="excelDownload2()" style="margin-right: 5px;">엑셀</a>
+							</div>
+						</div>
+						<perfect-scrollbar style="max-height: 700px;">
+						<table class="table-type01 response" id="datas-reponsive">
+							<caption></caption>
+							<thead class="thead-fixed">
+								<tr>
+									<th><input type="checkbox" v-model="selectAll2" @change="toggleSelectAll2"/></th>
+									<th scope="col">No</th>
+									<th scope="col">사용여부</th>
+									<th scope="col">물품분류번호</th>
+									<th scope="col">물품규격번호</th>
+									<th scope="col">규격명</th>
+									<th scope="col">비고</th>
+								</tr>
+							</thead>
+							<tbody v-if="mainList2.data.length > 0">
+								<tr v-for="(item, index) in mainList2.data" v-if="mainList2.getRowType(index) != 8" :key="index">
+									<td><input type="checkbox" v-model="selectedRows2[index]"/></td>
+									<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ index + 1 }}</a></td>
+									<td data-header="사용여부" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.USE_AT }}</a></td>
+									<td data-header="물품분류번호" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.ASSET_CL_NO }}</a></td>
+									<td data-header="물품규격번호" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.ASSET_STND_NO }}</a></td>
+									<td data-header="규격명" style="text-align: left;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.ASSET_STND_KO_NM }}</a></td>
+									<td data-header="비고" style="text-align: left;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.RMK }}</a></td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						</perfect-scrollbar>
+						<paging :pagingset="mainListPaging2" :type="'normal'"></paging>
+					</div>
+				</div>
+			</section>
+		</section>
+		
+		<!-- 물품분류 입력/수정 화면 -->
+		<section class="cont_box" v-if="mainList1.currentRow && mainList1.rowposition !== null">
+			<h3 class="h3" v-if="mainList1.getRowType(mainList1.rowposition) == ROWTYPE_INSERT">물품분류관리(입력)</h3>
+			<h3 class="h3" v-if="mainList1.getRowType(mainList1.rowposition) == ROWTYPE_NORMAL || mainList1.getRowType(mainList1.rowposition) == ROWTYPE_UPDATE">물품분류관리(수정)</h3>
+			<div class="box-type04">
+				<div class="form-group row">
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="assetClNo">물품분류번호</label>
+						<input type="text" class="size-m" id="assetClNo" name="assetClNo" data-vv-as="물품분류번호" v-model="mainList1.currentRow.ASSET_CL_NO" :disabled="mainList1.getRowType(mainList1.rowposition) !== ROWTYPE_INSERT">
+					</div>
+					
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="useYycnt">내용연수</label>
+						<input type="text" class="size-m" id="useYycnt" name="useYycnt" data-vv-as="내용연수" v-model="mainList1.currentRow.USE_YYCNT">
+					</div>
+
+					
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="intAt">정수여부</label>
+						<select class="size-m" v-model="mainList1.currentRow.INT_AT" name="intAt" id="intAt">
+						    <option value="ALL">-전체-</option>
+						    <option value="Y">정수</option>
+						    <option value="N">비정수</option>
+						</select>
+					</div>
+					<div class="col s12 m12 l2">
+						<label class="label-type01 size-m" for="comptrSeCd">물품구분</label>
+						<select class="size-m" v-model="mainList1.currentRow.COMPTR_SE_CD" name="comptrSeCd" id="comptrSeCd">
+							<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0210', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+						</select>	
+					</div>
+					
+					<div class="col s12 m12 l2">
+						<label class="label-type01 size-m" for="tagKindCd">태그종류</label>
+				        <select class="size-m"name="tagKindCd" id="tagKindCd" v-model="mainList1.currentRow.TAG_KIND_CD">
+				            <option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0120', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+				        </select>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<div class="col s12 m12 l12">
+						<label class="label-type01 required size-m" for="assetClKoNm">물품명</label>
+						<input type="text" class="size-m" id="assetClKoNm" name="assetClKoNm" data-vv-as="물품명" v-model="mainList1.currentRow.ASSET_CL_KO_NM">
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col s12 m12 l12">
+						<label class="label-type01 size-m" for="rmk">비고</label>
+						<input type="text" class="size-m" id="rmk" name="rmk" data-vv-as="비고" v-model="mainList1.currentRow.RMK">
+					</div>
+				</div>
+			</div>
+			
+			<div class="btn-line right">
+				<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow1">저장</a>
+				<a href="#!" class="btn type01 size-m left-icon icon-close" @click="closeMainList1">닫기</a>
+			</div>
+		</section>
+		
+		<!-- 물품규격 입력/수정 화면 -->
+		<section class="cont_box" v-if="mainList2.currentRow && mainList2.rowposition !== null">
+			<h3 class="h3" v-if="mainList2.getRowType(mainList2.rowposition) == ROWTYPE_INSERT">물품규격관리(입력)</h3>
+			<h3 class="h3" v-if="mainList2.getRowType(mainList2.rowposition) == ROWTYPE_NORMAL || mainList2.getRowType(mainList2.rowposition) == ROWTYPE_UPDATE">물품규격관리(수정)</h3>
+			<div class="box-type04">
+				<div class="form-group row">
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="assetClNo">물품분류번호</label>
+						<input type="text" class="size-m" id="assetClNo" name="assetClNo" data-vv-as="물품분류번호" v-model="mainList2.currentRow.ASSET_CL_NO" disabled>
+					</div>
+					
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="ASSET_STND_NO_INSCHK">물품규격번호</label>
+						<input type="text" class="size-m" id="ASSET_STND_NO_INSCHK" name="ASSET_STND_NO_INSCHK" data-vv-as="물품규격번호" v-model="mainList2.currentRow.ASSET_STND_NO">
+					</div>
+
+					<div class="col s12 m12 l6">
+						<label class="label-type01 required size-m" for="assetStndKoNm">규격명</label>
+						<input type="text" class="size-m" id="assetStndKoNm" name="assetStndKoNm" data-vv-as="규격명" v-model="mainList2.currentRow.ASSET_STND_KO_NM">
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<div class="col s12 m12 l2">
+						<label class="label-type01 size-m" for="prodtCtryCd">제조국가코드</label>
+						<select class="size-m" v-model="mainList2.currentRow.PRODT_CTRY_CD" name="prodtCtryCd" id="prodtCtryCd">
+							<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0130', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+						</select>
+					</div>
+					<div class="col s12 m12 l2">
+						<label class="label-type01 size-m" for="unitCd">물품단위</label>
+						<select class="size-m" v-model="mainList2.currentRow.UNIT_CD" name="unitCd" id="unitCd">
+							<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'CM0010', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+						</select>	
+					</div>
+					<div class="col s12 m12 l6">
+						<label class="label-type01 size-m" for="prodtCorpoNm">물품제조업체</label>
+						<input type="text" class="size-m" id="prodtCorpoNm" name="prodtCorpoNm" data-vv-as="물품제조업체" v-model="mainList2.currentRow.PRODT_CORPO_NM">
+					</div>
+				</div>
+				<div class="form-group row">
+				    <div class="col s12 m12 l2">
+						<div class="form-check inline">
+					        <label class="label-type03 size-l" for="ecofrdAt">친환경</label>
+					        <input type="checkbox" class="size-l" id="ecofrdAt" name="ecofrdAt" v-model="mainList2.currentRow.ECOFRD_AT" true-value="Y" false-value="N">
+					    </div>
+				    </div>
+				    <div class="col s12 m12 l2">
+						<div class="form-check inline">
+					        <label class="label-type03 size-l" for="dablprsnEntrAt">장애인기업</label>
+					        <input type="checkbox" class="size-l" id="dablprsnEntrAt" name="dablprsnEntrAt" v-model="mainList2.currentRow.DABLPRSN_ENTR_AT" true-value="Y" false-value="N">
+					    </div>
+				    </div>
+				    <div class="col s12 m12 l2">
+						<div class="form-check inline">
+					        <label class="label-type03 size-l" for="minorentrAt">중소기업</label>
+					        <input type="checkbox" class="size-l" id="minorentrAt" name="minorentrAt" v-model="mainList2.currentRow.MINORENTR_AT" true-value="Y" false-value="N">
+					    </div>
+				    </div>
+				    <div class="col s12 m12 l2">
+						<div class="form-check inline">
+					        <label class="label-type03 size-l" for="useAt">사용여부</label>
+					        <input type="checkbox" class="size-l" id="useAt" v-model="mainList2.currentRow.USE_AT" true-value="Y" false-value="N">
+					    </div>
+				    </div>
+				</div>
+				<div class="form-group row">
+					<div class="col s12 m12 l12">
+						<label class="label-type01 size-m" for="rmk">비고</label>
+						<input type="text" class="size-m" id="rmk" name="rmk" data-vv-as="비고" v-model="mainList2.currentRow.RMK">
+					</div>
+				</div>
+			</div>
+			
+			<div class="btn-line right">
+				<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow2">저장</a>
+				<a href="#!" class="btn type01 size-m left-icon icon-close" @click="closeMainList2">닫기</a>
+			</div>
+		</section>
+		
+	
+		<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+	
+</section>
+		
+<script type="text/javascript">
+
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+ 	el: '#app',
+ 	
+ 	//사용할 데이터
+ 	data: function() {
+ 		return {
+		mainList1: new Dataset(),
+		mainList2: new Dataset(),
+		excelList: new Dataset(),
+		initialState: {
+			pAssetClNo: '',
+			pAssetClKoNm: '',
+			pAssetStndKoNm: '',
+			pTagKindCd: '',
+			pIntAt: 'ALL',
+			pAssetStndNo: '',
+		},
+		pAssetClNo: '',
+		pAssetClKoNm: '',
+		pAssetStndKoNm: '',
+		pTagKindCd: '',
+		pIntAt: 'ALL',
+		pAssetStndNo: '',
+		messageModal: new ModalSet('acqmgmt-modal'),
+		mainListPaging1: new PagingSet(10,50),
+		mainListPaging2: new PagingSet(10,50),
+		deptCodeSet: new CustomcodeSet('/amanager/common/dept-list',{}),
+		//selectAll: false,
+		//selectedRows: [],
+		//currentSelectedIndex: null,
+		excelData1: new Array,
+		excelData2: new Array,
+		selectAll1: false,
+	     selectedRows1: [],
+	     currentSelectedIndex1: null,
+	     selectAll2: false,
+	     selectedRows2: [],
+	     currentSelectedIndex2: null,
+		};
+	},
+	
+	//생성 될 때
+	beforeCreate: function(){
+	},
+	
+	//계산된 속성 포현 시
+	computed: {
+   
+	},
+	
+	filters: {
+
+	},
+	
+	//데이터 감시
+	watch: {
+		'mainList1.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList1.enableevent){
+					var changeYn = this.mainList1.dataCompare(oldVal);
+					var rowType = this.mainList1.getRowType(val);
+
+					if(!changeYn){
+						this.mainList1.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList1.data': {
+			handler: function (val, oldVal) {
+				if(this.mainList1.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.mainList1.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.mainList1.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+		
+	    'mainListPaging1.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList1(null, val)
+			}
+	    },
+		
+		'mainList2.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList2.enableevent){
+					var changeYn = this.mainList2.dataCompare(oldVal);
+					var rowType = this.mainList2.getRowType(val);
+
+					if(!changeYn){
+						this.mainList2.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList2.data': {
+			handler: function (val, oldVal) {
+				if(this.mainList2.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.mainList2.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.mainList2.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+		
+	    'mainListPaging2.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList2(null, val)
+			}
+	    },
+		
+	},
+	//마운트 된 시험수행
+	mounted: function(){
+		this.setmainList1();
+		document.addEventListener('keydown', this.handleEscKey);
+
+	},
+	
+	beforeDestroy() {
+		document.removeEventListener('keydown', this.handleEscKey);	
+		
+	},
+	
+	//함수
+	methods: {
+		setmainList1: function(e, pPageNo, index){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+
+				var pAssetClNo 				= $('#pAssetClNo').val();
+				var pAssetClKoNm 			= $('#pAssetClKoNm').val();
+				var pAssetStndKoNm 			= $('#pAssetStndKoNm').val();
+				var pTagKindCd				= $('#pTagKindCd option:selected').val();
+				var pIntAt					= $('#pIntAt option:selected').val();
+				var pAssetStndNo 			= $('#pAssetStndNo').val();
+                var pageNo 					= pPageNo;
+                var rowCount 				= this.mainListPaging1.getRowCnt();
+
+				if(isNull(pAssetClNo)) 			pAssetClNo 			= '';
+				if(isNull(pAssetClKoNm)) 		pAssetClKoNm 		= '';
+				if(isNull(pAssetStndKoNm)) 		pAssetStndKoNm 		= '';
+				if(isNull(pTagKindCd)) 			pTagKindCd 			= '';
+				if(isNull(pIntAt)) 				pIntAt 				= '';
+				if(isNull(pAssetStndNo)) 		pAssetStndNo 		= '';
+				if(isNull(pageNo)) 				pageNo 				= 1;
+				if(isNull(rowCount)) 			rowCount 			= 50;
+				
+				var param = {
+					'pAssetClNo'		: pAssetClNo,
+					'pAssetClKoNm'		: pAssetClKoNm,
+					'pAssetStndKoNm'	: pAssetStndKoNm,
+					'pTagKindCd'		: pTagKindCd,
+					'pIntAt'			: pIntAt,
+					'pAssetStndNo'		: pAssetStndNo,
+					'pPageNo'			: pageNo,
+					'pRowCount'			: rowCount
+				};
+				
+				var self = this;
+				
+				var returnVal = gdsCdMgmtApi.getAssetClList(param, true);	
+				
+				returnVal.then(function(response) {
+					self.mainList1.setData(response.data);
+					self.excelData1 = response.data;
+					
+					if(self.mainList1.getRowCount() > 0){
+						var totalCnt = self.mainList1.data[0].TOTAL_CNT;
+						self.mainListPaging1.setTotalCnt(totalCnt);
+					} else {
+						self.mainListPaging1.setTotalCnt(0);
+					}
+
+				});
+			}
+		},
+		
+		setmainList2(index) {
+	        if (index === undefined) {
+	            index = 0; // 기본값 설정
+	        }
+
+	        if (!this.mainList1.data[index]) {
+	            console.error("유효하지 않은 인덱스입니다.");
+	            return;
+	        }
+
+	        var assetClNo = this.mainList1.data[index].ASSET_CL_NO;
+	        var pageNo = this.mainListPaging2.getCurrentPage();
+	        var rowCount = this.mainListPaging2.getRowCnt();
+
+	        if (pageNo != 1) {
+	            this.mainListPaging2.movePage(1);
+	        }
+
+	        var param = {
+	            'assetClNo': assetClNo,
+	            'pPageNo': pageNo,
+	            'pRowCount': rowCount
+	        };
+
+	        var self = this;
+
+	        var returnVal = gdsCdMgmtApi.getAssetStndList(param, true);
+
+	        returnVal.then(function(response) {
+	            self.mainList2.setData(response.data);
+				self.excelData2 = response.data;
+
+	            if (self.mainList2.getRowCount() > 0) {
+	                var totalCnt = self.mainList2.data[0].TOTAL_CNT;
+	                self.mainListPaging2.setTotalCnt(totalCnt);
+	            } else {
+	                self.mainListPaging2.setTotalCnt(0);
+	            }
+	        });
+	    },
+
+
+		/* 입력/수정 페이지 닫기 버튼 클릭시 */
+		closeMainList1() {
+	        this.mainList1.currentRow = null;
+	        this.mainList1.rowposition = null;
+	        this.searchMainList1();
+	    },
+	
+	    closeMainList2() {
+	        this.mainList2.currentRow = null;
+	        this.mainList2.rowposition = null;
+			if (this.currentSelectedIndex1 !== null) {
+	            this.setmainList2(this.currentSelectedIndex1);
+	        } else {
+	            this.searchMainList2();
+	        }
+	    },
+		
+		/* 일반 조회 */
+	    searchMainList1: function(e, pPageNo){
+	       var pageNo = this.mainListPaging1.getCurrentPage();
+	
+	       if(pageNo == 1){
+	           this.setmainList1(e, pPageNo);
+	       } else {
+	           this.mainListPaging1.movePage(1);
+	       }  
+	    },
+	
+	    searchMainList2: function(e, pPageNo){
+	       var pageNo = this.mainListPaging2.getCurrentPage();
+	
+	       if(pageNo == 1){
+	           this.setmainList2(e, pPageNo);
+	       } else {
+	           this.mainListPaging2.movePage(1);
+	       }  
+	    },
+
+		/* 물품분류코드 리스트 신규행 추가 */
+		newRow1: function(){
+			
+			var addObj = {
+				
+				'ASSET_CL_NO': '',
+				'ASSET_CL_KO_NM': '',
+				'INT_AT': '',
+				'USE_YYCNT': '',
+				'TAG_KIND_CD': '',
+				'COMPTR_SE_CD': '',
+				'RMK': '',
+				'REGUSER_ID': '',
+				'REG_DATE': '',
+				'AGENCY_ID': '',
+            };
+
+			var newRowPosition = this.mainList1.addRow(addObj);
+		},
+		
+		/* 물품규격코드 리스트 신규행 추가 */
+		newRow2: function() {
+	        var checkedIndex = this.selectedRows1.findIndex(row => row === true);
+	        if (checkedIndex === -1) {
+	            this.messageModal.openModal('message', '선택된 물품 없음', '물품분류번호를 선택해주세요.', 'small', '', '');
+	            return;
+	        }
+
+	        const selectedRow = this.mainList1.data[checkedIndex];
+	        if (selectedRow) {
+	            var addObj = {
+	                'ASSET_CL_NO': selectedRow.ASSET_CL_NO,
+	                'ASSET_STND_NO': '',
+	                'ASSET_STND_KO_NM': '',
+	                'UNIT_CD': '',
+	                'PRODT_CORPO_NM': '',
+	                'PRODT_CTRY_CD': '',
+	                'ECOFRD_AT': 'N',
+	                'DABLPRSN_ENTR_AT': 'N',
+	                'MINORENTR_AT': 'N',
+	                'USE_AT': 'Y',
+	                'RMK': '',
+	                'REGUSER_ID': '',
+	                'REG_DATE': '',
+	                'AGENCY_ID': '',
+	            };
+
+	            var newRowPosition = this.mainList2.addRow(addObj);
+	            this.currentSelectedIndex1 = checkedIndex;  // 현재 선택된 인덱스를 저장
+	        } else {
+	            this.messageModal.openModal('message', '선택된 물품 없음', '물품분류번호를 선택해주세요.', 'small', '', '');
+	        }
+	    },
+		
+		
+		/* 물품분류코드 리스트 저장,수정 */
+		saveRow1: function() {
+		    // 필수 입력 항목 검증
+		    if (!this.mainList1.currentRow.ASSET_CL_NO) {
+		        this.messageModal.openModal('message', '물품분류번호 미입력', '물품분류번호(은/는) 필수 입력 항목입니다.', 'small', '', '');
+		        return;
+		    }
+		    if (!this.mainList1.currentRow.USE_YYCNT) {
+		        this.messageModal.openModal('message', '내용연수 미입력', '내용연수(은/는) 필수 입력 항목입니다.', 'small', '', '');
+		        return;
+		    }
+		    if (!this.mainList1.currentRow.INT_AT) {
+		        this.messageModal.openModal('message', '정수여부 미입력', '정수여부(은/는) 필수 입력 항목입니다.', 'small', '', '');
+		        return;
+		    }
+		    if (!this.mainList1.currentRow.ASSET_CL_KO_NM) {
+		        this.messageModal.openModal('message', '물품명 미입력', '물품명(은/는) 필수 입력 항목입니다.', 'small', '', '');
+		        return;
+		    }
+
+		    var validate = this.$validator.validateAll();
+		    var self = this;
+
+		    validate.then(function(response) {
+		        if (response) {
+		            // 부서 중복 체크
+		            const requestData = {
+		                pAssetClNo: self.mainList1.currentRow.ASSET_CL_NO,
+		            };
+
+		            // 데이터 요청
+		            gdsCdMgmtApi.getAssetClList(requestData)
+		                .then(function(response) {
+		                    var data = response.data;
+
+		                    if (data && data.length > 0 && data[0].TOTAL_CNT > 0) {
+		                        // 중복된 데이터가 존재하는 경우
+		                        if (self.mainList1.getRowType(self.mainList1.rowposition) !== ROWTYPE_UPDATE) {
+		                            self.messageModal.openModal('message', '저장 오류', '사용중인 물품분류코드입니다.', 'middle', '', '');
+		                            // 중복 체크 실패 시 메시지만 띄우고 반환
+		                            return;
+		                        }
+		                    }
+		                    // 모든 중복 체크 통과 후 저장 로직 실행
+		                    proceedSaving();
+		                })
+		                .catch(function(error) {
+		                    console.error('중복 체크 API 호출 중 오류 발생:', error);
+		                    self.messageModal.openModal('message', '오류 발생', '중복 체크를 수행하는 도중 오류가 발생했습니다.', 'middle', '', '');
+		                });
+
+		            // 중복 체크 통과 후 저장 로직 실행
+		            function proceedSaving() {
+		                var rowposition = self.mainList1.rowposition;
+		                var checkedIndex = self.selectedRows1.findIndex(row => row === true);
+		                const selectedRow = self.mainList1.data[checkedIndex];
+		                var rowType1 = self.mainList1.getRowType(rowposition);
+		                var rowType2 = self.mainList1.getRowType(checkedIndex);
+		                var returnVal = null;
+
+		                // 신규 입력 시 저장
+		                if (rowType1 === ROWTYPE_INSERT || rowType2 === ROWTYPE_INSERT) {
+		                    returnVal = gdsCdMgmtApi.insertAssetClCd(self.mainList1.currentRow, false);
+		                }
+		                // 수정 시 저장
+		                else if (rowType1 === ROWTYPE_UPDATE || rowType2 === ROWTYPE_UPDATE) {
+		                    returnVal = gdsCdMgmtApi.updateAssetClCd(self.mainList1.currentRow, false);
+		                } else {
+		                    notifySubmit('info', 'GDSCDMGMT 저장', '저장할 내역이 없습니다.', 'icon-message');
+		                }
+
+		                if (!isNull(returnVal)) {
+		                    returnVal.then(function(response) {
+		                        var data = response.data;
+		                        notifySubmit('success', 'GDSCDMGMT 저장', '저장이 완료되었습니다.', 'icon-save');
+		                        self.setmainList1(null, self.mainListPaging1.currentPage, 0); 
+								console.log(1);
+		                    }).catch(function(error) {
+		                        notifySubmit('warning', 'GDSCDMGMT 저장', '저장에 실패하였습니다.', 'icon-caution');
+								console.log(2);
+		                    });
+		                }
+		            }
+		        } else {
+		            notifySubmit('warning', 'GDSCDMGMT 저장', '입력항목을 확인해주세요.', 'icon-caution');
+		        }
+		    });
+		    self.resetSelectedRows1();
+		},
+		
+		/* 물품규격코드 리스트 저장,수정 */
+		saveRow2: function() {
+		    // 필수 입력 항목 검증
+		    if (!this.mainList2.currentRow.ASSET_STND_NO) {
+		        this.messageModal.openModal('message', '물품규격번호 미입력', '물품규격번호(은/는) 필수 입력 항목입니다.', 'small', '', '');
+		        return;
+		    }
+			if (this.mainList2.currentRow.ASSET_STND_NO.length != 8){
+				this.messageModal.openModal('message', '물품규격번호 길이 초과', '물품규격번호는 8자리여야 합니다.', 'small', '', '');
+				return;
+			}
+		    if (!this.mainList2.currentRow.ASSET_STND_KO_NM) {
+		        this.messageModal.openModal('message', '규격명 미입력', '규격명(은/는) 필수 입력 항목입니다.', 'small', '', '');
+		        return;
+		    }
+
+		    var validate = this.$validator.validateAll();
+		    var self = this;
+
+		    validate.then(function(response) {
+		        if (response) {
+		            const requestData = {
+		                ASSET_STND_NO_INSCHK: self.mainList2.currentRow.ASSET_STND_NO
+		            };
+
+		            // 물품규격번호 중복 체크
+		            gdsCdMgmtApi.checkAssetStndList(requestData)
+		                .then(function(response) {
+		                    var data = response.data;
+
+		                    if (data && data.length > 0 && data[0].TOTAL_CNT > 0) {
+		                        if (self.mainList2.getRowType(self.mainList2.rowposition) !== ROWTYPE_UPDATE) {
+		                            self.messageModal.openModal('message', '저장 오류', '사용중인 물품규격코드입니다.', 'middle', '', '');
+		                            return;
+		                        }
+		                    }
+							console.log(self.mainList2.currentRow.ECOFRD_AT);
+							console.log(self.mainList2.currentRow.DABLPRSN_ENTR_AT);
+							console.log(self.mainList2.currentRow.MINORENTR_AT);
+							console.log(self.mainList2.currentRow.USE_AT);
+		                    proceedSaving();
+		                })
+		                .catch(function(error) {
+		                    console.error('중복 체크 API 호출 중 오류 발생:', error);
+		                    self.messageModal.openModal('message', '오류 발생', '중복 체크를 수행하는 도중 오류가 발생했습니다.', 'middle', '', '');
+		                });
+
+					// 중복 체크 통과 후 저장 로직 실행
+		            function proceedSaving() {
+						const flags = {
+						    ECOFRD_AT: 'ECOFRD_AT',
+						    DABLPRSN_ENTR_AT: 'DABLPRSN_ENTR_AT',
+						    MINORENTR_AT: 'MINORENTR_AT',
+						    USE_AT: 'USE_AT'
+						};
+
+						Object.keys(flags).forEach(flag => {
+						    self.mainList2.currentRow[flag] = (self.mainList2.currentRow[flag] === 'Y' || self.mainList2.currentRow[flag] === true) ? 'Y' : 'N';
+						});
+
+		                var rowposition = self.mainList2.rowposition;
+		                var checkedIndex = self.selectedRows2.findIndex(row => row === true);
+		                const selectedRow = self.mainList2.data[checkedIndex];
+		                var rowType1 = self.mainList2.getRowType(rowposition);
+		                var rowType2 = self.mainList2.getRowType(checkedIndex);
+		                var returnVal = null;
+
+		                if (rowType1 === ROWTYPE_INSERT || rowType2 === ROWTYPE_INSERT) {
+		                    returnVal = gdsCdMgmtApi.insertAssetStndCd(self.mainList2.currentRow, false);
+		                } else if (rowType1 === ROWTYPE_UPDATE || rowType2 === ROWTYPE_UPDATE) {
+		                    returnVal = gdsCdMgmtApi.updateAssetStndCd(self.mainList2.currentRow, false);
+		                } else {
+		                    notifySubmit('info', 'GDSCDMGMT 저장', '저장할 내역이 없습니다.', 'icon-message');
+		                }
+
+		                if (!isNull(returnVal)) {
+		                    returnVal.then(function(response) {
+		                        var data = response.data;
+		                        notifySubmit('success', 'GDSCDMGMT 저장', '저장이 완료되었습니다.', 'icon-save');
+								// 저장 후 인덱스를 전달
+		                        self.setmainList2(self.currentSelectedIndex1, self.mainListPaging2.currentPage, 0);
+		                        
+		                        // 체크박스 해제
+		                        self.selectedRows1 = self.mainList1.data.map(() => false);
+		                        self.selectedRows2 = self.mainList2.data.map(() => false);
+		                    }).catch(function(error) {
+		                        notifySubmit('warning', 'GDSCDMGMT 저장', '저장에 실패하였습니다.', 'icon-caution');
+		                        console.error('저장실패:', error);
+		                    });
+		                }
+		            }
+		        } else {
+		            notifySubmit('warning', 'GDSCDMGMT 저장', '입력항목을 확인해주세요.', 'icon-caution');
+		        }
+		    });
+		    self.resetSelectedRows2();
+		},
+
+		
+		/* 물품분류코드 삭제 버튼 클릭 시 사용 여부 확인 */
+		rowCheckUse1() {
+		    const self = this;
+
+		    if (!self.selectedRows1 || self.selectedRows1.length === 0) {
+		        this.messageModal.openModal('message', '선택된 물품 없음', '삭제할 물품을 선택 해주세요.', 'middle', '', '');
+		        return;
+		    }
+
+		    const checkedIndex = self.selectedRows1.findIndex(row => row === true);
+		    if (checkedIndex === -1) {
+		        this.messageModal.openModal('message', '선택된 물품 없음', '삭제할 물품을 선택 해주세요.', 'middle', '', '');
+		        return;
+		    }
+
+		    const selectRow = self.mainList1.data[checkedIndex];
+		    if (!selectRow) {
+		        this.messageModal.openModal('message', '선택된 물품 없음', '삭제할 물품을 선택 해주세요.', 'middle', '', '');
+		        return;
+		    } else{
+				const assetClNo = selectRow.ASSET_CL_NO;
+				const params = {
+					ASSET_CL_NO: assetClNo,
+				};
+				
+				// API 호출을 통한 사용 여부 확인
+			    gdsCdMgmtApi.checkUseAssetClCd(params, false)
+			        .then(response => {
+			            if (response.data[0].TOTAL_CNT > 0) {
+			                this.messageModal.openModal('message', '사용중인 물품번호', '사용중인 물품번호 이거나 물품번호에 해당하는 규격번호가 존재합니다.', 'middle', '', '');
+			            } else {
+			                this.messagePopup('ROW_DELETE_CL', assetClNo);
+			            }
+			        })
+			        .catch(error => {
+			            console.error('API 호출 중 오류 발생:', error);
+			            this.messageModal.openModal('message', '오류 발생', '사용 여부 확인 중 오류가 발생했습니다.', 'middle', '', '');
+			        });
+			}
+		},
+		
+		rowCheckUse2() {
+			const self = this;
+
+		    if (!self.selectedRows2 || self.selectedRows2.length === 0) {
+		        this.messageModal.openModal('message', '선택된 물품 없음', '삭제할 물품을 선택 해주세요.', 'middle', '', '');
+		        return;
+		    }
+
+		    const checkedIndex = self.selectedRows2.findIndex(row => row === true);
+		    if (checkedIndex === -1) {
+		        this.messageModal.openModal('message', '선택된 물품 없음', '삭제할 물품을 선택 해주세요.', 'middle', '', '');
+		        return;
+		    }
+
+		    const selectRow = self.mainList2.data[checkedIndex];
+		    if (!selectRow) {
+		        this.messageModal.openModal('message', '선택된 물품 없음', '삭제할 물품을 선택 해주세요.', 'middle', '', '');
+		        return;
+		    } else{
+				const assetStndNo = selectRow.ASSET_STND_NO;
+				const assetClNo = selectRow.ASSET_CL_NO;
+				const params = {
+					ASSET_STND_NO: assetStndNo,
+					ASSET_CL_NO: assetClNo,
+				};
+				
+				// API 호출을 통한 사용 여부 확인
+			    gdsCdMgmtApi.checkUseAssetStndCd(params, false)
+			        .then(response => {
+			            if (response.data[0].CNT > 0) {
+			                this.messageModal.openModal('message', '사용중인 규격번호', '규격번호에 해당하는 자산부터 삭제 해주시기 바랍니다.', 'middle', '', '');
+			            } else {
+			                this.messagePopup('ROW_DELETE_STND', params);
+			            }
+			        })
+			        .catch(error => {
+			            console.error('API 호출 중 오류 발생:', error);
+			            this.messageModal.openModal('message', '오류 발생', '사용 여부 확인 중 오류가 발생했습니다.', 'middle', '', '');
+			        });
+			}
+		},
+		
+		/* 물품분류코드 삭제(로우단위) */
+		deleteRow1(assetClNo) {
+		    const self = this;
+		    const index = this.mainList1.data.findIndex(row => row.ASSET_CL_NO === assetClNo);
+		    if (index !== -1) {
+		        gdsCdMgmtApi.deleteAssetClCd(assetClNo, true).then(function (response) {
+		            notifySubmit('success', '물품분류코드 삭제', `${assetClNo} 삭제가 완료되었습니다.`, 'icon-trashcan');
+		        }).catch(function (error) {
+		            notifySubmit('warning', '물품분류코드 삭제', `${assetClNo} 삭제에 실패하였습니다.`, 'icon-caution');
+		        }).finally(() => {
+		            self.setmainList1(self.currentSelectedIndex1, self.mainListPaging1.currentPage, 0);
+		            self.resetSelectedRows1();
+		        });
+		    } else {
+		        console.error("유효하지 않은 ASSET_CL_NO입니다.");
+		        notifySubmit('warning', '물품분류코드 삭제', `${assetClNo} 삭제에 실패하였습니다. 유효하지 않은 ASSET_CL_NO입니다.`, 'icon-caution');
+		    }
+		},
+		
+		deleteRow2(params) {
+			const assetStndNo = params.ASSET_STND_NO;
+		    const self = this;
+		    const index = this.mainList2.data.findIndex(row => row.ASSET_STND_NO === assetStndNo);
+		    if (index !== -1) {
+		        gdsCdMgmtApi.deleteAssetStndCd(params, true).then(function (response) {
+		            notifySubmit('success', '물품규격코드 삭제', `${assetStndNo} 삭제가 완료되었습니다.`, 'icon-trashcan');
+		        }).catch(function (error) {
+		            notifySubmit('warning', '물품규격코드 삭제', `${assetStndNo} 삭제에 실패하였습니다.`, 'icon-caution');
+		        }).finally(() => {
+					self.setmainList1(self.currentSelectedIndex1, self.mainListPaging1.currentPage, 0);
+		            self.setmainList2(0, self.mainListPaging2.currentPage, 0);
+		            self.resetSelectedRows2();
+		        });
+		    } else {
+		        console.error("유효하지 않은 ASSET_STND_NO입니다.");
+		        notifySubmit('warning', '물품규격코드 삭제', `${assetStndNo} 삭제에 실패하였습니다. 유효하지 않은 ASSET_STND_NO입니다.`, 'icon-caution');
+		    }
+		},
+		
+		/* 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+		},
+		
+		/* 수정버튼 클릭시 체크박스 선택 상태 확인 */
+		rowCheckClick1() {
+		    const checkedIndex = this.selectedRows1.findIndex(row => row === true);
+		    if (checkedIndex !== -1) {
+		        const selectedRow = this.mainList1.data[checkedIndex];
+				
+				this.mainList1.setRowType(checkedIndex, this.ROWTYPE_UPDATE);
+				this.mainList1.rowposition = checkedIndex;
+				this.mainList1.currentRow = this.mainList1.data[checkedIndex];
+		    } else {
+				this.messageModal.openModal('message', '선택된 물품 없음', '수정할 물품을 선택 해주세요.', 'middle', '', '');
+		    }
+		},
+		
+		rowCheckClick2() {
+		    const checkedIndex = this.selectedRows2.findIndex(row => row === true);
+		    if (checkedIndex !== -1) {
+		        const selectedRow = this.mainList2.data[checkedIndex];
+				
+				this.mainList2.setRowType(checkedIndex, this.ROWTYPE_UPDATE);
+				this.mainList2.rowposition = checkedIndex;
+				this.mainList2.currentRow = this.mainList2.data[checkedIndex];
+		    } else {
+				this.messageModal.openModal('message', '선택된 물품 없음', '수정할 물품규격번호를 선택 해주세요.', 'middle', '', '');
+		    }
+		},
+		
+		
+		/* 특정 Row 더블클릭시 수정창 [index값 기준] open */
+		rowDbClick1: function(index){
+			var nRowType = this.mainList1.setRowType(0, this.ROWTYPE_UPDATE);
+			const selectedRow = this.mainList1.data[index];
+
+			if (!selectedRow) {
+				console.error("선택된 행이 유효하지 않습니다.");
+				return;
+			}
+			this.mainList1.selectRow(index);
+		},
+		
+		rowDbClick2: function(index){
+			var nRowType = this.mainList2.setRowType(0, this.ROWTYPE_UPDATE);
+			const selectedRow = this.mainList2.data[index];
+
+			if (!selectedRow) {
+				console.error("선택된 행이 유효하지 않습니다.");
+				return;
+			}
+			this.mainList2.selectRow(index);
+		},
+		
+		/* 메세지창 띄우기 */
+		messagePopup: function (pId, pData) {
+		    console.log('messagePopup 호출됨', pId, pData); // 디버깅용 로그
+		    let title = '확인';
+		    let cont = '해당 작업을 수행하시겠습니까?';
+		    const pGb = 'confirm';
+
+		    switch (pId) {
+		        case 'ROW_DELETE_CL':
+		            title = '선택 및 적용';
+		            cont = '선택된 물품코드를 삭제하시겠습니까?';
+		            break;
+					
+		        case 'ROW_DELETE_STND':
+		            title = '선택 및 적용';
+		            cont = '선택된 규격명코드를 삭제하시겠습니까?';
+		            break;
+		    }
+		    this.messageModal.openModal(pGb, title, cont, 'middle', pId, pData);
+		},
+		
+		/* 메시지 콜백 */
+		messagePopupCallback: function (pGb, pId, pData) {
+			if (pGb != 'confirm') return;
+
+			switch (pId) {
+				case 'ROW_DELETE_CL':
+					this.deleteRow1(pData);
+					break;
+				case 'ROW_DELETE_STND':
+					this.deleteRow2(pData);
+					break;
+			}
+		},
+		
+		/* 검색조건 초기화 */
+		resetFields() {
+            Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialState)));
+        },
+		
+		resetModalFields() {
+            Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialModalState)));
+        },
+		
+		/* 모달 레이어 팝업 Close */
+		closeModal(event) {
+			if (!this.mainList1.currentRow) {
+				modal_close('assetSearchModal');
+				this.search(event);
+		    } else {
+		      modal_close('assetSearchModal');
+		    }
+		},
+		
+		/* 체크박스 선택시 데이터 저장*/
+		toggleRowSelection1(index) {
+	      if (this.selectedRows1.includes(index)) {
+	        this.selectedRows1 = this.selectedRows1.filter(i => i !== index);
+	        this.mainList1.deselectRow(index);
+	      } else {
+	        this.selectedRows1.push(index);
+	        this.mainList1.selectRow(index);
+	      }
+	    },
+		
+	    toggleRowSelection2(index) {
+	      if (this.selectedRows2.includes(index)) {
+	        this.selectedRows2 = this.selectedRows2.filter(i => i !== index);
+	        this.mainList2.deselectRow(index);
+	      } else {
+	        this.selectedRows2.push(index);
+	        this.mainList2.selectRow(index);
+	      }
+	    },
+		
+		/* 프로세스 적용 후 체크 선택 해제 */
+		resetSelectedRows1() {
+	      this.selectedRows1 = [];
+	      this.selectAll1 = false;
+	    },
+	    resetSelectedRows2() {
+	      this.selectedRows2 = [];
+	      this.selectAll2 = false;
+	    },
+		
+		/* 체크박스 토글 */
+		toggleCheckbox1(index) {
+			// 현재 선택되어있는 행이 존재할 시
+			if (this.currentSelectedIndex1 !== null && this.currentSelectedIndex1 !== index) {
+				// 이전에 선택된 행의 체크를 해제
+				this.$set(this.selectedRows1, this.currentSelectedIndex1, false);
+			}
+
+			this.$set(this.selectedRows1, index, !this.selectedRows1[index]);
+			this.currentSelectedIndex1 = index;  // 현재 선택된 인덱스를 업데이트
+			this.setmainList2(index);
+		},
+
+		toggleCheckbox2(index) {
+			if (this.currentSelectedIndex2 !== null && this.currentSelectedIndex2 !== index) {
+				// 이전에 선택된 행의 체크를 해제
+				this.$set(this.selectedRows2, this.currentSelectedIndex2, false);
+			}
+
+			this.$set(this.selectedRows2, index, !this.selectedRows2[index]);
+			this.currentSelectedIndex2 = index;  // 현재 선택된 인덱스를 업데이트
+		},
+
+		/* 모든 체크박스 토글  */
+		toggleSelectAll1() {
+			this.selectedRows1 = this.mainList1.data.map(() => this.selectAll1);
+		},
+
+		toggleSelectAll2() {
+			this.selectedRows2 = this.mainList2.data.map(() => this.selectAll2);
+		},
+
+		/* ESC 버튼 다운시 핸들러 */
+		handleEscKey(event) {
+			if (event.key === 'Escape' || event.key === 'Esc') {
+				this.closeModal(event);
+			}
+		},
+
+		/* 엑셀 다운로드 */		
+		excelDownload1() {
+			let date = moment().format('YYYY-MM-DD');
+		    let filename = '물품분류코드_' + date + '.xlsx';
+			
+			const dataForExcel = this.excelData1.map((item, index) => ({
+				'No': index + 1,
+				'물품분류번호': item.ASSET_CL_NO,
+				'물품명': item.ASSET_CL_KO_NM,
+				'태그종류': item.TAG_KIND_NM,
+				'사용연한': item.USE_YYCNT,
+				'정수여부': item.INT_AT_NM,
+				'비고': item.RMK,
+			}));
+	
+			// 데이터로 시트 생성
+			const workSheet = XLSX.utils.json_to_sheet(dataForExcel);
+			
+			// 열 넓이 설정
+			const colWidths = [
+				{ wpx: 30 },		// No
+				{ wpx: 90 },		// 물품분류번호
+				{ wpx: 300 },		// 물품명
+				{ wpx: 70 },		// 태그종류
+				{ wpx: 50 },		// 사용연한
+				{ wpx: 50 },		// 정수여부
+				{ wpx: 300 },		// 비고
+			];
+			workSheet['!cols'] = colWidths;
+	
+			// 워크북 생성 및 시트 추가
+			const workBook = XLSX.utils.book_new();
+			XLSX.utils.book_append_sheet(workBook, workSheet, '자산취득');
+	          
+			XLSX.writeFile(workBook, filename);
+		},
+		
+		/* 엑셀 다운로드 */	
+		excelDownload2() {
+			if(this.excelData2.length != 0){
+				let date = moment().format('YYYY-MM-DD');
+			    let filename = '물품규격코드_' + date + '.xlsx';
+				
+				const dataForExcel = this.excelData2.map((item, index) => ({
+					'No': index + 1,
+					'사용여부': item.USE_AT,
+					'물품분류번호': item.ASSET_CL_NO,
+					'물품규격번호': item.ASSET_STND_NO,
+					'규격명': item.ASSET_STND_KO_NM,
+					'비고': item.RMK,
+				}));
+	
+				// 데이터로 시트 생성
+				const workSheet = XLSX.utils.json_to_sheet(dataForExcel);
+				
+				// 열 넓이 설정
+				const colWidths = [
+					{ wpx: 30 },		// No
+					{ wpx: 50 },		// 사용여부
+					{ wpx: 90 },		// 물품분류번호
+					{ wpx: 90 },		// 물품규격번호
+					{ wpx: 300 },		// 규격명
+					{ wpx: 300 },		// 비고
+				];
+				workSheet['!cols'] = colWidths;
+	
+				// 워크북 생성 및 시트 추가
+				const workBook = XLSX.utils.book_new();
+				XLSX.utils.book_append_sheet(workBook, workSheet, '자산취득');
+		          
+				XLSX.writeFile(workBook, filename);
+			} else {
+				this.messageModal.openModal('message', '조회된 물품 없음', '조회된 물품이 없습니다.', 'middle', '', '');
+			}
+		},
+		
+		formatDateTime(dateTimeString) {
+		    if (!dateTimeString) return '';
+		    return moment(dateTimeString).format('YYYY-MM-DD HH:mm:ss'); // Moment.js를 사용하여 datetime 형식으로 포맷팅
+		},
+
+		dateFormatter(value) {
+		    if (!value) return '';
+		    return value.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+
+function handleNullValues(row) {
+     Object.keys(row).forEach(function(key) {
+         if (row[key] === '') {
+             row[key] = null;
+         }
+     });
+     return row;
+}
+ 
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+	
+</script>
+
+<!--*******************************************************************************************************************************************************************
+ * style start
+ *******************************************************************************************************************************************************************-->
+ 
+<style>
+	.thead-fixed {
+		position: sticky;
+	    top: 0;
+	    z-index: 1;
+	    background-color: #FFF;
+	}
+	
+	.sub_cont_wrap {
+	    width:97%;
+	    margin: 0 auto;
+	    margin-top: 40px;
+	    margin-bottom: 60px;
+	}
+	
+	.sub_cont_wrap .sub_cont_box {
+		padding: 20px;
+		margin-bottom: 0px;
+	}
+	
+	.row .col.l2 {
+		width: 20%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+	   
+    .row .col.l4 {
+		width: 40%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+	   
+    .row .col.l5 {
+		width: 50%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}   
+	   
+	.row .col.l6 {
+		width: 60%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+	   
+	th, td {
+		white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+		overflow: hidden; /* 넘치는 텍스트 숨김 */
+		text-overflow: ellipsis; /* 넘치는 텍스트에 "..." 표시 */
+    }
+	
+</style>
+
+<!--*******************************************************************************************************************************************************************
+ * style end
+ *******************************************************************************************************************************************************************-->

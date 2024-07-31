@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>대동대학교 포탈</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+<!--     <link rel="stylesheet" type="text/css" href="../../assets/css/reset.css" /> -->
+
+
+<!--     <link rel="stylesheet" type="text/css" href="../../assets/css/jui/jui-grid.classic.css"> -->
+    <link rel="stylesheet" type="text/css" href="../../assets/css/jui/jui-ui.classic.css">
+<!--     <link rel="stylesheet" type="text/css" href="../../assets/css/iframe_layout.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../assets/css/feather.css" />
+<!--     <link rel="stylesheet" type="text/css" href="../../assets/css/xcloud-icon.css" /> -->
+<!--     <link rel="stylesheet" type="text/css" href="../../assets/css/jquery.mCustomScrollbar.css"> -->
+<!--     <link rel="stylesheet" type="text/css" href="../../assets/css/slick.css" /> -->
+
+    <link rel="stylesheet" type="text/css" href="../../assets/css/login.css">
+
+<!--     <script type="text/javascript" src="../../assets/js/vendor/jquery-1.12.4.min.js"></script> -->
+<!--     <script type="text/javascript" src="../../assets/js/vendor/jquery.easing.1.3.js"></script> -->
+<!--     <script type="text/javascript" src="../../assets/js/vendor/slick.min.js"></script> -->
+<!--     <script type="text/javascript" src="../../assets/js/iframe.js"></script> -->
+<!--     <script type="text/javascript" src="../../assets/js/modal.js"></script> -->
+<!--     <script type="text/javascript" src="../../assets/js/vendor/jquery.mCustomScrollbar.concat.min.js"></script> -->
+<!--     <script type="text/javascript" src="../../assets/js/vendor/progresscircle.js"></script> -->
+</head>
+
+<body class="jui feather">
+    <div id="wrap" class="login_wrap">
+        <div class="login-inner">
+            <img src="/service/design/images/login/daedong_logo.svg" alt="대동대학교" class="logo">
+            <p class="eng-tit">Single Sign-on</p>
+            <h2>통합로그인</h2>
+            <ul class="identify-select">
+                <li>
+                    <div class="radio size-m">
+                        <input type="radio" name="radio" id="radio01" checked>
+                        <label for="radio01">학생</label>
+                        <i class="radio-icon"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="radio size-m">
+                        <input type="radio" name="radio" id="radio02">
+                        <label for="radio02">교수</label>
+                        <i class="radio-icon"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="radio size-m">
+                        <input type="radio" name="radio" id="radio03">
+                        <label for="radio03">직원</label>
+                        <i class="radio-icon"></i>
+                    </div>
+                </li>
+            </ul>
+            <div class="login-form">
+                <div class="input-wrap icon-user">
+                    <input type="text" class="size-l" placeholder="아이디를 입력하세요">
+                </div>
+                <div class="input-wrap icon-lock">
+                    <input type="password" class="size-l" placeholder="비밀번호를 입력하세요">
+                </div>
+                <input type="submit" class="btn-login" value="LOGIN">
+            </div>
+            <div class="login-menu">
+                <a href="#!">ID찾기</a>
+                <a href="#!">비밀번호찾기</a>
+                <a href="#!">회원가입</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

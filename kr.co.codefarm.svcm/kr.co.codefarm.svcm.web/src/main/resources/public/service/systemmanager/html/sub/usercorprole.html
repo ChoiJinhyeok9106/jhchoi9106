@@ -1,0 +1,260 @@
+<h2>시스템 사용자 현황</h2>
+<section class="sub_cont_box" id="app">
+	<section class="form-section myinfo-modify">
+		<h2 class="h2">시스템 사용자 현황</h2>
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+			<input type="text" name="pSearchArgv" class="size-m" id="pSearchArgv" v-model="pSearchArgv" placeholder="사용자 명/이메일" @keyup.13="setuserList" data-vv-as="사용자 명/아이디 " v-bind:class="{'invalid':errors.has('pSearchArgv')}">
+			<input type="button" value="검색" class="btn type01 size-m" @click="setUserList">
+		</div>
+		<div class="btn-line right">
+			<input type="button" class="btn type02 size-m bg-orange" value="삭제" @click="messagePopup('delete')" :disabled="checkSelected()">
+			<input type="button" class="btn type02 size-m bg-green" value="저장" @click="messagePopup('update')"  :disabled="checkSelected()">
+		</div>
+		<div class="col s12 l12">
+			<span class="board-info-txt size-m">총 <span>{{userListPaging.totalCnt}}</span>건의 내용이 있습니다. (<span>{{userListPaging.getCurrentPage()}}</span> / {{userListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="row form-row table-type04-wrap">
+			<table class="table-type04 response" id="userListLoading">
+				<thead>
+					<tr>
+						<th rowspan="2">선택</th>
+						<th class="left" rowspan="2">이메일</th>
+						<th class="left" rowspan="2">성명</th>
+						<th class="left" rowspan="2">부서</th>
+						<th class="left" rowspan="2">직책</th>
+						<th class="left" rowspan="2">전화번호</th>
+						<th class="left" rowspan="2">휴대전화</th>
+						<th class="left" rowspan="2">관리자여부</th>
+						<th :colspan="giaCommcode.getCommcode('GIA','OFCL_ROLE_CD','blank').length">시스템업무</th>
+					</tr>
+					<tr>
+						<th v-for="item in giaCommcode.getCommcode('GIA','OFCL_ROLE_CD','blank')">{{ item.CD_NM }}</th>
+					</tr>
+				</thead>
+				<tbody v-if="userList.data.length > 0">
+					<tr v-for="(item, index) in userList.data">
+						<td data-header="선택">
+							<div class="checkbox size-m type04 single">
+								<input type="checkbox" v-model="userList.data[index]['CHECK_YN']" true-value="Y" false-value="N"> <i class="icon-check"></i>
+							</div>
+						</td>
+						<td class="left" data-header="이메일">{{ item.LOGIN_ID }}</td>
+						<td class="left" data-header="성명">{{ item.USR_NM }}</td>
+						<td class="left" data-header="부서">{{ item.DEPT_NM }}</td>
+						<td class="left" data-header="직책">{{ item.PSTN_NM }}</td>
+						<td class="left" data-header="전화번호">{{ item.TEL_NO | telFormatter }}</td>
+						<td class="left" data-header="휴대전화">{{ item.MTEL_NO | telFormatter }}</td>
+						<td class="left" data-header="관리자여부">
+                            <label class="toggle-switch size-m">
+                                <input class="size-m" type="checkbox" id="authYn" name="authYn" true-value="Y" false-value="N" v-model="item.ADMIN_YN" @change="userList.data[index]['CHECK_YN'] = 'Y'"/>
+                                <span class="slider bg-red round"></span>
+                            </label>
+                        </td>
+                		<td :data-header="item2.CD_NM" v-for="(item2, index2) in giaCommcode.getCommcode('GIA','OFCL_ROLE_CD','blank')">
+                            <label class="toggle-switch size-m">
+                                <input type="checkbox" v-model="userList.data[index]['USR_ROLE_CD'][item2.CD]" @change="userList.data[index]['CHECK_YN'] = 'Y'" class="size-m" :true-value="'Y'" :false-value="'N'" />
+                                <span class="slider bg-red round"></span>
+                            </label>
+                			
+                		</td>
+					</tr>
+				</tbody>
+				<tbody v-else>
+					<tr>
+						<td colspan="99">검색결과가 존재하지않습니다.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<paging :pagingset="userListPaging" :type="'normal'"></paging>
+	</section>
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	pSearchArgv : '',
+    	userList: new Dataset(),
+    	userListPaging: new PagingSet(20,10),
+   		userListLoading: { id: 'userListLoading', val : false},
+        messageModal: new ModalSet('modal-message'),	// confirm 모달
+    },
+    
+    //데이터 감시
+    watch: {
+		'userList.data': {
+			handler: function(val, oldVal) {
+				if(this.userList.enableevent) {
+					var vm = this;
+					val.filter(function(data, rowposition) {
+						return Object.keys(data).some(function(colNm) {
+							var diff = data[colNm] !== vm.userList.beforeData[rowposition][colNm];
+							if(diff) {
+								vm.userList.beforeData[rowposition][colNm] = data[colNm];
+							}
+						});
+					});
+				}
+			},
+			deep: true
+		},
+		'userListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.userList.pageChange(val, this.userListPaging.getRowCnt());
+			}
+		},
+	    'userListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userListLoading.id), val);
+			}
+	    },
+    },
+    filters: {
+    	telFormatter: function(val){
+    		return val.replaceAll('-','').replace(/([0-9]{2,3})([0-9]{3,4})([0-9]{4})$/, '$1-$2-$3')
+    	}
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	this.setUserList();
+    },
+    //함수
+    methods: {
+	   	checkSelected: function(){
+	   		var self = this;
+	   		var t = true;
+	   		for(var i = 0 ; i < self.userList.data.length; i++){
+	   			if(self.userList.data[i]['CHECK_YN'] == 'Y'){
+	   				t = false;
+	   				break;
+	   			}
+	   		}
+	   		return t;
+	   	},
+    	setUserList: function(){
+    		var self = this;
+    		
+    		var params = {
+    			pSearchArgv : self.pSearchArgv, 
+    		}
+    		self.userListLoading.val = true;
+			self.userListPaging.currentPage = 1;
+			
+    		var returnVal = userApi.myCorpUser(params,false);
+    		returnVal.then(function (response){
+    			if(response.status >= 200 && response.status < 300){
+					for(var i = 0 ; i < response.data.length ; i++){
+						if(response.data[i]['USR_ROLE_CD']){
+							var t = JSON.parse(response.data[i]['USR_ROLE_CD']);
+							response.data[i]['USR_ROLE_CD'] = {};
+							for(var item of t)
+								response.data[i]['USR_ROLE_CD'][item] = 'Y';
+						}else{
+							response.data[i]['USR_ROLE_CD'] = {};
+						}
+					}
+    				self.userList.setRawData(response.data, self.userListPaging.getRowCnt());
+    				if(response.data.length > 0){
+    					self.userListPaging.setTotalCnt(response.data.length);
+    				}else{
+    					self.userListPaging.setTotalCnt(0);
+    				}
+    			}else{
+    				notifySubmit('warning','회원조회','회원조회에 실패하였습니다.','icon-caution');
+    			}
+    		}).finally(function(){
+        		self.userListLoading.val = false;
+    		});
+    	},
+    	updateUser: function(){
+			var self = this;
+			var params = [];
+			for (var i = 0; i< self.userList.data.length ; i++){
+				params[i] = self.userList.data[i];	
+				var keys = Object.keys(params[i]['USR_ROLE_CD']);
+				for(var j = 0 ; j < keys.length ; j++){
+					if(params[i]['USR_ROLE_CD'][keys[j]] == 'Y')
+						params[i][keys[j]] = 'Y';
+					
+				}
+				params[i]['USR_ROLE_CD'] = null;			
+			}
+    		var returnVal = userApi.updateMyCorpUser(params,false);
+    		returnVal.then(function (response){
+    			if(response.status >= 200 && response.status < 300){
+    				self.setUserList();
+					notifySubmit('success', '회원권한 수정', '권한 수정에 성공하였습니다.', 'icon-save');
+    			}else{
+    				notifySubmit('warning','회원권한 수정','권한 수정에 실패하였습니다.','icon-caution');
+    			}
+    		});
+    	},
+    	deleteUser: function(){
+			var self = this;
+			var params = [];
+			for (var i = 0; i< self.userList.data.length ; i++){
+				params[i] = self.userList.data[i];				
+			}
+    		var returnVal = userApi.deleteMyCorpUser(params,false);
+    		returnVal.then(function (response){
+    			if(response.status >= 200 && response.status < 300){
+    				self.setUserList();
+					notifySubmit('success', '회원권한 수정', '사용자 삭제에 성공하였습니다.', 'icon-save');
+    			}else{
+    				notifySubmit('warning','회원권한 수정','사용자 삭제에 실패하였습니다.','icon-caution');
+    			}
+    		});
+    	},
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            
+      		switch(pId) {
+	    		case 'delete':
+                    title = '사용자 삭제';
+                    cont = '선택 된 사용자들을 삭제 하시겠습니까?';
+	    			break;
+	    		case 'update':
+                    title = '권한수정';
+                    cont = '선택 된 사용자들의 권한을 일괄적으로 수정하시겠습니까?<br>(관리자가 미사용중인 서비스는 권한부여가 불가합니다.)';
+	    			break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+        messagePopupCallback: function(pGb, pId) {	
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'delete':
+	    			this.deleteUser();
+	    			break;
+	    		case 'update':
+	    			this.updateUser();
+	    			break;
+	    	}
+        }
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>

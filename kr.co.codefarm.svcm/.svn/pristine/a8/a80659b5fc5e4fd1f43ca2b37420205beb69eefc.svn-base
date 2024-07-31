@@ -1,0 +1,1321 @@
+<script type="text/javascript" src="/app-assets/js/api/amanager/usrloccd.api.js"></script>
+<script type="text/javascript" src="/app-assets/js/api/amanager/commonsearch.api.js"></script>
+
+
+<h3 style="margin-top:-20px;">자산관리 설정 > 설정 > 내부시스템관리 > <strong>사용위치관리</strong></h3>
+<section class="sub_cont_box" id="app" style="margin-top:10px;">
+	<section class="cont_box" v-if="!mainList1.currentRow && !mainList2.currentRow && !mainList3.currentRow">
+			<!-- 테이블 영역 -->
+			<section class="row">
+				
+				<!-- 사용위치관리 건물명 테이블 -->
+				<div class="form-group col s12 l3">
+					<div class="box-type03">
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1;">
+								<span class="board-info-txt size-s">총 <span>{{mainListPaging1.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging1.getCurrentPage()}}</span> / {{mainListPaging1.getTotalPage()}})</span>
+							</div>
+							<div class="btn_container">
+								<div class="col-inline btn-line right">
+									<select class="size-s" name="pUseAt_L" id="pUseAt_L" v-model="pUseAt_L" @change="setmainList1()">
+										<option value="ALL">-전체-</option>
+										<option value="Y">사용</option>
+										<option value="N">미사용</option>
+									</select>
+									<a href="#!" class="btn type04 size-s left-icon icon-more" @click="newRow1" style="margin-right: 5px;">입력</a>
+									<a href="#!" class="btn type04 size-s left-icon icon-edit" @click="rowCheckClick1()" style="margin-right: 5px;">수정</a>
+								</div>
+							</div>
+						</div>
+						<perfect-scrollbar style="max-height: 700px;">
+						<table class="table-type01 response" id="datas-reponsive">
+							<caption></caption>
+							<thead class="thead-fixed">
+								<tr>
+									<th><input type="checkbox" v-model="selectAll1" @change="toggleSelectAll1"/></th>
+									<th scope="col">No</th>
+									<th scope="col" @click="sortMainList1('USE_AT_NM')" class="sortable"><span :class="sortIcon('mainList1', 'USE_AT_NM')"></span>사용여부</th>
+									<th scope="col" @click="sortMainList1('CODE_NM')" class="sortable"><span :class="sortIcon('mainList1', 'CODE_NM')"></span>건물명</th>
+								</tr>
+							</thead>
+							<tbody v-if="sortedData1.length > 0">
+								<tr v-for="(item, index) in sortedData1" v-if="mainList1.getRowType(index) != 8" :key="index">
+									<td><input type="checkbox" v-model="selectedRows1[index]"/></td>
+									<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ index + 1 }}</a></td>
+									<td data-header="사용여부" style="text-align: center;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.USE_AT_NM }}</a></td>
+									<td data-header="건물명" style="text-align: left;"><a href="#!" @click="toggleCheckbox1(index)" @dblclick="rowDbClick1(index)">{{ item.CD_NM }}</a></td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						</perfect-scrollbar>
+						<!-- 페이지당 Row 선택 드랍다운 메뉴 -->
+						<div class="col s12 l12" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 10px;">
+							<div class="col s3" style="margin-top: -2px;">
+								<select class="size-s" v-model="pageSize1" @change="changePageSize(1)" name="pageSize1" id="pageSize1">
+									<option v-for="sizeOption in pageSizes" :value="sizeOption">{{ sizeOption }} 건</option>
+								</select>
+							</div>
+							<span style="margin-left: 10px; margin-bottom: 0;">/ 페이지당</span>
+						</div>
+						<paging :pagingset="mainListPaging1" :type="'normal'"></paging>
+					</div>
+				</div>
+				
+				<!-- 사용위치관리 층 테이블 -->
+				<div class="form-group col s12 l3">
+					<div class="box-type03">
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1;">
+								<span class="board-info-txt size-s">총 <span>{{mainListPaging2.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging2.getCurrentPage()}}</span> / {{mainListPaging2.getTotalPage()}})</span>
+							</div>
+							<div class="btn_container">
+								<div class="col-inline btn-line right">
+									<select class="size-s" name="pUseAt_M" id="pUseAt_M" v-model="pUseAt_M" @change="setmainList2()">
+										<option value="ALL">-전체-</option>
+										<option value="Y">사용</option>
+										<option value="N">미사용</option>
+									</select>
+									<a href="#!" class="btn type04 size-s left-icon icon-more" @click="newRow2" style="margin-right: 5px;">입력</a>
+									<a href="#!" class="btn type04 size-s left-icon icon-edit" @click="rowCheckClick2()" style="margin-right: 5px;">수정</a>
+								</div>
+							</div>
+						</div>
+						<perfect-scrollbar style="max-height: 700px;">
+						<table class="table-type01 response" id="datas-reponsive">
+							<caption></caption>
+							<thead class="thead-fixed">
+								<tr>
+									<th><input type="checkbox" v-model="selectAll2" @change="toggleSelectAll2"/></th>
+									<th scope="col">No</th>
+									<th scope="col" @click="sortMainList2('USE_AT_NM')" class="sortable"><span :class="sortIcon('mainList2', 'USE_AT_NM')"></span>사용여부</th>
+									<th scope="col" @click="sortMainList2('CODE_NM')" class="sortable"><span :class="sortIcon('mainList2', 'CODE_NM')"></span>층</th>
+								</tr>
+							</thead>
+							<tbody v-if="sortedData2.length > 0">
+								<tr v-for="(item, index) in sortedData2" v-if="mainList2.getRowType(index) != 8" :key="index">
+									<td><input type="checkbox" v-model="selectedRows2[index]"/></td>
+									<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ index + 1 }}</a></td>
+									<td data-header="사용여부" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.USE_AT_NM }}</a></td>
+									<td data-header="층" style="text-align: center;"><a href="#!" @click="toggleCheckbox2(index)" @dblclick="rowDbClick2(index)">{{ item.CODE_NM }}</a></td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						</perfect-scrollbar>
+						<!-- 페이지당 Row 선택 드랍다운 메뉴 -->
+						<div class="col s12 l12" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 10px;">
+							<div class="col s3" style="margin-top: -2px;">
+								<select class="size-s" v-model="pageSize2" @change="changePageSize(2)" name="pageSize2" id="pageSize2">
+									<option v-for="sizeOption in pageSizes" :value="sizeOption">{{ sizeOption }} 건</option>
+								</select>
+							</div>
+							<span style="margin-left: 10px; margin-bottom: 0;">/ 페이지당</span>
+						</div>
+						<paging :pagingset="mainListPaging2" :type="'normal'"></paging>
+					</div>
+				</div>
+				
+				<!-- 사용위치관리 위치명 테이블 -->
+				<div class="form-group col s12 l3">
+					<div class="box-type03">
+						<div style="display: flex; align-items: center;">
+							<div class="col s12 l12" style="flex: 1;">
+								<span class="board-info-txt size-s">총 <span>{{mainListPaging3.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging3.getCurrentPage()}}</span> / {{mainListPaging3.getTotalPage()}})</span>
+							</div>
+							<div class="btn_container">
+								<div class="col-inline btn-line right">
+									<select class="size-s" name="pUseAt_R" id="pUseAt_R" v-model="pUseAt_R" @change="setmainList3()">
+										<option value="ALL">-전체-</option>
+										<option value="Y">사용</option>
+										<option value="N">미사용</option>
+									</select>
+									<a href="#!" class="btn type04 size-s left-icon icon-more" @click="newRow3" style="margin-right: 5px;">입력</a>
+									<a href="#!" class="btn type04 size-s left-icon icon-edit" @click="rowCheckClick3()"
+										style="margin-right: 5px;">수정</a>
+								</div>
+							</div>
+						</div>
+						<perfect-scrollbar style="max-height: 700px;">
+						<table class="table-type01 response" id="datas-reponsive">
+							<caption></caption>
+							<thead class="thead-fixed">
+								<tr>
+									<th><input type="checkbox" v-model="selectAll3" @change="toggleSelectAll3"/></th>
+									<th scope="col">No</th>
+									<th scope="col" @click="sortMainList3('USE_AT_NM')" class="sortable"><span :class="sortIcon('mainList3', 'USE_AT_NM')"></span>사용여부</th>
+									<th scope="col" @click="sortMainList3('LOC_NM')" class="sortable"><span :class="sortIcon('mainList3', 'LOC_NM')"></span>위치명</th>
+								</tr>
+							</thead>
+							<tbody v-if="sortedData3.length > 0">
+								<tr v-for="(item, index) in sortedData3" v-if="mainList3.getRowType(index) != 8" :key="index">
+									<td><input type="checkbox" v-model="selectedRows3[index]"/></td>
+									<td data-header="No" style="text-align: center;"><a href="#!" @click="toggleCheckbox3(index)" @dblclick="rowDbClick3(index)">{{ index + 1 }}</a></td>
+									<td data-header="사용여부" style="text-align: center;"><a href="#!" @click="toggleCheckbox3(index)" @dblclick="rowDbClick3(index)">{{ item.USE_AT_NM }}</a></td>
+									<td data-header="위치명" style="text-align: center;"><a href="#!" @click="toggleCheckbox3(index)" @dblclick="rowDbClick3(index)">{{ item.LOC_NM }}</a></td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+						</perfect-scrollbar>
+						<!-- 페이지당 Row 선택 드랍다운 메뉴 -->
+						<div class="col s12 l12" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 10px;">
+							<div class="col s3" style="margin-top: -2px;">
+								<select class="size-s" v-model="pageSize3" @change="changePageSize(3)" name="pageSize3" id="pageSize3">
+									<option v-for="sizeOption in pageSizes" :value="sizeOption">{{ sizeOption }} 건</option>
+								</select>
+							</div>
+							<span style="margin-left: 10px; margin-bottom: 0;">/ 페이지당</span>
+						</div>
+						<paging :pagingset="mainListPaging3" :type="'normal'"></paging>
+					</div>
+				</div>
+			</section>
+		</section>
+		
+		
+		<!-- 사용위치관리 건물 입력/수정 화면 -->
+		<section class="cont_box" v-if="mainList1.currentRow && mainList1.rowposition !== null">
+			<h3 class="h3" v-if="mainList1.getRowType(mainList1.rowposition) == ROWTYPE_INSERT">사용위치관리(입력)</h3>
+			<h3 class="h3" v-if="mainList1.getRowType(mainList1.rowposition) == ROWTYPE_NORMAL || mainList1.getRowType(mainList1.rowposition) == ROWTYPE_UPDATE">공통코드관리(수정)</h3>
+			<div class="box-type04">
+				<div class="form-group row">
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="codeNm">건물명</label>
+						<input type="text" class="size-m" id="codeNm" name="codeNm" data-vv-as="건물명" v-model="mainList1.currentRow.CODE_NM">
+					</div>
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="useAt">사용여부</label>
+						<select class="size-s" name="useAt" id="useAt" v-model="mainList1.currentRow.USE_AT">
+							<option value="Y">사용</option>
+							<option value="N">미사용</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<div class="btn-line right">
+				<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow1">저장</a>
+				<a href="#!" class="btn type01 size-m left-icon icon-close" @click="closeMainList1">닫기</a>
+			</div>
+		</section>
+		
+		<!-- 사용위치관리 층 입력/수정 화면 -->
+		<section class="cont_box" v-if="mainList2.currentRow && mainList2.rowposition !== null">
+			<h3 class="h3" v-if="mainList2.getRowType(mainList2.rowposition) == ROWTYPE_INSERT">사용위치관리(입력)</h3>
+			<h3 class="h3" v-if="mainList2.getRowType(mainList2.rowposition) == ROWTYPE_NORMAL || mainList2.getRowType(mainList2.rowposition) == ROWTYPE_UPDATE">공통코드관리(수정)</h3>
+			<div class="box-type04">
+				<div class="form-group row">
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="codeNm">층</label>
+						<input type="text" class="size-m" id="codeNm" name="codeNm" data-vv-as="층" v-model="mainList2.currentRow.CODE_NM">
+					</div>
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="useAt">사용여부</label>
+						<select class="size-s" name="useAt" id="useAt" v-model="mainList2.currentRow.USE_AT">
+							<option value="Y">사용</option>
+							<option value="N">미사용</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<div class="btn-line right">
+				<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow2">저장</a>
+				<a href="#!" class="btn type01 size-m left-icon icon-close" @click="closeMainList2">닫기</a>
+			</div>
+		</section>
+		
+		<!-- 사용위치관리 위치 입력/수정 화면 -->
+		<section class="cont_box" v-if="mainList3.currentRow && mainList3.rowposition !== null">
+			<h3 class="h3" v-if="mainList3.getRowType(mainList3.rowposition) == ROWTYPE_INSERT">사용위치관리(입력)</h3>
+			<h3 class="h3" v-if="mainList3.getRowType(mainList3.rowposition) == ROWTYPE_NORMAL || mainList3.getRowType(mainList3.rowposition) == ROWTYPE_UPDATE">공통코드관리(수정)</h3>
+			<div class="box-type04">
+				<div class="form-group row">
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="codeNm">위치명</label>
+						<input type="text" class="size-m" id="locNm" name="locNm" data-vv-as="위치명" v-model="mainList3.currentRow.LOC_NM">
+					</div>
+					<div class="col s12 m12 l2">
+						<label class="label-type01 required size-m" for="useAt">사용여부</label>
+						<select class="size-s" name="useAt" id="useAt" v-model="mainList3.currentRow.USE_AT">
+							<option value="Y">사용</option>
+							<option value="N">미사용</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<div class="btn-line right">
+				<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow3">저장</a>
+				<a href="#!" class="btn type01 size-m left-icon icon-close" @click="closeMainList3">닫기</a>
+			</div>
+		</section>
+		
+	
+		<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+	
+</section>
+		
+<script type="text/javascript">
+
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+ 	el: '#app',
+ 	
+ 	/* 사용할 데이터 */
+ 	data: function() {
+ 		return {
+		mainList1: new Dataset(),
+		mainList2: new Dataset(),
+		mainList3: new Dataset(),
+		initialState: {
+			pUseAt_L: 'ALL',
+			pUseAt_M: 'ALL',
+			pUseAt_R: 'ALL',
+		},
+		pUseAt_L: 'ALL',
+		pUseAt_M: 'ALL',
+		pUseAt_R: 'ALL',
+		tableSort: {
+			mainList1: {sortKey: '', sortOrders: {USE_AT_NM: 'ASC', CODE_NM: 0}},
+			mainList2: {sortKey: '', sortOrders: {USE_AT_NM: 'ASC', CODE_NM: 0}},
+			mainList3: {sortKey: '', sortOrders: {USE_AT_NM: 'ASC', LOC_NM: 0}},
+		},
+		messageModal: new ModalSet('acqmgmt-modal'),
+		mainListPaging1: new PagingSet(10,100),
+		mainListPaging2: new PagingSet(10,100),
+		mainListPaging3: new PagingSet(10,100),
+		pageSizes: [100, 300, 500, 1000, 5000],
+		pageSize1: 100,
+		pageSize2: 100,
+		pageSize3: 100,
+		size: 100,
+		selectAll1: false,
+		selectedRows1: [],
+		currentSelectedIndex1: null,
+		selectAll2: false,
+		selectedRows2: [],
+		currentSelectedIndex2: null,
+		selectAll3: false,
+		selectedRows3: [],
+		currentSelectedIndex3: null,
+		};
+	},
+	
+	/* 생성 될 때 */
+	beforeCreate: function(){
+	},
+	
+	/* 계산된 속성 포현 시 */
+	computed: {
+		/* 테이블 정렬 추적 */
+		sortedData1() {
+			return this.sortDataComputed('mainList1');
+		},
+		sortedData2() {
+			return this.sortDataComputed('mainList2');
+		},
+		sortedData3() {
+			return this.sortDataComputed('mainList3');
+		},
+	},
+	
+	filters: {
+	},
+	
+	/* 데이터 감시 */
+	watch: {
+		'mainList1.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList1.enableevent){
+					var changeYn = this.mainList1.dataCompare(oldVal);
+					var rowType = this.mainList1.getRowType(val);
+
+					if(!changeYn){
+						this.mainList1.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList1.data': {
+			handler: function (val, oldVal) {
+				if (this.mainList1.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.mainList1.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.mainList1.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+		
+		'mainListPaging1.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList1(null, val)
+			}
+		},
+		
+		'mainList2.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList2.enableevent){
+					var changeYn = this.mainList2.dataCompare(oldVal);
+					var rowType = this.mainList2.getRowType(val);
+
+					if(!changeYn){
+						this.mainList2.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList2.data': {
+			handler: function (val, oldVal) {
+				if (this.mainList2.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.mainList2.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.mainList2.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+		
+		'mainListPaging2.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList2(null, val)
+			}
+		},
+		
+		'mainList3.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList3.enableevent){
+					var changeYn = this.mainList3.dataCompare(oldVal);
+					var rowType = this.mainList3.getRowType(val);
+
+					if(!changeYn){
+						this.mainList3.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList3.data': {
+			handler: function (val, oldVal) {
+				if (this.mainList3.enableevent) {
+					var vm = this;
+					val.filter(function (data, rowposition) {
+						return Object.keys(data).some(function (colNm) {
+							var diff = data[colNm] !== vm.mainList3.beforeData[rowposition][colNm];
+							if (diff) {
+								vm.mainList3.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+							}
+						})
+					});
+				}
+			},
+			deep: true
+		},
+		
+		'mainListPaging3.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList3(null, val)
+			}
+		},
+
+	},
+	
+	/* 마운트 된 시험수행 */
+	mounted: function(){
+		this.setmainList1();
+		document.addEventListener('keydown', this.handleEscKey);
+
+	},
+	
+	beforeDestroy() {
+		document.removeEventListener('keydown', this.handleEscKey);	
+		
+	},
+	
+	/* 함수 */
+	methods: {
+		setmainList1: function (e, pPageNo, index) {
+			if (isNull(e) || e.keyCode == 13 || e.type == 'click') {
+				
+				var codeId = 'CM0310';
+				var pUseAt_L = this.pUseAt_L;
+				var pageNo = pPageNo;
+				var rowCount = this.mainListPaging1.getRowCnt();
+
+				if (isNull(codeId)) codeId = '';
+				if (isNull(pUseAt_L)) pUseAt_L = '';
+				if (isNull(pageNo)) pageNo = 1;
+				if (isNull(rowCount)) rowCount = 50;
+
+				var param = {
+					'codeId': codeId,
+					'pUseAt': pUseAt_L,
+					'pPageNo': pageNo,
+					'pRowCount': rowCount
+				};
+
+				var self = this;
+
+				var returnVal = usrloccdApi.getBldgList(param, true);
+
+				returnVal.then(function (response) {
+					self.mainList1.setData(response.data);
+
+					if (self.mainList1.getRowCount() > 0) {
+						var totalCnt = self.mainList1.data[0].TOTAL_CNT;
+						self.mainListPaging1.setTotalCnt(totalCnt);
+					} else {
+						self.mainListPaging1.setTotalCnt(0);
+					}
+
+				});
+			}
+		},
+
+		setmainList2: function (e, pPageNo) {
+			var index = this.currentSelectedIndex1;
+			var codeId = 'CM0320';
+			var pUseAt_M = this.pUseAt_M;
+			var pageNo = pPageNo;
+			var rowCount = this.mainListPaging2.getRowCnt();
+
+			if (isNull(codeId)) codeId = '';
+			if (isNull(pUseAt_M)) pUseAt_M = '';
+			if (isNull(pageNo)) pageNo = 1;
+			if (isNull(rowCount)) rowCount = 50;
+
+			var param = {
+				'codeId': codeId,
+				'pUseAt': pUseAt_M,
+				'pPageNo': pageNo,
+				'pRowCount': rowCount
+			};
+
+			var self = this;
+			var returnVal = usrloccdApi.getBldgList(param, true);
+
+			returnVal.then(function (response) {
+				self.mainList2.setData(response.data);
+
+				if (self.mainList2.getRowCount() > 0) {
+					var totalCnt = self.mainList2.data[0].TOTAL_CNT;
+					self.mainListPaging2.setTotalCnt(totalCnt);
+				} else {
+					self.mainListPaging2.setTotalCnt(0);
+				}
+			});
+		},
+		
+		setmainList3: function (e, pPageNo) {
+			var index1 = this.currentSelectedIndex1;
+			var index2 = this.currentSelectedIndex2;
+			var bldgCd = this.mainList1.data[index1].CODE;
+			var stairCd = this.mainList2.data[index2].CODE;
+			var pUseAt_R = this.pUseAt_R;
+			var pageNo = pPageNo;
+			var rowCount = this.mainListPaging3.getRowCnt();
+
+			if (isNull(bldgCd)) bldgCd = '';
+			if (isNull(stairCd)) stairCd = '';
+			if (isNull(pUseAt_R)) pUseAt_R = '';
+			if (isNull(pageNo)) pageNo = 1;
+			if (isNull(rowCount)) rowCount = 50;
+
+			var param = {
+				'bldgCd': bldgCd,
+				'stairCd': stairCd,
+				'pUseAt': pUseAt_R,
+				'pPageNo': pageNo,
+				'pRowCount': rowCount
+			};
+
+			var self = this;
+			var returnVal = usrloccdApi.getLocList(param, true);
+
+			returnVal.then(function (response) {
+				self.mainList3.setData(response.data);
+
+				if (self.mainList3.getRowCount() > 0) {
+					var totalCnt = self.mainList3.data[0].TOTAL_CNT;
+					self.mainListPaging3.setTotalCnt(totalCnt);
+				} else {
+					self.mainListPaging3.setTotalCnt(0);
+				}
+			});
+		},
+		
+		/* 입력/수정 페이지 닫기 버튼 클릭시 */
+		closeMainList1() {
+			const previousSelectedIndex = this.currentSelectedIndex1;  // 이전에 선택된 인덱스 저장
+			this.mainList1.currentRow = null;
+			this.mainList1.rowposition = null;
+			if (this.currentSelectedIndex1 !== null) {
+				this.setmainList1(null, this.mainListPaging1.currentPage);  // 현재 페이지 유지
+			} else {
+				this.setmainList1(null, 1);  // 선택된 행이 없을 경우 첫 페이지로 검색
+			}
+			if (previousSelectedIndex !== null) {
+				this.$set(this.selectedRows1, previousSelectedIndex, true);  // 이전에 선택된 행을 다시 선택
+			}
+		},
+
+		closeMainList2() {
+			// 이전에 선택된 인덱스 저장
+			const previousSelectedIndex = this.currentSelectedIndex2;
+			this.mainList2.currentRow = null;
+			this.mainList2.rowposition = null;
+			if (this.currentSelectedIndex1 !== null) {
+				this.setmainList2(null, this.mainListPaging2.currentPage);  // 현재 페이지 유지
+			} else {
+				this.setmainList2(null, 1);  // 선택된 행이 없을 경우 첫 페이지로 검색
+			}
+			if (previousSelectedIndex !== null) {
+				this.$set(this.selectedRows2, previousSelectedIndex, true);  // 이전에 선택된 행을 다시 선택
+			}
+		},
+
+		closeMainList3() {
+			// 이전에 선택된 인덱스 저장
+			const previousSelectedIndex = this.currentSelectedIndex3;
+			this.mainList3.currentRow = null;
+			this.mainList3.rowposition = null;
+			if (this.currentSelectedIndex1 !== null && this.currentSelectedIndex2 !== null) {
+				this.setmainList3(null, this.mainListPaging3.currentPage);  // 현재 페이지 유지
+			} else {
+				this.setmainList3(null, 1);  // 선택된 행이 없을 경우 첫 페이지로 검색
+			}
+			if (previousSelectedIndex !== null) {
+				this.$set(this.selectedRows3, previousSelectedIndex, true);  // 이전에 선택된 행을 다시 선택
+			}
+		},
+
+		
+		/* 사용위치관리 건물 리스트 신규행 추가 */
+		newRow1: function () {
+
+			var addObj = {
+
+				'CODE_ID': 'CM0310',
+				'CODE': '',
+				'CODE_NM': '',
+				'CODE_DC': '',
+				'USE_AT': 'Y',
+				'FRST_REGIST_PNTTM': '',
+				'FRST_REGISTER_ID': '',
+				'ORDER_SEQ': '',
+				'AGENCY_ID': '',
+			};
+
+			var newRowPosition = this.mainList1.addRow(addObj);
+		},
+
+		/* 공통코드 상세 리스트 신규행 추가 */
+		newRow2: function () {
+			var checkedIndex = this.selectedRows1.findIndex(row => row === true);
+			if (checkedIndex === -1) {
+				this.messageModal.openModal('message', '선택된 건물 없음', '건물을 선택해주세요.', 'small', '', '');
+				return;
+			}
+
+			const selectedRow = this.mainList1.data[checkedIndex];
+			if (selectedRow) {
+				var addObj = {
+					'CODE_ID': 'CM0320',
+					'CODE': '',
+					'CODE_NM': '',
+					'CODE_DC': '',
+					'USE_AT': 'Y',
+					'FRST_REGIST_PNTTM': '',
+					'FRST_REGISTER_ID': '',
+					'ORDER_SEQ': '',
+					'AGENCY_ID': '',
+				};
+
+				var newRowPosition = this.mainList2.addRow(addObj);
+				this.currentSelectedIndex1 = checkedIndex;  // 현재 선택된 인덱스를 저장
+			} else {
+				this.messageModal.openModal('message', '선택된 건물 없음', '건물을 선택해주세요.', 'small', '', '');
+			}
+		},
+		
+		/* 공통코드 상세 리스트 신규행 추가 */
+		newRow3: function () {
+			var checkedIndex1 = this.selectedRows1.findIndex(row => row === true);
+			var checkedIndex2 = this.selectedRows2.findIndex(row => row === true);
+			if (checkedIndex1 === -1 || checkedIndex2 === -1) {
+				this.messageModal.openModal('message', '선택된 건물, 층 없음', '건물과 층을 선택해주세요.', 'small', '', '');
+				return;
+			}
+
+			const selectedRow1 = this.mainList1.data[checkedIndex1];
+			const selectedRow2 = this.mainList2.data[checkedIndex2];
+			
+			if (selectedRow1 && selectedRow2) {
+				var addObj = {
+					'LOC_CD': '',
+					'BLDG_CD': selectedRow1.CODE,
+					'BLDG_NM': selectedRow1.CODE_NM,
+					'STAIR_CD': selectedRow2.CODE,
+					'STAIR_NM': selectedRow2.CODE_NM,
+					'LOC_NM': '',
+					'USE_AT': 'Y',
+					'REGUSER_ID': '',
+					'REG_DATE': '',
+					'AGENCY_ID': '',
+				};
+
+				var newRowPosition = this.mainList3.addRow(addObj);
+				this.currentSelectedIndex1 = checkedIndex1;  // 현재 선택된 인덱스를 저장
+				this.currentSelectedIndex2 = checkedIndex2;  // 현재 선택된 인덱스를 저장
+			} else {
+				this.messageModal.openModal('message', '선택된 건물, 층 없음', '건물과 층을 선택해주세요.', 'small', '', '');
+			}
+		},
+		
+		/* 사용위치관리 건물 리스트 저장,수정 */
+		saveRow1: function () {
+			// 필수 입력 항목 검증
+			if (!this.mainList1.currentRow.CODE_NM) {
+				this.messageModal.openModal('message', '건물명 미입력', '건물명(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function (response) {
+				if (response) {
+					proceedSaving();
+
+					// 중복 체크 통과 후 저장 로직 실행
+					function proceedSaving() {
+						var rowposition = self.mainList1.rowposition;
+						var checkedIndex = self.selectedRows1.findIndex(row => row === true);
+						const selectedRow = self.mainList1.data[checkedIndex];
+						var rowType1 = self.mainList1.getRowType(rowposition);
+						var rowType2 = self.mainList1.getRowType(checkedIndex);
+						var returnVal = null;
+
+						// 신규 입력 시 저장
+						if (rowType1 === ROWTYPE_INSERT || rowType2 === ROWTYPE_INSERT) {
+							returnVal = usrloccdApi.insertBldg(self.mainList1.currentRow, false);
+						}
+						// 수정 시 저장
+						else if (rowType1 === ROWTYPE_UPDATE || rowType2 === ROWTYPE_UPDATE) {
+							returnVal = usrloccdApi.updateBldg(self.mainList1.currentRow, false);
+						} else {
+							notifySubmit('info', 'USRLOCCD 저장', '저장할 내역이 없습니다.', 'icon-message');
+						}
+
+						if (!isNull(returnVal)) {
+							returnVal.then(function (response) {
+								var data = response.data;
+								notifySubmit('success', 'USRLOCCD 저장', '저장이 완료되었습니다.', 'icon-save');
+								self.setmainList1(null, self.mainListPaging1.currentPage, 0);
+							}).catch(function (error) {
+								notifySubmit('warning', 'USRLOCCD 저장', '저장에 실패하였습니다.', 'icon-caution');
+							});
+						}
+					}
+				} else {
+					notifySubmit('warning', 'USRLOCCD 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+			self.resetSelectedRows1();
+		},
+				
+		/* 사용위치관리 층 리스트 저장,수정 */
+		saveRow2: function () {
+			// 필수 입력 항목 검증
+			if (!this.mainList2.currentRow.CODE_NM) {
+				this.messageModal.openModal('message', '층 미입력', '층(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function (response) {
+				if (response) {
+					proceedSaving();
+
+					// 중복 체크 통과 후 저장 로직 실행
+					function proceedSaving() {
+						var rowposition = self.mainList2.rowposition;
+						var checkedIndex = self.selectedRows2.findIndex(row => row === true);
+						const selectedRow = self.mainList2.data[checkedIndex];
+						var rowType1 = self.mainList2.getRowType(rowposition);
+						var rowType2 = self.mainList2.getRowType(checkedIndex);
+						var returnVal = null;
+
+						// 신규 입력 시 저장
+						if (rowType1 === ROWTYPE_INSERT || rowType2 === ROWTYPE_INSERT) {
+							returnVal = usrloccdApi.insertStair(self.mainList2.currentRow, false);
+						}
+						// 수정 시 저장
+						else if (rowType1 === ROWTYPE_UPDATE || rowType2 === ROWTYPE_UPDATE) {
+							returnVal = usrloccdApi.updateStair(self.mainList2.currentRow, false);
+						} else {
+							notifySubmit('info', 'USRLOCCD 저장', '저장할 내역이 없습니다.', 'icon-message');
+						}
+
+						if (!isNull(returnVal)) {
+							returnVal.then(function (response) {
+								var data = response.data;
+								notifySubmit('success', 'USRLOCCD 저장', '저장이 완료되었습니다.', 'icon-save');
+								self.setmainList2(null, self.mainListPaging2.currentPage, 0);
+							}).catch(function (error) {
+								notifySubmit('warning', 'USRLOCCD 저장', '저장에 실패하였습니다.', 'icon-caution');
+							});
+						}
+					}
+				} else {
+					notifySubmit('warning', 'USRLOCCD 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+			self.resetSelectedRows2();
+		},
+		
+		/* 사용위치관리 층 리스트 저장,수정 */
+		saveRow3: function () {
+			// 필수 입력 항목 검증
+			if (!this.mainList3.currentRow.LOC_NM) {
+				this.messageModal.openModal('message', '위치명 미입력', '위치명(은/는) 필수 입력 항목입니다.', 'small', '', '');
+				return;
+			}
+
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function (response) {
+				if (response) {
+					proceedSaving();
+
+					// 중복 체크 통과 후 저장 로직 실행
+					function proceedSaving() {
+						var rowposition = self.mainList3.rowposition;
+						var checkedIndex = self.selectedRows3.findIndex(row => row === true);
+						const selectedRow = self.mainList3.data[checkedIndex];
+						var rowType1 = self.mainList3.getRowType(rowposition);
+						var rowType2 = self.mainList3.getRowType(checkedIndex);
+						var returnVal = null;
+
+						// 신규 입력 시 저장
+						if (rowType1 === ROWTYPE_INSERT || rowType2 === ROWTYPE_INSERT) {
+							returnVal = usrloccdApi.insertLoc(self.mainList3.currentRow, false);
+						}
+						// 수정 시 저장
+						else if (rowType1 === ROWTYPE_UPDATE || rowType2 === ROWTYPE_UPDATE) {
+							returnVal = usrloccdApi.updateLoc(self.mainList3.currentRow, false);
+						} else {
+							notifySubmit('info', 'USRLOCCD 저장', '저장할 내역이 없습니다.', 'icon-message');
+						}
+
+						if (!isNull(returnVal)) {
+							returnVal.then(function (response) {
+								var data = response.data;
+								notifySubmit('success', 'USRLOCCD 저장', '저장이 완료되었습니다.', 'icon-save');
+								self.setmainList3(null, self.mainListPaging3.currentPage, 0);
+							}).catch(function (error) {
+								notifySubmit('warning', 'USRLOCCD 저장', '저장에 실패하였습니다.', 'icon-caution');
+							});
+						}
+					}
+				} else {
+					notifySubmit('warning', 'USRLOCCD 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+			self.resetSelectedRows3();
+		},
+		
+		/*  페이지 당 Row 선택 */
+		changePageSize: function(num) {
+			if(num==1){
+				this.mainListPaging1.setRowCnt(this.pageSize1);
+				this.setmainList1(null, 1);
+			} else if(num==2) {
+				this.mainListPaging2.setRowCnt(this.pageSize2);
+				this.setmainList2(null, 1);
+			} else if(num==3) {
+				this.mainListPaging3.setRowCnt(this.pageSize3);
+				this.setmainList3(null, 1);
+			}
+
+		},
+
+		/* 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+		},
+		
+		/* 수정버튼 클릭시 체크박스 선택 상태 확인 */
+		rowCheckClick1() {
+			const checkedIndex = this.selectedRows1.findIndex(row => row === true);
+			if (checkedIndex !== -1) {
+				const selectedRow = this.mainList1.data[checkedIndex];
+
+				this.mainList1.setRowType(checkedIndex, this.ROWTYPE_UPDATE);
+				this.mainList1.rowposition = checkedIndex;
+				this.mainList1.currentRow = this.mainList1.data[checkedIndex];
+			} else {
+				this.messageModal.openModal('message', '선택된 건물 없음', '수정할 건물을 선택 해주세요.', 'middle', '', '');
+			}
+		},
+		
+		rowCheckClick2() {
+			const checkedIndex = this.selectedRows2.findIndex(row => row === true);
+			if (checkedIndex !== -1) {
+				const selectedRow = this.mainList2.data[checkedIndex];
+
+				this.mainList2.setRowType(checkedIndex, this.ROWTYPE_UPDATE);
+				this.mainList2.rowposition = checkedIndex;
+				this.mainList2.currentRow = this.mainList2.data[checkedIndex];
+			} else {
+				this.messageModal.openModal('message', '선택된 층 없음', '수정할 층을 선택 해주세요.', 'middle', '', '');
+			}
+		},
+		
+		rowCheckClick3() {
+			const checkedIndex = this.selectedRows3.findIndex(row => row === true);
+			if (checkedIndex !== -1) {
+				const selectedRow = this.mainList3.data[checkedIndex];
+
+				this.mainList3.setRowType(checkedIndex, this.ROWTYPE_UPDATE);
+				this.mainList3.rowposition = checkedIndex;
+				this.mainList3.currentRow = this.mainList3.data[checkedIndex];
+			} else {
+				this.messageModal.openModal('message', '선택된 위치 없음', '수정할 위치를 선택 해주세요.', 'middle', '', '');
+			}
+		},
+		
+		
+		/* 특정 Row 더블클릭시 수정창 [index값 기준] open */
+		rowDbClick1: function(index){
+			var nRowType = this.mainList1.setRowType(0, this.ROWTYPE_UPDATE);
+			const selectedRow = this.mainList1.data[index];
+
+			if (!selectedRow) {
+				console.error("선택된 행이 유효하지 않습니다.");
+				return;
+			}
+			this.mainList1.selectRow(index);
+		},
+		
+		rowDbClick2: function(index){
+			var nRowType = this.mainList2.setRowType(0, this.ROWTYPE_UPDATE);
+			const selectedRow = this.mainList2.data[index];
+
+			if (!selectedRow) {
+				console.error("선택된 행이 유효하지 않습니다.");
+				return;
+			}
+			this.mainList2.selectRow(index);
+		},
+		
+		rowDbClick3: function(index){
+			var nRowType = this.mainList3.setRowType(0, this.ROWTYPE_UPDATE);
+			const selectedRow = this.mainList3.data[index];
+
+			if (!selectedRow) {
+				console.error("선택된 행이 유효하지 않습니다.");
+				return;
+			}
+			this.mainList3.selectRow(index);
+		},
+		
+		/* 메세지창 띄우기 */
+		messagePopup: function (pId, pData) {
+			console.log('messagePopup 호출됨', pId, pData); // 디버깅용 로그
+			let title = '확인';
+			let cont = '해당 작업을 수행하시겠습니까?';
+			const pGb = 'confirm';
+
+			switch (pId) {
+				case 'ROW_DELETE_CL':
+					title = '선택 및 적용';
+					cont = '선택된 물품코드를 삭제하시겠습니까?';
+					break;
+
+				case 'ROW_DELETE_STND':
+					title = '선택 및 적용';
+					cont = '선택된 규격명코드를 삭제하시겠습니까?';
+					break;
+			}
+			this.messageModal.openModal(pGb, title, cont, 'middle', pId, pData);
+		},
+		
+		/* 메시지 콜백 */
+		messagePopupCallback: function (pGb, pId, pData) {
+			if (pGb != 'confirm') return;
+
+			switch (pId) {
+				case 'ROW_DELETE_CL':
+					this.deleteRow1(pData);
+					break;
+				case 'ROW_DELETE_STND':
+					this.deleteRow2(pData);
+					break;
+			}
+		},
+		
+		/* 검색조건 초기화 */
+		resetFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialState)));
+		},
+
+		resetModalFields() {
+			Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialModalState)));
+		},
+
+		/* 모달 레이어 팝업 Close */
+		closeModal(event) {
+			if (!this.mainList1.currentRow) {
+				modal_close('assetSearchModal');
+				this.search(event);
+			} else {
+				modal_close('assetSearchModal');
+			}
+		},
+
+		/* 체크박스 선택시 데이터 저장*/
+		toggleRowSelection1(index) {
+			if (this.selectedRows1.includes(index)) {
+				this.selectedRows1 = this.selectedRows1.filter(i => i !== index);
+				this.mainList1.deselectRow(index);
+			} else {
+				this.selectedRows1.push(index);
+				this.mainList1.selectRow(index);
+			}
+		},
+
+		toggleRowSelection2(index) {
+			if (this.selectedRows2.includes(index)) {
+				this.selectedRows2 = this.selectedRows2.filter(i => i !== index);
+				this.mainList2.deselectRow(index);
+			} else {
+				this.selectedRows2.push(index);
+				this.mainList2.selectRow(index);
+			}
+		},
+
+		/* 프로세스 적용 후 체크 선택 해제 */
+		resetSelectedRows1() {
+			this.selectedRows1 = [];
+			this.selectAll1 = false;
+		},
+		resetSelectedRows2() {
+			this.selectedRows2 = [];
+			this.selectAll2 = false;
+			this.currentSelectedIndex2 = null;  // 오른쪽 테이블의 선택된 인덱스 초기화
+		},
+		resetSelectedRows3() {
+			this.selectedRows3 = [];
+			this.selectAll3 = false;
+			this.currentSelectedIndex3 = null;  // 오른쪽 테이블의 선택된 인덱스 초기화
+		},
+
+		/* 행 클릭시 */
+		toggleCheckbox1(index) {
+			// 현재 선택되어있는 행이 존재할 시
+			if (this.currentSelectedIndex1 !== null && this.currentSelectedIndex1 !== index) {
+				// 이전에 선택된 행의 체크를 해제
+				this.$set(this.selectedRows1, this.currentSelectedIndex1, false);
+			}
+
+			this.$set(this.selectedRows1, index, !this.selectedRows1[index]);
+			this.currentSelectedIndex1 = index;  // 현재 선택된 인덱스를 업데이트
+
+			this.setmainList2(null, 1);
+
+			// 오른쪽 테이블의 체크박스를 해제
+			this.resetSelectedRows2();
+		},
+
+		toggleCheckbox2(index) {
+			if (this.currentSelectedIndex2 !== null && this.currentSelectedIndex2 !== index) {
+				// 이전에 선택된 행의 체크를 해제
+				this.$set(this.selectedRows2, this.currentSelectedIndex2, false);
+			}
+
+			this.$set(this.selectedRows2, index, !this.selectedRows2[index]);
+			this.currentSelectedIndex2 = index;  // 현재 선택된 인덱스를 업데이트
+			
+			this.setmainList3(null, 1);
+
+			// 오른쪽 테이블의 체크박스를 해제
+			this.resetSelectedRows3();
+		},
+
+		toggleCheckbox3(index) {
+			if (this.currentSelectedIndex3 !== null && this.currentSelectedIndex3 !== index) {
+				// 이전에 선택된 행의 체크를 해제
+				this.$set(this.selectedRows3, this.currentSelectedIndex3, false);
+			}
+
+			this.$set(this.selectedRows3, index, !this.selectedRows3[index]);
+			this.currentSelectedIndex3 = index;  // 현재 선택된 인덱스를 업데이트
+			
+			//this.setmainList3(null, 1);
+		},
+
+		/* 모든 체크박스 토글  */
+		toggleSelectAll1() {
+			this.selectedRows1 = this.mainList1.data.map(() => this.selectAll1);
+		},
+
+		toggleSelectAll2() {
+			this.selectedRows2 = this.mainList2.data.map(() => this.selectAll2);
+		},
+		
+		toggleSelectAll3() {
+			this.selectedRows2 = this.mainList2.data.map(() => this.selectAll2);
+		},
+
+		/* ESC 버튼 다운시 핸들러 */
+		handleEscKey(event) {
+			if (event.key === 'Escape' || event.key === 'Esc') {
+				this.closeModal(event);
+			}
+		},
+		
+		formatTimestamp(timestamp) {
+			const date = new Date(timestamp);
+			const year = date.getFullYear();
+			const month = ('0' + (date.getMonth() + 1)).slice(-2);
+			const day = ('0' + date.getDate()).slice(-2);
+			const hours = ('0' + date.getHours()).slice(-2);
+			const minutes = ('0' + date.getMinutes()).slice(-2);
+			const seconds = ('0' + date.getSeconds()).slice(-2);
+			return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+		},
+
+		/* 테이블 정렬 상태값 적용 */
+		sortMainList1(key) {
+			let sortState = this.tableSort.mainList1;
+			if (sortState.sortKey === key) {
+				sortState.sortOrders[key] = sortState.sortOrders[key] === 'ASC' ? 'DESC' : 'ASC';
+			} else {
+				sortState.sortKey = key;
+				sortState.sortOrders[key] = 'ASC';
+			}
+			this.sortData('mainList1');
+		},
+
+		sortMainList2(key) {
+			let sortState = this.tableSort.mainList2;
+			if (sortState.sortKey === key) {
+				sortState.sortOrders[key] = sortState.sortOrders[key] === 'ASC' ? 'DESC' : 'ASC';
+			} else {
+				sortState.sortKey = key;
+				sortState.sortOrders[key] = 'ASC';
+			}
+			this.sortData('mainList2');
+		},
+
+		sortMainList3(key) {
+			let sortState = this.tableSort.mainList3;
+			if (sortState.sortKey === key) {
+				sortState.sortOrders[key] = sortState.sortOrders[key] === 'ASC' ? 'DESC' : 'ASC';
+			} else {
+				sortState.sortKey = key;
+				sortState.sortOrders[key] = 'ASC';
+			}
+			this.sortData('mainList3');
+		},
+
+		sortData(listName) {
+			let sortState = this.tableSort[listName];
+			let data = this[listName].data;
+			if (sortState.sortKey) {
+				data.sort((a, b) => {
+					let result = 0;
+					if (a[sortState.sortKey] > b[sortState.sortKey]) {
+						result = 1;
+					} else if (a[sortState.sortKey] < b[sortState.sortKey]) {
+						result = -1;
+					}
+					return result * (sortState.sortOrders[sortState.sortKey] === 'ASC' ? 1 : -1);
+				});
+			}
+		},
+
+		sortDataComputed(listName) {
+			if (this[listName] && this[listName].data) {
+				let sortState = this.tableSort[listName];
+				if (sortState.sortKey) {
+					return this[listName].data.slice().sort((a, b) => {
+						let result = 0;
+						if (a[sortState.sortKey] > b[sortState.sortKey]) {
+							result = 1;
+						} else if (a[sortState.sortKey] < b[sortState.sortKey]) {
+							result = -1;
+						}
+						return result * (sortState.sortOrders[sortState.sortKey] === 'ASC' ? 1 : -1);
+					});
+				} else {
+					return this[listName].data;
+				}
+			} else {
+				return []; // 또는 적절한 기본값
+			}
+		},
+
+		/* 테이블 정렬 아이콘 */
+		sortIcon(table, key) {
+			let sortState = this.tableSort[table];
+			// sortState 객체와 sortKey를 확인
+			if (sortState && sortState.sortKey === key) {
+				return sortState.sortOrders[key] === 'ASC' ? 'icon-arrow3' : 'icon-arrow1';
+			}
+			// 객체가 정의되지 않았거나 필요한 키가 없는 경우 기본 아이콘을 반환
+			return 'icon-default';
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+
+function handleNullValues(row) {
+	Object.keys(row).forEach(function (key) {
+		if (row[key] === '') {
+			row[key] = null;
+		}
+	});
+	return row;
+}
+
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+	
+</script>
+
+<!--*******************************************************************************************************************************************************************
+ * style start
+ *******************************************************************************************************************************************************************-->
+<style>
+	.thead-fixed {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background-color: #FFF;
+	}
+
+	.sub_cont_wrap {
+		width: 97%;
+		margin: 0 auto;
+		margin-top: 40px;
+		margin-bottom: 60px;
+	}
+
+	.sub_cont_wrap .sub_cont_box {
+		padding: 20px;
+		margin-bottom: 0px;
+	}
+
+	.row .col.l2 {
+		width: 20%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l3 {
+		width: 33.3%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+	.row .col.l4 {
+		width: 40%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l5 {
+		width: 50%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	.row .col.l6 {
+		width: 60%;
+		margin-left: auto;
+		left: auto;
+		right: auto
+	}
+
+	th,
+	td {
+		white-space: nowrap;
+		/* 텍스트 줄바꿈 방지 */
+		overflow: hidden;
+		/* 넘치는 텍스트 숨김 */
+		text-overflow: ellipsis;
+		/* 넘치는 텍스트에 "..." 표시 */
+	}
+	.btn_container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.sortable {
+		cursor: pointer;
+		transition: background-color 0.3s, color 0.3s;
+	}
+
+	.sortable:hover {
+		background-color: rgb(204, 204, 204);
+		color: #333;
+	}
+</style>
+
+<!--*******************************************************************************************************************************************************************
+ * style end
+ *******************************************************************************************************************************************************************-->

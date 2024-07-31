@@ -1,0 +1,1280 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/menu.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/appstore.css" />
+
+<h2>앱 메뉴 관리</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box" v-if="!appList.currentRow">
+        <h2 class="h2">앱 리스트</h2>
+        <div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pSearchType" v-model="pSearchType" style="width:184px;" class="size-m">
+                <option value="1">앱 명</option>
+                <option value="2">앱 영문명</option>
+                <option value="3">설명</option>
+            </select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	    </div>
+	    
+	    <div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{appListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{appListPaging.getCurrentPage()}}</span> / {{appListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+		       	<table class="table-type04 response" id="mainListLoading">
+		       		<caption>예제 게시판 목록 번호, 제목, 작성자, 작성일, 첨부파일유무, 조회 항목별 순서대로 안내하는 표입니다</caption>
+					<colgroup>
+						<col width="27%" />
+						<col width="27%" >
+						<col width="10%" />
+						<col width="36%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col" class="left">앱 명</th>
+							<th scope="col" class="left">앱 영문 명</th>
+							<th scope="col">버전</th>
+							<th scope="col" class="left">END-POINT</th>
+						</tr>
+					</thead>
+					<tbody v-if="appList.getRowCount() > 0">
+						<tr v-for="(item, index) in appList.getData()" v-show="appList.getRowType(index) != 8 && !appList.isFilterRow(index)" :key="index">
+							<td class="left" data-header="앱명"><a href="#!" @click="rowClick(index)">{{item.APP_NM}}</a></td>
+							<td class="left" data-header="앱 영문 명"><a href="#!" @click="rowClick(index)">{{item.APP_ENM}}</a></td>
+							<td data-header="버전"><a href="#!" @click="rowClick(index)">{{item.APP_VER}}</a></td>
+							<td class="left" data-header="END-POINT"><a href="#!" @click="rowClick(index)">{{item.ENDPOINT}}</a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+		       	</table>
+		    </div>
+	        <paging :pagingset="appListPaging" :type="'normal'"></paging>
+	    </div>
+    </section>
+    
+    <section class="cont_box board-view-page nonsubject-info" v-if="appList.currentRow">
+    	<!-- <h2 class="h2">[{{appList.getColumn(appList.rowposition, 'APP_NM')}}] 앱 메뉴 관리</h2> -->
+   		<div class="row form-row head-box">
+   			<div class="form-group col s12 l8">
+	   			<p class="title">{{appList.getColumn(appList.rowposition, 'APP_NM')}} {{appList.getColumn(appList.rowposition, 'APP_ENM') ? '('+appList.getColumn(appList.rowposition, 'APP_ENM')+')' : ''}} v.{{appList.getColumn(appList.rowposition, 'APP_VER')}}</p>
+	        	<p class="desription" v-if="!isWriteManual">{{appList.getColumn(appList.rowposition, 'APP_NM')}} 앱의 앱 메뉴를 등록 및 관리 할 수 있습니다. 신규 버튼을 눌러 앱 메뉴을 등록해주세요.</p>
+	        	<p class="desription" v-if="isWriteManual">선택한 {{appList.getColumn(appList.rowposition, 'APP_NM')}} 앱 메뉴의 매뉴얼을 등록 및 관리 할 수 있습니다.</p>
+	        	
+   			</div>
+    		<div class="form-group col s12 l4 right">
+	    		<a href="#!" class="btn type01 size-m left-icon icon-corner-left-up" @click="tabPage = 1; appList.selectRow(-1);" v-if="!isWriteManual">앱 목록</a>
+	    		<input type="button" value="신규" class="btn type02 size-m" @click="newRow" v-if="!isWriteManual">
+    		</div>
+   		</div>
+   		<div class="row form-row menu-manage" v-if="!isWriteManual">
+			<div class="form-group col s12 l5 xl3" id="sub1ListLoading">
+				<!-- <h2 class="h2">앱 메뉴 목록</h2> -->
+				<div class="box-type03 col-inline menu-auth-search" v-if="appAllMenuAuthList.getRowCount() > 1">
+		        	<label for="InputText01" class="label-type00 size-m icon-search">검색</label>
+			        <select class="size-s search-menu-select" v-model="pMenuAuth" name="pMenuAuth" id="pMenuAuth" @change="setAppMenuList">
+						<option v-for="(item, index) in appAllMenuAuthList.getData()" v-bind:value="item.AUTH_CD">{{item.AUTH_NM}}</option>
+					</select>
+			    </div>
+				<div class="app_menu box-type04">
+					<cf-menu :model="appMenuList.treeData" :open="true" v-on:callback="selectMenu"></cf-menu>
+				</div>
+			</div>
+			<div class="form-group col s12 l7 xl9">
+				<div class="tab-outter" style="margin-bottom:10px;">
+					<div class="tab-type04">
+						<div class="tab-inner">
+							<div rel="tab2"><a href="#!" @click="tabPage = 1" :class="{'active':tabPage == 1}">앱 메뉴 상세관리</a></div>
+							<div rel="tab1" v-if="appMenuList.currentRow && appMenuList.getRowType(appMenuList.rowposition) != ROWTYPE_INSERT"><a href="#!" @click="tabPage = 2" :class="{'active':tabPage == 2}">앱 메뉴 권한관리</a></div>
+							<div rel="tab3" v-if="appMenuList.currentRow && appMenuList.getRowType(appMenuList.rowposition) != ROWTYPE_INSERT && appMenuList.currentRow.MENU_GB == '02'"><a href="#!" @click="tabPage = 3" :class="{'active':tabPage == 3}">하위 프로그램 관리</a></div>
+							<div rel="tab4" v-if="appMenuList.getRowType(appMenuList.rowposition) != ROWTYPE_INSERT"><a href="#!" @click="tabPage = 4" :class="{'active':tabPage == 4}">앱 메뉴 권한 일괄설정</a></div>
+						</div>
+					</div>
+				</div>
+				<div id="tab1" class="tab-content" v-show="tabPage == 1">
+					<div class="style_set box-type01" v-if="appMenuList.currentRow">		    
+						<div class="row form-row">
+					        <div class="form-group col s12 xl9">
+					    		<label class="label-type01 required" for="upMenuCd">상위 메뉴명</label>
+					    		<select name="upMenuCd" v-model="appMenuList.currentRow.UP_MENU_CD" class="size-m" @change="upMenuChange" :disabled="updateDisabled">
+							        <option v-for="(item, index) in appMenuList.treeNormalData" v-if="item.MENU_CD && item.MENU_CD != appMenuList.currentRow.MENU_CD" :value="item.MENU_CD" v-html="upMenuNameReturn(item.MENU_NM, item.MENU_LV)"></option>
+					            </select>
+					    		<invalid-message :visible="true" :name="'upMenuCd'" :verror="errors"/>
+					    	</div>
+					    	<div class="form-group col s12 xl3">
+					            <label class="label-type01 required" for="menuLv">메뉴 레벨</label>
+					            <input class="size-m" type="text" id="menuLv" name="menuLv"  placeholder="자동 지정" data-vv-as="메뉴 레벨 " v-model="appMenuList.currentRow.MENU_LV" v-validate="'required|integer'" v-bind:class="{'invalid': errors.has('menuLv')}" disabled="true"/>
+					            <invalid-message :visible="true" :name="'menuLv'" :verror="errors"/>
+					        </div>
+					    </div>
+					    <div class="row form-row">
+					    	<div class="form-group col s12 m4 l4 xl4">
+					            <label class="label-type01 required" for="menuCd">메뉴코드</label>
+					            <input class="size-m readonly" type="text" id="menuCd"  placeholder="자동생성" name="menuCd" v-model="appMenuList.currentRow.MENU_CD" readonly disabled="true"/>
+					        </div>
+							<div class="form-group col s12 m4 l4 xl4">
+					            <label class="label-type01 required" for="menuNm">메뉴명</label>
+					            <input class="size-m" type="text" id="menuNm" name="menuNm"  placeholder="메뉴명" data-vv-as="메뉴명 " v-model="appMenuList.currentRow.MENU_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('menuNm')}"/>
+					            <invalid-message :visible="true" :name="'menuNm'" :verror="errors"/>
+					        </div>
+							<div class="form-group col s12 m4 l4 xl4">
+					            <label class="label-type01 required" for="menuGb">메뉴구분</label>
+					            <select class="size-m" id="menuGb" name="menuGb" data-vv-as="메뉴구분 " v-model="appMenuList.currentRow.MENU_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('menuGb')}" @change="menuGbChange(appMenuList.currentRow.MENU_GB)">
+					          		<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'MENU_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+				        		</select>
+					            <invalid-message :visible="true" :name="'menuGb'" :verror="errors"/>
+					        </div>
+					    </div>
+					    <div class="row form-row" v-if="appMenuList.currentRow.MENU_GB == '01'">
+					        <div class="form-group col s12 m6 l6 xl6">
+					    		<label class="label-type01 required" for="daesangAppId">대상 앱</label>
+					    		<select class="size-m" v-model="appMenuList.currentRow.DAESANG_APP_ID" name="daesangAppId" id="daesangAppId" data-vv-as="대상 앱 " v-validate="'required'" v-bind:class="{'invalid': errors.has('daesangAppId')}">
+									<option v-for="(item, index) in appCodeSet.getCustomcode('APP_ID', 'APP_NM')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+								</select>
+								<invalid-message :visible="true" :name="'daesangAppId'" :verror="errors"/>
+					    	</div>
+					    	<div class="form-group col s12 m6 l6 xl6">
+					            <label class="label-type01 required" for="daesangMenuCd">대상 메뉴</label>
+					            <select class="size-m" v-model="appMenuList.currentRow.DAESANG_MENU_CD" name="daesangMenuCd" id="daesangMenuCd" data-vv-as="대상 메뉴 " v-validate="'required'" v-bind:class="{'invalid': errors.has('daesangMenuCd')}">
+									<option v-for="(item, index) in _.filter(appMenuCodeSet.getCustomcode('MENU_CD', 'MENU_NM', 'select', 'APP_ID'), function(e){ return e.APP_ID == appMenuList.currentRow.DAESANG_APP_ID || e.MENU_CD == ''})" v-bind:value="item.CD">{{item.CD_NM}}</option>
+								</select>
+								<invalid-message :visible="true" :name="'daesangMenuCd'" :verror="errors"/>
+					        </div>
+					    </div>
+					    <div class="row form-row" v-if="appMenuList.currentRow.MENU_GB == '02'">
+					        <div class="form-group col s12 m6 l6 xl6">
+					    		<label class="label-type01 required" for="serviceCd">서비스</label>
+					    		<select class="size-m" v-model="appMenuList.currentRow.SERVICE_CD" name="serviceCd" id="serviceCd" data-vv-as="서비스 " v-validate="'required'" v-bind:class="{'invalid': errors.has('serviceCd')}">
+									<option v-for="(item, index) in serviceCodeSet.getCustomcode('service_CD', 'service_NM', 'select')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+								</select>
+								<invalid-message :visible="true" :name="'serviceCd'" :verror="errors"/>
+					    	</div>
+					    	<div class="form-group col s12 m6 l6 xl6">
+					            <label class="label-type01 required" for="pgmId">프로그램</label>
+					            <select class="size-m" v-model="appMenuList.currentRow.PGM_ID" name="pgmId" id="pgmId" data-vv-as="프로그램 " v-validate="'required'" v-bind:class="{'invalid': errors.has('pgmId')}">
+						            <option v-for="(item, index) in _.filter(programCodeSet.getCustomcode('PGM_ID', 'PGM_NM', 'select', 'SERVICE_CD'), function(e){return e.SERVICE_CD == appMenuList.currentRow.SERVICE_CD || e.CD == ''})" v-bind:value="item.CD">{{item.CD_NM}}{{item.CD ? ' ('+item.CD+')':''}}</option>
+								</select>
+								<invalid-message :visible="true" :name="'pgmId'" :verror="errors"/>
+					        </div>
+					    </div>
+					    <div class="row form-row" v-if="appMenuList.currentRow.MENU_GB == '03'">
+					        <div class="form-group col s12 m12 l12 xl12">
+					    		<label class="label-type01 required" for="linkUrl">LINK URL</label>
+					    		<input class="size-m" type="text" id="linkUrl" name="linkUrl"  placeholder="http://example.com" data-vv-as="LINK URL " v-model="appMenuList.currentRow.LINK_URL" v-validate="'required|max:1000'" v-bind:class="{'invalid': errors.has('linkUrl')}"/>
+								<invalid-message :visible="true" :name="'linkUrl'" :verror="errors"/>
+					    	</div>
+					    </div>
+					    <div class="row form-row">
+					    	<div class="form-group col s12 m6 l7 xl9">
+					            <label class="label-type01" for="parameter">파라메터 (JSON Object Type)</label>
+					            <input class="size-m" type="text" id="parameter" name="parameter" placeholder="ex) {'userName': '홍길동', 'age': '16'}" data-vv-as="파라메터 " v-model="appMenuList.currentRow.PARAMETER" v-validate="'max:500'"/>
+					            <invalid-message :visible="true" :name="'parameter'" :verror="errors"/>
+					        </div>
+					        <div class="form-group col s12 m6 l5 xl3">
+					        	<label class="label-type01 required" for="ord">메뉴순서</label>
+					            <input class="size-m" type="text" id="ord" name="ord" placeholder="레벨 별 적용" data-vv-as="메뉴순서 " v-model="appMenuList.currentRow.ORD" v-validate="'required|integer'" v-bind:class="{'invalid': errors.has('ord')}"/>
+					            <invalid-message :visible="true" :name="'ord'" :verror="errors"/>
+					        </div>
+					    </div>
+					    <div class="row form-row">
+					    	<div class="form-group col s12 m6 l7 xl9">
+								<label class="label-type01" for="remark">비고</label>
+					    		<input class="size-m" type="text" id="remark"  name="remark" placeholder="비고" data-vv-as="비고" v-model="appMenuList.currentRow.REMARK" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('remark')}"/>
+					    		<invalid-message :visible="true" :name="'remark'" :verror="errors"/>
+					    	</div>	
+					    	<div class="form-group col s12 m6 l5 xl3">
+								<label for="useYn" class="label-type01">사용여부</label>
+								<div class="form-check">
+									<label class="toggle-switch size-m">
+										<input class="size-m" type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부" v-model="appMenuList.currentRow.USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('useYn')}" />
+										<span class="slider round"></span>
+									</label>
+								</div>
+					    	</div>
+					    </div>
+					</div>
+			    	<div class="btn-line col-inline right">
+			    		<a href="#!" class="btn type01 size-m" v-if="appMenuList.getRowType(appMenuList.rowposition) == ROWTYPE_NORMAL || appMenuList.getRowType(appMenuList.rowposition) == ROWTYPE_UPDATE" @click="writeManual(appMenuList.currentRow.APP_ID, appMenuList.currentRow.MENU_CD)">매뉴얼 작성</a>
+			    		<a href="#!" class="btn type01 size-m" v-if="appMenuList.getRowType(appMenuList.rowposition) == ROWTYPE_NORMAL || appMenuList.getRowType(appMenuList.rowposition) == ROWTYPE_UPDATE" @click="messagePopup('deleteMenu')">삭제</a>
+			    		<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+			    	</div>
+				</div>
+				<div id="tab2" class="tab-content" v-show="tabPage == 2">
+					<!-- <div class="col s12 l12">
+					    <span class="board-info-txt size-m">총 <span>{{authListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{authListPaging.getCurrentPage()}}</span> / {{authListPaging.getTotalPage()}})</span>
+					</div> -->
+			        <div class="table-type04-wrap">
+			            <table class="table-type04 response">
+			                <caption></caption>
+			                <colgroup>
+			                    <col width="20%" />
+			                 <col width="20%" />
+			                    <col width="45%" />
+			                    <col width="15%" />
+			                </colgroup>
+			                <thead>
+			                    <tr>
+			                        <th scope="col">권한구분</th>
+			                     	<th scope="col">권한코드</th>
+			                        <th scope="col">권한명</th>
+			                        <th scope="col">등록</th>
+			                    </tr>
+			                </thead>
+			                <tbody v-if="authList.getRowCount() > 0">
+			                    <tr v-for="(item, index) in authList.getData()" v-if="authList.getRowType(index) != '8'">
+			                        <td data-header="권한구분">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</td>
+			                        <td data-header="권한코드">{{item.AUTH_CD}}</td>
+			                        <td class="left" data-header="권한명">{{item.AUTH_NM}}</td>
+			                        <td data-header="등록">
+										<label class="toggle-switch size-m" v-show="item.AUTH_YN != null">
+											<input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.AUTH_YN" @change="authList.selectRow(index); regProgramAuth(item.AUTH_CD)"/>
+			                                <span class="slider bg-red round"></span>
+			                            </label>
+			                        </td>
+			     				</tr>
+			                </tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+			            </table>
+			        </div>
+			        <paging :pagingset="authListPaging" :type="'normal'"></paging>
+				</div>
+				<div id="tab3" class="tab-content" v-show="tabPage == 3">
+					<div class="box-type03">
+			       	 	<div class="row form-row">
+				            <div class="col s12 l6">
+					    		<select v-if="tabPage == 3" class="size-m" v-model="pSearchServiceCd" name="pSearchServiceCd" id="pSearchServiceCd" data-vv-as="서비스 " v-validate="'required'" v-bind:class="{'invalid': errors.has('pSearchServiceCd')}">
+									<option v-for="(item, index) in serviceCodeSet.getCustomcode('service_CD', 'service_NM', 'select')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+								</select>
+								<invalid-message :visible="true" :name="'pSearchServiceCd'" :verror="errors"/>
+				            </div>
+				            <div class="col s12 l4">
+					   			<select v-if="tabPage == 3" class="size-m" v-model="pSearchPgmId" name="pSearchPgmId" id="pSearchPgmId" data-vv-as="프로그램 " v-validate="'required'" v-bind:class="{'invalid': errors.has('pSearchPgmId')}">
+						            <option v-for="(item, index) in _.filter(programCodeSet.getCustomcode('PGM_ID', 'PGM_NM', 'select', 'SERVICE_CD'), function(e){return e.SERVICE_CD == pSearchServiceCd || e.CD == ''})" v-bind:value="item.CD">{{item.CD_NM}}{{item.CD ? ' ('+item.CD+')':''}}</option>
+								</select>
+					        </div>
+				            <div class="col s12 l2">
+				            	<input type="button" value="추가" class="btn type01 size-m" @click="saveSubPgmRow">
+				            </div>
+					    </div>
+			    	</div>
+			        <div class="table-type04-wrap">
+			            <table class="table-type04 response">
+			                <caption></caption>
+			                <colgroup>
+			                	<col width="15%" />
+			                	<col width="25%" />
+			                    <col width="25%" />
+			                    <col width="25%" />
+			                    <col width="10%" />
+			                </colgroup>
+			                <thead>
+			                    <tr>
+			                     <th scope="col">서비스코드</th>
+			                     <th class="left" scope="col">서비스명</th>
+			                     <th class="left" scope="col">프로그램명</th>
+			                     <th class="left" scope="col">프로그램 아이디</th>
+			                     <th scope="col">삭제</th>
+			                    </tr>
+			                </thead>
+			                <tbody v-if="subProgramList.getRowCount() > 0">
+			                    <tr v-for="(item, index) in subProgramList.getData()" v-if="subProgramList.getRowType(index) != '8'">
+			                    	<td data-header="서비스코드">{{item.SERVICE_CD}}</td>
+			                        <td class="left" data-header="서비스명">{{item.SERVICE_NM}}</td>
+			                        <td class="left" data-header="프로그램명">{{item.PGM_NM}}</td>
+			                        <td class="left" data-header="프로그램 아이디">{{item.PGM_ID}}</td>
+			                        <td data-header="삭제"><a href="#!" @click="deleteSubPgmRow(index);"><span class="icon-trashcan"></span></a></td>
+			     				</tr>
+			                </tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+			            </table>
+			        </div>
+			        <paging :pagingset="subProgramListPaging" :type="'normal'"></paging>
+				</div>
+				<div id="tab4" class="tab-content" v-show="tabPage == 4">
+					<!-- <div class="col s12 l12">
+					    <span class="board-info-txt size-m">총 <span>{{authListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{authListPaging.getCurrentPage()}}</span> / {{authListPaging.getTotalPage()}})</span>
+					</div> -->
+					<div class="table-type04-wrap">
+						<table class="table-type04 response">
+							<caption></caption>
+							<colgroup>
+								<col width="20%" />
+								<col width="20%" />
+								<col width="45%" />
+								<col width="15%" />
+							</colgroup>
+							<thead>
+							<tr>
+								<th scope="col">권한구분</th>
+								<th scope="col">권한코드</th>
+								<th scope="col">권한명</th>
+								<th scope="col">등록</th>
+							</tr>
+							</thead>
+							<tbody v-if="appAllAuthList.getRowCount() > 0">
+							<tr v-for="(item, index) in appAllAuthList.getData()">
+								<td data-header="권한구분">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</td>
+								<td data-header="권한코드">{{item.AUTH_CD}}</td>
+								<td class="left" data-header="권한명">{{item.AUTH_NM}}</td>
+								<td data-header="등록">
+									<label class="toggle-switch size-m" v-show="item.AUTH_YN != null">
+										<input class="size-m" type="checkbox" id="authAllYn" name="authAllYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.AUTH_YN" @change="appAllAuthList.selectRow(index); regAllProgramAuth(item.AUTH_CD)"/>
+										<span class="slider bg-red round"></span>
+									</label>
+								</td>
+							</tr>
+							</tbody>
+							<tbody v-else>
+							<tr>
+								<td colspan="100">검색결과가 없습니다.</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+   		</div>
+   		<div class="row form-row menu-manage" v-if="isWriteManual" id="sub2ListLoading">
+        	<h3 class="h3">매뉴얼 작성</h3>
+        	<div class="box-type01">		    
+	        	<div class="row form-row">
+					<div class="form-group col s12 l6">
+						<label for="menuCd" class="label-type01">메뉴 코드</label>
+						<input class="size-m" type="text" id="menuCd" name="menuCd" data-vv-as="매뉴 코드" v-model="appMenuList.currentRow.MENU_CD" disabled="disabled"/> 
+					</div>
+					<div class="form-group col s12 l6">
+						<label for="menuNm" class="label-type01">메뉴 명</label>
+						<input class="size-m" type="text" id="menuNm" name="menuNm" data-vv-as="메뉴 명" v-model="appMenuList.currentRow.MENU_NM" disabled="disabled"/> 
+					</div>
+				</div>
+	        	<div class="row form-row">
+					<div class="form-group col s12 l12">
+						<label for="manualText" class="label-type01 required">내용</label>
+						<div class="form-inner-box" id="editSection">
+						</div> 
+						<small v-if="showInvalid" class="form-txt invalid">내용 항목은 필수 정보입니다.</small>
+					</div>
+				</div>
+	        </div>
+	    	<div class="btn-line col-inline right">
+	    		<a href="#!" class="btn type01 size-m" @click="showMain">뒤로</a>
+	    		<a href="#!" class="btn type01 size-m" v-if="appMenuManualList.data.length > 0" @click="messagePopup('deleteManual')">삭제</a>
+	    		<a href="#!" class="btn type02 size-m" @click="saveManual(appMenuList.currentRow)">저장</a>
+	    	</div>
+   		</div>
+        <modal-message :modalset="messageModal"  v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+    </section>
+</section>
+<script type="text/javascript">
+/**********************************************************	*********************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+        appList: new Dataset(),
+        appMenuList: new Dataset(),
+        appMenuAuthList: new Dataset(),
+        appAllMenuAuthList: new Dataset(),
+        appAllAuthList: new Dataset(),
+        subProgramList: new Dataset(),
+        updateDisabled: false,
+        appListPaging: new PagingSet(5, 5),
+        authList: new Dataset(),				//
+        authListPaging: new PagingSet(5, 5),	// 페이징(page, row)
+        subProgramListPaging: new PagingSet(5, 5),	// 페이징(page, row)
+        messageModal: new ModalSet('app-modal'),
+        pSearchType: '1',
+        pSearchArgv: '',
+        pSearchServiceCd: '',
+        pSearchPgmId: '',
+        pMenuAuth: '',
+        mainListLoading: {id:'mainListLoading', val:false},
+        sub1ListLoading: {id:'sub1ListLoading', val:false},
+        sub2ListLoading: {id:'sub2ListLoading', val:false},	// 매뉴얼 작성
+        serviceCodeSet: new CustomcodeSet('/system-manager/service/initList'),
+        programCodeSet: new CustomcodeSet('/system-manager/program',{'pSortYn':'Y'}),
+        appCodeSet: new CustomcodeSet('/system-manager/app',{'pUseYn':'Y'}),
+        appMenuCodeSet: new CustomcodeSet('/system-manager/menu',{'pUseYn':'Y','pUsePgm':'Y'}),
+        tabPage: 1,
+        lastMenuCd: '', 
+        beforeServiceCd: '', 
+        beforeUpMenuCd: '', 
+        beforeMenuLv: '', 
+        beforeOrd: '', 
+        isWriteManual: false,	// 화면 전환 - 매뉴얼 작성
+		webEditor: null,                                // mounted에서 초기화 처리
+		webEditorValue: '',
+		showInvalid: false,
+		appMenuManualList: new Dataset(),
+    },
+    //생성 될 때 
+    beforeCreate: function(){
+        
+    },
+    //계산된 속성 표현 시
+    computed: {
+        
+    },
+    //데이터 감시
+    watch: {
+        'appMenuList.rowposition': {
+            handler: function (val, oldVal) {
+                if(this.appMenuList.enableevent){
+                    var changeYn = this.appMenuList.dataCompare(oldVal);
+                    var rowType = this.appMenuList.getRowType(val);
+					var oldRowType = this.appMenuList.getRowType(oldVal);
+                    
+                    if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+                        this.appMenuList.setDefaultRow(oldVal);
+                    }
+                    
+                    if(val != -1){
+                    	if(rowType == this.ROWTYPE_NORMAL || rowType == this.ROWTYPE_UPDATE){
+                            this.updateDisabled = true; 
+                        }else{
+                            this.updateDisabled = false;
+                        }
+                    	
+                        this.$forceUpdate();
+                        this.$validator.reset();	
+                    }
+                }
+            }
+        },      
+        'appMenuList.data': {
+            handler: function (val, oldVal) {
+                if(this.appMenuList.enableevent){
+                    var vm = this;
+                    val.filter( function( data, rowposition ) {
+                        return Object.keys(data ).some( function( colNm ) {
+                            var diff = data[colNm] !== vm.appMenuList.beforeData[rowposition][colNm];
+                            if(diff) {
+                                vm.appMenuList.beforeData[rowposition][colNm] = _.cloneDeep(data[colNm]);
+                                vm.appMenuList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+                                //vm.componentStateChange();
+                            }
+                        })
+                    });
+                }
+            },
+            deep: true
+        },
+        'subProgramList.rowposition': {
+            handler: function (val, oldVal) {
+                if(this.subProgramList.enableevent){
+                    var changeYn = this.subProgramList.dataCompare(oldVal);
+                    var rowType = this.subProgramList.getRowType(val);
+					var oldRowType = this.subProgramList.getRowType(oldVal);
+                    
+                    if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+                        this.subProgramList.setDefaultRow(oldVal);
+                    }
+                    
+                    if(val != -1){
+                    	if(rowType == this.ROWTYPE_NORMAL || rowType == this.ROWTYPE_UPDATE){
+                            this.updateDisabled = true; 
+                        }else{
+                            this.updateDisabled = false;
+                        }
+                    	
+                        this.$forceUpdate();
+                        this.$validator.reset();	
+                    }
+                }
+            }
+        },      
+        'subProgramList.data': {
+            handler: function (val, oldVal) {
+                if(this.subProgramList.enableevent){
+                    var vm = this;
+                    val.filter( function( data, rowposition ) {
+                        return Object.keys(data ).some( function( colNm ) {
+                            var diff = data[colNm] !== vm.subProgramList.beforeData[rowposition][colNm];
+                            if(diff) {
+                                vm.subProgramList.beforeData[rowposition][colNm] = _.cloneDeep(data[colNm]);
+                                vm.subProgramList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+                                //vm.componentStateChange();
+                            }
+                        })
+                    });
+                }
+            },
+            deep: true
+        },
+		'appMenuManualList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.appMenuManualList.enableevent){
+					var changeYn = this.appMenuManualList.dataCompare(oldVal);
+					var rowType = this.appMenuManualList.getRowType(val);
+					
+					if(!changeYn){
+						this.appMenuManualList.setDefaultRow(oldVal);
+					}
+					
+                    this.$validator.reset();
+				}
+			}
+		},
+		'appMenuManualList.data': {
+			handler: function (val, oldVal) {
+				if(this.appMenuManualList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.appMenuManualList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.appMenuManualList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+        'appListPaging.currentPage': {
+            handler: function (val, oldVal) {
+                this.setAppList();
+            }
+        },
+        'authListPaging.currentPage': {
+			handler: function (val, oldVal) {
+                this.authList.pageChange(val, this.authListPaging.getRowCnt());
+                this.setProgramAuthInfo();
+			}
+	    },	
+        'subProgramListPaging.currentPage': {
+            handler: function (val, oldVal) {
+                this.subProgramList.pageChange(val, this.subProgramListPaging.getRowCnt());
+            }
+        },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'sub1ListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.sub1ListLoading.id), val);
+			}
+	    },
+	    'sub2ListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.sub2ListLoading.id), val);
+			}
+	    },
+	    'tabPage': {
+	    	handler: function (val, oldVal) {
+				/* this.userList.clear(); */
+			}
+	    },
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+        this.setAppList();
+        this.setAuthList();
+    },
+    //함수
+    methods: {
+        /* 앱 리스트 조회 */
+        setAppList: function(){
+            var self = this;
+            if(isNull(this.pSearchArgv)) this.pSearchArgv = '';
+            
+            if(isNull(this.pSearchType)){
+                this.pSearchType = '';
+                this.pSearchArgv = '';
+            }
+			
+            var addObj = {
+                "pSearchType": this.pSearchType,
+                "pSearchArgv": this.pSearchArgv,
+                "pPageNo": this.appListPaging.currentPage,
+                "pRowCount": this.appListPaging.getRowCnt()
+            };
+            
+            self.mainListLoading.val = true;
+            var returnVal = appApi.app(addObj, false);
+            
+            returnVal.then(function(response) {
+            	self.appList.setData(response.data);
+                
+                if(response.data.length > 0){
+                    var totalCnt = self.appList.data[0].CNT;
+                    self.appListPaging.setTotalCnt(totalCnt);
+                }else{
+                	self.appListPaging.setTotalCnt(0);
+                }
+            }).finally(function(){
+				self.mainListLoading.val = false;
+			});
+        },
+        /* 검색 */
+        search: function(){
+        	var pageNo = this.appListPaging.getCurrentPage();
+        	
+        	if(pageNo == 1){
+        		this.setAppList();
+        	}else{
+        		this.appListPaging.movePage(1);
+        	}  
+        },
+        selectApp: function(pIndex){
+        	this.appList.selectRow(pIndex);
+        	this.setAppMenuList();
+	        this.setAppAllAuthList(this.appList.getColumn(this.appList.rowposition, 'APP_ID'));
+        },
+        /* 앱 메뉴 리스트 조회 */
+        setAppMenuList: function(){
+            var self = this;
+            var appId = this.appList.getColumn(this.appList.rowposition, 'APP_ID');
+            
+            self.sub1ListLoading.val = true;
+            var returnVal = menuApi.menus({'APP_ID':appId,'pMenuAuth':self.pMenuAuth}, false);
+            
+            returnVal.then(function(response) {
+            	self.appMenuList.setData(response.data, 'tree');
+            	self.getAppAllMenuAuthList();
+                //if(self.appMenuList.rowposition == -1) self.newRow();
+            }).finally(function(){
+				self.sub1ListLoading.val = false;
+			});
+        },
+        //현재 앱에 속해있는 모든 권한 정보
+        getAppAllMenuAuthList: function(){
+        	var self = this;
+        	var appId = this.appList.getColumn(this.appList.rowposition, 'APP_ID');
+    		var returnVal = menuApi.menuAuths({'APP_ID':appId});
+    		
+    		returnVal.then(function(response){
+    			self.appAllMenuAuthList.setData(_.cloneDeep(_.uniqBy(response.data, 'AUTH_CD')));
+    			self.appAllMenuAuthList.data.splice(0, 0, {'AUTH_CD':'', 'AUTH_NM': '- 선택 -'});
+    		});
+        },
+        //하위 프로그램 조회
+        setSubProgramList: function(){
+        	var self = this;
+        	var appId = this.appMenuList.getColumn(this.appMenuList.rowposition, 'APP_ID');
+        	var menuCd = this.appMenuList.getColumn(this.appMenuList.rowposition, 'MENU_CD');
+        	
+    		var returnVal = menuApi.subPgms({'APP_ID':appId,'MENU_CD':menuCd});
+    		
+    		returnVal.then(function(response){
+				self.subProgramList.setRawData(response.data);
+				self.subProgramList.setRawData(response.data, self.subProgramListPaging.getRowCnt());
+               	if(response.data.length > 0){
+					self.subProgramListPaging.setTotalCnt(response.data.length);
+               	}else{
+                   	self.subProgramListPaging.setTotalCnt(0);
+               	}
+    		});
+        },
+        /* 하위 프로그램 추가 */
+        saveSubPgmRow: function(){
+            var self = this;
+            var validate = Promise.all([
+				self.$validator.validate('pSearchServiceCd', self.pSearchServiceCd),
+				self.$validator.validate('pSearchPgmId', self.pSearchPgmId),
+			]);
+            
+            validate.then(function(response) {
+                if(response[0] && response[1]){
+                    var returnVal = null;
+                	var appId = self.appMenuList.getColumn(self.appMenuList.rowposition, 'APP_ID');
+                	var menuCd = self.appMenuList.getColumn(self.appMenuList.rowposition, 'MENU_CD');
+                	var serviceCd = self.pSearchServiceCd;
+                	var pgmId = self.pSearchPgmId;
+                	var findRow = _.findIndex(self.subProgramList.getData(), function(o){
+                		return o.SERVICE_CD == serviceCd && o.PGM_ID == pgmId;
+                	})
+                	var addObj = {
+                       		'APP_ID' : appId,
+                       		'MENU_CD' : menuCd,
+                       		'SERVICE_CD' : serviceCd,
+                       		'PGM_ID' : pgmId,
+                       		'USE_YN' : 'Y',
+                       	};
+                	
+                	if(findRow > -1){
+                		notifySubmit('warning', '앱 메뉴 하위 프로그램 저장', '이미 등록 된 프로그램 입니다.', 'icon-save');
+                		return false;
+                	}
+                    
+                    returnVal = menuApi.subPgmInsert(addObj, true);
+                    
+                    if(!isNull(returnVal)){
+                        returnVal.then(function(response) {
+                        	notifySubmit('success', '앱 메뉴 하위 프로그램 저장', '저장이 완료되었습니다.', 'icon-save');
+                            self.setSubProgramList();
+                            systemApi.authRefresh(null, false);
+                        });
+                    }
+                }else{
+                    notifySubmit('warning', '앱 메뉴 하위 프로그램 저장', '입력항목을 확인해주세요.', 'icon-caution');
+                }
+            });
+        },
+        /* 앱 메뉴 하위 프로그램 리스트 삭제 */
+        deleteSubPgmRow: function(row){
+            var returnVal = null;
+            var self = this;
+            
+            returnVal = menuApi.subPgmDelete(self.subProgramList.getRow(row), true);
+            returnVal.then(function(response) {
+            	notifySubmit('success', '앱 메뉴 하위 프로그램 삭제', '삭제가 완료되었습니다.', 'icon-save');
+                self.setSubProgramList();
+                systemApi.authRefresh(null, false);
+            }).catch(function(error) {
+                notifySubmit('warning', '앱 메뉴 하위 프로그램 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+            }); 
+        },
+        selectMenu: function(item){
+        	this.appMenuList.selectRow(_.cloneDeep(item.DEFAULT_INDEX));
+        	this.pSearchServiceCd = item.SERVICE_CD;
+        	this.initToggle();
+        	this.setAppMenuAuthList();
+        	this.setSubProgramList();
+        	
+        	if(item.MENU_GB != '02' && this.tabPage == 3){
+        		this.tabPage = 1;
+        	}
+        	notifySubmit('info', '앱 메뉴 선택', '['+item.MENU_NM+'] 메뉴가 선택되었습니다.', 'icon-message');
+        },
+        /* 권한목록 리스트 */
+		setAuthList: function(){
+			var self = this;
+			var returnVal = authApi.auth();
+			returnVal.then(function(response) {
+				self.authList.setRawData(response.data, self.authListPaging.getRowCnt());
+               	if(self.authList.getRowCount() > 0){
+					self.authListPaging.setTotalCnt(self.authList.getRowCount());
+               	}else{
+                   	self.authListPaging.setTotalCnt(0);
+               	}
+			});
+        },
+	    /* 앱 메뉴 전체권한 리스트 */
+	    setAppAllAuthList: function(pAppId){
+		    var self = this;
+		    var returnVal = authApi.appAllAuth(pAppId);
+		    returnVal.then(function(response) {
+			    self.appAllAuthList.setData(response.data);
+		    });
+	    },
+        /* 앱 메뉴 권한 리스트 */
+		setAppMenuAuthList: function(){
+			var self = this;
+			if(this.appMenuList.rowposition > -1 ){
+				var rowposition = self.appMenuList.rowposition;
+				var rowType = self.appMenuList.getRowType(rowposition);
+				
+				if(rowType != self.ROWTYPE_INSERT){
+					var appId = this.appMenuList.currentRow.APP_ID;
+					var menuCd = this.appMenuList.currentRow.MENU_CD;
+					
+					var returnVal = menuApi.menuAuths({'APP_ID':appId,'MENU_CD':menuCd});
+					returnVal.then(function(response) {
+						self.appMenuAuthList.setData(response.data);
+						self.setProgramAuthInfo();
+					});
+				}
+			}
+        },
+        /* 토글을 초기화 한다. */
+        initToggle: function(){
+        	var self = this;
+        	
+           	this.authList.data.forEach(function(authObj, idx) {
+           		self.authList.data[idx].AUTH_YN = 'N'; 
+            });	
+        },
+        /* 대상자 리스트 획득 후 권한, 사용자 테이블에 정보 셋팅 */
+	    setProgramAuthInfo: function(){
+	    	if(this.appMenuList.rowposition > -1){
+	    		var appId = this.appMenuList.currentRow.APP_ID;
+	            var menuCd = this.appMenuList.currentRow.MENU_CD;
+	            
+            	this.authList.data.forEach(function(authObj, idx) {
+                    authObj.AUTH_YN = vm.isProgramAuth(appId, menuCd, authObj.AUTH_CD);
+                    Vue.set(vm.authList.data, idx, authObj);
+                    //vue.set(객체명, 인덱스, newVal) -> 객체의 값을 직접 변경. 객체명[idx] = newVal 로 변경시 vue가 감지하지 못함. 해당 함수를 이용해서 변경하면 감지 가능.
+                });
+	    	}
+        },
+        //권한 대상자에 해당 정보가 존재하는지 확인
+        isProgramAuth: function(appId, menuCd, authCd) {			
+			if(isNull(appId) || isNull(menuCd) || isNull(authCd)) return;
+			var findIndex = _.findIndex(this.appMenuAuthList.data, function(menu) {
+				return  menu.APP_ID == appId && menu.MENU_CD == menuCd && menu.AUTH_CD == authCd;
+			});
+			
+			try {
+                return findIndex > -1 ? 'Y':'N';
+			} catch (err) {
+                return 'N';
+			}
+		},
+	    regAllProgramAuth: function(pAuthCd){
+		    var appId = this.appList.getColumn(this.appList.rowposition, 'APP_ID');
+		    var authCd = pAuthCd;
+
+		    if(this.appAllAuthList.currentRow.AUTH_YN == 'Y'){
+			    this.saveProgramAuthBatch({'APP_ID': appId, 'AUTH_CD': authCd});
+		    } else if (this.appAllAuthList.currentRow.AUTH_YN == 'N') {
+			    this.deleteProgramAuthBatch({'APP_ID': appId, 'AUTH_CD': authCd});
+		    };
+	    },
+	    regProgramAuth: function(pAuthCd){
+	    	var appId = this.appMenuList.currentRow.APP_ID;
+	    	var menuCd = this.appMenuList.currentRow.MENU_CD;
+	    	
+	    	/* 권한 */
+    		switch(this.authList.currentRow.AUTH_YN) {
+                case 'Y':   //현재 상태가 'N'인 경우 등록(insert)
+                    this.saveProgramAuth({'APP_ID': appId,'MENU_CD': menuCd,'AUTH_CD':this.authList.currentRow.AUTH_CD});
+                    break;
+                case 'N':   //현재 상태가 'Y'인 경우 삭제(delete)
+                    this.deleteProgramAuth({'APP_ID': appId,'MENU_CD': menuCd,'AUTH_CD':this.authList.currentRow.AUTH_CD});
+                    break;
+                default:
+                    break;
+            }
+        },
+        saveProgramAuth: function(appMenuAuth) {
+            var self = this;
+            var returnVal = menuApi.menuAuthInsert(appMenuAuth, true);
+                    
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+                    var data = response.data;
+                    
+                    notifySubmit('success', '앱 메뉴권한 등록', '등록이 완료되었습니다.', 'icon-save');
+                    self.setAppMenuAuthList();     //저장 후 앱권한 리스트 갱신
+					self.setAppAllAuthList(appMenuAuth.APP_ID);
+                    systemApi.authRefresh(null, false);
+				}).catch(function(error) {
+					notifySubmit('warning', '앱메뉴권한 등록', '등록에 실패하였습니다.', 'icon-caution');
+				});	
+			}
+        },
+        deleteProgramAuth: function(appMenuAuth) {
+            var self = this;
+			var returnVal = menuApi.menuAuthDelete(appMenuAuth, true);
+						
+			if(!isNull(returnVal)){
+			    returnVal.then(function(response) {
+				    var data = response.data;
+					
+				    notifySubmit('success', '앱 메뉴권한 해제', '해제가 완료되었습니다.', 'icon-save');
+				    self.setAppMenuAuthList();      //삭제 후 앱권한 리스트 갱신
+				    self.setAppAllAuthList(appMenuAuth.APP_ID);
+                    systemApi.authRefresh(null, false);
+				}).catch(function(error) {
+					notifySubmit('warning', '앱 메뉴권한 등록', '해제에 실패하였습니다.', 'icon-caution');
+				});	
+			}
+        },
+	    saveProgramAuthBatch: function(appMenuAuth) {
+		    var self = this;
+		    var returnVal = menuApi.appMenuAuthBatchDelete(appMenuAuth, true);
+
+		    if(!isNull(returnVal)){
+			    returnVal.then(function(response) {
+				    notifySubmit('success', '앱 메뉴권한 해제', '해제가 완료되었습니다.', 'icon-save');
+
+				    var returnVal2 = menuApi.appMenuAuthBatchInsert(appMenuAuth, true);
+
+				    if(!isNull(returnVal2)){
+					    returnVal2.then(function(response) {
+						    notifySubmit('success', '앱 메뉴권한 등록', '등록이 완료되었습니다.', 'icon-save');
+						    self.setAppMenuAuthList();
+						    self.setAppAllAuthList(appMenuAuth.APP_ID);//삭제 후 앱권한 리스트 갱신
+						    systemApi.authRefresh(null, false);
+					    }).catch(function(error) {
+						    notifySubmit('warning', '앱메뉴권한 등록', '등록에 실패하였습니다.', 'icon-caution');
+					    });
+				    }
+			    }).catch(function(error) {
+				    notifySubmit('warning', '앱 메뉴권한 등록', '해제에 실패하였습니다.', 'icon-caution');
+			    });
+		    }
+	    },
+	    deleteProgramAuthBatch: function(appMenuAuth) {
+		    var self = this;
+		    var returnVal = menuApi.appMenuAuthBatchDelete(appMenuAuth, true);
+
+		    if(!isNull(returnVal)){
+			    returnVal.then(function(response) {
+				    notifySubmit('success', '앱 메뉴권한 해제', '해제가 완료되었습니다.', 'icon-save');
+				    self.setAppMenuAuthList();
+				    self.setAppAllAuthList(appMenuAuth.APP_ID);//삭제 후 앱권한 리스트 갱신
+				    systemApi.authRefresh(null, false);
+			    }).catch(function(error) {
+				    notifySubmit('warning', '앱 메뉴권한 등록', '해제에 실패하였습니다.', 'icon-caution');
+			    });
+		    }
+	    },
+        /* 앱 메뉴 리스트 신규행 추가 */
+        newRow: function(){
+            var appId = this.appList.getColumn(this.appList.rowposition, 'APP_ID');
+            var upMenuCd = this.appMenuList.currentRow ? this.appMenuList.currentRow.MENU_CD : '';
+            var upMenuLv = this.appMenuList.currentRow ? this.appMenuList.currentRow.MENU_LV : '';
+            var ord = '';
+            
+            if(isNull(upMenuCd)){
+            	upMenuCd = this.beforeUpMenuCd;
+            	upMenuLv = !isNull(this.beforeMenuLv) ? parseInt(this.beforeMenuLv,10)-1 : -1;
+            	ord = !isNull(this.beforeOrd) ? parseInt(this.beforeOrd,10)+1 : 1;
+            }
+            
+            if(parseInt(upMenuLv,10) == 2){
+            	notifySubmit('warning', '앱 메뉴 저장', '3레벨 이상 메뉴를 생성할 수 없습니다.', 'icon-caution');
+            }else{
+                
+            	var addObj = {
+                   		'APP_ID' : appId,
+                   		'MENU_CD' : '',
+                   		'MENU_NM' : '',
+                   		'UP_MENU_CD' : upMenuCd ? upMenuCd : '00000000',
+                   		'MENU_LV' : !isNull(upMenuLv) ? upMenuLv+1 : 0,
+                   		'MENU_GB' : '02',
+                   		'DAESANG_APP_ID' : '',
+                   		'DAESANG_MENU_CD' : '',
+                   		'SERVICE_CD' : this.beforeServiceCd,
+                   		'PGM_ID' : '',
+                   		'LINK_URL' : '',
+                   		'PARAMETER' : '',
+                   		'ORD' : ord ? ord : '1',
+                   		'USE_YN' : 'Y',
+                   		'REMARK' : '',
+                   		'CD' : '',
+                   		'UP_CD' : '',
+                   		'LV' : '',
+                	};
+                	
+                    var newRowPosition = this.appMenuList.addRow(addObj);
+                    this.tabPage = 1;
+            }
+        },
+        /* 앱 메뉴 리스트 저장,수정 */
+        saveRow: function(){
+            var validate = this.$validator.validateAll();
+            var self = this;
+            validate.then(function(response) {
+                if(response){
+                    var rowposition = self.appMenuList.rowposition;
+                    var rowType = self.appMenuList.getRowType(rowposition); 
+                    var returnVal = null;
+                    
+                    //신규
+                    if(rowType == self.ROWTYPE_INSERT){
+                        returnVal = menuApi.menuInsert(self.appMenuList.currentRow, true);
+                        
+                        self.beforeServiceCd = self.appMenuList.currentRow.SERVICE_CD; 
+                        self.beforeUpMenuCd = self.appMenuList.currentRow.UP_MENU_CD; 
+                        self.beforeMenuLv = self.appMenuList.currentRow.MENU_LV;
+                        self.beforeOrd = self.appMenuList.currentRow.ORD;
+                    }
+                    //수정
+                    else if(rowType == self.ROWTYPE_UPDATE){
+                        returnVal = menuApi.menuUpdate(self.appMenuList.currentRow, true);
+                    }else{
+                        notifySubmit('info', '앱 메뉴 저장', '저장할 내역이 없습니다.', 'icon-message');
+                    }
+                    
+                    if(!isNull(returnVal)){
+                        returnVal.then(function(response) {
+                            var data = response.data;
+                            
+                          	notifySubmit('success', '앱 메뉴 저장', '저장이 완료되었습니다.', 'icon-save');
+                          	systemApi.authRefresh(null, false);
+                            self.setAppMenuList();
+                        }).catch(function(error) {
+                        	notifySubmit('warning', '앱 메뉴 저장', '저장에 실패하였습니다.', 'icon-caution');
+                        });
+                    }
+                }else{
+                    notifySubmit('warning', '앱 메뉴 저장', '입력항목을 확인해주세요.', 'icon-caution');
+                }
+            });
+        },
+        /* 앱 메뉴 리스트 삭제 */
+        deleteRow: function(row){
+            var rowType = this.appMenuList.getRowType(this.appMenuList.rowposition);
+            var returnVal = null;
+            var self = this;
+            
+            if(rowType != self.ROWTYPE_INSERT){
+                returnVal = menuApi.menuDelete(self.appMenuList.currentRow, true);
+                returnVal.then(function(response) {
+                    var data = response.data;
+                    
+                   	self.appMenuList.deleteRow(self.appMenuList.rowposition);
+                   	systemApi.authRefresh(null, false);
+                    self.setAppMenuList();
+                    notifySubmit('success', '앱 메뉴 삭제', '삭제가 완료되었습니다.', 'icon-save');
+                }).catch(function(error) {
+                	notifySubmit('warning', '앱 메뉴 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+                }); 
+            }else{
+            	this.appMenuList.deleteRow(self.appMenuList.rowposition);
+            	notifySubmit('success', '앱 메뉴 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+            }
+        },
+        upMenuChange: function(){
+        	var self = this;
+        	var upMenuCd = self.appMenuList.currentRow.UP_MENU_CD;
+        	var findRowPosition = _.findIndex(self.appMenuList.getData(), function(o){
+        		return o.MENU_CD == upMenuCd;
+        	})
+        	
+        	if(upMenuCd == '00000000'){
+        		self.appMenuList.setColumn(self.appMenuList.rowposition, 'MENU_LV', 0);
+        	}else if(upMenuCd && findRowPosition != -1){
+       			self.appMenuList.setColumn(self.appMenuList.rowposition, 'MENU_LV', parseInt(self.appMenuList.getColumn(findRowPosition, 'MENU_LV'),10)+1);	
+        	}
+        },
+        upMenuNameReturn: function(menuNm, menuLv){
+        	var space = '';
+        	
+        	for(var i=0 ; i < parseInt(menuLv,10) ; i++){
+        		space+= '&nbsp;&nbsp;&nbsp;&nbsp;';
+        	}
+        	
+        	return space + '[ LV : ' + menuLv + ' ] '+menuNm; 
+        },
+        menuGbChange: function(pMenuGb){
+        	this.appMenuList.currentRow.DAESANG_APP_ID = '';
+        	this.appMenuList.currentRow.DAESANG_MENU_CD = '';
+        	this.appMenuList.currentRow.SERVICE_CD = '';
+        	this.appMenuList.currentRow.PGM_ID = '';
+        	this.appMenuList.currentRow.LINK_URL = '';
+        	this.$validator.reset();
+        },
+		rowClick: function(index){
+			this.selectApp(index)
+		},
+        /* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            
+      		switch(pId) {
+	    		case 'deleteMenu':
+                    title = '앱 메뉴 삭제';
+                    cont = '선택 한 메뉴를 삭제 하시겠습니까?</br>(지정 된 권한과 작성된 매뉴얼도 함께 삭제되며</br>삭제 후에는 복구가 불가능합니다.)';
+	    			break;
+	    		case 'deleteManual':
+                    title = '앱 메뉴 매뉴얼 삭제';
+                    cont = '선택 한 메뉴의 매뉴얼을 삭제 하시겠습니까?';
+	    			break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+        //confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+        messagePopupCallback: function(pGb, pId, pData) {
+	    	if(pGb!='confirm') return;
+	    	switch(pId) {
+	    		case 'deleteMenu':
+	    			this.deleteRow();
+	    			break;
+	    		case 'deleteManual':
+	    			this.deleteManual();
+	    			break;
+	    	}
+	    },
+        // 매뉴얼 작성 화면으로 이동
+        writeManual: function(pAppId, pMenuCd){
+            this.isWriteManual = true;
+			var self = this;
+
+			this.$nextTick(function(){
+				self.sub2ListLoading.val = true;
+				var returnVal = menuApi.appMenuManual(pAppId, pMenuCd, false);
+	            
+	            returnVal.then(function(response) {
+	            	self.appMenuManualList.setData(response.data);
+	            	
+	            	var pText = '';
+	            	var pGb = '';
+
+	            	if(self.appMenuManualList.data.length > 0){
+	            		pText = self.appMenuManualList.getColumn(0, 'MANUAL_TEXT');
+	            		pGb = self.appMenuManualList.getColumn(0, 'TEXT_GB');
+	            	}
+	            	
+					if(isNull(pText)) pText = '';
+					if(isNull(pGb)) pGb = '';
+	            	
+					self.setWebEditor(pText, pGb, pAppId, pMenuCd);	
+					
+	            }).finally(function(){
+					self.sub2ListLoading.val = false;
+				});
+			});
+            
+        },
+	    showMain: function(){
+	    	this.isWriteManual = false;
+            this.webEditor = null;
+	    },
+        // 매뉴얼 저장
+        saveManual: function(pRow){
+        	var text = '';
+        	if(this.webEditor.wwEditor.editorType == 'wysiwyg'){
+        		text = this.webEditor.getHTML();
+        	}else
+        		text = this.webEditor.getMarkdown();
+        	
+        	if(isNull(text)) {
+        		notifySubmit('warning', '매뉴얼 저장', '내용을 입력해주세요.', 'icon-caution');
+        		return;
+        	}
+
+        	var pData = {
+            		appId: pRow.APP_ID,
+            		menuCd: pRow.MENU_CD,
+            		manualText: text,
+            		textGb: this.webEditor.wwEditor.editorType
+            };
+            var validate = this.$validator.validateAll();
+            var self 	 = this;
+            
+            validate.then(function(response) {
+                if(response){
+                    var returnVal = null;
+                    
+                    if(self.appMenuManualList.data.length > 0){
+                        returnVal = menuApi.appMenuManualUpdate(pData, true);
+                    }else {
+                    	returnVal = menuApi.appMenuManualInsert(pData, true);
+                    }
+                    
+                    returnVal.then(function(response) {
+                        if(response.data == '1'){
+                       		self.showMain();	
+                            notifySubmit('success', '매뉴얼 저장', '저장이 완료되었습니다.', 'icon-save');
+                        }else{
+                            notifySubmit('warning', '매뉴얼 저장', '저장에 실패하였습니다.', 'icon-caution');
+                        }
+                    });
+                }else{
+                    notifySubmit('warning', '매뉴얼 저장', '입력항목을 확인해주세요.', 'icon-caution');
+                }
+            });
+        },
+	    deleteManual: function(){
+            var returnVal = null;
+            var self = this;
+			var pAppId = this.appMenuList.currentRow.APP_ID;
+			var pMenuCd = this.appMenuList.currentRow.MENU_CD;
+			
+            returnVal = menuApi.appMenuManualDelete(pAppId, pMenuCd, false);
+            returnVal.then(function(response) {
+                if(response.data == '1'){
+                    self.showMain();
+                    notifySubmit('success', '매뉴얼 삭제', '삭제가 완료되었습니다.', 'icon-save');
+                }else{
+                    notifySubmit('warning', '매뉴얼 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+                }
+            }); 
+	    },
+        // 에디터 설정
+        setWebEditor: function(pContent, pTextGb, pAppId, pMenuCd){
+        	var self = this;
+        	
+    		if(isNull(pContent)) pContent = '';
+    		if(isNull(pTextGb)) pTextGb = 'markdown';
+    		
+        	this.webEditor = new toastui.Editor({
+                el: document.querySelector('#editSection'),
+                language: 'ko_KR',
+                initialEditType: pTextGb,	// wysiwyg, markdown
+                previewStyle: 'vertical',
+                height: '600px',
+                initialValue: pContent,
+                placeholder: '내용을 입력하세요.',
+                events: {change : this.onChange},
+                hooks: {
+        	    	'addImageBlobHook': function(blob, callback){
+        	    		try{
+        	    			self.uploadImage(blob, pAppId, pMenuCd).then(function(response) {
+        		    			var _protocol = window.location.protocol;
+        		    			var _host = window.location.host;
+        		    			var _url = _protocol + "//" + _host;
+        		    			var _fileUrl = '';
+        		    			
+        	    				_fileUrl = response.data;
+        	    				callback('/upload' + _fileUrl, blob.name);
+        		    	    });	
+        	    		} catch(err){
+        	    			return false;
+        	    		}
+        	    	},
+        	    },
+            });		
+        },
+        onChange: function(){
+        	if(this.webEditor.getMarkdown().length == 0){
+        		this.showInvalid = true;
+        		$('#editSection > div').addClass('invalid');
+        	}else{
+        		this.showInvalid = false;
+        		$('#editSection > div').removeClass('invalid');
+        	}
+        },
+        uploadImage: function(blob, pAppId, pMenuCd) {
+			var formData = new FormData();
+			var serviceAbbrNm = 'SMN';
+			var fileId = 'SMN_APP_MENU_MANUAL';
+			var fileHangmok = 'EDITOR_IMG';
+			var fileKey = pAppId+'#'+pMenuCd;
+
+   		    formData.append('serviceAbbrNm', serviceAbbrNm);
+   		    formData.append('upload_path', serviceAbbrNm + '\\' + fileId + '\\' + fileHangmok);
+   		    formData.append('fileId', fileId);
+   		    formData.append('fileKey', fileKey);
+   		    formData.append('fileHangmok', fileHangmok);
+   		 	formData.append('file1', blob, blob.name);
+
+   		 	return axios.post('/commons/file/upload-editor',
+   	    		formData,
+   	            {
+   	                headers: {
+   	                    'Content-Type': 'multipart/form-data'
+   	                },
+   	            }
+  	        );
+    	 }
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

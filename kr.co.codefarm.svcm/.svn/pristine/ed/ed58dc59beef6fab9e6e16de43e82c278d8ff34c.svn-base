@@ -1,0 +1,474 @@
+<h2>로그 통계</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l4">
+					<label for="pLogTonggyeGb" class="label-type01">로그 통계 구분</label> 
+			        <select class="size-m" name="pLogTonggyeGb" id="pLogTonggyeGb" @change="setResultList();" v-model="logTonggyeGb">
+						<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'LOG_TONGGYE_GB', 'blank')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				<div class="form-group col s12 l8" v-if="logTonggyeGb == '01'">
+					<label for="frdt" class="label-type01">검색 기간</label>
+					<div class="row form-row">
+						<div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="strDate" @input="function(value){ strDate = value }" ></date-picker>
+	                            <input id="pStartDt" type="hidden" name="targetname" data-vv-as="날짜 " v-model="strDate">
+	                        </div>
+	                    </div>
+	                    <div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+	                            <date-picker :value="endDate" @input="function(value){ endDate = value }"></date-picker>
+	                            <input id="pEndDt" type="hidden" name="targetname" data-vv-as="날짜 " v-model="endDate">
+	                        </div>
+	                    </div>
+					</div>
+				</div>
+				<div class="form-group col s12 l8" v-if="logTonggyeGb == '02'">
+					<label for="frdt" class="label-type01">검색년도</label>
+					<div class="row form-row">
+						<div class="form-group col s12 l6">
+	                        <div class="date-form-wrap">
+	                            <input id="pYear" type="number" name="pYear" data-vv-as="년도 " v-model="year" data-vv-as="검색년도 " min="0" v-validate="'decimal:0|required'" v-bind:class="{'invalid': errors.has('pYear')}" @keyup.13="setResultList();"/>
+	                            <invalid-message :visible="true" :name="'pYear'" :verror="errors"/>
+	                        </div>
+	                    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-inline btn-line right">
+			<a href="#!" class="btn type01 size-m" @click="setResultList();">검색</a>
+		</div>
+		
+		<div id="no-data-div" class="table-type04-wrap">
+			<table class="table-type05 response">
+				<colgroup>
+				</colgroup>
+				<thead>
+				</thead>
+				<tbody>
+					<tr>
+						<td data-header="검색결과 없음" colspan="100">준비중입니다.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+			
+		<perfect-scrollbar id="chart-area" v-show="logTonggyeGb == '01'">
+		</perfect-scrollbar>
+		<!-- 김성래 - 연도별 접속 현황 그리드 추가 -->
+		<div id="grid-area"></div>
+		
+	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		logTonggyeGb: '01',
+		year: moment().format('YYYY'),
+		strDate: moment().add(-3,'month').format('YYYYMMDD'),	// 검색조건 - 로그 검색 기간
+		endDate: moment().format('YYYYMMDD'),					// 검색조건 - 로그 검색 기간
+		resultList: new Dataset(),								// 로그 목록
+		graphCategory: [],										// 차트용 데이터
+		graphCnt: [0],											// 차트용 데이터
+		graphSeries: [],										// 차트용 데이터
+		
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+	},
+	//계산된 속성 표현 시
+	computed: {
+	},
+	//데이터 감시
+	watch: {
+		'resultList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.resultList.enableevent){
+					var changeYn = this.resultList.dataCompare(oldVal);
+					var rowType = this.resultList.getRowType(val);
+					var oldRowType = this.resultList.getRowType(oldVal);
+					
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.resultList.setDefaultRow(oldVal);
+					}
+					
+					this.$validator.reset();
+					this.$nextTick(function(){
+						this.toggleTr();	
+					});
+				}
+			}
+		},		
+		'resultList.data': {
+			handler: function (val, oldVal) {
+				if(this.resultList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.resultList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.resultList.beforeData[rowposition][colNm] = data[colNm];
+				          		vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    }
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		$("#no-data-div").hide();
+		this.setResultList();
+	},
+	//함수
+	methods: {
+		setGridForm: function(){
+			$("#grid-area").empty();
+			
+			this.grid = new tui.Grid({
+	   		    el: document.getElementById('grid-area'),
+	   			scrollX: true,
+	   		 	bodyHeight: 430,
+	   			rowHeaders: ['rowNum'],
+	   			//selectionUnit: 'row',
+	   			columns: [
+	   				{
+	   					header: 'ID',
+	   					name: 'USER_ID',
+	   					align: 'center',
+	   					//editor: 'text'
+	   			        sortingType: 'asc',
+	   			     	minWidth: 100,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '성명',
+	   					name: 'USER_NM',
+	   					align: 'center',
+	   					//className: 'clickable',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '학과/부서',
+	   					name: 'DEPT_NM',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 150,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '1월',
+	   					name: 'JAN_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '2월',
+	   					name: 'FEB_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '3월',
+	   					name: 'MAR_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '4월',
+	   					name: 'APR_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '5월',
+	   					name: 'MAY_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '6월',
+	   					name: 'JUN_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '7월',
+	   					name: 'JUL_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '8월',
+	   					name: 'AUG_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '9월',
+	   					name: 'SEP_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '10월',
+	   					name: 'OCT_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '11월',
+	   					name: 'NOV_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '12월',
+	   					name: 'DEC_CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   				{
+	   					header: '총계',
+	   					name: 'CNT',
+	   					align: 'center',
+	   			        sortingType: 'asc',
+	   			     	minWidth: 80,
+	   			     	whiteSpace: 'normal',
+	   			        sortable: true,
+	   				},
+	   			],
+	   		    columnOptions: {
+	   		      	frozenCount: isPc() ? 3 : 0,
+	   		      	frozenBorderWidth: isPc() ? 3 : 0,
+	   		      	//minWidth: 300,
+	   		   		resizable: true,
+	   		    },
+	   		});
+		},
+		/* 로그 통계 조회 */
+		setResultList: function(){
+			var pLogTonggyeGb 	= this.logTonggyeGb                          	// 로그 통계 구분
+			var pCd1			= this.getCD1(pLogTonggyeGb);					// 로그 통계 구분 코드의 CD1 - 조회할 인원 수
+			var pLogFrDt 		= this.strDate									// 검색 기간 시작
+			var pLogToDt 		= this.endDate;									// 검색 기간 종료
+			var pYear 		= this.year;									    // 검색 년도
+			
+			if(isNull(pLogTonggyeGb)) 	pLogTonggyeGb 	= '';
+			if(isNull(pLogFrDt)) 		pLogFrDt 		= '';
+			if(isNull(pLogToDt)) 		pLogToDt		= '';
+			if(isNull(pYear)) 			pYear		= '';
+			
+			var pParam = {};
+			pParam.pLogTonggyeGb	= pLogTonggyeGb;
+			pParam.pCd1				= pCd1;
+			pParam.pLogFrDt			= pLogFrDt;
+			pParam.pLogToDt			= pLogToDt;
+
+			var self 	  = this;
+			var returnVal = null;	
+			
+			// 로그 통계 구분이 접속자별 접속 횟수일 때.
+			if(pLogTonggyeGb == "01"){
+				$("#grid-area").empty();
+				
+				pParam.pYear 			= '';
+				
+				returnVal = loglistApi.getLogTonggye(pParam, true);	
+				
+				if(!isNull(returnVal)){
+					returnVal.then(function(response) {
+						self.resultList.setData(response.data);
+
+						if(self.resultList.getRowCount() > 0){
+							self.graphSeries = [];
+							for(var i = 0; i < self.resultList.getRowCount(); i++ ){
+								var pushData = {};
+								pushData.name = self.resultList.data[i].USER_NM;
+								pushData.data = self.resultList.data[i].CNT;
+								self.graphSeries.push(pushData);
+							}
+						}else{
+							self.graphCategory = [];
+							self.graphCnt = [0];
+							self.graphSeries = [];
+						}
+					}).finally(function(){
+						self.drawChart(pLogTonggyeGb);
+					});
+				}else{
+					$("#no-data-div").show();
+					$("#chart-area").empty();
+				}
+			}else if(pLogTonggyeGb == "02"){
+				self.setGridForm();
+				
+				pParam.pLogFrDt = '';
+				pParam.pLogToDt = '';
+				pParam.pYear = self.year;
+				
+				var validate = self.$validator.validateAll();
+				
+				validate.then(function(response){
+					if(response){
+						returnVal = loglistApi.getLogTonggye(pParam, true);	
+						
+						if(!isNull(returnVal)){
+							returnVal.then(function(response) {
+								self.resultList.setData(response.data);
+								self.grid.resetData(self.resultList.getData());
+							}).finally(function(){
+								self.$forceUpdate();
+							});
+						}else{
+							$("#chart-area").empty();
+						}
+					}else{
+						notifySubmit('warning', '연도 별 접속 현황', '검색년도를 확인해주세요.', 'icon-caution');
+						
+						return;
+					}
+				});
+			}
+		},
+		componentStateChange: function(){
+		},	
+		drawChart: function(pLogTonggyeGb){
+			$("#no-data-div").hide();
+			$("#chart-area").empty();	// 차트 지우기
+			
+			// 접속자 별 접속 횟수
+			if(pLogTonggyeGb == "01"){
+				var container = document.getElementById('chart-area');
+	            var data = {
+	                categories: [''],
+	                series: this.graphSeries
+	            };
+	            var options = {
+	                chart: {
+	                	width: 900,
+	                    height: 500
+	                },
+	                yAxis: {
+	                	title: '접속 횟수',
+			            min: 0.0
+	// 		            max: 4.5
+	                },
+	                xAxis: {
+			            pointOnColumn: true,
+			            tickInterval: 'auto',
+			            title: '접속자 목록'
+	                },
+	                legend: {
+	                    align: 'top'
+	                },
+	                series: {
+	                	showLabel: true
+	                }
+	            };
+	            var theme = {
+	                series: {
+	                    colors: [
+	                        '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+	                        '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+	                    ]
+	                }
+	            };
+	            // For apply theme
+	            // tui.chart.registerTheme('myTheme', theme);
+	            // options.theme = 'myTheme';
+	            var chart = tui.chart.columnChart(container, data, options);
+				
+			}
+			// 접속자 별 접속 횟수
+			else if(pLogTonggyeGb == "02"){
+				
+			}
+		},
+		getCD1: function(pCd) {
+			if(isNull(pCd)) return;
+			var list = this.smnCommcode.data;
+			var findObj =_.filter(list, function(uplist) {
+				  			return  uplist.UP_CD == 'LOG_TONGGYE_GB' && uplist.CD == pCd;
+						});	
+			try {
+				return isNull(findObj[0].CD1)?'':findObj[0].CD1;
+			} catch (err) {
+				return '';
+			}
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

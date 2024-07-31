@@ -1,0 +1,387 @@
+<h2>REST API 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!restApiList.currentRow">
+		<h3 class="h3">REST API 리스트</h3>
+
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+   			<input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	        <div class="f-right">
+	            <input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+	        </div>
+	    </div>
+
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{restApiListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{restApiListPaging.getCurrentPage()}}</span> / {{restApiListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="mainListLoading">
+					<caption>서비스 번호, 서비스 코드, 서비스 명, 서비스 영문 명, 주소를 조회 항목별 순서대로 안내하는 표입니다</caption>
+					<caption>REST API 리스트</caption>
+					<colgroup>
+						<col width="15%" />
+						<col width="20%" />
+						<col width="10%" />
+						<col />
+						<col width="7%" />
+						<col width="7%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">서비스 코드</th>
+							<th scope="col">API 명</th>
+							<th scope="col">METHOD</th>
+							<th scope="col">API URL</th>
+							<th scope="col">사용<br/>여부</th>
+							<th scope="col">삭제</th>
+						</tr>
+					</thead>
+					<tbody v-if="restApiList.getRowCount() > 0">
+						<tr v-for="(item, index) in restApiList.data" v-if="restApiList.getRowType(index) != 8">
+							<td class="left" data-header="서비스 코드"><a href="#!" @click="rowClick(index)">{{getServiceNm(item.SERVICE_CD)}}</a></td>
+							<td class="left" data-header="API 명"><a href="#!" @click="rowClick(index)">{{item.API_NM}}</a></td>
+							<td data-header="METHOD"><a href="#!" @click="rowClick(index)">{{item.METHOD_GB}}</a></td>
+							<td class="left" data-header="API URL"><a href="#!" @click="rowClick(index)">{{item.API_URL}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+							<td data-header="삭제"><a href="#!" @click="messagePopup('ID_DELETE', index)"><span class="icon-trashcan"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="restApiListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+
+	<section class="cont_box" v-if="restApiList.currentRow">
+		<h3 class="h3">REST API 상세</h3>
+		<div class="style_set box-type01">
+		    <form>
+				<div class="row form-row">
+			        <div class="form-group col s12 m6 l3 xl3">
+			    		<label class="label-type01 required" for="apiSeq">API 순번</label>
+			    		<input class="size-m" type="text" id="apiSeq"  name="apiSeq" data-vv-as="API 순번 " v-model="restApiList.currentRow.API_SEQ" disabled="disabled" placeholder="자동부여"/>
+			    	</div>
+			        <div class="form-group col s12 m6 l3 xl3">
+			    		<label class="label-type01 required" for="serviceCd">서비스 코드</label>
+			    		<select class="size-m" id="serviceCd" name="serviceCd" data-vv-as="서비스 코드 " v-model="restApiList.currentRow.SERVICE_CD" v-validate="'required'" v-bind:class="{'invalid': errors.has('serviceCd')}">
+	                        <option v-for="(item, index) in customcodeSet.getCustomcode('service_CD', 'service_NM', 'select')" :value="item.CD">{{item.CD_NM}}</option>
+	                    </select>
+	                    <invalid-message :visible="restApiList.currentRow" :name="'serviceCd'" :verror="errors"/>
+			    	</div>
+			    	<div class="form-group col s12 m12 l6 xl6">
+			            <label class="label-type01 required" for="apiNm">API 명</label>
+			            <input class="size-m" type="text" id="apiNm"  name="apiNm" data-vv-as="API 명 " v-model="restApiList.currentRow.API_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('apiNm')}"/>
+	                    <invalid-message :visible="restApiList.currentRow" :name="'apiNm'" :verror="errors"/>
+			        </div>
+			    </div>
+			    <div class="form-group row form-row">
+			        <div class="col s12 m12 l12 xl12">
+			    		<label class="label-type01 required" for="apiUrl">API URL</label>
+			    		<input class="size-m" type="text" id="apiUrl"  name="apiUrl" data-vv-as="API URL " v-model="restApiList.currentRow.API_URL" v-validate="'required|max:1000'" v-bind:class="{'invalid': errors.has('apiUrl')}"/>
+	                    <invalid-message :visible="restApiList.currentRow" :name="'apiUrl'" :verror="errors"/>
+			    	</div>
+			    </div>
+			    <div class="row form-row">
+			    	<div class="form-group col s12 m6 l6 xl6">
+			            <label class="label-type01 required" for="methodGb">메소드 구분</label>
+			            <select class="size-m" id="methodGb" name="methodGb" data-vv-as="메소드 구분 " v-model="restApiList.currentRow.METHOD_GB" v-validate="'required'" v-bind:class="{'invalid': errors.has('methodGb')}">
+			            	<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'METHOD_GB', 'select')" :value="item.CD">{{item.CD_NM}}</option>
+				        </select>
+	                    <invalid-message :visible="restApiList.currentRow" :name="'methodGb'" :verror="errors"/>
+			        </div>
+			    	<div class="form-group col s12 m6 l6 xl6">
+			            <label class="label-type01" for="useYn">사용여부</label>
+        			    <div class="col s12 m12 l12 xl12">
+		                    <div class="form-check">
+		                        <label class="toggle-switch size-l">
+		                            <input type="checkbox" id="useYn" name="useYn" data-vv-as="사용 여부" v-model="restApiList.currentRow.USE_YN" true-value="Y" false-value="N">
+		                            <span class="slider round"></span>
+		                        </label>
+		                   </div>
+			            	<span class="slider round"></span>
+	                    	<invalid-message :visible="restApiList.currentRow" :name="'useYn'" :verror="errors"/>
+			        	</div>
+			        </div>
+			    </div>
+			    <div class="form-group row form-row">
+			        <div class="col s12 m12 l12 xl12">
+			    		<label class="label-type01" for="restApiDesc">REST API 설명</label>
+			    		<textarea rows="" cols="" class="size-m" id="restApiDesc"  name="restApiDesc" data-vv-as="REST API 설명 " v-model="restApiList.currentRow.REST_API_DESC" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('restApiDesc')}"></textarea>
+                    	<invalid-message :visible="restApiList.currentRow" :name="'restApiDesc'" :verror="errors"/>
+			    	</div>
+			    </div>
+			    <div class="form-group row form-row">
+			        <div class="col s12 m12 l12 xl12">
+			    		<label class="label-type01" for="remark">비고</label>
+			    		<textarea rows="" cols="" class="size-m" id="remark"  name="remark" data-vv-as="비고 " v-model="restApiList.currentRow.REMARK" v-validate="'max:500'" v-bind:class="{'invalid': errors.has('remark')}"></textarea>
+                    	<invalid-message :visible="restApiList.currentRow" :name="'remark'" :verror="errors"/>
+			    	</div>
+			    </div>
+			</form>
+		</div>
+		<div class="col-inline btn-line right">
+			<div class="col-inline right">
+				<a href="#!" class="btn type01 size-m" @click="search()">목록</a>
+				<a href="#!" class="btn type01 size-m" v-if="restApiList.getRowType(restApiList.rowposition) == ROWTYPE_NORMAL || restApiList.getRowType(restApiList.rowposition) == ROWTYPE_UPDATE" @click="messagePopup('ID_DELETE', restApiList.rowposition)">삭제</a>
+				<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+			</div>
+		</div>
+	</section>
+
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		restApiList: new Dataset(),
+		//updateDisabled: false,
+        pSearchArgv: '',
+		restApiListPaging: new PagingSet(5, 5),
+		messageModal: new ModalSet('restapi-modal'),	// confirm 모달
+		customcodeSet: new CustomcodeSet('/system-manager/service/initList'),
+		mainListLoading: {id:'mainListLoading', val:false},
+	},
+	//생성 될 때
+	beforeCreate: function(){
+
+	},
+	//계산된 속성 표현 시
+	computed: {
+
+	},
+	//데이터 감시
+	watch: {
+		'restApiList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.restApiList.enableevent){
+					var changeYn = this.restApiList.dataCompare(oldVal);
+					var rowType = this.restApiList.getRowType(val);
+
+					if(!changeYn){
+						this.restApiList.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		'restApiList.data': {
+			handler: function (val, oldVal) {
+				if(this.restApiList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.restApiList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.restApiList.beforeData[rowposition][colNm] = data[colNm];
+				          		//colNm, rosposition
+
+				          		vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+		'restApiListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setRestApiList(null, val)
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setRestApiList();
+	},
+	//함수
+	methods: {
+		/* REST API 리스트 조회 */
+		setRestApiList: function(e, pPageNo){
+			var self = this;
+            self.mainListLoading.val = true;
+			var returnVal = restApiApi.restApi(this.pSearchArgv, this.restApiListPaging.currentPage, this.restApiListPaging.getRowCnt(), false);
+
+			returnVal.then(function(response) {
+				self.restApiList.setData(response.data);
+				if(response.data.length > 0){
+					var totalCnt = self.restApiList.data[0].CNT;
+					self.restApiListPaging.setTotalCnt(totalCnt);
+				}else{
+					self.restApiListPaging.setTotalCnt(0);
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		 /* 검색 */
+        search: function(){
+        	var pageNo = this.restApiListPaging.getCurrentPage();
+
+        	if(pageNo == 1){
+        		this.setRestApiList();
+        	}else{
+        		this.restApiListPaging.movePage(1);
+        	}
+        },
+		/* REST API 리스트 신규행 추가 */
+		newRow: function(){
+			var addObj = {
+                'API_SEQ': null,
+                'SERVICE_CD': '',
+                'API_NM': '',
+                'API_URL': '',
+                'METHOD_GB': '',
+                'USE_YN': 'Y',
+                'REST_API_DESC': '',
+                'REMARK': ''
+            };
+
+			var newRowPosition = this.restApiList.addRow(addObj);
+		},
+		/* REST API 리스트 저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.restApiList.rowposition;
+					var rowType = self.restApiList.getRowType(rowposition);
+					var returnVal = null;
+
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						self.restApiList.setColumn(rowposition, 'REST_API_DESC', self.restApiList.currentRow.REST_API_DESC.replace(/\n/g, "<br>"));
+						self.restApiList.setColumn(rowposition, 'REMARK', self.restApiList.currentRow.REMARK.replace(/\n/g, "<br>"));
+						returnVal = restApiApi.restApiInsert(self.restApiList.currentRow, false);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						self.restApiList.setColumn(rowposition, 'REST_API_DESC', self.restApiList.currentRow.REST_API_DESC.replace(/\n/g, "<br>"));
+						self.restApiList.setColumn(rowposition, 'REMARK', self.restApiList.currentRow.REMARK.replace(/\n/g, "<br>"));
+						returnVal = restApiApi.restApiUpdate(self.restApiList.currentRow, false);
+					}else{
+						notifySubmit('info', 'REST API 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							notifySubmit('success', 'REST API 저장', '저장이 완료되었습니다.', 'icon-save');
+							self.setRestApiList(null, self.restApiListPaging.currentPage);
+						}).catch(function(error) {
+							notifySubmit('warning', 'REST API 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}else{
+					notifySubmit('warning', 'REST API 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		/* REST API 리스트 삭제 */
+		deleteRow: function(row){
+			var rowType = this.restApiList.getRowType(row);
+			var returnVal = null;
+			var apiSeq = this.restApiList.getColumn(row, 'API_SEQ');
+
+			this.restApiList.deleteRow(row);
+			var self = this;
+
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = restApiApi.restApiDelete(apiSeq, false);
+				returnVal.then(function(response) {
+					var data = response.data;
+
+					notifySubmit('success', 'REST API 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+					self.setRestApiList(null, self.restApiListPaging.currentPage);
+				}).catch(function(error) {
+					notifySubmit('warning', 'REST API 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				});
+			}else{
+				notifySubmit('success', 'REST API 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+			}
+
+		},
+		/* REST API 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+
+		},
+		/* 서비스코드 명칭 매핑 */
+		getServiceNm: function(pServiceCd) {
+			if(isNull(pServiceCd)) return;
+			var list = this.customcodeSet.data;
+			var findObj =_.filter(list, function(uplist) {
+	  			return  uplist.service_CD == pServiceCd;
+			});
+
+			try {
+				return isNull(findObj[0].service_NM)?'':findObj[0].service_NM;
+			} catch (err) {
+				return '';
+			}
+		},
+		rowClick: function(index){
+			this.restApiList.selectRow(index)
+		},
+		/* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            var pGb = 'confirm';
+
+            switch(pId) {
+	    		case 'ID_DELETE':
+	    			title = '삭제';
+	    			cont = '해당 항목을 삭제하시겠습니까?<br /><span style="color:#c90000;">(해당 API로 등록 된 알림, 로그처리와 등<br />관련 설정들이 모두 삭제 됩니다.)</span>';
+                    break;
+	    	}
+
+	    	this.messageModal.openModal(pGb, title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+
+	    	switch(pId) {
+	    		case 'ID_DELETE':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    }
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>
+

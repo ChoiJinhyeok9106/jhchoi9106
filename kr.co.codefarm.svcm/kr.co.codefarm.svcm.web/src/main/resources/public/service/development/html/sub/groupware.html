@@ -1,0 +1,160 @@
+<h2>Groupware API연계 테스트</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Groupware</h3>
+    </section>
+    <section class="cont_box">
+    	<div class="row form-row">
+	  		<div class="form-group col s12 l6">
+				<label for="makeSession" class="label-type01">세션생성</label>
+				<input type="button" value="Session Make" class="btn type02 size-m" @click="makeSession">
+			</div>
+	  			<div class="form-group col s12 l6">
+				<label for="getEmailList" class="label-type01">이메일 리스트</label>
+				<input type="button" value="Get Email List" class="btn type02 size-m" @click="getEmailList">
+			</div>
+		</div>
+		<div class="row form-row">
+	  		<div class="form-group col s12 l6" v-html="sessionMakeReturn"></div>
+			<div class="form-group col s12 l6" v-html="emailListReturn"></div>
+		</div>
+   	</section>
+    <section class="cont_box">
+    	<div class="row form-row">
+	  		<div class="form-group col s12 l6">
+				<label for="makeSessionAjax" class="label-type01">세션생성 Ajax</label>
+				<input type="button" value="Session Make" class="btn type02 size-m" @click="makeSessionAjax">
+			</div>
+	  			<div class="form-group col s12 l6">
+				<label for="getEmailListAjax" class="label-type01">이메일 리스트 Ajax</label>
+				<input type="button" value="Get Email List" class="btn type02 size-m" @click="getEmailListAjax">
+			</div>
+		</div>
+		<div class="row form-row">
+	  		<div class="form-group col s12 l6" v-html="sessionMakeReturnAjax"></div>
+			<div class="form-group col s12 l6" v-html="emailListReturnAjax"></div>
+		</div>
+   	</section>
+    <section class="cont_box">
+    	<div class="row form-row">
+	  		<div class="form-group col s12 l6">
+				<label for="makeSessionPopup" class="label-type01">세션생성 Popup</label>
+				<input type="button" value="Session Make" class="btn type02 size-m" @click="makeSessionPopup">
+			</div>
+	  			<div class="form-group col s12 l6">
+				<label for="getEmailListAjaxPopup" class="label-type01">이메일 리스트 Popup</label>
+				<input type="button" value="Get Email List" class="btn type02 size-m" @click="getEmailListAjaxPopup">
+			</div>
+		</div>
+   	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	sessionMakeReturn : '',
+    	emailListReturn : '',
+    	sessionMakeReturnAjax : '',
+    	emailListReturnAjax : '',
+    	groupWareEmailLinkUrl: '',
+    	groupWareEmailListUrl: '',
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	this.groupWareEmailLinkUrl = this.defaultInfo.GROUPWARE_SESSION_INSERT_URL;
+    	this.groupWareEmailListUrl = this.defaultInfo.GROUPWARE_EMAIL_LIST_URL;
+    },
+    //함수
+    methods: {
+    	makeSession: function() {
+    		var self = this;
+    		
+    		var returnValue = systemApi.corsJson({'CALL_URL':self.groupWareEmailLinkUrl});
+    		
+    		returnValue.then(function(resData) {
+    			self.sessionMakeReturn = resData;
+    		}).catch(function(error) {
+                console.error('error:', error);
+            }).finally(function(){
+            	
+			});
+    	},
+    	getEmailList: function(){
+    		var self = this;
+    		
+    		var returnValue = systemApi.corsXml({'CALL_URL':self.groupWareEmailListUrl},false);
+    		
+    		returnValue.then(function(resData) {
+    			self.emailListReturn = resData;
+    		}).catch(function(error) {
+                console.error('error:', error);
+            }).finally(function(){
+            	
+			});
+    	},
+    	makeSessionAjax: function() {
+    		var self = this;
+    		
+    		$.get('/commons/cors/json', {'CALL_URL':self.groupWareEmailLinkUrl}, function(response){
+    			self.sessionMakeReturnAjax = response;
+			});
+    	},
+    	getEmailListAjax: function(){
+    		var self = this;
+    		
+    		$.get('/commons/cors/xml', {'CALL_URL':self.groupWareEmailListUrl}, function(response){
+    			self.emailListReturnAjax = response;
+			});
+    	},
+    	makeSessionPopup: function() {
+    		var self = this;
+    		window.open(self.groupWareEmailLinkUrl);	
+    	},
+    	getEmailListAjaxPopup: function(){
+    		var self = this;
+    		window.open(self.groupWareEmailListUrl);	
+    	},
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+// 	editor('codeEditor1', 100);
+// 	editor('codeEditor2', 300);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

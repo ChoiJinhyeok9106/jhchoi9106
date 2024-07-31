@@ -1,0 +1,191 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/circle.css" />  
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/career.css" />  
+
+<h2 id="top" class="h2">Toast UI Chart-Radial</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">[Radial chart] basic</h3>
+		<div class="form-group row form-row">        	
+			<ul class="list-type02">
+	        	<li style="margin-top:10px;"><a href="https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic" class="btn type01 size-s c-blue" style="border:0px" target="_blank">https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic</a></li>
+	        	<li style="margin-top:10px;">사용되는 화면: 역량강화메인</li>
+	        	<li style="margin-top:10px;">1. 차트를 그릴 위치에 div를 생성하고 id 값을 설정</li>
+	        	<li style="margin-top:10px;">2. 설정한 id 값을 var container = document.getElementById('설정한 id'); 에 입력 - 아래의 예제 소스 1번줄</li>
+	        	<li style="margin-top:10px;">3. var container: 차트를 그릴 위치 지정</li>
+	        	<li style="margin-top:10px;">4. var data: 차트의 데이터</li>
+	        	<li style="margin-top:10px;">5. var options: 차트의 옵션 설정 - https://github.com/nhnent/tui.chart/blob/v3.6.0/src/js/chart.js - radial chart로 검색</li>
+	        	<li style="margin-top:10px;">6. tui.chart.radialChart(container, data, options); - 차트 그리기 </li>
+			</ul>
+	        <div id="chart-area"></div>
+		</div>
+    </section>
+    
+    <section class="cont_box">
+        <textarea id="codeEditor1">
+	        var container = document.getElementById('chart-area');
+			var data = {
+			    categories: ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+			    series: [
+			        {
+			            name: 'Budget',
+			            data: [5000, 3000, 5000, 7000, 6000, 4000]
+			        },
+			        {
+			            name: 'Income',
+			            data: [8000, 8000, 7000, 2000, 5000, 3000]
+			
+			        },
+			        {
+			            name: 'Expenses',
+			            data: [4000, 4000, 6000, 3000, 4000, 5000]
+			        },
+			        {
+			            name: 'Debt',
+			            data: [6000, 3000, 3000, 1000, 2000, 4000]
+			        }
+			    ]
+			};
+			var options = {
+			    chart: {
+			        title: 'Annual Incomes',
+			        width: 700,
+			        height: 700
+			    },
+			    series: {
+			        showDot: false,
+			        showArea: true
+			    },
+			    plot: {
+			        type: 'spiderweb'
+			    },
+			    legend: {
+			        align: 'bottom'
+			    }
+			};
+			var theme = {
+			    series: {
+			        colors: [
+			            '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+			            '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+			        ]
+			    }
+			};
+			
+			// For apply theme
+			// tui.chart.registerTheme('myTheme', theme);
+			// options.theme = 'myTheme';
+			tui.chart.radialChart(container, data, options);
+		</textarea>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * tui script start 
+ ********************************************************************************************************************************************************************/
+ var container = document.getElementById('chart-area');
+
+ var data = {
+     categories: ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+     series: [
+         {
+             name: 'Budget',
+             data: [5000, 3000, 5000, 7000, 6000, 4000]
+         },
+         {
+             name: 'Income',
+             data: [8000, 8000, 7000, 2000, 5000, 3000]
+
+         },
+         {
+             name: 'Expenses',
+             data: [4000, 4000, 6000, 3000, 4000, 5000]
+         },
+         {
+             name: 'Debt',
+             data: [6000, 3000, 3000, 1000, 2000, 4000]
+         }
+     ]
+ };
+ var options = {
+     chart: {
+         title: 'Annual Incomes',
+         width: 700,
+         height: 700
+     },
+     series: {
+         showDot: false,
+         showArea: true
+     },
+     plot: {
+         type: 'spiderweb'
+     },
+     legend: {
+         align: 'bottom'
+     }
+ };
+ var theme = {
+     series: {
+         colors: [
+             '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+             '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+         ]
+     }
+ };
+
+ // For apply theme
+ // tui.chart.registerTheme('myTheme', theme);
+ // options.theme = 'myTheme';
+ tui.chart.radialChart(container, data, options);
+/*******************************************************************************************************************************************************************
+ * tui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 350);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

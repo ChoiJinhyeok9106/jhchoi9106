@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.gdscdmgmt">
+
+	<!-- 물품분류그리드 조회 / 물품분류번호 중복체크 -->
+	<select id="getAssetClList"  parameterType="hashMap" resultType="hashMap">
+	SELECT
+	               A_.*,
+	               cm_getcodenm('GM0120', A_.TAG_KIND_CD,A_.AGENCY_ID) TAG_KIND_NM,
+	               cm_getcodenm('GM0210', A_.COMPTR_SE_CD,A_.AGENCY_ID) COMPTR_SE_CD
+	                
+	         FROM 
+	              (SELECT
+		           	COUNT(*) OVER() TOTAL_CNT
+	               <if test="pPageNo != null and pPageNo != ''.toString()">
+		             , ROW_NUMBER() OVER(ORDER BY A.ASSET_CL_NO ASC) AS RNUM
+		            </if>  
+	                     
+	                   , A.ASSET_CL_NO 
+	                   , A.ASSET_CL_KO_NM 
+	                   , A.ASSET_CL_EN_NM 
+	                   , A.INT_AT 
+	                   , CASE A.INT_AT  WHEN 'Y' THEN  '정수'  WHEN 'N' THEN  '비정수'  ELSE '없음' END INT_AT_NM
+	                   , A.USE_YYCNT 
+	                   , A.TAG_KIND_CD 
+	                   , A.COMPTR_SE_CD 
+	                   , A.RMK 
+	                   , A.REGUSER_ID 
+	                   , A.REG_DATE 
+	                   , A.CHGR_ID 
+	                   , A.CHG_DATE 
+	                   , B.ASSET_STND_KO_NM
+	                   , A.AGENCY_ID
+	                FROM 
+	                     TA_ASSET_CL_CD A
+	                     <if test="pAssetStndKoNm == null or pAssetStndKoNm == ''.toString()">
+	                     	LEFT JOIN
+	                     </if>
+	                     <if test="pAssetStndKoNm != null and pAssetStndKoNm != ''.toString()">
+	                     	INNER JOIN
+	                     </if>
+	                        (SELECT 
+	                            A1.ASSET_CL_NO,
+	                            A1.ASSET_STND_KO_NM,
+	                            A1.ASSET_STND_NO,
+	                            A1.AGENCY_ID 
+	                       FROM TA_ASSET_STND_CD A1 
+	                       INNER JOIN TA_ASSET_CL_CD A2 ON A1.ASSET_CL_NO = A2.ASSET_CL_NO AND A1.AGENCY_ID = A2.AGENCY_ID
+							<!-- 규격명 -->
+							<if test="pAssetStndKoNm != null and pAssetStndKoNm != ''.toString()">
+								AND upper(A1.ASSET_STND_KO_NM) like CONCAT('%' , upper(#{pAssetStndKoNm}) , '%')
+							</if>
+	                      GROUP BY A1.ASSET_CL_NO
+	                     ) B
+	                     ON A.ASSET_CL_NO = B.ASSET_CL_NO AND A.AGENCY_ID = B.AGENCY_ID
+	                WHERE A.AGENCY_ID = '00000000'
+					<!-- 물품분류번호 -->
+					<if test="pAssetClNo != null and pAssetClNo != ''.toString()">
+						AND A.ASSET_CL_NO like CONCAT('%' , #{pAssetClNo} , '%')
+					</if>
+					<!-- 물품명 -->
+					<if test="pAssetClKoNm != null and pAssetClKoNm != ''.toString()">
+						AND upper(A.ASSET_CL_KO_NM) like CONCAT('%' , upper(#{pAssetClKoNm}) , '%')
+					</if>
+					<!-- 태그코드 -->
+					<if test="pTagKindCd != null and pTagKindCd != ''.toString()">
+						<if test="pTagKindCd != 'ALL'">
+							AND A.TAG_KIND_CD = #{pTagKindCd}
+						</if>
+					</if>
+					<!-- 물품규격번호 -->
+					<if test="pAssetStndNo != null and pAssetStndNo != ''.toString()">
+						AND upper(B.ASSET_STND_NO) like CONCAT('%' , upper(#{pAssetStndNo}) , '%')
+					</if>
+					<!-- 정수여부 -->
+					<if test="pIntAt != null and pIntAt != ''.toString()">
+						<if test="pIntAt != 'ALL'">
+							AND A.INT_AT = #{pIntAt}
+						</if>
+					</if> 
+		) A_ 
+		WHERE 1=1
+			<if test="pPageNo != null and pPageNo != ''.toString()">
+  			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    		</if>
+	</select>
+
+	<!-- 물품규격그리드 조회 -->
+	<select id="getAssetStndList" parameterType="hashMap" resultType="hashMap">
+	SELECT
+	      A_.* 
+	         FROM 
+	              (
+					SELECT
+					<if test="pPageNo != null and pPageNo != ''.toString()">
+		             ROW_NUMBER() OVER(ORDER BY A.ASSET_CL_NO ASC) AS RNUM
+		           , COUNT(*) OVER() TOTAL_CNT
+		            </if>  
+				     , A.ASSET_CL_NO
+				     , A.USE_AT
+				     , A.ASSET_STND_NO
+				     , A.ASSET_STND_KO_NM
+				     , A.ASSET_STND_EN_NM
+				     , A.UNIT_CD
+				     , CM_GETCODENM('CM0010',A.UNIT_CD, '00000000') UNIT_NM
+				     , A.PRODT_CORPO_NM
+				     , A.PRODT_CTRY_CD
+				     , CM_GETCODENM('GM0130',A.PRODT_CTRY_CD, '00000000') PRODT_CTRY_NM
+				     , A.ECOFRD_AT
+				     , A.DABLPRSN_ENTR_AT
+				     , A.MINORENTR_AT
+				     , A.RMK
+				     , A.AGENCY_ID
+				  FROM 
+				       TA_ASSET_STND_CD A
+				       INNER JOIN TA_ASSET_CL_CD B ON A.ASSET_CL_NO = B.ASSET_CL_NO AND A.AGENCY_ID = B.AGENCY_ID 
+				       where 1=1
+				       AND A.AGENCY_ID = '00000000'
+				        <!-- 물품분류번호 -->
+						<if test="assetClNo != null and assetClNo != ''.toString()">
+							AND A.ASSET_CL_NO = #{assetClNo}
+						</if>
+						<!-- 물품규격번호 -->
+						<if test="assetStndNo != null and assetStndNo != ''.toString()">
+							AND A.ASSET_STND_NO like CONCAT('%' , #{assetStndNo} , '%')
+						</if>
+						<!-- 규격명 -->
+						<if test="assetStndKoNm != null and assetStndKoNm != ''.toString()">
+							AND upper(A.ASSET_STND_KO_NM) like CONCAT('%' , upper(#{assetStndKoNm}) , '%')
+						</if>
+						<!-- 물품명(자산분류한글명) -->
+						<if test="assetClKoNm != null and assetClKoNm != ''.toString()">
+							AND upper(B.ASSET_CL_KO_NM) like CONCAT('%' , upper(#{assetClKoNm}) , '%')
+						</if>
+						<!-- 태그코드 -->
+						<if test="tagKindCd != null and tagKindCd != ''.toString()">
+							<if test="tagKindCd != 'ALL'">
+								AND B.TAG_KIND_CD = #{tagKindCd}
+							</if>
+						</if> 
+						<!-- 정수여부 -->
+						<if test="intAt != null and intAt != ''.toString()">
+							<if test="intAt != 'ALL'">
+								AND B.INT_AT = #{intAt}
+							</if>
+						</if> 
+						 ) A_
+						 WHERE 1=1
+						<if test="pPageNo != null and pPageNo != ''.toString()">
+  						AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    					</if>
+ 		ORDER BY ASSET_STND_NO ASC			
+	</select>
+		
+	<!-- 물품분류 입력 -->
+	<insert id="insertAssetClCd" parameterType="hashMap">
+		INSERT
+		INTO TA_ASSET_CL_CD
+		       (   ASSET_CL_NO
+		         , ASSET_CL_KO_NM
+		         , INT_AT
+		         , USE_YYCNT
+		         <if test="TAG_KIND_CD != null and TAG_KIND_CD != ''">
+		         	<if test="TAG_KIND_CD != 'ALL'">
+		         		, TAG_KIND_CD
+		         	</if>
+		         </if>
+		         <if test="COMPTR_SE_CD != null and COMPTR_SE_CD != ''">
+		         	<if test="COMPTR_SE_CD != 'ALL'">
+		         		, COMPTR_SE_CD
+		         	</if>
+		         </if>
+		         , RMK
+		         , REGUSER_ID
+		         , REG_DATE
+		         , AGENCY_ID
+		        
+		       ) 
+		       VALUES 
+		       (   #{ASSET_CL_NO}
+		         , #{ASSET_CL_KO_NM}
+		         , #{INT_AT}
+		         , #{USE_YYCNT}
+		         <if test="TAG_KIND_CD != null and TAG_KIND_CD != ''">
+		         	<if test="TAG_KIND_CD != 'ALL'">
+		         		,#{TAG_KIND_CD}
+		         	</if>
+		         </if>
+		         <if test="COMPTR_SE_CD != null and COMPTR_SE_CD != ''">
+		         	<if test="COMPTR_SE_CD != 'ALL'">
+		         		,#{COMPTR_SE_CD}
+		         	</if>
+		         </if>
+		         , #{RMK}
+		         , #{SYSTEM_ID}
+		         , NOW()
+		         , '00000000'
+		       ) 
+	</insert>
+	
+	<!-- 물품분류 수정 -->
+	<update id="updateAssetClCd" parameterType="hashMap">
+		UPDATE  TA_ASSET_CL_CD
+		SET
+ 				  ASSET_CL_KO_NM  = #{ASSET_CL_KO_NM}
+			     , INT_AT = #{INT_AT}
+			     , USE_YYCNT = #{USE_YYCNT}
+			     <if test="TAG_KIND_CD != null and TAG_KIND_CD != ''">
+			     	<if test="TAG_KIND_CD != 'ALL'">
+			     	, TAG_KIND_CD = #{TAG_KIND_CD}
+			     	</if>
+			     	<if test="TAG_KIND_CD == 'ALL'">
+			     	, TAG_KIND_CD = null
+			     	</if>
+			     </if>
+			     <if test="COMPTR_SE_CD != null and COMPTR_SE_CD != ''">
+			     	<if test="COMPTR_SE_CD != 'ALL'">
+			     	, COMPTR_SE_CD = #{COMPTR_SE_CD}
+			     	</if>
+			     	<if test="COMPTR_SE_CD == 'ALL'">
+			     	, COMPTR_SE_CD = null
+			     	</if>
+			     </if>
+			     , RMK = #{RMK}
+			     , CHGR_ID = #{SYSTEM_ID}
+			     , CHG_DATE = NOW()	
+		WHERE ASSET_CL_NO = #{ASSET_CL_NO}
+		AND   AGENCY_ID = '00000000'
+	</update> 
+	
+
+	<!-- 물품분류 삭제시 사용여부 확인-->
+	<select id="checkUseAssetClCd"  parameterType="hashMap" resultType="hashMap">
+		SELECT SUM(A_.CNT) AS TOTAL_CNT
+		FROM (
+		SELECT
+		       COUNT(DISTINCT A.ASSET_MGMT_NO) AS CNT
+		  FROM 
+		       TA_ASSET_ACQ_DTL A
+		 WHERE 
+		        A.ASSET_CL_NO = #{ASSET_CL_NO}
+				AND A.AGENCY_ID = '00000000'
+		UNION ALL 
+		SELECT 
+			COUNT(DISTINCT B.ASSET_STND_NO) AS STND_CNT
+		FROM TA_ASSET_STND_CD B 
+		WHERE 	
+			B.ASSET_CL_NO = #{ASSET_CL_NO}
+			AND B.AGENCY_ID = '00000000' ) A_
+	</select>
+
+
+	<!-- 물품분류 삭제 -->
+	<delete id="deleteAssetClCd" parameterType="hashMap">
+		DELETE
+		FROM TA_ASSET_CL_CD
+		WHERE
+		ASSET_CL_NO = #{assetClNo}
+		AND AGENCY_ID = '00000000'
+	</delete>
+
+
+	<!-- 물품규격코드 중복체크 -->
+	<select id="checkAssetStndList"  parameterType="hashMap" resultType="hashMap">
+	SELECT
+	      A_.* 
+	         FROM 
+	              (
+					SELECT 
+						COUNT(*) OVER() TOTAL_CNT
+				     , A.ASSET_CL_NO
+				     , A.USE_AT
+				     , A.ASSET_STND_NO
+				     , A.ASSET_STND_KO_NM
+				     , A.ASSET_STND_EN_NM
+				     , A.UNIT_CD
+				     , CM_GETCODENM('CM0010',A.UNIT_CD, '00000000') UNIT_NM
+				     , A.PRODT_CORPO_NM
+				     , A.PRODT_CTRY_CD
+				     , CM_GETCODENM('GM0130',A.PRODT_CTRY_CD, '00000000') PRODT_CTRY_NM
+				     , A.ECOFRD_AT
+				     , A.DABLPRSN_ENTR_AT
+				     , A.MINORENTR_AT
+				     , A.RMK
+				  FROM 
+				       TA_ASSET_STND_CD A
+				       where 1=1	
+				        AND A.AGENCY_ID = '00000000'
+		<!--  규격코드입력시 검사 -->
+						<if test='ASSET_STND_NO_INSCHK != null and ASSET_STND_NO_INSCHK != ""'>
+							AND A.ASSET_STND_NO = #{ASSET_STND_NO_INSCHK}
+						</if>
+		<!--  규격코드 -->
+						<if test='ASSET_STND_NO != null and ASSET_STND_NO != ""'>
+							AND A.ASSET_STND_NO like CONCAT('%' , #{ASSET_STND_NO} , '%')
+						</if>
+		<!-- 규격이름 -->
+						<if test='ASSET_STND_KO_NM != null and ASSET_STND_KO_NM != ""'>
+							AND upper(A.ASSET_STND_KO_NM) like CONCAT('%' , upper(#{ASSET_STND_KO_NM}) , '%')
+						</if> 
+						 ) A_ 
+	</select>
+	
+	<!-- 물품규격 입력 -->
+	<insert id="insertAssetStndCd" parameterType="hashMap">
+	
+		INSERT
+		INTO TA_ASSET_STND_CD 
+		       ( 
+		           ASSET_CL_NO 
+		         , ASSET_STND_NO 
+		         , ASSET_STND_KO_NM
+		         <if test="UNIT_CD != null and UNIT_CD != ''">
+		         	<if test="UNIT_CD != 'ALL'">
+		         		, UNIT_CD
+		         	</if>
+		         </if>
+		         , PRODT_CORPO_NM
+		         <if test="PRODT_CTRY_CD != null and PRODT_CTRY_CD != ''">
+		         	<if test="PRODT_CTRY_CD != 'ALL'">
+		         		, PRODT_CTRY_CD
+		         	</if>
+		         </if> 
+		         , ECOFRD_AT 
+		         , DABLPRSN_ENTR_AT 
+		         , MINORENTR_AT
+		         , USE_AT   
+		         , RMK 
+		         , REGUSER_ID 
+		         , REG_DATE
+		         , AGENCY_ID  
+		       ) 
+		       VALUES 
+		       ( 
+		          #{ASSET_CL_NO} 
+		         , #{ASSET_STND_NO} 
+		         , #{ASSET_STND_KO_NM}
+		         <if test="UNIT_CD != null and UNIT_CD != ''">
+		         	<if test="UNIT_CD != 'ALL'">
+		         		, #{UNIT_CD}
+		         	</if>
+		         </if>
+		         , #{PRODT_CORPO_NM}
+		         <if test="PRODT_CTRY_CD != null and PRODT_CTRY_CD != ''">
+		         	<if test="PRODT_CTRY_CD != 'ALL'">
+		         		, #{PRODT_CTRY_CD}
+		         	</if>
+		         </if>
+		         , #{ECOFRD_AT} 
+		         , #{DABLPRSN_ENTR_AT} 
+		         , #{MINORENTR_AT}
+		         , #{USE_AT}  
+		         , #{RMK} 
+		         , #{SYSTEM_ID} 
+		         , NOW() 
+		         , '00000000'
+		       )
+	</insert>
+
+	<!-- 물품규격 수정 -->
+	<update id="updateAssetStndCd" parameterType="hashMap">
+		UPDATE TA_ASSET_STND_CD
+		SET
+	     ASSET_STND_KO_NM = #{ASSET_STND_KO_NM}
+	     <if test="UNIT_CD != null and UNIT_CD != ''">
+	     	<if test="UNIT_CD != 'ALL'">
+	     		, UNIT_CD = #{UNIT_CD}
+	     	</if>
+	     </if>
+	     , PRODT_CORPO_NM = #{PRODT_CORPO_NM}
+	     <if test="PRODT_CTRY_CD != null and PRODT_CTRY_CD != ''">
+	     	<if test="PRODT_CTRY_CD != 'ALL'">
+	     		, PRODT_CTRY_CD = #{PRODT_CTRY_CD}
+	     	</if>
+	     </if>
+	     , ECOFRD_AT = #{ECOFRD_AT}
+	     , DABLPRSN_ENTR_AT = #{DABLPRSN_ENTR_AT}
+	     , MINORENTR_AT = #{MINORENTR_AT}
+	     , USE_AT = #{USE_AT}
+	     , RMK = #{RMK}
+	     , CHGR_ID = #{SYSTEM_ID}
+	     , CHG_DATE = NOW()
+		WHERE ASSET_CL_NO = #{ASSET_CL_NO}
+		AND   ASSET_STND_NO = #{ASSET_STND_NO}
+		AND   AGENCY_ID = '00000000'
+	</update>
+	
+	
+	<!-- 물품규격코드 삭제시 사용여부 확인-->
+	<select id="checkUseAssetStndCd"  parameterType="hashMap" resultType="hashMap">
+		SELECT
+		       COUNT(*) AS CNT 
+		  FROM 
+		       TA_ASSET_ACQ_DTL A 
+		 WHERE 
+		        ASSET_STND_NO = #{ASSET_STND_NO}
+				AND AGENCY_ID = '00000000'
+	</select> 
+
+	<!-- 물품규격 삭제 -->
+	<delete id="deleteAssetStndCd" parameterType="hashMap">
+		DELETE FROM TA_ASSET_STND_CD
+		WHERE
+		 ASSET_CL_NO = #{ASSET_CL_NO}
+	     AND ASSET_STND_NO = #{ASSET_STND_NO}
+	     AND AGENCY_ID = '00000000'
+	</delete>
+	
+<!-- 물품분류코드 조회 -->
+	<select id="selectASSET_CL_STND_NO"  parameterType="hashMap" resultType="hashMap">
+		SELECT /* TA_CL_STND_selectASSET_CL_STND_NO */
+		       ASSET_CL_NO
+		     , ASSET_STND_NO 
+		  FROM 
+		       TA_ASSET_STND_CD 
+		 WHERE 
+		       ASSET_STND_NO = #{ASSET_STND_NO}
+		       AND AGENCY_ID = '00000000'
+		
+	</select> 
+	
+</mapper>

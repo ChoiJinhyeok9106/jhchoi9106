@@ -1,0 +1,2627 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/board.css" />
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" id="mainListLoading">
+		<div class="cont_box" v-if="authAll > 0 || authListView > 0">
+			<!-- 게시판 리스트 공통 부분(게시판 리스트 맨 위) START -->
+      		<div class="search-box" v-if="boardPostMode && !boardContMode">
+			  <div class="form-group" >
+				  <div class="col-inline">
+				    <select name="pPostSearchType" id="pPostSearchType" v-model="pPostSearchType" class="col l1 size-m">
+				        <option value="1" selected>제목</option>
+				        <option value="2">내용</option>
+				        <option value="3">제목+내용</option>
+				        <option value="4">작성자</option>
+              			<option value="5">해쉬태그</option>
+              </select>
+				<select name="pPostCategory" id="pPostCategory" v-model="pPostCategory" class="col l2 size-m" v-if="boardList.data[0].CATEGORY_USE_YN == 'Y'">
+					  <option value="" selected>- 카테고리 -</option>
+				  		<option v-for="item in categoryArr" :value="item">{{item}}</option>
+				  </select>
+				  <input type="text" name="pPostSearchArgv" id="pPostSearchArgv" v-model="pPostSearchArgv" class=" size-m"  @keyup.enter="setBoardPostList(event);" placeholder="입력하세요">
+				  <a href="javascript:void(0)" class="btn type00 size-m icon-search" @click="setBoardPostList"></a>
+				  <div class="f-right">
+					<a href="javascript:void(0)" v-if="authAll > 0 || authPostWrite > 0" class="btn type02 size-m" @click="newPostRow">글쓰기</a>
+				  </div>
+			  </div>
+
+        </div>
+
+	</div>
+
+      <div v-if="boardPostMode && !boardContMode">
+        <div class="col s12 l5">
+          <span class="board-info-txt size-m">총 <span>{{boardPostListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{boardPostListPaging.getCurrentPage()}}</span>/ {{boardPostListPaging.getTotalPage()}})</span>
+        </div>
+      </div>
+			<!-- 게시판 리스트 공통 부분(게시판 리스트 맨 위) END -->
+
+			<!-- 일반 게시판 TEXT 제목형 --- START -->
+			<div class="board-text-cont" v-if="boardPostMode && (boardPostType=='normal' || boardPostType=='reference' || boardPostType=='anonymous' || boardPostType=='notice')">
+				<div :class="item.LV == 0 ? 'list' : 'list sub'" v-for="(item, index) in boardPostList.data">
+			        <div class="num">
+				    	<span v-if="item.GONGJI_YN=='Y'" class="notice icon-info-message">공지</span>
+				    	{{item.GONGJI_YN == 'N' ? item.CNT - ((boardPostListPaging.rowCnt * (boardPostListPaging.currentPage - 1)) + index) : ''}}
+				    </div>
+				    <div class="list-content">
+				    	<span class="cont-tit">
+				    		<a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (authAll > 0 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ?
+	                                                ( item.LINK_YN == 'Y' ? viewAndLinkUrl(index, item.LINK_URL):selectPost(index) ) : notAuthMsg('read')">
+	                        	{{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}}
+	                        </a>
+	<!-- 기존 			    		<a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (boardPostAuth.ADMIN == 1 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ?  -->
+	<!--                                                 ( item.LINK_YN == 'Y' ? openBlankUrl(item.LINK_URL):selectPost(index) ) : notAuthMsg('read')"> -->
+	<!--                         {{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}} -->
+	<!--                         </a> -->
+	                        <span v-if="item.FILE_NO > 0" class="file icon-clip"></span>
+	                        <!-- <span class="file icon-link" v-if="item.LINK_YN=='Y'"></span> -->
+	                        <span class="board-statue-new" v-if="item.NEW_ICON_PYOSI_YN=='Y'">NEW</span>
+						</span>
+						<span class="cont-text" v-if="item.TEXT_READ_YN =='Y'">{{item.BIMILGEUL_YN == 'Y' ? '' : item.CONTENTS_PREVIEW != '' && item.CONTENTS_PREVIEW != null ? item.CONTENTS_PREVIEW.substr(0, 180) + '...' : '' | contPrevFormatter}}</span>
+						<div v-if="item.HASH_USE_YN == 'Y' && item.HASHTAG.length > 0">
+							<a href="#" class="txt-hash" v-for="hashitem in item.HASHTAG.split(',')" @click="setHashSearList(hashitem)">#{{hashitem}} </a>
+						</div>
+						<span class="etc icon-realtime">{{item.INSERT_DTTM}}</span>
+						<span class="etc icon-pen">
+							<span v-if="item.JAKSEONGJA_GB == '01'">{{item.JAKSEONGJA_NM}}</span>
+	                        <span v-else-if="item.JAKSEONGJA_GB == '02'">{{item.JAKSEONGJA_ID}}</span>
+	                        <span v-else-if="item.JAKSEONGJA_GB == '03'">비공개</span>
+							<span v-else-if="item.JAKSEONGJA_GB == '04'">{{item.JAKSEONGJA_NM}}</span>
+						</span>
+						<!-- 작성자 구분에 따라 다르게 출력해야됨 -->
+						<span class="etc icon-eye">{{item.SEARCH_CNT}}</span>
+						<span class="etc icon-like" v-if="item.LIKE_USE_YN=='Y'">{{item.LIKE_CNT}}</span>
+						<span class="etc icon-edit">{{item.CM_CNT}}</span>
+						<span class="etc icon-tag" v-if="item.CATEGORY_USE_YN=='Y' && item.CATEGORY_NM">{{item.CATEGORY_NM}}</span>
+					</div>
+				</div>
+				<div class="app-list" v-if="boardPostList.data.length == 0">
+	                <div class="no-cont">
+	                    검색결과가 없습니다.
+	                </div>
+	            </div>
+			</div>
+			<!-- 일반 게시판 TEXT 제목형 --- END -->
+
+			<!-- 공지사항 TEXT 제목 + 내용형 --- START -->
+<!--			<div class="board-text-cont" v-if="boardPostMode && boardPostType=='notice'">-->
+<!--				<div :class="item.LV == 0 ? 'list' : 'list sub'" v-for="(item, index) in boardPostList.data">-->
+<!--				    <div class="num">-->
+<!--				    	<span v-if="item.GONGJI_YN=='Y'" class="notice icon-info-message">공지</span>-->
+<!--	                    {{item.GONGJI_YN == 'N' ? item.CNT - ((boardPostListPaging.rowCnt * (boardPostListPaging.currentPage - 1)) + index) : ''}}-->
+<!--				    </div>-->
+<!--				    <div class="list-content">-->
+<!--				    	<span class="cont-tit">-->
+<!--				    		<a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (authAll > 0 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ? -->
+<!--				    	                            ( item.LINK_YN == 'Y' ? viewAndLinkUrl(index, item.LINK_URL):selectPost(index) ) : notAuthMsg('read')">-->
+<!--				    	    {{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}}-->
+<!--				    	    </a>-->
+<!--	&lt;!&ndash; 			    	    기존 <a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (boardPostAuth.ADMIN == 1 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ?  &ndash;&gt;-->
+<!--	&lt;!&ndash; 			    	                            ( item.LINK_YN == 'Y' ? openBlankUrl(item.LINK_URL):selectPost(index) ) : notAuthMsg('read')"> &ndash;&gt;-->
+<!--	&lt;!&ndash; 			    	    {{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}} &ndash;&gt;-->
+<!--	&lt;!&ndash; 			    	    </a> &ndash;&gt;-->
+<!--				    	    <span v-if="item.FILE_NO > 0" class="file icon-clip"></span>-->
+<!--				    	    &lt;!&ndash; <span class="file icon-link" v-if="item.LINK_YN=='Y'"></span> &ndash;&gt;-->
+<!--				    	    <span class="board-statue-new" v-if="item.NEW_ICON_PYOSI_YN=='Y'">NEW</span>-->
+<!--						</span>-->
+<!--						<span class="cont-text">{{item.BIMILGEUL_YN == 'Y' ? '' : item.CONTENTS_PREVIEW != '' && item.CONTENTS_PREVIEW != null ? getContextPreView(item.CONTENTS_PREVIEW) : ''}}</span>-->
+<!--						<span class="etc icon-realtime">{{item.INSERT_DTTM}}</span>-->
+<!--						&lt;!&ndash; 작성자 구분에 따라 다르게 출력해야됨 &ndash;&gt;-->
+<!--						<span class="etc icon-pen">-->
+<!--							<span v-if="item.JAKSEONGJA_GB == '01'">{{item.JAKSEONGJA_NM}}</span>-->
+<!--	                        <span v-else-if="item.JAKSEONGJA_GB == '02'">{{item.JAKSEONGJA_ID}}</span>-->
+<!--	                        <span v-else-if="item.JAKSEONGJA_GB == '03'">비공개</span>-->
+<!--						</span>-->
+<!--						<span class="etc icon-eye">{{item.SEARCH_CNT}}</span>-->
+<!--						<span class="etc icon-edit">{{item.CM_CNT}}</span>-->
+<!--						<span class="etc icon-tag" v-if="item.CATEGORY_USE_YN=='Y' && item.CATEGORY_NM">{{item.CATEGORY_NM}}</span>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--				<div class="app-list" v-if="boardPostList.data.length == 0">-->
+<!--	                <div class="no-cont">-->
+<!--	                    검색결과가 없습니다.-->
+<!--	                </div>-->
+<!--	            </div>-->
+<!--			</div>-->
+			<!-- 공지사항 TEXT 제목 + 내용형 --- END -->
+
+			<!-- 현재 있는 QnA는 FAQ 형식에 가까워서 사용 X (22.05.11) -->
+
+			<!-- 게시판 QnA --- START -->
+			<div class="board-text-cont" v-if="boardPostMode && boardPostType=='QnA'">
+				<div :class="item.LV==0?'list':'list sub'" v-for="(item, index) in boardPostList.data">
+					<div class="num">
+						<span v-if="item.GONGJI_YN=='Y'" class="notice icon-info-message">공지</span>
+						{{item.GONGJI_YN == 'N' ? item.CNT - ((boardPostListPaging.rowCnt * (boardPostListPaging.currentPage - 1)) + index) : ''}}
+					</div>
+					<div class="list-content row form-row">
+						<div class="form-group col s12 l10">
+						<span class="cont-tit">
+							<a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (authAll > 0 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ?
+	                                                ( item.LINK_YN == 'Y' ? viewAndLinkUrl(index, item.LINK_URL):selectPost(index) ) : notAuthMsg('read')">
+	                        	{{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}}
+	                        </a>
+							<span v-if="item.FILE_NO > 0" class="file icon-clip"></span>
+							<!-- <span class="file icon-link" v-if="item.LINK_YN=='Y'"></span> -->
+							<span class="board-statue-new" v-if="item.NEW_ICON_PYOSI_YN=='Y'">NEW</span>
+						</span>
+							<span class="cont-text" v-if="item.TEXT_READ_YN =='Y'">{{item.BIMILGEUL_YN == 'Y' ? '' : item.CONTENTS_PREVIEW != '' && item.CONTENTS_PREVIEW != null ? item.CONTENTS_PREVIEW.substr(0, 180) + '...' : '' | contPrevFormatter}}</span>
+							<div v-if="item.HASH_USE_YN == 'Y' && item.HASHTAG.length > 0">
+								<a href="#" class="txt-hash" v-for="hashitem in item.HASHTAG.split(',')" @click="setHashSearList(hashitem)">#{{hashitem}} </a>
+							</div>
+							<span class="etc icon-realtime">{{item.INSERT_DTTM}}</span>
+							<span class="etc icon-pen">
+							<span v-if="item.JAKSEONGJA_GB == '01'">{{item.JAKSEONGJA_NM}}</span>
+							<span v-else-if="item.JAKSEONGJA_GB == '02'">{{item.JAKSEONGJA_ID}}</span>
+							<span v-else-if="item.JAKSEONGJA_GB == '03'">비공개</span>
+						</span>
+							<!-- 작성자 구분에 따라 다르게 출력해야됨 -->
+							<span class="etc icon-eye">{{item.SEARCH_CNT}}</span>
+							<span class="etc icon-like" v-if="item.LIKE_USE_YN=='Y'">{{item.LIKE_CNT}}</span>
+							<span class="etc icon-edit" v-if="item.CM_USE_YN=='Y'">{{item.CM_CNT}}</span>
+							<span class="etc icon-tag" v-if="item.CATEGORY_USE_YN=='Y' && item.CATEGORY_NM">{{item.CATEGORY_NM}}</span>
+						</div>
+						<div class="form-group col s12 l2">
+							<!-- 20220524 -->
+							<div class="circle-type01 f-right ">
+								<p class="center cont-tit font-16 font-color-gray" v-if="item.ANSWER_CHK == ''">
+									<i class="icon-alert-triangle d-block font-20"></i>
+									답변예정
+								</p>
+								<p class="center cont-tit font-16 font-bold font-color-orange" v-if="item.ANSWER_CHK != ''">
+									<i class="icon-check d-block font-20"></i>
+									답변완료
+								</p>
+							</div>
+							<!-- //20220524 -->
+						</div>
+					</div>
+				</div>
+				<div class="app-list" v-if="boardPostList.data.length == 0">
+					<div class="no-cont">
+						검색결과가 없습니다.
+					</div>
+				</div>
+			</div>
+			<!-- 게시판 QnA --- END -->
+
+			<!-- 게시판 FAQ --- START -->
+			<div class="board-faq" v-if="boardPostMode && boardPostType=='FAQ'">
+			    <div class="list" v-for="(item, index) in boardPostList.data">
+			        <div class="question" @click="showHideView(index)" :ref="'target-div'+index"><span class="statue-question">Q</span><span class="txt">{{item.TITLE}}</span></div>
+			        <div class="answer on">
+	                    <span class="statue-answer" :ref="'hidden-div'+index">A</span>
+	                    <div class="txt">
+	                    	<div class="view-cont-box" :id="'viewerSection'+index">
+	                    	</div>
+	                    </div>
+	                    <div class="col-inline btn-line right" v-if="authAll > 0 || authPostWrite > 0">
+							<a href="javascript:void(0)" class="btn type01 size-m" v-if="authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID)" @click="setBoardViewMode('ContEdit')">수정</a>
+						</div>
+	                </div>
+			    </div>
+			    <div class="app-list" v-if="boardPostList.data.length == 0">
+	                <div class="no-cont">
+	                    검색결과가 없습니다.
+	                </div>
+	            </div>
+			</div>
+			<!-- 게시판 FAQ --- END -->
+
+			<!-- 이미지 게시판 (카드형) 제목 --- START -->
+			<div class="board-card-image" v-if="boardPostMode && boardPostType=='image'">
+				<div class="list-wrap">
+					<div class="list" v-for="(item, index) in boardPostList.data">
+						<span class="num">
+							<span v-if="item.GONGJI_YN=='Y'" class="notice icon-info-message">공지</span>
+	                        {{item.GONGJI_YN == 'N' ? item.CNT - ((boardPostListPaging.rowCnt * (boardPostListPaging.currentPage - 1)) + index) : ''}}
+						</span>
+						<span class="file"><span v-if="item.FILE_NO > 0" class="file icon-clip"></span></span>
+						<span class="image">
+							<img width="212" height="145" :src="item.PREV_IMG_PATH" :alt="item.PREV_IMG_NM">
+						</span>
+						<div class="cont-inner">
+							<span class="cont-tit">
+								<a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (authAll > 0 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ?
+	                                                ( item.LINK_YN == 'Y' ? viewAndLinkUrl(index, item.LINK_URL):selectPost(index) ) : notAuthMsg('read')">
+		                        	{{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}}
+		                        </a>
+	<!-- 							기존<a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (boardPostAuth.ADMIN == 1 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ?  -->
+	<!--                                                 ( item.LINK_YN == 'Y' ? openBlankUrl(item.LINK_URL):selectPost(index) ) : notAuthMsg('read')"> -->
+	<!-- 	                        {{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}} -->
+	<!-- 	                        </a> -->
+							</span>
+							<div v-if="item.HASH_USE_YN == 'Y' && item.HASHTAG.length > 0">
+								<a href="#" class="txt-hash" v-for="hashitem in item.HASHTAG.split(',')" @click="setHashSearList(hashitem)">#{{hashitem}} </a>
+							</div>
+							<span class="etc icon-calendar" v-if="item.BOARD_SEQ == '36'">{{item.GONGJI_FR_DT | dateFormatter}} / {{item.RESERVE_FR_TM}} ~ {{item.RESERVE_TO_TM}}</span>
+							<!-- <span class="etc icon-realtime">{{item.INSERT_DTTM}}</span> -->
+							<span class="etc icon-pen">
+								<span v-if="item.JAKSEONGJA_GB == '01'">{{item.JAKSEONGJA_NM}}</span>
+	                            <span v-else-if="item.JAKSEONGJA_GB == '02'">{{item.JAKSEONGJA_ID}}</span>
+	                            <span v-else-if="item.JAKSEONGJA_GB == '03'">비공개</span>
+							</span>
+							<span class="etc icon-eye">{{item.SEARCH_CNT}}</span>
+							<span class="etc icon-like" v-if="item.LIKE_USE_YN=='Y'">{{item.LIKE_CNT}}</span>
+						</div>
+					</div>
+					<div class="app-list" v-if="boardPostList.data.length == 0">
+						<div class="no-cont">
+							검색결과가 없습니다.
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 이미지 게시판 (카드형) 제목 --- END -->
+
+			<!-- 이미지 게시판 썸네일형 제목+내용 --- START -->
+			<div class="board-thumb-text" v-if="boardPostMode && boardPostType=='imageList'">
+				<div class="list-wrap">
+					<div class="list" v-for="(item, index) in boardPostList.data">
+						<div class="thumb">
+						<span class="image">
+							<img width="250" height="170" :src="item.PREV_IMG_PATH" :alt="item.PREV_IMG_NM">
+						</span>
+						</div>
+						<div class="list-content">
+						<span class="num">
+							<span v-if="item.GONGJI_YN=='Y'" class="notice icon-info-message">공지</span>
+							{{item.GONGJI_YN == 'N' ? item.CNT - ((boardPostListPaging.rowCnt * (boardPostListPaging.currentPage - 1)) + index) : ''}}</span>
+							</span>
+							<span class="cont-tit">
+								<a href="javascript:void(0)" @click="item.BIMILGEUL_YN == 'N' || item.BIMILGEUL_YN == 'Y' && (authAll > 0 || item.JAKSEONGJA_ID == session.INTERNAL_ID) ?
+														( item.LINK_YN == 'Y' ? viewAndLinkUrl(index, item.LINK_URL):selectPost(index) ) : notAuthMsg('read')">
+									{{item.BIMILGEUL_YN == 'Y' ? '비밀글입니다.' : item.GONGJI_YN == 'Y' ? '[공지] ' + item.TITLE : item.TITLE}}
+								</a>
+								<span v-if="item.FILE_NO > 0" class="file icon-clip"></span>
+									<!-- <span class="file icon-link" v-if="item.LINK_YN=='Y'"></span> -->
+								<span class="board-statue-new" v-if="item.NEW_ICON_PYOSI_YN=='Y'">NEW</span>
+							</span>
+							<span class="cont-text" v-if="item.TEXT_READ_YN =='Y'">{{item.BIMILGEUL_YN == 'Y' ? '' : item.CONTENTS_PREVIEW != '' && item.CONTENTS_PREVIEW != null ? item.CONTENTS_PREVIEW.substr(0, 180) + '...' : '' | contPrevFormatter}}</span>
+							<div v-if="item.HASH_USE_YN == 'Y' && item.HASHTAG.length > 0">
+								<a href="#" class="txt-hash" v-for="hashitem in item.HASHTAG.split(',')" @click="setHashSearList(hashitem)">#{{hashitem}} </a>
+							</div>
+							<span class="etc icon-calendar" v-if="item.BOARD_SEQ == '35'">{{item.GONGJI_FR_DT | dateFormatter}} ~ {{item.GONGJI_TO_DT | dateFormatter}}</span>
+							<span class="etc icon-realtime">{{item.INSERT_DTTM}}</span>
+							<span class="etc icon-pen">
+								<span v-if="item.JAKSEONGJA_GB == '01'">{{item.JAKSEONGJA_NM}}</span>
+								<span v-else-if="item.JAKSEONGJA_GB == '02'">{{item.JAKSEONGJA_ID}}</span>
+								<span v-else-if="item.JAKSEONGJA_GB == '03'">비공개</span>
+							</span>
+							<span class="etc icon-eye">{{item.SEARCH_CNT}}</span>
+							<span class="etc icon-like" v-if="item.LIKE_USE_YN=='Y'">{{item.LIKE_CNT}}</span>
+							<span class="etc icon-tag" v-if="item.CATEGORY_USE_YN=='Y' && item.CATEGORY_NM">{{item.CATEGORY_NM}}</span>
+						</div>
+					</div>
+					<div class="app-list" v-if="boardPostList.data.length == 0">
+						<div class="no-cont">
+							검색결과가 없습니다.
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 이미지 게시판 썸네일형 제목+내용 --- END -->
+
+			<paging :pagingset="boardPostListPaging" :type="'normal'" id="board-post-page" v-if="boardPostMode && !boardContMode"></paging>
+
+			<div class="col-inline btn-line right" v-if="boardPostMode && !boardContMode">
+				<a href="javascript:void(0)" v-if="authAll > 0 || authPostWrite > 0" class="btn type02 size-m" @click="newPostRow">글쓰기</a>
+	<!-- 			기존<a href="javascript:void(0)" v-if="boardPostAuth.ADMIN == 1 || boardPostAuth.WRITE == 1" class="btn type02 size-m" @click="newPostRow">글쓰기</a> -->
+
+			</div>
+			<!-- /section -->
+		</div>
+		<div v-else>
+			<div class="app-list">
+                <div class="no-cont">
+					게시판 리스트 확인 권한이 없습니다.
+                </div>
+            </div>
+		</div>
+	<!-- div class="row"></div -->
+	<!-- div class="row"></div -->
+
+
+	<!-- 게시판 post 편집 화면 -->
+		<div v-if="boardContType == 'edit'">
+			<h3 class="h3">게시물 내용 입력 </h3>
+			<form>
+			<!-- 게시판 쓰기/수정 페이지 -->
+			<div class="box-type03 board-write-page">
+
+				<div class="row form-row" v-if="boardContType == 'edit'">
+					<div class="form-group col s12 l2 col-label">
+						<label for="title" class="label-type01 size-m required">제목</label>
+					</div>
+					<div class="form-group col s12 l10">
+						<!--<input class="size-m" type="text" id="title" name="title" data-vv-as="제목" v-if="boardList.currentRow.BOARD_GB == '03' && !answerOn" v-model="boardPostList.currentRow.TITLE" v-validate="'required|max:500'" v-bind:class="{'invalid': errors.has('title')}" />-->
+						<input class="size-m" type="text" id="title" name="title" data-vv-as="제목" v-if="boardList.currentRow.BOARD_GB == '03' && answerOn" v-model="rePostObj.TITLE" v-validate="'required|max:500'" v-bind:class="{'invalid': errors.has('title')}" />
+						<input class="size-m" type="text" id="title" name="title" data-vv-as="제목" v-else v-model="boardPostList.currentRow.TITLE" v-validate="'required|max:500'" v-bind:class="{'invalid': errors.has('title')}" :disabled="boardPostList.currentRow.LV==1"/>
+						<small class="form-txt">{{ errors.first('title') }}</small>
+					</div>
+				</div>
+				<div class="row form-row" v-if="boardContType == 'edit' && boardList.currentRow.CATEGORY_USE_YN=='Y' && !answerOn">
+					<div class="form-group col s12 l2 col-label">
+						<label for="categoryNm" class="label-type01 size-m">카테고리 구분</label>
+					</div>
+					<div class="form-group col s12 l4" v-if="boardList.currentRow.CATEGORY_USE_YN=='Y'">
+						<select class="size-m" id="categoryNm" name="categoryNm" v-model="boardPostList.currentRow.CATEGORY_NM" data-vv-as="카테고리 구분 " v-validate="'required'" v-bind:class="{'invalid': errors.has('categoryNm')}" :disabled="boardPostList.currentRow.LV==1"><!--   -->
+							<option disabled value="">- 선택 -</option>
+							<option v-for="cat in catArr" v-bind:value="cat">{{cat}}</option>
+						</select>
+	<!-- 					<small class="form-txt">{{ errors.first('categoryNm') }}</small> -->
+					</div>
+					<div class="form-group col s12 l2 col-label" v-if="authAll > 0">
+						<label for="categoryNm" class="label-type01 size-m">작성자 명</label>
+					</div>
+					<div class="form-group col s12 l4" v-if="authAll > 0">
+						<input class="size-m" type="text" id="jakseongjaNm" name="jakseongjaNm" data-vv-as="작성자 명 " v-model="boardPostList.currentRow.JAKSEONGJA_NM" v-validate="'required|max:150'" v-bind:class="{'invalid': errors.has('jakseongjaNm')}" />
+						<small class="form-txt">{{ errors.first('jakseongjaNm') }}</small>
+					</div>
+				</div>
+
+				<div class="row form-row">
+					<div class="form-group col s12 l2 col-label" v-if="boardContType == 'edit' && authAll > 0 && boardPostList.currentRow.LV == 0">
+						<label for="gongjiYn" class="label-type01 size-m">공지여부</label>
+					</div>
+					<div class="form-group col s12 l4" v-if="boardContType == 'edit' && authAll > 0 && boardPostList.currentRow.LV == 0">
+						<div class="form-check">
+							<label class="toggle-switch size-m"> <input class="size-m" type="checkbox" id="gongjiYn" name="gongjiYn" data-vv-as="공지여부 " v-model="boardPostList.currentRow.GONGJI_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('gongjiYn')}" /> <span class="slider bg-red round"></span></label>
+						</div>
+					</div>
+					<!--
+					<div class="form-group col s12 l2 col-label" v-if="boardPostList.currentRow.GONGJI_YN == 'Y'">
+						<label for="bimilgeulYn" class="label-type01 size-m">공지기간</label>
+					</div>
+					<div class="form-group col s12 l4" v-if="boardPostList.currentRow.GONGJI_YN == 'Y'">
+						<div class="row form-row">
+							<div class="form-group col s12 l6">
+								<div class="date-form-wrap">
+								<a href="javascript:void(0)" class="size-m"><span class="icon icon-calendar"></span></a>
+								<date-picker :value="boardPostList.currentRow.GONGJI_FR_DT" @input="function(value){ boardPostList.currentRow.GONGJI_FR_DT = value }" :invalid="errors.has('gongjiFrDt')"></date-picker>
+								<input type="hidden" id="gongjiFrDt" name="gongjiFrDt" v-model="boardPostList.currentRow.GONGJI_FR_DT">
+								</div>
+							</div>
+							<div class="form-group col s12 l6">
+							<div class="date-form-wrap">
+								<a href="javascript:void(0)" class="size-m"><span class="icon icon-calendar"></span></a>
+								<date-picker :value="boardPostList.currentRow.GONGJI_TO_DT" @input="function(value){ boardPostList.currentRow.GONGJI_TO_DT = value }" :invalid="errors.has('gongjiToDt')"></date-picker>
+								<input type="hidden" id="gongjiToDt" name="gongjiToDt" v-model="boardPostList.currentRow.GONGJI_TO_DT">
+								</div>
+							</div>
+						</div>
+					</div>
+					-->
+				</div>
+
+				<div class="row form-row" v-if="boardContType == 'edit' && boardList.currentRow.BOARD_SEQ == '35'">
+					<div class="form-group col s12 l2 col label">
+						<label for="eventFrDt" class="label-type01 size-m">시작날짜</label>
+					</div>
+					<div class="form-group col s12 l4">
+						<div class="date-form-wrap">
+							<date-picker :value="boardPostList.currentRow.GONGJI_FR_DT" @input="function(value){ boardPostList.currentRow.GONGJI_FR_DT = value; }" :invalid="errors.has('eventFrDt')"></date-picker>
+							<input type="hidden" name="eventFrDt" data-vv-as="날짜 " v-model="boardPostList.currentRow.GONGJI_FR_DT" v-validate="'required'">
+							<invalid-message :visible="true" :name="'fromDate'" :verror="errors"></invalid-message>
+						</div>
+					</div>
+					<div class="form-group col s12 l2 col label">
+						<label for="eventToDt" class="label-type01 size-m">종료날짜</label>
+					</div>
+					<div class="form-group col s12 l4">
+						<div class="date-form-wrap">
+							<date-picker :value="boardPostList.currentRow.GONGJI_TO_DT" @input="function(value){ boardPostList.currentRow.GONGJI_TO_DT = value; }" :invalid="errors.has('eventToDt')"></date-picker>
+							<input type="hidden" name="eventToDt" data-vv-as="날짜 " v-model="boardPostList.currentRow.GONGJI_TO_DT" v-validate="'required'">
+							<invalid-message :visible="true" :name="'fromDate'" :verror="errors"></invalid-message>
+						</div>
+					</div>
+				</div>
+
+				<div class="row form-row" v-if="boardContType == 'edit' && boardList.currentRow.BOARD_SEQ == '36'">
+					<div class="form-group col s12 l2 col label">
+						<label for="eventDt" class="label-type01 size-m">행사날짜</label>
+					</div>
+					<div class="form-group col s12 l4">
+						<div class="date-form-wrap">
+							<date-picker :value="boardPostList.currentRow.GONGJI_FR_DT" @input="function(value){ boardPostList.currentRow.GONGJI_FR_DT = value; }" :invalid="errors.has('eventFrDt')"></date-picker>
+							<input type="hidden" name="eventFrDt" data-vv-as="날짜 " v-model="boardPostList.currentRow.GONGJI_FR_DT" v-validate="'required'">
+							<invalid-message :visible="true" :name="'fromDate'" :verror="errors"></invalid-message>
+						</div>
+					</div>
+					<div class="form-group col s12 l1 col label">
+						<label for="eventFrTm" class="label-type01 size-m">시작시간</label>
+					</div>
+					<div class="form-group col s12 l2">
+						<div class="date-form-wrap">
+							<time-picker :value="boardPostList.currentRow.RESERVE_FR_TM" @input="function(value){ boardPostList.currentRow.RESERVE_FR_TM = value; }" :invalid="errors.has('eventFrTm')"></time-picker>
+							<input type="hidden" name="eventFrTm" data-vv-as="시간 " v-model="boardPostList.currentRow.RESERVE_FR_TM" v-validate="'required'">
+							<invalid-message :visible="true" :name="'eventFrTm'" :verror="errors"></invalid-message>
+						</div>
+					</div>
+					<div class="form-group col s12 l1 col label">
+						<label for="eventToTm" class="label-type01 size-m">종료시간</label>
+					</div>
+					<div class="form-group col s12 l2">
+						<div class="date-form-wrap">
+							<time-picker :value="boardPostList.currentRow.RESERVE_TO_TM" @input="function(value){ boardPostList.currentRow.RESERVE_TO_TM = value; }" :invalid="errors.has('eventToTm')"></time-picker>
+							<input type="hidden" name="eventToTm" data-vv-as="시간 " v-model="boardPostList.currentRow.RESERVE_TO_TM" v-validate="'required'">
+							<invalid-message :visible="true" :name="'eventToTm'" :verror="errors"></invalid-message>
+						</div>
+					</div>
+				</div>
+
+				<div class="row form-row" v-if="boardContType == 'edit' && boardList.currentRow.LINK_USE_YN=='Y'">
+					<div class="form-group col s12 l2 col-label">
+						<label for="linkYn" class="label-type01 size-m">링크여부</label>
+					</div>
+					<div class="form-group col s12 l4">
+						<div class="form-check">
+								<label class="toggle-switch size-m"> <input class="size-m" type="checkbox" id="linkYn" name="linkYn" data-vv-as="링크여부 " v-model="boardPostList.currentRow.LINK_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('linkYn')}" /> <span class="slider bg-red round"></span></label>
+							</div>
+					</div>
+					<div class="form-group col s12 l2 col-label">
+						<label for="linkUrl" class="label-type01 size-m">링크URL</label>
+					</div>
+					<div class="form-group col s12 l4">
+						<input class="size-m" type="text" id="linkUrl" name="linkUrl" data-vv-as="링크URL" v-model="boardPostList.currentRow.LINK_URL" v-validate="'max:1000'" v-bind:class="{'invalid': errors.has('linkUrl')}" />
+						<small class="form-txt">{{ errors.first('linkUrl') }}</small>
+					</div>
+				</div>
+
+				<!-- <div class="row form-row">
+					<div class="form-group col s12 l2 col-label">
+						<label for="inlineFormInputName1" class="label-type01 size-m">타이틀 이미지</label>
+					</div>
+					<div class="form-group col s12 l10" v-if="boardContType == 'edit'" v-html="boardPostList.currentRow.TITLE_IMG_URL">
+					</div>
+				</div> -->
+				<div class="row form-row" v-if="boardContType == 'edit' && boardList.currentRow.HASH_USE_YN == 'Y' && boardPostList.currentRow.LV == 0">
+					<div class="form-group col s12 l2 col-label">
+						<label for="hashtag" class="label-type01">해시태그</label>
+					</div>
+					<div class="form-group col s12 l10">
+						<tag-input :id="'postHashtagInput'" :tagset="boardPostHashtagSet" :rowposition="boardPostList.rowposition"></tag-input>
+						<input type="hidden" id="hashtag" class="size-m" name="hashtag" data-vv-as="해쉬태그 " v-validate="'max:500'" v-bind:class="{'invalid': errors.has('hashtag')}">
+						<small class="form-txt invalid">{{ errors.first('hashtag')}}</small>
+					</div>
+				</div>
+
+				<div class="row form-row" v-if="boardContType == 'edit' && (boardList.currentRow.BOARD_GB == '04' || boardList.currentRow.BOARD_GB == '05')">
+					<div class="form-group col s12 l2 col-label">
+						<label class="label-type01 size-m">대표이미지</label>
+					</div>
+					<div class="form-group col s12 l10" v-if="boardContType == 'edit'">
+						<div class="title_img_zone">
+							<img v-for="(item, index) in titleImgList.data" :src="item.SRC" :class="{'on':item.SRC == boardPostList.currentRow.TITLE_IMG_URL}" @click="titleImgSelect(item.SRC)"/>
+						</div>
+					</div>
+				</div>
+
+				<div class="row form-row">
+					<div class="form-group col s12 l2 col-label">
+						<label class="label-type01 size-m">내용</label>
+					</div>
+					<div class="form-group col s12 l10" v-if="boardContType == 'edit'">
+						<div class="form-inner-box" id="editSection">
+						</div>
+					</div>
+				</div>
+
+				<div class="row form-row" v-if="boardContType == 'edit' && boardPostFile.maxCnt > 0">
+					<div class="form-group col s12 l2 col-label">
+						<label class="label-type01 size-m">첨부파일</label>
+					</div>
+					<div class="form-group col s12 l10">
+						<file-uploader v-if="boardList.currentRow.BOARD_GB=='04'" :fileset="boardPostFile" :type="'img'" :fileid="'ADD_BOARD'" :filekey="boardPostList.currentRow.BOARD_SEQ+'#'+boardPostList.currentRow.POST_NO" :filehangmok="'attach'" :modify="true" :uploadbtn="true"></file-uploader>
+						<file-uploader v-else :fileset="boardPostFile" :type="'list'" :fileid="'ADD_BOARD'" :filekey="boardPostList.currentRow.BOARD_SEQ+'#'+boardPostList.currentRow.POST_NO" :filehangmok="'attach'" :modify="true" :uploadbtn="true"></file-uploader>
+					</div>
+				</div>
+				<!-- 전체관리자 작성일자변경 가능 처리 : 게시판권한 슈퍼관리자 설정 -->
+				<div class="row form-row" v-if="boardContType == 'edit' && authAll == '1'">
+					<div class="form-group col s12 l2 col-label">
+						<label class="label-type01 size-m">작성일자 </label>
+					</div>
+					<div class="form-group col s12 l10">
+						<date-picker :value="boardPostList.currentRow.INSERT_DT" @input="function(value){ boardPostList.currentRow.INSERT_DT ? boardPostList.currentRow.INSERT_DT = value : ''}" :invalid="errors.has('insertDt')"></date-picker>
+						<input type="hidden" id="insertDt" name="insertDt" data-vv-as="작성일자 " v-model="boardPostList.currentRow.INSERT_DT" v-validate="'required'">
+						<invalid-message :visible="true" :name="'insertDt'" :verror="errors"></invalid-message>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-inline btn-line right" v-if="!answerEditorOn">
+				<a href="javascript:void(0)" v-if="authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID)" class="btn type01 del size-m" @click="messagePopup('ID_DEL_POST', boardPostList.rowposition)">삭제</a>
+				<a href="javascript:void(0)" v-if="(boardPostList.currentRow.BOARD_GB == '04' || boardPostList.currentRow.BOARD_GB == '05') && (authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID && authPostWrite > 0) || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID && authReplyWrite > 0))" class="btn type01 size-m" @click="boardPostList.currentRow.TITLE_IMG_URL == '' ? messagePopup('TITLE_IMG_NULL', boardPostList.currentRow) : boardPostSave(boardPostList.currentRow)">저장</a>
+				<a href="javascript:void(0)" v-else-if="(authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID && authPostWrite > 0) || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID && authReplyWrite > 0))" class="btn type01 size-m" @click="boardPostSave(boardPostList.currentRow)">저장</a>
+				<a href="javascript:void(0)" class="btn type02 size-m" @click="viewPostList">목록</a>
+			</div>
+			<div class="col-inline btn-line right" v-if="answerEditorOn">
+				<a href="javascript:void(0)" v-if="authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID)" class="btn type01 del size-m" @click="messagePopup('ID_DEL_ANSWER', rePostObj)">답글삭제</a>
+				<a href="javascript:void(0)" v-if="authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID && authPostWrite > 0) || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID && authReplyWrite > 0)" class="btn type01 size-m" @click="boardPostSave(rePostObj)">답글저장</a>
+				<a href="javascript:void(0)" class="btn type02 size-m" @click="viewPostList">목록</a>
+			</div>
+			</form>
+		</div>
+
+		<!-- 게시판 post 출력 화면 -->
+		<div v-show="boardContType == 'view'">
+			<h3 class="h3" v-if="boardContType == 'view' && boardPostList.currentRow.CATEGORY_NM">{{boardPostList.currentRow.CATEGORY_NM}}</h3>
+			<div class="board-view-page" v-if="boardContType == 'view'">
+				<div class="head-box">
+					<!-- 20220524 QnA 답변 확인 부분 (QnA만 적용)-->
+					<div class="circle-type01" v-if="boardContType == 'view' && boardList.currentRow.BOARD_GB == '03'">
+						<p class="center cont-tit font-16 font-color-gray" v-if="boardPostList.currentRow.ANSWER_CHK == ''">
+							<i class="icon-alert-triangle d-block font-20"></i>
+							답변예정
+						</p>
+						<p class="center cont-tit font-16  font-color-orange" v-if="boardPostList.currentRow.ANSWER_CHK != ''">
+							<i class="icon-check d-block font-20"></i>
+							답변완료
+						</p>
+					</div>
+					<!-- //20220524 -->
+					<div class="title center">{{boardPostList.currentRow.TITLE}}</div>
+					<span class="etc icon-calendar" v-if="boardPostList.currentRow.BOARD_SEQ == '35'">{{boardPostList.currentRow.GONGJI_FR_DT | dateFormatter}} ~ {{boardPostList.currentRow.GONGJI_TO_DT | dateFormatter}}</span>
+					<span class="etc icon-calendar" v-if="boardPostList.currentRow.BOARD_SEQ == '36'">{{boardPostList.currentRow.GONGJI_FR_DT | dateFormatter}} / {{boardPostList.currentRow.RESERVE_FR_TM}} ~ {{boardPostList.currentRow.RESERVE_TO_TM}}</span>
+					<span class="etc icon-realtime">{{boardPostList.currentRow.INSERT_DTTM}}</span>
+					<span class="etc icon-pen" v-if="boardPostList.currentRow.JAKSEONGJA_GB == '01' || boardPostList.currentRow.JAKSEONGJA_GB == '04'">{{boardPostList.currentRow.JAKSEONGJA_NM}}</span>
+					<span class="etc icon-pen" v-else-if="boardPostList.currentRow.JAKSEONGJA_GB == '02'">{{boardPostList.currentRow.JAKSEONGJA_ID}}</span>
+					<span class="etc icon-pen" v-else>비공개</span>
+					<span class="etc icon-eye">{{boardPostList.currentRow.SEARCH_CNT}}</span>
+					<span class="etc icon-like" v-if="boardPostList.currentRow.LIKE_USE_YN=='Y'">{{boardPostList.currentRow.LIKE_CNT}}</span>
+					<a href="javascript:void(0)" @click="copyUrl" title="게시물 주소복사"><span class="etc icon-copy f-right">주소복사</span></a>
+				</div>
+
+				<div class="view-cont-box" id="viewerSection">
+	<!-- 				<div class="img-box" v-if="boardList.currentRow.BOARD_GB=='05'"> -->
+	<!-- 					<img src="/app/board/images/common/board_noimage2.jpg" alt="이미지없음" /> -->
+	<!-- 				</div>  -->
+					<!-- 이미지 슬라이드 -->
+					<!-- carousel v-show="imageTagsList.length>0" height="600" width="600" align="center" :autoplay="true" :data="imageTagsList"></carousel -->
+					<div height="600" width="600" align="center" v-if="boardList.currentRow.BOARD_GB == '04'">
+						<carousel v-show="imageTagsList.length>0" indicator-trigger="hover" indicator-type="disc" :autoplay="true" :data="imageTagsList"></carousel>
+					</div>
+				</div>
+
+				<!-- 20220524 -->
+				<div class="hash-list" v-if="boardPostList.currentRow.HASH_USE_YN == 'Y' && boardPostList.currentRow.HASHTAG.length > 0">
+					<a href="#" class="txt-hash" v-for="hashitem in boardPostList.currentRow.HASHTAG.split(',')" @click="setHashSearList(hashitem)">#{{hashitem}} </a>
+				</div>
+				<!-- //20220524 -->
+
+				<!-- 좋아요 -->
+				<div class="form-group" v-if="boardList.currentRow.LIKE_USE_YN == 'Y'">
+					<div class="center">
+						<a href="javascript:void(0)" class="btn type02 size-l icon-thumbs-up" v-if="!likeOnOff" @click="insertPostLike"> {{boardPostList.currentRow.LIKE_CNT}}</a>
+						<a href="javascript:void(0)" class="btn type01 size-l icon-thumbs-up active" v-if="likeOnOff" @click="deletePostLike"> {{boardPostList.currentRow.LIKE_CNT}}</a>
+					</div>
+				</div>
+
+				<!-- 첨부 파일 -->
+				<div class="form-group" v-show="boardList.currentRow.BOARD_GB == '04' && boardPostFile.getFileCnt()>0">
+					<file-uploader v-if="boardList.currentRow.BOARD_GB=='04'" :fileset="boardPostFile" :type="'img'" :fileid="'ADD_BOARD'" :filekey="boardPostList.currentRow.BOARD_SEQ+'#'+boardPostList.currentRow.POST_NO" :filehangmok="'attach'" :title="'첨부파일'" :modify="false"></file-uploader>
+					<!-- <file-uploader v-else :fileset="boardPostFile" :type="'list'" :fileid="'ADD_BOARD'" :filekey="boardPostList.currentRow.BOARD_SEQ+'#'+boardPostList.currentRow.POST_NO" :filehangmok="'attach'" :title="'첨부파일'" :modify="false"></file-uploader> -->
+				</div>
+
+				<div class="file-box" v-show="boardList.currentRow.BOARD_GB != '04' && boardPostFile.getFileCnt()>0" >
+					<div class="tit"><span class="icon icon-clip">첨부파일</span></div>
+					<div class="file-list">
+						<span v-for="(item, index) in boardPostFile.getFileList()"><a href="javascript:void(0)" class="btn-file" @click="fileDownLoad(item.FILE_ID, item.FILE_KEY, item.FILE_HANGMOK, item.FILE_NO, item.FILE_NM, item.FILE_PATH)">{{item.FILE_NM}}</a></span>
+					</div>
+				</div>
+
+
+				<!--  댓글 새 디자인 적용 -->
+				<div class="comment-wrap" v-if="boardPostList.currentRow.CM_USE_YN=='Y'">
+
+					<form>
+						<div class="form-group row form-row">
+							<div class="col s12 l12">
+								<a href="javascript:void(0)" class="btn type02 size-m" @click="setPostCmList"><span class="icon-refresh"></span></a>
+							</div>
+						</div>
+					</form>
+					<div class="form-group row form-row"></div>
+
+					<p class="tit">Comments</p>
+					<div class="comment-box">
+						<div class="comment-write">
+							<span class="photo">
+								<img v-if="session.USER_PIC && (boardList.currentRow.JAKSEONGJA_GB!='03' || boardList.currentRow.JAKSEONGJA_GB!='04')" :src="session.USER_PIC" alt="">
+								<span v-else class="icon icon-user"></span>
+							</span>
+							<div class="cont-line">
+								<div class="row form-row">
+									<div class="form-group col s12">
+										<span class="name" v-if="boardPostList.currentRow.JAKSEONGJA_GB=='01'">{{ userNm }}</span>
+										<span class="name" v-if="boardPostList.currentRow.JAKSEONGJA_GB=='02'">{{ userId }}</span>
+										<span class="name" v-if="boardPostList.currentRow.JAKSEONGJA_GB=='03'">비공개</span>
+										<span class="name" v-if="boardPostList.currentRow.JAKSEONGJA_GB=='04'">{{ userNick }}</span>
+									</div>
+								</div>
+								<div class="row form-row">
+									<div class="form-group col s12 l10">
+										<textarea class="size-m" id="postCm" rows="10" placeholder="댓글을 입력하세요.(4000자 이내)" name="postCm" data-vv-as="댓글 " v-validate="" v-bind:class="{'invalid': errors.has('postCm')}"></textarea>
+										<small class="form-txt">{{ errors.first('postCm') }}</small>
+									</div>
+									<div class="form-group col s12 l2">
+										<a href="javascript:void(0)" class="btn type02 size-l" @click="insertPostCm">등록</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<ul class="comment-list" v-if="postCmList.data">
+							<li class="list" v-for="(item, index) in postCmList.data">
+								<span class="photo">
+									<img v-if="item.USER_PIC  && (boardList.currentRow.JAKSEONGJA_GB!='03' || boardList.currentRow.JAKSEONGJA_GB!='04')" :src="item.USER_PIC" alt="프로필 사진이 없습니다.">
+									<span v-else class="icon icon-user"></span>
+								</span>
+
+								<div class="cont-line">
+									<div class="row form-row">
+										<div class="form-group col s12 l6">
+											<span class="name">
+												<span v-if="boardList.currentRow.JAKSEONGJA_GB=='01' || boardList.currentRow.JAKSEONGJA_GB=='04'">{{item.JAKSEONGJA_NM}}</span>
+												<span v-if="boardPostList.currentRow.JAKSEONGJA_GB=='02'">{{item.JAKSEONGJA_ID}}</span>
+												<span v-if="boardPostList.currentRow.JAKSEONGJA_GB=='03'">비공개</span>
+											</span>
+											<span class="date">
+												{{item.INSERT_DT}}
+											</span>
+										</div>
+
+										<!-- div class="form-group col s12 l6 right" v-if="item.JAKSEONGJA_ID == userId" -->
+										<div class="form-group col s12 l6 right">
+											<div class="btn-box">
+												<a href="javascript:void(0)" class="icon-x-mark" v-if="authAll > 0 || (item.JAKSEONGJA_ID == session.INTERNAL_ID)" @click="messagePopup('ID_DEL_CM', index)">삭제</a>
+											</div>
+										</div>
+									</div>
+									<div class="row form-row">
+										<div class="form-group col s12">
+											<p class="cont-txt">{{item.TEXT}}</p>
+										</div>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<paging :pagingset="postCmListPaging" :type="'normal'" id="cm-page"></paging>
+				</div>
+			</div>
+
+			<div class="col-inline btn-line right" v-if="boardContType == 'view'">
+				<a href="javascript:void(0)" v-if="boardPostList.currentRow.RE_USE_YN=='Y' && boardPostList.currentRow.LV == 0 && boardPostList.currentRow.GONGJI_YN == 'N' && (boardList.currentRow.BOARD_GB != '03' || authAll > 0 && !boardPostList.currentRow.ANSWER_CHK)" class="btn type01 size-m" @click="newPostRow(boardPostList.currentRow, 'reply')">답글</a>
+				<a href="javascript:void(0)" v-if="authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID)" class="btn type01 del size-m" @click="messagePopup('ID_DEL_POST',boardPostList.rowposition)">삭제</a>
+				<a href="javascript:void(0)" v-if="authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID)" class="btn type01 size-m" @click="setBoardViewMode('ContEdit')">수정</a>
+				<a href="javascript:void(0)" class="btn type02 size-m" @click="viewPostList">목록</a>
+			</div>
+			<!-- QnA 답글 조회 START -->
+			<div class="board-view-page" v-if="boardContType == 'view' && boardList.currentRow.BOARD_GB == '03' && answerOn">
+				<div class="comment-wrap">
+					<h3 class="tit"><i class="icon-check"></i> 답글</h3>
+					<!--				<div class="head-box">-->
+					<!--					<div class="title">{{rePostObj.TITLE}}</div>-->
+					<!--					<span class="etc icon-realtime">{{rePostObj.INSERT_DTTM}}</span>-->
+					<!--					<span class="etc icon-pen">{{rePostObj.JAKSEONGJA}}</span>-->
+					<!--				</div>-->
+					<div class="comment-box">
+						<div class="comment-list" id="viewerSectionAnswer"></div>
+					</div>
+					<div class="col-inline btn-line right">
+						<a href="javascript:void(0)" class="btn type01 size-m" v-if="authAll > 0 || (boardPostList.currentRow && boardPostList.currentRow.JAKSEONGJA_ID == session.INTERNAL_ID)" @click="setBoardViewMode('ContEditAns')">답글수정</a>
+					</div>
+				</div>
+			</div>
+			<!-- QnA 답글 조회 END -->
+		</div>
+	</section>
+
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+/********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		boardList: new Dataset(),						//게시판 설정 목록
+		boardPostList: new Dataset(),					//게시판 게시물 목록
+		postCmList: new Dataset(),						//댓글 목록
+		titleImgList: new Dataset(),					//대표 이미지 리스트
+		boardPostAnswerList: new Dataset(),				//QnA 답변 목록
+		boardCategorySet: new Tagset(),
+		boardPostHashtagSet: new Tagset(),
+		boardPostFile: new FileSet('ADD', 10),
+		catArr: [],
+		hashArr: [],
+		selectedBoardSeq: -1,
+		selectedBoardGb: '',
+		newBoardData: null,								//신규 게시판 정보
+		updateDisabled: false,							//공통코드 입력 available
+		upCodeInfo: new Object(),						//상위 코드 정보(하위코드 리스트에서 보여줄 상위 코드 정보)
+		messageModal: new ModalSet('board-modal'),		//모달(notice 및 confirm용)
+		boardListPaging: new PagingSet(5, 6),			//리스트 페이징 객체 (pageCnt, rowCnt)
+		boardPostListPaging: new PagingSet(5, 5),		//리스트 페이징 객체
+		postCmListPaging: new PagingSet(5, 5),			//리스트 페이징 객체
+		newModalShow: false,							//커스텀 모달 버튼 visible flag
+		detailViewFlag: false,							//게시판 상세보기 보여주기 여부  FLAG(게시판 등록 시 사용)
+		boardPostMode: false,							//게시판 미리보기 모드
+		boardPostType: 'none',							//normal, notice, QnA, image, imageList, FAQ, reference, anonymous,none
+		boardContMode: false,							//게시판 미리보기 모드에서 포스트 내용 출력 모드
+		boardContType: 'none',							//편집(edit) / 출력(view) / 출력x(none)
+		boardSearchPage: -1,							//조회 시 페이지 번호 백업용
+		postSearchPage: -1,								//조회 시 페이지 번호 백업용
+		userId: '',
+		userNm: '',
+		userNick: '',
+		isFirst: true,
+		rePostObj: {},
+		answerOn: false,
+		answerEditorOn: false,
+		likeOnOff: false,
+		webViewer: null,
+		webEditor: null,                                // mounted에서 초기화 처리
+		pPostSearchType: '1',
+		pPostSearchArgv: '',
+		pPostCategory : '',
+		categoryArr : [],
+
+
+// 		images: ['http://i.imgur.com/vYdoAKu.jpg', 'http://i.imgur.com/PUD9HQL.jpg', 'http://i.imgur.com/Lfv18Sb.jpg', 'http://i.imgur.com/tmVJtna.jpg', 'http://i.imgur.com/ZfFAkWZ.jpg'],
+// 		imageList: ['<img height="600" width="600" align="center" src="http://i.imgur.com/vYdoAKu.jpg">'
+// 				, '<img height="600" width="600" align="center" src=http://i.imgur.com/PUD9HQL.jpg>'
+// 				, '<img height="600" width="600" align="center" src=http://i.imgur.com/Lfv18Sb.jpg>'
+// 				, '<img height="600" width="600" align="center" src=http://i.imgur.com/tmVJtna.jpg>'
+// 				, '<img height="600" width="600" align="center" src=http://i.imgur.com/ZfFAkWZ.jpg>'],
+		imageFullPathList: [],
+		imageTagsList: [],
+// 		imagesList: ['<img height="300" width="400" align="center" src="http://demoportal.codefarm.co.kr/upload/ADD/ADD_BOARD/attach/66593bc7-ca93-40fb-b28b-734326dfc76a.gif">'
+// 			, '<img height="300" width="400" align="center" src="http://i.imgur.com/vYdoAKu.jpg">'
+// 			, '<img height="300" width="400" align="center" src="http://demoportal.codefarm.co.kr/upload/ADD/ADD_BOARD/attach/a2c9504c-de46-4732-a945-27c3b5e46322.gif">'
+// 			, '<img height="300" width="400" align="center" src="http://demoportal.codefarm.co.kr/upload/ADD/ADD_BOARD/attach/87add2f7-aca3-4ae7-b20d-0a96c32b451a.jpg">'
+// 			, '<img height="300" width="400" align="center" src="http://demoportal.codefarm.co.kr/upload/ADD/ADD_BOARD/attach/0c6dd28e-c998-43bc-96f2-fdcf73773665.png">'
+// 			, '<img height="300" width="400" align="center" src="http://demoportal.codefarm.co.kr/upload/ADD/ADD_BOARD/attach/3f30ea81-d388-4f7a-bfb3-f3966019a666.png">'
+// 			, '<img height="300" width="400" align="center" src="https://www.imagetoday.co.kr/mainview/theme_update/0110_theme_01.jpg">'],
+		boardPostAuth: {'WRITE': 0, 'READ': 0, 'EDIT':0, 'DELETE':0, 'ADMIN':0 },	// 게시판 권한 {쓰기, 읽기, 수정, 삭제, 관리자여부}
+
+		authListView: 0,		// 리스트 확인
+		authContentsView: 0,	// 내용 확인
+		authPostWrite: 0,		// 글 쓰기
+		authReplyWrite: 0,		// 답글 쓰기
+		authCommentWrite: 0,	// 댓글 쓰기
+		authAll: 0,				// 전체 권한
+		currentDate: moment().format('YYYYMMDD'),
+		mainListLoading: {id:'mainListLoading', val:false},
+        clipboard: '',
+	},
+	filters: {
+		contPrevFormatter: function(value) {
+			if(value != ""){
+				return value.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}');
+			} else {
+				return "";
+			}
+		},
+		dateFormatter: function(value) {
+			if(!value) return '';
+			return value.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+		}
+	},
+	//생성 될 때
+	beforeCreate: function(){
+	},
+	//계산된 속성 표현 시
+	computed: {
+		currContentsText: function(){
+			return this.boardPostList.currentRow.CONTENTS.split('\n').join('<br/>');
+		}
+	},
+	//데이터 감시
+	watch: {
+		'boardList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.boardList.enableevent){
+					var changeYn = this.boardList.dataCompare(oldVal);
+					var rowType = this.boardList.getRowType(val);
+
+					if(!changeYn){
+						this.boardList.setDefaultRow(oldVal);
+					}
+
+					//pk에 대한 able 설정
+					/* if(rowType == ROWTYPE_NORMAL  || rowType == ROWTYPE_UPDATE){
+						this.updateDisabled = true;
+					}else{
+						this.updateDisabled = false;
+					} */
+
+					this.boardCategorySet.init(this.boardList, 'CATEGORY', val, 'category');
+
+					if(!isNull(this.boardList.currentRow) && !isNull(this.boardList.currentRow.CATEGORY))
+						this.catArr = this.boardList.currentRow.CATEGORY.split(',');
+
+                    this.$validator.reset();
+				}
+			}
+		},
+		'boardList.data': {
+			handler: function (val, oldVal) {
+				if(this.boardList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.boardList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.boardList.beforeData[rowposition][colNm] = data[colNm];
+				          		//colNm, rosposition
+
+				          		vm.boardComponentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'boardListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setBoardList(null, val)
+			}
+	    },
+	    'boardPostList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.boardPostList.enableevent){
+					var changeYn = this.boardPostList.dataCompare(oldVal);
+					var rowType = this.boardPostList.getRowType(val);
+
+					if(!changeYn){
+						this.boardPostList.setDefaultRow(oldVal);
+					}
+
+					//pk에 대한 able 설정
+					/* if(rowType == ROWTYPE_NORMAL  || rowType == ROWTYPE_UPDATE){
+						this.updateDisabled = true;
+					}else{
+						this.updateDisabled = false;
+					} */
+					this.boardPostHashtagSet.init(this.boardPostList, 'HASHTAG', val, 'hashtag');
+
+					if(!isNull(this.boardPostList.currentRow) && !isNull(this.boardPostList.currentRow.HASHTAG))
+						this.hashArr = this.boardPostList.currentRow.HASHTAG.split(',');
+
+					this.$validator.reset();
+
+					if(this.boardList.currentRow.BOARD_GB == "03") {
+						this.toggleTr();
+					}
+				}
+			}
+		},
+		'boardPostList.data': {
+			handler: function (val, oldVal) {
+				if(this.boardPostList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.boardPostList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.boardPostList.beforeData[rowposition][colNm] = data[colNm];
+				          		//colNm, rosposition
+
+				          		vm.boardPostComponentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+		'boardPostFile.fileList': {
+			handler: function (val, oldVal) {
+				if(typeof this.webEditor == 'object' && this.webEditor){
+					this.titleImgListSet();
+				}
+			},
+			deep: true
+	    },
+	    'boardPostListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setBoardPostList(null, val)
+			}
+	    },
+		'postCmListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setPostCmList(null, val)
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setBoardInfo(globalParam.BOARD_SEQ);
+		this.setAuthInfo(globalParam.BOARD_SEQ); // 게시판의 권한 정보 설정 - 게시판 순번, 세션의 사용자 권한 사용
+
+		//this.setBoardList();
+		this.userId = this.session.USER_ID;
+		this.userNm = this.session.USER_NM;
+		this.userNick = this.session.USER_ADD_COL1;
+
+		// 게시판 권한 설정
+// 		var authValue = globalParam.CRUDA.split(',');
+
+// 		if(authValue.length > 0) {
+// 			this.boardPostAuth.WRITE = authValue[0];
+// 			this.boardPostAuth.READ = authValue[1];
+// 			this.boardPostAuth.EDIT = authValue[2];
+// 			this.boardPostAuth.DELETE = authValue[3];
+// 			this.boardPostAuth.ADMIN = authValue[4];
+// 		}
+	},
+	//함수
+	methods: {
+		viewEditorInit: function(pIndex, pContents){
+			var self = this;
+
+			const { tableMergedCell, uml } = toastui.Editor.plugin;
+
+			self.webViewer = new toastui.Editor.factory({
+	    	    el: document.querySelector('#viewerSection' + pIndex),
+	    	    viewer: true,
+	    	    height: 'auto',
+	    	    initialValue: pContents,
+				plugins: [ tableMergedCell, uml]
+	        });
+		},
+		editorInit: function() {
+			var self = this;
+			const { tableMergedCell, uml } = toastui.Editor.plugin;
+
+			this.webEditor = new toastui.Editor({
+	            el: document.querySelector('#editSection'),
+	            customHTMLRenderer: {
+	            	htmlBlock: {
+	            		iframe(node) {
+	                    	return [
+	                        	{ type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
+	                        	{ type: 'html', content: node.childrenHTML },
+	                        	{ type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+	                    	];
+	                  	},
+	                },
+	                htmlInline: {
+                    	big(node, { entering }) {
+                          	return entering
+                            	? { type: 'openTag', tagName: 'big', attributes: node.attrs }
+                            	: { type: 'closeTag', tagName: 'big' };
+                        },
+                  	},
+	            },
+	            language: 'ko_KR',
+	            initialEditType: 'wysiwyg',
+	            initialValue: self.boardPostList.currentRow.CONTENTS.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}'),
+	            previewStyle: 'vertical',
+	            plugins: [tableMergedCell, uml],
+	            height: '300px',
+	            events: {
+	            	'change': function(a) {
+		    			self.titleImgListSet();
+	            	}
+	            },
+	            hooks: {
+	    	    	'addImageBlobHook': function(blob, callback){
+	    	    		try{
+	    	    			self.uploadImage(blob).then(function(response) {
+	    		    			var _protocol = window.location.protocol;
+	    		    			var _host = window.location.host;
+	    		    			var _url = _protocol + "//" + _host;
+	    		    			var _fileUrl = '';
+
+	    	    				_fileUrl = response.data;
+
+	    		    	        callback(_url+'/upload' + _fileUrl, blob.name); //절대경로로 등록
+	    		    	      //callback('/upload' + _fileUrl, blob.name); //상대경로로 등록
+	    		    	        return false;
+	    		    	    });
+	    	    		} catch(err){
+	    	    			return false;
+	    	    		}
+	    	    	},
+	    	    },
+	        });
+			self.titleImgListSet();
+		},
+		ansEditorInit: function() {
+			var self = this;
+			const { colorSyntax, tableMergedCell, uml } = toastui.Editor.plugin;
+
+			this.webEditor = new toastui.Editor({
+				el: document.querySelector('#editSection'),
+				customHTMLRenderer: {
+					htmlBlock: {
+						iframe(node) {
+							return [
+								{ type: 'openTag', tagName: 'iframe', outerNewLine: true, attributes: node.attrs },
+								{ type: 'html', content: node.childrenHTML },
+								{ type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+							];
+						},
+					},
+					htmlInline: {
+						big(node, { entering }) {
+							return entering
+									? { type: 'openTag', tagName: 'big', attributes: node.attrs }
+									: { type: 'closeTag', tagName: 'big' };
+						},
+					},
+				},
+				language: 'ko_KR',
+				initialEditType: 'wysiwyg',
+				initialValue: self.rePostObj.CONTENTS.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}'),
+				previewStyle: 'vertical',
+				plugins: [colorSyntax, tableMergedCell, uml],
+				height: '300px',
+				events: {
+					'change': function(a) {
+						self.titleImgListSet();
+					}
+				},
+				hooks: {
+					'addImageBlobHook': function(blob, callback){
+						try{
+							self.uploadImage(blob).then(function(response) {
+								var _protocol = window.location.protocol;
+								var _host = window.location.host;
+								var _url = _protocol + "//" + _host;
+								var _fileUrl = '';
+
+								_fileUrl = response.data;
+
+								callback(_url+'/upload' + _fileUrl, blob.name); //절대경로로 등록
+								//callback('/upload' + _fileUrl, blob.name); //상대경로로 등록
+								return false;
+							}).catch(error => {
+								return false;
+							});
+						} catch(err){
+							return false;
+						}
+					},
+				},
+			});
+			self.titleImgListSet();
+		},
+		setBoardInfo: function(pBoardSeq){
+			var returnVal = boardApi.boardBySeq(pBoardSeq);
+			var self = this;
+
+			returnVal.then(function(response) {
+				self.boardList.setData(response.data);
+
+				if(self.boardList.getRowCount() > 0){
+					self.boardList.selectRow(0);	//조회된 데이터가 있다면, 첫번째 row 선택
+
+					self.categoryArr = self.boardList.data[0].CATEGORY.split(',');
+
+
+					self.postPreview(self.boardList.currentRow);
+
+					$('#boardTile').text(self.boardList.currentRow.BOARD_NM);
+				}else{
+					alert('해당 게시판이 존재 하지 않습니다.');
+				}
+			});
+
+		},
+		// 게시판 권한 설정 - yjahn
+		setAuthInfo: function(pBoardSeq){
+
+			var returnVal = boardApi.authInfo(pBoardSeq);
+			var self = this;
+
+			returnVal.then(function(response) {
+				self.authListView 	  = response.data[0].AUTH_GB_CNT;		// 리스트 확인
+				self.authContentsView = response.data[1].AUTH_GB_CNT;		// 내용 확인
+				self.authPostWrite	  = response.data[2].AUTH_GB_CNT;		// 글 쓰기
+				self.authReplyWrite	  = response.data[3].AUTH_GB_CNT;		// 답글 쓰기
+				self.authCommentWrite = response.data[4].AUTH_GB_CNT;		// 댓글 쓰기
+				self.authAll		  = response.data[5].AUTH_GB_CNT;			// 전체 권한
+
+			});
+
+		},
+		/* 게시판 데이터 처리*/
+		setBoardList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				var pBoardGb = $('#pBoardGb option:selected').val();
+				var pUseYn = $('#pUseYn option:selected').val();
+				var pSearchType = $('#pSearchType option:selected').val();
+				var pSearchArgv = $('#pSearchArgv').val();
+				var pageNo = pPageNo;
+				var rowCount = this.boardListPaging.getRowCnt();
+
+				if(isNull(pBoardGb)) 	pBoardGb = '';
+				if(isNull(pUseYn)) 		pUseYn = '';
+				if(isNull(pSearchArgv)) pSearchArgv = '';
+
+				if(isNull(pSearchType)){
+					pSearchType = '';
+					pSearchArgv = '';
+				}
+
+				if(isNull(pageNo)) pageNo = 1;
+				if(isNull(rowCount)) rowCount = 6;
+
+				var returnVal = boardApi.board(pBoardGb, pUseYn, pSearchType, pSearchArgv, pageNo, rowCount, true);
+				var self = this;
+
+				returnVal.then(function(response) {
+					self.boardList.setData(response.data);
+
+					if(self.detailViewFlag) {
+						self.boardList.selectRow(0);
+						self.fnSetAnchorEvent('board-detail', 300);
+						self.detailViewFlag = false;
+					}
+
+					if(self.boardList.getRowCount() > 0){
+						var totalCnt = self.boardList.data[0].CNT;
+
+						self.boardListPaging.setTotalCnt(totalCnt);
+
+					}else{
+						self.boardListPaging.setTotalCnt(0);
+					}
+				});
+			}
+		},
+		/* 서비스 리스트 신규행 추가 */
+		newRow: function(){	//신규 게시판
+			//게시판 템플릿 팝업 호출
+			this.newModalShow = modal_open('new_modal');
+		},
+		/* 서비스 리스트 저장,수정 */
+		saveRow: function(){
+
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.boardList.rowposition;
+					var rowType = self.boardList.getRowType(rowposition);
+					var returnVal = null;
+
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = boardApi.boardInsert(self.boardList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						self.boardSearchPage = self.boardListPaging.currentPage;		//현재 포스트 페이지 저장(목록 및 저장 후 재조회에 사용)
+
+						returnVal = boardApi.boardUpdate(self.boardList.currentRow, true);
+					}else{
+						notifySubmit('info', '게시판 설정 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							//alert(JSON.stringify(data));
+							if(data == '1'){
+								self.setBoardList(null, self.boardSearchPage);
+								notifySubmit('success', '게시판 설정 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '게시판 설정 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						});
+					}
+				}else{
+					notifySubmit('warning', '게시판 설정 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		/* 서비스 리스트 삭제  - SQL맵에서 하위 코드도 삭제 처리*/
+		deleteRow: function(row){
+
+			//this.messageModal.openModal('confirm', '게시판 삭제', '해당 게시판을 삭제하시겠습니까?', 'small', 'ID_DEL_BOARD');
+
+			var rowType = this.boardList.getRowType(row);
+			var returnVal = null;
+			var boardSeq = this.boardList.getColumn(row, 'BOARD_SEQ');
+			var self = this;
+
+			if(rowType==ROWTYPE_INSERT) {
+				self.boardList.deleteRow(row);
+			} else {
+				self.boardList.selectRow(row);
+				returnVal = boardApi.boardDelete(boardSeq, true);
+				returnVal.then(function(response){
+					var data = response.data;
+
+					if(parseInt(data,10) > 0){
+						self.setBoardList();
+					}else{
+						notifySubmit('warning', '게시판 설정 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+			notifySubmit('success', '게시판 설정 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+		},
+		/* 서비스 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		boardComponentStateChange: function(){
+			var rowposition = this.boardList.rowposition;
+			var rowType = this.boardList.getRowType(rowposition);
+
+			if(rowType == ROWTYPE_NORMAL || rowType == ROWTYPE_UPDATE){
+				$('#cd').attr('disabled', true);
+			}else{
+				$('#cd').attr('disabled', false);
+			}
+		},
+		/* 게시판 POST 데이터 처리*/
+		setBoardPostList: function(e, pPageNo, pRowCount){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				
+				if(!isNull(pRowCount)) this.boardPostListPaging.setRowCnt(pRowCount);
+
+				var self = this;
+				var pSearchType = $('#pPostSearchType option:selected').val();
+				var pSearchArgv = $('#pPostSearchArgv').val();
+				var pageNo = pPageNo;
+				var rowCount = this.boardPostListPaging.getRowCnt();
+				var pBoardSeq = this.selectedBoardSeq;
+				var pBoardGb = this.selectedBoardGb;
+				var pPostCategory = this.pPostCategory;
+
+
+				if(isNull(pSearchType)){
+					pSearchType = '';
+					pSearchArgv = '';
+				}
+
+				if(isNull(pSearchArgv)){
+					pSearchType = '';
+					pSearchArgv = '';
+				}
+				if(isNull(pageNo) || pageNo<1) pageNo = 1;
+
+				if(globalParam.FAQ_YN =='Y'){
+					var returnVal = boardApi.boardPost(pBoardSeq, pBoardGb, pSearchType, pSearchArgv, pageNo, rowCount, '', pPostCategory, true);
+				}else{
+					var returnVal = boardApi.boardPost(pBoardSeq, pBoardGb, pSearchType, pSearchArgv, pageNo, rowCount, self.isFirst ? globalParam.POST_NO : '', pPostCategory, true);
+				}
+
+				returnVal.then(function(response) {
+					self.boardPostList.setData(response.data);
+
+					if(self.boardPostList.getRowCount() > 0){
+						//this.boardPostListPaging.setRowCnt(this.boardPostList.data[0].PAGE_BOARD_CNT);
+
+						var totalCnt = self.boardPostList.data[0].CNT;
+						self.boardPostListPaging.setTotalCnt(totalCnt);
+
+
+
+						if(typeof globalParam.POST_NO != 'undefined' && self.isFirst){
+
+							if(globalParam.FAQ_YN == 'Y'){
+								self.showHideView(globalParam.POST_NO);
+							}else{
+								self.selectPost(0);
+							}
+
+							self.isFirst = false;
+						}
+					}else{
+						self.boardPostListPaging.setTotalCnt(0);
+					}
+				});
+			}
+		},
+		/* 게시판 HASHTAG 검색 */
+		setHashSearList: function(value, e, pPageNo, pRowCount){
+			var self = this;
+
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				if(!isNull(pRowCount)) this.boardPostListPaging.setRowCnt(pRowCount);
+
+				if(!isNull(self.boardPostList.currentRow)) self.viewPostList();
+
+				var pSearchType = '5';
+				var pSearchArgv = value.replace(/#/g, '');
+				var pageNo = pPageNo;
+				var rowCount = this.boardPostListPaging.getRowCnt();
+				var pBoardSeq = this.selectedBoardSeq;
+				var pBoardGb = this.selectedBoardGb;
+
+				self.pPostSearchType = pSearchType;
+				self.pPostSearchArgv = pSearchArgv;
+
+				if(isNull(pageNo)) pageNo = 1;
+
+				var returnVal = boardApi.boardPost(pBoardSeq, pBoardGb, pSearchType, pSearchArgv, pageNo, rowCount, self.isFirst ? globalParam.POST_NO : '', true);
+
+
+				returnVal.then(function(response) {
+					self.boardPostList.setData(response.data);
+
+					if(self.boardPostList.getRowCount() > 0){
+						//this.boardPostListPaging.setRowCnt(this.boardPostList.data[0].PAGE_BOARD_CNT);
+
+						var totalCnt = self.boardPostList.data[0].CNT;
+						self.boardPostListPaging.setTotalCnt(totalCnt);
+
+						if(typeof globalParam.POST_NO != 'undefined' && self.isFirst){
+							self.selectPost(0);
+							self.isFirst = false;
+						}
+					}else{
+						self.boardPostListPaging.setTotalCnt(0);
+					}
+				});
+			}
+		},
+		/* 서비스 리스트 신규행 추가 */
+		newPostRow: function(pUpPost){
+			//pUpPost가 null이면 신규, 아니면 답글
+			var newRowPosition = this.boardPostList.addRow();
+			this.boardPostList.setColumn(newRowPosition, 'BOARD_SEQ', this.boardList.currentRow.BOARD_SEQ);
+			this.boardPostList.setColumn(newRowPosition, 'BOARD_NM', this.boardList.currentRow.BOARD_NM);
+			this.boardPostList.setColumn(newRowPosition, 'SKIN_GB', this.boardList.currentRow.SKIN_GB);
+			this.boardPostList.setColumn(newRowPosition, 'WIDTH', this.boardList.currentRow.WIDTH);
+			this.boardPostList.setColumn(newRowPosition, 'PAGE_BOARD_CNT', this.boardList.currentRow.PAGE_BOARD_CNT);
+			this.boardPostList.setColumn(newRowPosition, 'BOARD_GB', this.boardList.currentRow.BOARD_GB);
+			this.boardPostList.setColumn(newRowPosition, 'JAKSEONGJA_GB', this.boardList.currentRow.JAKSEONGJA_GB);
+			this.boardPostList.setColumn(newRowPosition, 'FILE_SIZE_LMT', this.boardList.currentRow.FILE_SIZE_LMT);
+			this.boardPostList.setColumn(newRowPosition, 'LINK_USE_YN', this.boardList.currentRow.LINK_USE_YN);
+			this.boardPostList.setColumn(newRowPosition, 'LINK_URL', '');
+			this.boardPostList.setColumn(newRowPosition, 'RE_USE_YN', this.boardList.currentRow.RE_USE_YN);
+			this.boardPostList.setColumn(newRowPosition, 'CM_USE_YN', this.boardList.currentRow.CM_USE_YN);
+			this.boardPostList.setColumn(newRowPosition, 'CATEGORY_USE_YN', this.boardList.currentRow.CATEGORY_USE_YN);
+			this.boardPostList.setColumn(newRowPosition, 'CATEGORY', this.boardList.currentRow.CATEGORY);
+			this.boardPostList.setColumn(newRowPosition, 'LIKE_USE_YN', this.boardList.currentRow.LIKE_USE_YN);
+			this.boardPostList.setColumn(newRowPosition, 'BIMILGEUL_USE_YN', this.boardList.currentRow.BIMILGEUL_USE_YN);
+			this.boardPostList.setColumn(newRowPosition, 'TITLE_READ_YN', this.boardList.currentRow.TITLE_READ_YN);
+			this.boardPostList.setColumn(newRowPosition, 'TEXT_READ_YN', this.boardList.currentRow.TEXT_READ_YN);
+			this.boardPostList.setColumn(newRowPosition, 'HASH_USE_YN', this.boardList.currentRow.HASH_USE_YN);
+
+			this.boardPostList.setColumn(newRowPosition, 'LV', pUpPost.LV==undefined?0:pUpPost.LV+1);
+			this.boardPostList.setColumn(newRowPosition, 'UP_POST_NO', isNull(pUpPost.POST_NO)?'-1':pUpPost.POST_NO);
+			this.boardPostList.setColumn(newRowPosition, 'CATEGORY_NM', pUpPost.LV==0?pUpPost.CATEGORY_NM:'');
+			this.boardPostList.setColumn(newRowPosition, 'HASHTAG', pUpPost.LV==0?pUpPost.HASHTAG:'');
+			this.boardPostList.setColumn(newRowPosition, 'DELETE_YN', 'Y');			//신규 POST 등록시 실제 DB에는 insert 시키지만 삭제 처리로 보이지 않게한다.
+			this.boardPostList.setColumn(newRowPosition, 'JAKSEONGJA_ID', this.userId);
+			this.boardPostList.setColumn(newRowPosition, 'JAKSEONGJA_NM', this.userNm);
+			this.boardPostList.setColumn(newRowPosition, 'GONGJI_YN', 'N');
+			this.boardPostList.setColumn(newRowPosition, 'CONTENTS', '');			// text 타입은 null 들어갈시 오류 발생하여 공백으로 초기화 처리, tui data
+			this.boardPostList.setColumn(newRowPosition, 'CONTENTS_HTML', '');      // text 타입은 null 들어갈시 오류 발생하여 공백으로 초기화 처리, html data
+			this.boardPostList.setColumn(newRowPosition, 'CONTENTS_PREVIEW', '');      // text 타입은 null 들어갈시 오류 발생하여 공백으로 초기화 처리, html data
+			if(pUpPost.LV == 0 && this.boardList.currentRow.BOARD_GB == '03'){
+				this.boardPostList.setColumn(newRowPosition, 'TITLE', '[답변]' + pUpPost.TITLE);
+			} else if(pUpPost.LV == 0) {
+				this.boardPostList.setColumn(newRowPosition, 'TITLE', '[답글]' + pUpPost.TITLE);
+			} else {
+				this.boardPostList.setColumn(newRowPosition, 'TITLE', '');
+			}
+			this.boardPostList.setColumn(newRowPosition, 'INSERT_DT', this.currentDate);
+			this.boardPostList.setColumn(newRowPosition, 'TITLE_IMG_URL', '');
+			this.boardPostList.setColumn(newRowPosition, 'BIMILGEUL_YN', 'N');
+
+			//this.webEditor.setMarkdown('');
+
+			var returnVal = boardApi.boardPostInsert(this.boardPostList.currentRow, true);
+			var self = this;
+			this.postSearchPage = 1;		//신규 등록시 무조건 1페이지를 보게 한다.
+
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					var data = response.data;
+					if(data._INSERT_ROW_CNT == '1'){
+						self.boardPostList.currentRow = data;
+						self.boardPostFile.getFiles('ADD_BOARD', self.boardPostList.currentRow.BOARD_SEQ+'#'+self.boardPostList.currentRow.POST_NO, 'attach', null);
+						self.setBoardViewMode('ContEdit');
+					}else{
+						notifySubmit('warning', '게시판 저장', '저장에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+		},
+		/* 서비스 리스트 저장,수정 */
+		savePostRow: function(){
+
+			//상세화면에서 저장 처리
+
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.boardPostList.rowposition;
+					var rowType = self.boardPostList.getRowType(rowposition);
+					var returnVal = null;
+
+					if(self.boardPostList.currentRow.BOARD_GB == '02')
+						self.boardPostList.currentRow.GONGJI_YN = 'Y';
+					
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = boardApi.boardPostInsert(self.boardList.currentRow, true);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = boardApi.boardPostUpdate(self.boardList.currentRow, true);
+					}else{
+						notifySubmit('info', '게시물 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							//alert(JSON.stringify(data));
+							if(data == '1'){
+								self.setBoardPostList();
+								notifySubmit('success', '게시물 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '게시물 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						});
+					}
+				}else{
+					notifySubmit('warning', '게시물 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		/* 서비스 리스트 삭제  - SQL맵에서 하위 코드도 삭제 처리*/
+		deletePostRow: function(row){
+			var rowType = this.boardPostList.getRowType(row);
+			var returnVal = null;
+			var postNo = this.boardPostList.getColumn(row, 'POST_NO');
+			var self = this;
+
+			if(rowType==ROWTYPE_INSERT) {
+				this.boardPostList.deleteRow(row);
+			} else {
+				this.boardPostList.selectRow(row);
+				returnVal = boardApi.boardPostDelete(this.boardPostList.currentRow, true);
+				returnVal.then(function(response) {
+					var data = response.data;
+
+					if(parseInt(data,10) > 0){
+						self.setBoardPostList();
+					}else{
+						notifySubmit('warning', '게시물 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+			notifySubmit('success', '게시물 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+		},
+		/* 서비스 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		boardPostComponentStateChange: function(){
+			var rowposition = this.boardPostList.rowposition;
+			var rowType = this.boardPostList.getRowType(rowposition);
+
+			if(rowType == ROWTYPE_NORMAL || rowType == ROWTYPE_UPDATE){
+				$('#cd').attr('disabled', true);
+			}else{
+				$('#cd').attr('disabled', false);
+			}
+		},
+		fileDownLoad: function(pFileId, pFileKey, pFileHangmok, pFileNo, pFilename, pFilePath){
+            this.boardPostFile.download(pFileId, pFileKey, pFileHangmok, pFileNo, pFilename, pFilePath);
+        },
+		/* 기타 처리 메소드 */
+		usePrint: function(bYn) {		//그리드 테이블에서 사용/미사용 표시 (bYn : 'Y' or 'N')
+			return bYn=='Y'?'사용':'미사용';
+		},
+		getBoardGbNm: function(pBoardGb) {		//게시판 구분명 반환
+			var boardGbNm;
+
+			switch(pBoardGb) {
+				case '01': boardGbNm = '일반'; break;
+				case '02': boardGbNm = '공지사항'; break;
+				case '03': boardGbNm = 'Q&A'; break;
+				case '04': boardGbNm = '이미지(카드형)'; break;
+				case '05': boardGbNm = '이미지(리스트형)'; break;
+				case '06': boardGbNm = 'FAQ'; break;
+				case '07': boardGbNm = '자료실'; break;
+				case '08': boardGbNm = '익명'; break;
+			}
+			return boardGbNm;
+		},
+		vaildateCheck: function(pId) {	//유효성 검사(파라미터 생략 시 전체 검사, 지정된 id가 있는 경우 해당 요소만 검사)
+			if(isNull(pId)) {
+				this.$validator.validateAll();
+				return;
+			}else{
+				this.$validator.validate(pId);
+			}
+		},
+		newModalClose: function(){		//커스텀 보달 닫기
+			this.newModalShow = false;
+			 $("html").css("overflow", "auto");
+		},
+		test: function(){
+			//this.messageModal.openModal('confirm', 'TEST TITLE', 'contents', 'small', 'ID1');
+		},
+		getDateTime: function() {		//시스템 현재 시간 텍스트 반환(새 게시판 생성시 게시판명에 사용될 게시판 생성 시간 - 임시 이름 용도)
+			var date = new Date();
+			var dateTime = "" + date.getFullYear()+(date.getMonth()+1)+date.getDate()+"_"+date.getHours()+date.getMinutes()+date.getSeconds();
+
+			return dateTime;
+		},
+		makeBoardTemplate: function(pBoardGb) {		//게시판 구분별 템플릿(테스트용으로 임의 설정되어 있음)
+			var newBoardData = new Object();
+
+			switch(pBoardGb){
+				case '01': 	newBoardData.BOARD_NM = 'new 일반게시판 - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 5;
+					newBoardData.JAKSEONGJA_GB = '01';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'Y';
+					newBoardData.CM_USE_YN = 'Y';
+					newBoardData.CATEGORY_USE_YN = 'Y';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'Y';
+					newBoardData.TEXT_READ_YN = 'N';
+					newBoardData.LIKE_USE_YN = 'Y';
+					newBoardData.HASH_USE_YN = 'Y';
+					break;
+				case '02':	newBoardData.BOARD_NM = 'new 공지사항 - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 5;
+					newBoardData.JAKSEONGJA_GB = '01';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'N';
+					newBoardData.CM_USE_YN = 'N';
+					newBoardData.CATEGORY_USE_YN = 'Y';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'N';
+					newBoardData.TEXT_READ_YN = 'N';
+					newBoardData.LIKE_USE_YN = 'N';
+					newBoardData.HASH_USE_YN = 'N';
+					break;
+				case '03':	newBoardData.BOARD_NM = 'new Q&A - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 5;
+					newBoardData.JAKSEONGJA_GB = '01';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'Y';
+					newBoardData.CM_USE_YN = 'Y';
+					newBoardData.CATEGORY_USE_YN = 'Y';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'Y';
+					newBoardData.TEXT_READ_YN = 'N';
+					newBoardData.LIKE_USE_YN = 'N';
+					newBoardData.HASH_USE_YN = 'N';
+					break;
+				case '04':	newBoardData.BOARD_NM = 'new 이미지(카드) - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 8;
+					newBoardData.JAKSEONGJA_GB = '01';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'N';
+					newBoardData.CM_USE_YN = 'N';
+					newBoardData.CATEGORY_USE_YN = 'N';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'N';
+					newBoardData.TEXT_READ_YN = 'N';
+					newBoardData.LIKE_USE_YN = 'Y';
+					newBoardData.HASH_USE_YN = 'Y';
+					break;
+				case '05':	newBoardData.BOARD_NM = 'new 이미지(리스트) - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 8;
+					newBoardData.JAKSEONGJA_GB = '01';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'N';
+					newBoardData.CM_USE_YN = 'N';
+					newBoardData.CATEGORY_USE_YN = 'N';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'Y';
+					newBoardData.TEXT_READ_YN = 'Y';
+					newBoardData.LIKE_USE_YN = 'Y';
+					newBoardData.HASH_USE_YN = 'Y';
+					break;
+				case '06':	newBoardData.BOARD_NM = 'new FAQ - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 5;
+					newBoardData.JAKSEONGJA_GB = '01';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'N';
+					newBoardData.CM_USE_YN = 'N';
+					newBoardData.CATEGORY_USE_YN = 'Y';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'Y';
+					newBoardData.TEXT_READ_YN = 'N';
+					newBoardData.LIKE_USE_YN = 'N';
+					newBoardData.HASH_USE_YN = 'N';
+					break;
+				case '07':	newBoardData.BOARD_NM = 'new 자료실 - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 5;
+					newBoardData.JAKSEONGJA_GB = '01';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'Y';
+					newBoardData.CM_USE_YN = 'Y';
+					newBoardData.CATEGORY_USE_YN = 'Y';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'Y';
+					newBoardData.TEXT_READ_YN = 'N';
+					newBoardData.LIKE_USE_YN = 'N';
+					newBoardData.HASH_USE_YN = 'N';
+					break;
+				case '08':	newBoardData.BOARD_NM = 'new 익명 - ' + this.getDateTime();
+					newBoardData.BOARD_GB = pBoardGb;
+					newBoardData.SKIN_GB = '01';
+					newBoardData.WIDTH = 15;
+					newBoardData.PAGE_BOARD_CNT = 8;
+					newBoardData.JAKSEONGJA_GB = '04';
+					newBoardData.CHEOMBU_FILE_CNT = 5;
+					newBoardData.FILE_SIZE_LMT = 10000;
+					newBoardData.NEW_ICON_PYOSI_GB = '01';
+					newBoardData.HOT_ICON_HIT_CNT = 100;
+					newBoardData.USE_YN = 'Y';
+					newBoardData.LINK_USE_YN = 'N';
+					newBoardData.RE_USE_YN = 'N';
+					newBoardData.CM_USE_YN = 'N';
+					newBoardData.CATEGORY_USE_YN = 'N';
+					newBoardData.BIMILGEUL_USE_YN = 'N';
+					newBoardData.TITLE_READ_YN = 'N';
+					newBoardData.TEXT_READ_YN = 'N';
+					newBoardData.LIKE_USE_YN = 'Y';
+					newBoardData.HASH_USE_YN = 'N';
+					break;
+			}
+			return newBoardData;
+		},
+		insertNewBoard: function(pBoardGb) {		//새 게시판 저장
+			var newBoardData = this.makeBoardTemplate(pBoardGb);
+
+			if(isNull(newBoardData)) {
+				notifySubmit('warning', '게시판 생성', '생성이 실패하였습니다.', 'icon-caution');
+				return;
+			}
+
+			var returnVal = boardApi.boardInsert(newBoardData, true);
+			var self = this;
+
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					var data = response.data;
+					//alert(JSON.stringify(data));
+					if(data._INSERT_ROW_CNT == '1'){
+						self.detailViewFlag = true;		//조회 후 상세보기 가능하도록 설정
+						self.setBoardList();
+						notifySubmit('success', '게시판 저장', '저장이 완료되었습니다.', 'icon-save');
+
+						self.newModalShow = false;
+						$("html").css("overflow", "auto");
+					}else{
+						notifySubmit('warning', '게시판 저장', '저장에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+		},
+		fnAnchorMove: function(pAnchNm){	//앵커 기능 _ board-detail 이동용
+	        var offset = $("#" + pAnchNm).offset();
+	        $('html, body').animate({scrollTop : offset.top}, 400);
+	    },
+	    fnSetAnchorEvent: function(pAnchNm, msec) {	//앵커 기능에 타이머 적용(에니메이션 처리 후 적용되도록 delay 적용)
+	    	setTimeout(function(){ vm.fnAnchorMove(pAnchNm); }, msec);
+	    },
+		setBoardViewMode: function(pMode, pPostBoardGb) {			//화면 전환 처리 함tn
+
+			var BoardGbNm;
+
+			if(!isNull(pPostBoardGb)) {
+				pMode = 'Post';
+
+				switch(pPostBoardGb) {
+					case '01':
+					case 'Normal':
+						this.boardPostType = 'normal';
+						break;
+					case '02':
+					case 'Notice':
+						this.boardPostType = 'notice';
+						break;
+					case '03':
+					case 'Qna':
+						this.boardPostType = 'QnA';
+						break;
+					case '04':
+					case 'Image':
+						this.boardPostType = 'image';
+						break;
+					case '05':
+					case 'Image':
+						this.boardPostType = 'imageList';
+						break;
+					case '06':
+					case 'Image':
+						this.boardPostType = 'FAQ';
+						break;
+					case '07':
+					case 'Image':
+						this.boardPostType = 'reference';
+						break;
+					case '08':
+					case 'Image':
+						this.boardPostType = 'anonymous';
+						break;
+					default: this.boardPostType = 'none';
+				}
+			}
+
+			switch(pMode) {
+				case 'Board':
+					this.boardPostMode = false;
+					this.boardPostType = 'none';
+					this.boardContMode = false;
+					this.boardContType = 'none';
+					break;
+				case 'Post':
+					this.boardPostMode = true;
+					this.boardContMode = false;
+					this.boardContType = 'none';
+					break;
+				case 'ContEdit':		//게시물 에디트 모드
+					this.boardPostMode = true;
+					this.boardPostType = 'none';
+					this.boardContMode = true;
+					this.boardContType = 'edit';
+					this.$nextTick(function(){
+						this.editorInit();
+					});
+					// viewEditor 세팅
+					break;
+				case 'ContEditAns':		//게시물 에디트 모드
+					this.boardPostMode = true;
+					this.boardPostType = 'none';
+					this.boardContMode = true;
+					this.boardContType = 'edit';
+					this.answerEditorOn = true;
+					this.$nextTick(function(){
+						this.ansEditorInit();
+					});
+					// find
+					// viewEditor 세팅
+					break;
+				case 'ContView':
+					this.boardPostMode = true;
+					this.boardPostType = 'none';
+					this.boardContMode = true;
+					this.boardContType = 'view';
+					break;
+			}
+		},
+		isEmpty: function(value) {
+			if(value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length )) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+	    openBlankUrl: function(openUrl) {
+	        window.open(openUrl,'_blank');
+	    },
+	    viewAndLinkUrl: function(idx, openUrl){
+	    	this.selectPost(idx);
+	        window.open(openUrl,'_blank');
+	    },
+	    selectPost: function(pIdx) {			//게시판 미리보기에서 포스트를 선택하였을 때
+	    	// 슈퍼관리자 권한이나 내용확인 권한 모두 없는 경우는 조회 불가
+	    	if(this.authAll == 0 && this.authContentsView == 0){
+	    		notifySubmit('warning', '게시글 내용 확인', '게시글 내용 확인 권한이 없습니다.', 'icon-caution');
+	    	}else{
+	    		var tmpObj = this.boardPostList.currentRow;
+		    	this.boardPostList.selectRow(pIdx);
+		    	var self = this;
+				if(self.boardPostList.currentRow.BOARD_GB == '03' ){
+					self.pTitle = this.boardPostList.currentRow.TITLE;
+				}
+
+		    	//링크 글이고 자신이 쓴 게시물이 아니면 게시글 보기 화면 진입 금지 (커뮤니티에만 적용 필요)
+		    	//if(this.boardPostList.currentRow.LINK_YN=='Y' && this.boardPostList.currentRow.JAKSEONGJA_ID != this.session.USER_ID) return;
+
+		    	//비밀글 설정이 되어있고 내용 읽기가 허용되지 않은 경우는 상세보기 하지 않음.(관리자모드에서는 주석처리함)
+				//if(this.boardPostList.currentRow.BIMILGEUL_YN=='Y' && this.boardPostList.currentRow.TEXT_READ_YN=='N')
+				//	return;
+
+		    	//alert('b : ' + this.boardPostFile.getFileCnt());
+		    	var filesetVal = self.boardPostFile.getFiles('ADD_BOARD', self.boardPostList.currentRow.BOARD_SEQ+'#'+self.boardPostList.currentRow.POST_NO, 'attach', null);
+
+		    	if(!isNull(filesetVal)){
+		    		filesetVal.then(function(response) {
+						//뷰 카운트 증가 후 처리가 필요한 경우 구현
+						self.setImageURLTag(300, 400);
+					});
+		    	}
+
+				//답글 조회
+				var answerRetrunVal = boardApi.answerPostList({'POST_NO' : self.boardPostList.currentRow.POST_NO}, false);
+				answerRetrunVal.then(function(response) {
+					var data = response.data;
+					if(data.length > 0) {
+						self.rePostObj = data[0];
+					} else {
+						self.rePostObj = {};
+					}
+				});
+
+				//좋아요 조회
+				var likeReturnVal = boardApi.checkPostLike({'POST_NO':this.boardPostList.currentRow.POST_NO}, false);
+				if(!isNull(likeReturnVal)){
+					likeReturnVal.then(function (response) {
+						var data = response.data;
+						if(data.length > 0) {
+							self.likeOnOff = true;
+						}else{
+							self.likeOnOff = false;
+						}
+					})
+				}
+
+				//댓글 조회
+				this.setPostCmList();
+
+				//첨부파일 확인
+		    	this.postSearchPage = this.boardPostListPaging.currentPage;		//현재 포스트 페이지 저장(목록 및 저장 후 재조회에 사용)
+		    	this.boardPostList.currentRow.SEARCH_CNT = this.boardPostList.currentRow.SEARCH_CNT + 1;
+
+		    	//if(this.boardPostType=='image') {
+				//	alert('image');
+				//	this.setImageURLTag(300, 400);
+				//}
+
+		    	//조회 카운트 증가
+		    	this.mainListLoading.val = true;
+		    	var cntReturnVal = boardApi.boardPostUpdateCount({'POST_NO':this.boardPostList.currentRow.POST_NO}, false);
+		    	var contents = boardApi.boardPostContents({'POST_NO':this.boardPostList.currentRow.POST_NO}, false);
+
+				if(!isNull(contents)){
+					contents.then(function(response) {
+						//뷰 카운트 증가 후 처리가 필요한 경우 구현
+						self.boardPostList.setColumn(self.boardPostList.rowposition, 'CONTENTS', response.data.CONTENTS);
+						self.boardPostList.setColumn(self.boardPostList.rowposition, 'CONTENTS_HTML', response.data.CONTENTS_HTML);
+
+				    	// 작성글 웹에디터 설정
+				    	if(self.webEditor != null) {
+			                self.webEditor.setMarkdown(self.boardPostList.currentRow.CONTENTS);
+			            }
+
+// 				    	if(self.webViewer != null) {
+// 			                self.webViewer.setMarkdown(self.boardPostList.currentRow.CONTENTS);
+// 			            }
+						self.setBoardViewMode('ContView');	//화면 전환(포스트 내용 보기 화면)
+						self.$nextTick(function(){
+			    			$('#viewerSection > div').remove();
+
+			    			var pContents = self.boardPostList.currentRow.CONTENTS.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}');
+			    			//파일이 있을 경우 첨부파일 미리보기 실행
+			    			if(self.boardPostFile.getFileList().length > 0 && globalParam.BOARD_SEQ == '10'){
+			    				self.imageFullPathList.forEach(function(imageFullPath) {
+			    					if(imageFullPath.toLowerCase().indexOf('png') != '-1'
+			    					|| imageFullPath.toLowerCase().indexOf('jpg') != '-1'
+			    					|| imageFullPath.toLowerCase().indexOf('jpeg') != '-1'
+		    						|| imageFullPath.toLowerCase().indexOf('bmp') != '-1'
+		    						|| imageFullPath.toLowerCase().indexOf('gif') != '-1') {
+				    					pContents += '첨부파일 미리보기 <br> <p>';
+				    					pContents += "<img src='" + imageFullPath + "' alt='" + imageFullPath + "'><br>";
+			    					}
+			    		    	});
+
+			    				pContents += '</p>'
+			    			}
+
+			    			self.viewEditorInit('', pContents);
+
+						    $('#viewerSection').find('a').each(function(){
+						        $(this).attr('target','_blank');
+						    });
+
+						    self.clipboard = window.location.href + '&postNo='+self.boardPostList.currentRow.POST_NO;
+
+							// QnA 답글 조회
+							if(self.boardPostList.currentRow.BOARD_GB == '03') {
+								if(!self.isEmpty(self.rePostObj)){
+									self.answerOn = true;
+
+									self.$nextTick(function() {
+										$('#viewerSectionAnswer > div').remove();
+										var pAnswer = self.rePostObj.CONTENTS.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}');
+
+										self.viewEditorInit('Answer', pAnswer);
+
+										$('#viewerSectionAnswer').find('a').each(function () {
+											$(this).attr('target', '_blank');
+										});
+									});
+								}else{
+									self.answerOn = false;
+								}
+							}
+						});
+					}).finally(function(){
+						self.mainListLoading.val = false;
+					});
+				}
+	    	}
+	    },
+	    selectEditPost: function(pIdx) {           //게시판 미리보기에서 포스트를 선택하였을 때
+            var tmpObj = this.boardPostList.currentRow;
+            this.boardPostList.selectRow(pIdx);
+            var self = this;
+
+            //링크 글이고 자신이 쓴 게시물이 아니면 게시글 보기 화면 진입 금지 (커뮤니티에만 적용 필요)
+            //if(this.boardPostList.currentRow.LINK_YN=='Y' && this.boardPostList.currentRow.JAKSEONGJA_ID != this.session.USER_ID) return;
+
+            //비밀글 설정이 되어있고 내용 읽기가 허용되지 않은 경우는 상세보기 하지 않음.(관리자모드에서는 주석처리함)
+            //if(this.boardPostList.currentRow.BIMILGEUL_YN=='Y' && this.boardPostList.currentRow.TEXT_READ_YN=='N')
+            //  return;
+
+            //alert('b : ' + this.boardPostFile.getFileCnt());
+            var filesetVal = this.boardPostFile.getFiles('ADD_BOARD', this.boardPostList.currentRow.BOARD_SEQ+'#'+this.boardPostList.currentRow.POST_NO, 'attach', null);
+            if(!isNull(filesetVal)){
+                filesetVal.then(function(response) {
+                    //뷰 카운트 증가 후 처리가 필요한 경우 구현
+                    self.setImageURLTag(300, 400);
+                });
+            }
+
+            //첨부파일 확인
+            this.postSearchPage = this.boardPostListPaging.currentPage;     //현재 포스트 페이지 저장(목록 및 저장 후 재조회에 사용)
+            this.boardPostList.currentRow.SEARCH_CNT = this.boardPostList.currentRow.SEARCH_CNT + 1;
+
+            //if(this.boardPostType=='image') {
+            //  alert('image');
+            //  this.setImageURLTag(300, 400);
+            //}
+
+            this.mainListLoading.val = true;
+            var contents = boardApi.boardPostContents({'POST_NO':this.boardPostList.currentRow.POST_NO}, false);
+
+			if(!isNull(contents)){
+				contents.then(function(response) {
+					self.boardPostList.setColumn(self.boardPostList.rowposition, 'CONTENTS', response.data.CONTENTS);
+					self.boardPostList.setColumn(self.boardPostList.rowposition, 'CONTENTS_HTML', response.data.CONTENTS_HTML);
+
+					// 작성글 웹에디터 설정
+		            if(self.webEditor != null) {
+		                self.webEditor.setMarkdown(self.boardPostList.currentRow.CONTENTS);
+		            }
+
+					self.$nextTick(function(){
+						self.setBoardViewMode('ContEdit');  //화면 전환(포스트 내용 보기 화면)
+					});
+				}).finally(function(){
+					self.mainListLoading.val = false;
+				});
+			}
+        },
+		postPreview: function(pBoardObj) {	//게시판 목록에서 미리보기 버튼 눌렀을 때
+			this.selectedBoardSeq = pBoardObj.BOARD_SEQ;	//선택된 BOARD_SEQ 설정
+			this.selectedBoardGb = pBoardObj.BOARD_GB;
+			this.setBoardPostList(null, null, pBoardObj.PAGE_BOARD_CNT);
+			this.boardPostListPaging.movePage(1);	//게시물 페이지 인덱스 초기화
+			this.boardPostFile.setMaxCnt(pBoardObj.CHEOMBU_FILE_CNT);	//파일 업로드 갯수 설정
+
+			this.setBoardViewMode('Post', pBoardObj.BOARD_GB);
+		},
+	    viewPostList: function() {		//목록버튼을 눌렀을 때 처리
+			this.imageTagsList = [];
+			this.rePostObj = {};
+			this.answerEditorOn = false;
+
+	    	if(isNull(this.postSearchPage)) this.postSearchPage = 1;
+
+			if(!isNull(globalParam.POST_NO)){
+				this.setBoardInfo(globalParam.BOARD_SEQ);
+				this.setAuthInfo(globalParam.BOARD_SEQ); // 게시판의 권한 정보 설정 - 게시판 순번, 세션의 사용자 권한 사용
+
+				//this.setBoardList();
+				this.userId = this.session.INTERNAL_ID;
+				this.userNm = this.session.USER_NM;
+				this.userNick = this.session.USER_ADD_COL1;
+			}
+
+	    	var self = this;
+
+	    	if(this.boardPostList.currentRow.ROW_TYPE==ROWTYPE_INSERT) {
+	    		var returnVal = boardApi.boardPostRemove(this.boardPostList.currentRow, true);
+
+	    		if(!isNull(returnVal)){
+					returnVal.then(function(response) {
+// 						self.setBoardPostList(null, self.postSearchPage);
+						self.setBoardViewMode('Post', self.boardList.currentRow.BOARD_GB);
+				    	return;
+					});
+				}
+	    	}
+
+// 	    	this.setBoardPostList(null, this.postSearchPage);
+	    	this.setBoardViewMode('Post', this.boardList.currentRow.BOARD_GB);
+	    	
+	    	if(this.boardPostList.currentRow.ROW_TYPE=="2") {
+	    		this.boardPostList.deleteRow(this.boardPostList.rowposition);
+	    	}
+	    },
+	    boardPostSave: function(pEntry) {			//게시물 수정
+	    	var entry = pEntry;
+	    	var self = this;
+
+			var validate = this.$validator.validateAll();
+
+			var contents = this.webEditor.getMarkdown();        // markdown tag data 저장
+            var contentsHtml = this.webEditor.getHTML();     // html tag data 저저
+
+            contents = contents.replace(/\[/g, '&#91;').replace(/\]/g, '&#93;').replace(/\{/g, '&#123;').replace(/\}/g, '&#125;').replaceAll("\n\n", "\n<br>\n");
+            contentsHtml = contentsHtml.replace(/\[/g, '&#91;').replace(/\]/g, '&#93;').replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
+
+            entry["CONTENTS"] = contents.replace(/^[\s\u00a0]+|[\s\u00a0]+$/g, '&nbsp;').replace(/\u00A0/g, "&nbsp;").replace(/[\r\n]+/g, "\n");
+            entry["CONTENTS_HTML"] = contentsHtml;
+            entry["CONTENTS_PREVIEW"] = contentsHtml.replace(/(<([^>]+)>)/ig,"").replace(/[&]nbsp[;]/gi,'').cut(200);
+
+			entry["ROW_TYPE"] = self.boardPostList.currentRow.ROW_TYPE;
+
+			if(self.boardPostList.currentRow.BOARD_GB == '08'&& self.boardPostList.currentRow.JAKSEONGJA_GB == '04'){
+				entry["JAKSEONGJA_NM"] = self.userNick;
+			}
+
+			validate.then(function(response) {
+				if(response){
+			    	if(entry.ROW_TYPE==ROWTYPE_INSERT) entry["DELETE_YN"] = 'N';	//신규 POST를 저장하는 경우 임시로 설정한 삭제 상태를 복구 시킨다.
+			    	self.mainListLoading.val = true;
+					var returnVal = boardApi.boardPostUpdate(entry, true);
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							self.setBoardPostList(null, self.postSearchPage);
+							self.setBoardViewMode('Post', self.boardPostList.currentRow.BOARD_GB);
+							notifySubmit('success', '게시물 저장', '저장이 완료되었습니다.', 'icon-save');
+						}).finally(function(){
+							self.mainListLoading.val = false;
+						});
+					}else{
+						notifySubmit('warning', '게시물 저장', '저장에 실패하였습니다.', 'icon-caution');
+					}
+				}else{
+					notifySubmit('warning', '공통코드 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+	    },
+	    boardPostDelete: function(row) {
+	    	this.boardPostList.selectRow(row);
+	    	var self = this;
+	    	//삭제 처리 시  게시물은 삭제 하지 않고 삭제 상태로 변경만 하므로 첨부파일도 미삭제
+	    	//this.boardPostFile.delFiles('ADD_BOARD', this.boardPostList.currentRow.BOARD_SEQ+'#'+this.boardPostList.currentRow.POST_NO, 'attach', null);
+			self.mainListLoading.val = true;
+	    	var returnVal = boardApi.boardPostDelete(this.boardPostList.currentRow, true);
+
+
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					self.setBoardPostList(null, self.postSearchPage);
+					self.setBoardViewMode('Post', self.boardPostList.currentRow.BOARD_GB);
+					notifySubmit('success', '게시물 삭제', '삭제가 완료되었습니다.', 'icon-save');
+				}).catch(function(error) {
+					notifySubmit('warning', '게시물 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}).finally(function(){
+					self.mainListLoading.val = false;
+				});
+			}
+	    },
+		boardAnswerDelete: function(row) {
+			var self = this;
+			//삭제 처리 시  게시물은 삭제 하지 않고 삭제 상태로 변경만 하므로 첨부파일도 미삭제
+			//this.boardPostFile.delFiles('ADD_BOARD', this.boardPostList.currentRow.BOARD_SEQ+'#'+this.boardPostList.currentRow.POST_NO, 'attach', null);
+			self.mainListLoading.val = true;
+			var returnVal = boardApi.boardPostDelete(this.rePostObj, true);
+
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					self.setBoardPostList(null, self.postSearchPage);
+					self.setBoardViewMode('Post', self.boardPostList.currentRow.BOARD_GB);
+					notifySubmit('success', '게시물 삭제', '삭제가 완료되었습니다.', 'icon-save');
+				}).catch(function(error) {
+					notifySubmit('warning', '게시물 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}).finally(function(){
+					self.mainListLoading.val = false;
+				});
+			}
+		},
+	    getBoardListCount: function() {
+	    	var cnt;
+
+	    	try {
+	    		cnt = this.boardPostList.data[0].CNT;
+	    	} catch(e) {
+	    		cnt = 0;
+	    	}
+
+	    	return cnt;
+	    },
+	    getPostNoStr: function(pStr) {
+	    	var strArr = pStr.split('.');
+	    	return strArr[0];
+	    },
+	    setPostCmList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				var pageNo = pPageNo;
+				var pBoardSeq = this.selectedBoardSeq;
+				var rowCount = this.postCmListPaging.getRowCnt();
+
+				if(isNull(pageNo)) pageNo = 1;
+
+				var returnVal = boardApi.postCm(this.boardPostList.currentRow.POST_NO, pageNo, rowCount, true);
+				var self = this;
+
+				if(!isNull(returnVal)){
+					returnVal.then(function(response) {
+						self.postCmList.setData(response.data);
+						//댓글 조회 완료 후 처리
+
+						if(self.postCmList.getRowCount() > 0){
+							var totalCnt = self.postCmList.data[0].CNT;
+							self.postCmListPaging.setTotalCnt(totalCnt)
+							self.postCmListPaging.movePage(pageNo);
+						}else{
+							self.postCmListPaging.setTotalCnt(0);
+						}
+					});
+				}
+			}
+		},
+	    insertPostCm: function() {
+			if(this.authAll == 0 && this.authCommentWrite == 0){
+				notifySubmit('warning', '게시글 댓글 등록', '댓글 작성 권한이 없습니다.', 'icon-caution');
+			}else{
+				var cmData = { "DELETE_YN":"N" };
+				cmData["POST_NO"] = this.boardPostList.currentRow.POST_NO;
+				cmData["TEXT"] = $('#postCm').val();
+
+				//로그인 정보로 설정
+				cmData["JAKSEONGJA_ID"] = this.userId;
+				if(this.boardList.currentRow.JAKSEONGJA_GB == '04'){
+					cmData["JAKSEONGJA_NM"] = this.userNick;
+				} else {
+					cmData["JAKSEONGJA_NM"] = this.userNm;
+				}
+
+				var returnVal = boardApi.postCmInsert(cmData, true);
+				var self = this;
+
+				if(!isNull(returnVal)){
+					returnVal.then(function(response){
+						var data = response.data;
+						//alert(JSON.stringify(data));
+						if(data == '1'){
+							self.setPostCmList();
+							$('#postCm').val('');
+							boardApi.boardPostUpdateCmCount(self.boardPostList.currentRow);
+							notifySubmit('success', '댓글 저장', '저장이 완료되었습니다.', 'icon-save');
+						}else{
+							notifySubmit('warning', '댓글 저장', '저장에 실패하였습니다.', 'icon-caution');
+						}
+					});
+				}
+			}
+	    },
+	    deletePostCm: function(pIdx) {
+	    	this.postCmList.selectRow(pIdx);
+
+	    	var returnVal = boardApi.postCmDelete(this.postCmList.currentRow, true);
+	    	var self = this;
+
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					var data = response.data;
+					//alert(JSON.stringify(data));
+					if(data == '1'){
+						self.setPostCmList();
+						boardApi.boardPostUpdateCmCount(self.boardPostList.currentRow);
+						notifySubmit('success', '댓글 삭제', '삭제가 완료되었습니다.', 'icon-save');
+					}else{
+						notifySubmit('warning', '댓글 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+	    },
+		insertPostLike: function() {
+			var self = this;
+
+			var params = {
+				POST_NO : self.boardPostList.currentRow.POST_NO
+			};
+
+			var returnVal = boardApi.postLikeInsert(params, true);
+
+			if(!isNull(returnVal)){
+				returnVal.then(function (response) {
+					var data = response.data;
+					if(data == '1') {
+						self.likeOnOff = true;
+						boardApi.boardPostUpdateLikeCount(self.boardPostList.currentRow);
+						self.boardPostList.currentRow.LIKE_CNT += 1;
+						notifySubmit('success', '좋아요 등록', '좋아요가 등록되었습니다.', 'icon-save');
+					}else{
+						notifySubmit('warning', '좋아요 등록 실패', '좋아요 등록을 실패하셨습니다.', 'icon-caution');
+					}
+				})
+			}
+		},
+		deletePostLike: function() {
+			var self = this;
+
+			var params = {
+				POST_NO : self.boardPostList.currentRow.POST_NO
+			};
+
+			var returnVal = boardApi.postLikeDelete(params, true);
+			if(!isNull(returnVal)){
+				returnVal.then(function (response) {
+					var data = response.data;
+					if(data == '1') {
+						self.likeOnOff = false;
+						boardApi.boardPostUpdateLikeCount(self.boardPostList.currentRow);
+						self.boardPostList.currentRow.LIKE_CNT -= 1;
+						notifySubmit('success', '좋아요 취소', '좋아요가 취소되었습니다.', 'icon-save');
+					}else{
+						notifySubmit('warning', '좋아요 취소 실패', '좋아요 취소를 실패했습니다.', 'icon-caution');
+					}
+				})
+			}
+		},
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+        /* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+
+            switch(pId) {
+	    		case 'ID_SAVE_BOARD':
+	    		case 'ID_SAVE_POST':
+	    		case 'ID_SAVE_CM':
+                    title = '저장';
+                    cont = '입력한 내용을 저장하시겠습니까?';
+	    			break;
+	    		case 'ID_DEL_BOARD':
+	    		case 'ID_DEL_POST':
+	    		case 'ID_DEL_CM':
+				case 'ID_DEL_ANSWER':
+	    			title = '삭제';
+                    cont = '해당 항목을 삭제하시겠습니까?';
+                    break;
+				case 'TITLE_IMG_NULL':
+					title = '저장';
+					cont = '대표 이미지가 비어있습니다. 저장하시겠습니까?';
+					break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+
+	    	switch(pId) {
+	    		case 'ID_SAVE_BOARD':
+	    			this.saveRow();
+	    			break;
+    			case 'ID_SAVE_POST':
+    				//this.boardPostSave(this.boardPostList.currentRow);
+    				break;
+    			case 'ID_SAVE_CM':
+    				//this.insertPostCm();
+    				break;
+		    	case 'ID_DEL_BOARD':
+	    			this.deleteRow(pData);
+	    			break;
+	    		case 'ID_DEL_POST':
+	    			this.boardPostDelete(pData);
+	    			break;
+				case 'ID_DEL_ANSWER':
+					this.boardAnswerDelete(pData);
+					break;
+	    		case 'ID_DEL_CM':
+	    			this.deletePostCm(pData);
+	    			break;
+				case 'TITLE_IMG_NULL':
+					this.boardPostSave(pData);
+					break;
+	    	}
+	    },
+	    setImageURL: function() {
+	    	//this.imageFullPathList	//파일업로드 이미지 경로 리스트
+	    	//if(this.boardPostFile.getFileCnt() < 1) return;
+
+	    	var globalProtocol = window.location.protocol;
+	    	var globalHost = window.location.host;
+
+	    	var arrImagePath = this.boardPostFile.getFileList();
+	    	this.imageFullPathList = [];
+
+	    	var self = this;
+
+	    	arrImagePath.forEach(function(imagePath) {
+	    		var filePath = imagePath.FILE_PATH.replaceAll('\\','/');
+	    		self.imageFullPathList.push(globalProtocol + '//' + globalHost + '/upload' + filePath);
+	    	});
+	    },
+	    setImageURLTag: function(pHeight, pWidth){
+
+	    	//초기화
+	    	this.imageTagsList = [];
+
+	    	//첨부파일이 없으면 종료
+	    	if(this.boardPostFile.getFileCnt() < 1) return;
+
+	    	var height = isNull(pHeight)?600:pHeight;
+	    	var width = isNull(pWidth)?600:pWidth;
+
+	    	this.setImageURL();
+
+	    	var self = this;
+
+	    	this.imageFullPathList.forEach(function(imageFullPath) {
+	    		self.imageTagsList.push('<img height="' + height +'" width="' + width + '" align="center" src="' + imageFullPath + '">');
+	    		//self.imageTagsList.push('<img src=' + imageFullPath + '>');
+	    	});
+	    },
+	    notAuthMsg : function (authType) {
+	    	if(authType == 'read') {
+	    		notifySubmit('warning', '게시글 내용 확인', '비밀글은 작성자만 확인할 수 있습니다.', 'icon-caution');
+	    		return ;
+	    	}
+	    },
+	    showHideView: function (index) {
+	    	var self = this;
+
+	    	self.boardPostList.selectRow(index);
+
+	    	self.$nextTick(function(){
+    			$('#viewerSection' + index + ' > div').remove();
+    			var pContents = self.boardPostList.currentRow.CONTENTS.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}');
+
+    			self.viewEditorInit(index, pContents);
+
+			    $('#viewerSection' + index).find('a').each(function(){
+			        $(this).attr('target','_blank');
+			    });
+
+			    self.clipboard = window.location.href + '&postNo='+self.boardPostList.currentRow.POST_NO;
+
+				if(index == self.boardPostList.rowposition) self.toggleTr();
+			});
+	    },
+	    toggleTr: function(){
+            var hiddenDiv = this.$refs['hidden-div'+this.boardPostList.rowposition];
+            var targetDiv = this.$refs['target-div'+this.boardPostList.rowposition];
+
+            if ($(targetDiv).hasClass('on')) {
+            	$(targetDiv).removeClass('on');
+                $(targetDiv).siblings('.answer').slideUp();
+            } else {
+            	$('.board-faq .answer').slideUp();
+                $('.board-faq .question').removeClass('on');
+                $(targetDiv).siblings('.answer').slideDown();
+                $(targetDiv).addClass('on');
+            }
+        },
+        uploadImage: function(blob) {
+			var formData = new FormData();
+			var serviceAbbrNm = 'ADD';
+			var fileId = 'ADD_BOARD_POST';
+			var fileHangmok = 'EDITOR_IMG';
+			var fileKey = this.boardPostList.currentRow.POST_NO;
+
+   		    formData.append('serviceAbbrNm', serviceAbbrNm);
+   		    formData.append('upload_path', serviceAbbrNm + '\\' + fileId + '\\' + fileHangmok);
+   		    formData.append('fileId', fileId);
+   		    formData.append('fileKey', fileKey);
+   		    formData.append('fileHangmok', fileHangmok);
+   		 	formData.append('file1', blob, blob.name);
+
+   		 	return axios.post('/commons/file/upload-editor',
+   	    		formData,
+   	            {
+   	                headers: {
+   	                    'Content-Type': 'multipart/form-data'
+   	                }
+   	            }
+  	        );
+		},
+		copyUrl: function() {
+			this.$copyText(this.clipboard).then(function (e) {
+				notifySubmit('success', '클립보드 복사', '게시물 주소가 클립보드에 복사되었습니다.', 'icon-save');
+           	}, function (e) {
+           		notifySubmit('error', '클립보드 복사', '게시물 주소 복사에 실패하였습니다.', 'icon-save');
+           	});
+		},
+		titleImgListSet: function() {
+			var self = this;
+			var _protocol = window.location.protocol;
+			var _host = window.location.host;
+			var _url = _protocol + "//" + _host;
+    		var arrayOfImageSrcs = getAttrFromString(self.webEditor.getHTML(),'img','src');
+    		var titleImgUrl = '';
+    		var isTitleImg = false;
+
+    		if(self.boardPostList.currentRow && self.boardPostList.currentRow.TITLE_IMG_URL){
+    			titleImgUrl = self.boardPostList.currentRow.TITLE_IMG_URL;
+    		}
+
+            self.titleImgList.clear();
+
+            for(var i=0 ; i < arrayOfImageSrcs.length ; i++){
+            	var imgSrc = arrayOfImageSrcs[i];
+            	var newRowPosition = self.titleImgList.addRow();
+
+            	self.titleImgList.setColumn(newRowPosition, 'SRC', imgSrc);
+            	if(imgSrc == titleImgUrl) isTitleImg = true;
+            }
+
+            var arrImagePath = self.boardPostFile.getFileList();
+
+	    	arrImagePath.forEach(function(imagePath) {
+	    		var filePath = imagePath.FILE_PATH.replaceAll('\\','/');
+	    		var testing = /(jpg|gif|png)$/.test(filePath);
+
+	    		if(testing){
+                	var newRowPosition = self.titleImgList.addRow();
+	    			self.titleImgList.setColumn(newRowPosition, 'SRC', _url+'/upload'+filePath);
+	    			if(_url+'/upload'+filePath == titleImgUrl) isTitleImg = true;
+	    		}
+	    	});
+
+	    	if(!isTitleImg){
+	    		if(self.boardPostList.currentRow){
+        			self.boardPostList.currentRow.TITLE_IMG_URL = '';
+        		}
+	    	}
+		},
+		titleImgSelect: function(pTitmeImgUrl) {
+			if(this.boardPostList.currentRow){
+				this.boardPostList.currentRow.TITLE_IMG_URL = pTitmeImgUrl;
+			}
+		},
+		getContextPreView: function(pContextPreview){
+			var contextPreview = String(pContextPreview);
+
+			if(!isNull(contextPreview.length)){
+				contextPreview = contextPreview.replace(/&#91;/g, '[').replace(/&#93;/g, ']').replace(/&#123;/g, '{').replace(/&#125;/g, '}');
+			}else{
+				contextPreview = '';
+			}
+
+			return contextPreview.substr(0, 180) + '...';
+		}
+	}
+});
+
+
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start
+ ********************************************************************************************************************************************************************/
+
+/* var notify = jui_ui_notify("#app",{
+	position: "bottom-right",
+	//showDuration: 1000,
+    //hideDuration: 1000,
+    //timeout: 0,
+    //distance: 30,
+	padding: {
+	    bottom: 100
+	},
+	tpl: {
+	    item: $("#notify").html()
+	}
+});
+
+notifySubmit = function(color, title, message, icon) {
+	// color: success, info, warning, danger
+    var data = {
+        title: title,
+        message: message,
+        color: color,
+        icon: icon
+    };
+
+    notify.add(data);
+}; */
+/*******************************************************************************************************************************************************************
+ * jui script end
+ ********************************************************************************************************************************************************************/
+
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+	Vue.component(VueCarousel.name, VueCarousel);
+
+});
+
+/* (function(window, Editor) {
+
+	vm.webEditor = new toastui.Editor({
+		el: document.querySelector('#editSection'),
+	   	language: 'ko_KR',
+   	    initialEditType: 'wysiwyg',
+   	    previewStyle: 'vertical',
+   	    exts: ['colorSyntax'],
+   	    height: '300px',
+	});
+	window.webEditor = vm.webEditor;
+
+})(window, toastui.Editor); */
+
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>
+

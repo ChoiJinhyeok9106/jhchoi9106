@@ -1,0 +1,173 @@
+spring:
+  profiles:
+    active: "dev"
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  
+enable-csrf: true
+    
+
+---
+sysprop:
+  sessionKeyId: id
+  sessionKeyCurrentPg: current_program
+  sessionDupCheckType: 0
+  uploadDir: upload/
+  uploadPath: upload_path
+  uploadFixedName: upload_fixed_name
+  uploadMaxSize: max_size
+  uploadErr: upload_error
+  uploadCnt: upload_count
+  uploadAllowMimetypes: 
+    - image
+    - audio
+    - video
+    - application/pdf
+    - application/x-hwp
+    - application/haansofthwp
+    - application/x-tika-msoffice
+    - application/x-tika-ooxml
+    - application/vnd.ms-excel
+    - application/vnd.ms-powerpoint
+    - application/vnd.ms-word
+    - application/vnd.openxmlformats-officedocument
+    - application/x-zip-compressed
+    - application/zip
+    - application/xml
+    - text/plain
+    - application/msword
+  filemapPath: filemap_path
+  filemapName: filemap_name
+  filemapType: filemap_type
+  filemapSize: filemap_size
+  suffixListParam: _LIST
+  suffixJsonListParam: JSON_DATA_LIST
+  defaultPageSize: 10
+  downloadFile: file_path
+  downloadFileNm: file_nm
+
+---
+spring: 
+  profiles: local
+  databse:
+    main: maria
+    sub1: xxx
+    sub2: xxx
+  maria:
+    mapper-locations: classpath*:mapper/maria/**/*.xml
+    callSettersOnNulls: true
+    datasource:
+      jdbc-url: jdbc:log4jdbc:mariadb://59.20.180.195:3308/CSAP_EAM?characterEncoding=UTF-8&useUnicode=true&serverTimezone=KST&allowMultiQueries=true
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      username: CSAP
+      password: CSAP
+logging:
+  level:
+    kr.co.codefarm.svcm: debug
+    web: debug
+    jdbc.sqlonly: debug
+    jdbc.resultset: off
+    jdbc.resultsettable: debug
+v-context:
+  login: /
+server:
+  error.include-stacktrace: never
+  servlet.session.timeout: 10800
+  #ssl:
+  #  enabled: true
+  #  key-store: keystore.p12
+  #  key-store-password: localhost
+  #  key-store-type: PKCS12
+  #  key-alias: local-ssl
+  #port: 443
+  port: 8080
+homedir: /upload
+keyfile: 
+use-sso: false
+sso:
+  ssoUri:
+  clientId:
+  clientSecret:
+  scope:
+  check:
+sso-home: 
+use-ssl: false
+service-origin-url: 
+jwt:
+  maindomain:
+#  properties: mail.smtp.auth:false, mail.smtp.starttls.enable:true
+devtools:
+  restart:
+    enabled: true
+  livereload:
+    enabled: true
+mail:
+  host: mail.codefarm.co.kr
+  port: 25
+  username: no-reply@codefarm.co.kr
+  password: zhemvka@noreply
+  properties: 
+
+---
+spring: 
+  profiles: dev
+  databse:
+    main: maria
+    sub1: xxx
+    sub2: xxx
+  maria:
+    mapper-locations: classpath*:mapper/maria/**/*.xml
+    callSettersOnNulls: true
+    datasource:
+      jdbc-url: jdbc:log4jdbc:mariadb://10.0.0.113:3306/CSAP_EAM?characterEncoding=UTF-8&useUnicode=true&serverTimezone=KST&allowMultiQueries=true
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      username: CSAP
+      password: CSAP
+logging:
+  level:
+    kr.co.codefarm.svcm: debug
+    web: debug
+    jdbc.sqlonly: debug
+    jdbc.resultset: off
+    jdbc.resultsettable: debug
+v-context:
+  login: /
+server:
+  error.include-stacktrace: never
+  servlet.session.timeout: 10800
+  #ssl:
+  #  enabled: true
+  #  key-store: keystore.p12
+  #  key-store-password: localhost
+  #  key-store-type: PKCS12
+  #  key-alias: local-ssl
+  #port: 443
+  port: 8080
+homedir: /upload
+keyfile: 
+use-sso: false
+sso:
+  ssoUri:
+  clientId:
+  clientSecret:
+  scope:
+  check:
+sso-home: 
+use-ssl: false
+service-origin-url: 
+jwt:
+  maindomain:
+#  properties: mail.smtp.auth:false, mail.smtp.starttls.enable:true
+devtools:
+  restart:
+    enabled: true
+  livereload:
+    enabled: true
+mail:
+  host: mail.codefarm.co.kr
+  port: 25
+  username: no-reply@codefarm.co.kr
+  password: zhemvka@noreply
+  properties: 

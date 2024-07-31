@@ -1,0 +1,493 @@
+<h2>프로그램 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!serviceList.currentRow">
+		<h2 class="h2">서비스 리스트</h2>
+		<div class="box-type03 col-inline">
+			<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select name="pSearchType" v-model="pSearchType" style="width:184px;" class="size-m">
+		            <option value="1">서비스 코드</option>
+		            <option value="2">서비스 명</option>
+		            <option value="3">서비스 영문 명</option>
+            </select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="입력하세요" v-on:keyup.13="search()">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search()">
+	    </div>
+	    
+		<div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{serviceListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{serviceListPaging.getCurrentPage()}}</span> / {{serviceListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="mainListLoading">
+					<caption>서비스 번호, 서비스 코드, 서비스 명, 서비스 영문 명, 주소를 조회 항목별 순서대로 안내하는 표입니다</caption>	
+					<colgroup>
+						<col width="13%" />
+						<col width="20%" />
+						<col width="20%" />
+						<col/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th class="left" scope="col">서비스 코드(약어)</th>
+							<th class="left" scope="col">서비스 명</th>
+							<th class="left" scope="col">서비스 영문명</th>
+							<th class="left" scope="col">주소</th>
+						</tr>
+					</thead>
+					<tbody v-if="serviceList.getRowCount() > 0">
+						<tr v-for="(item, index) in serviceList.data" v-if="serviceList.getRowType(index) != 8">
+							<td class="left" data-header="서비스 코드"><a href="#!" @click="rowClick(index)">{{item.SERVICE_CD}}</a></td>
+							<td class="left" data-header="서비스 명"><a href="#!" @click="rowClick(index)">{{item.SERVICE_NM}}</a></td>
+							<td class="left" data-header="서비스 영문명"><a href="#!" @click="rowClick(index)">{{item.SERVICE_ENM}}</a></td>
+							<td class="left" data-header="서비스 주소"><a href="#!" @click="rowClick(index)">{{item.DOMAIN}}<span v-if="item.PORT">:{{item.PORT}}</span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="serviceListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+		
+		
+	<section class="cont_box board-view-page nonsubject-info" v-if="serviceList.currentRow">
+		<div class="row form-row head-box">
+   			<div class="form-group col s12 l8">
+	   			<p class="title">[{{serviceList.currentRow.SERVICE_CD}}] {{serviceList.currentRow.SERVICE_NM}}</p>
+	        	<p class="description">{{serviceList.currentRow.SERVICE_ENM}}</p>
+   			</div>
+    		<div class="form-group col s12 l4 right">
+	    		<a href="#!" class="btn type01 size-m left-icon icon-corner-left-up" @click="serviceList.selectRow(-1); programList.clear(); programListPaging.setTotalCnt(0);">목록</a>
+	    		<input type="button" value="신규" class="btn type02 size-m" @click="newRow">
+    		</div>
+   		</div>
+   		
+   		<div class="col s12 m12 xl12">
+			<table class="table-type01 response" summary="프로그램구분,프로그램 명, 프로그램 직함, 시작일자, 종료일자" id="sub1ListLoading">
+				<caption>프로그램 목록</caption>
+				<colgroup>
+					<col width="7%" />
+					<col width="15%" />
+					<col />
+					<col width="12%" />
+					<col width="10%" />
+					<col width="7%" />					
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col">상태</th>
+						<th scope="col" class="left">프로그램 아이디</th>
+						<th scope="col" class="left">프로그램 명</th>
+						<th scope="col">개인정보 사용여부</th>
+						<th scope="col">사용여부</th>
+						<th scope="col">삭제</th>					
+					</tr>
+				</thead>
+				<tbody v-if="programList.getRowCount() > 0">
+					<tr v-for="(item, index) in programList.data" v-if="programList.getRowType(index) != 8">
+						<td :class="programList.getRowType(index, 'class')" data-header="상태"></td>
+						<td class="left" data-header="프로그램 아이디"><a href="#!" @click="subRowClick(index)">{{item.PGM_ID}}</a></td>
+						<td class="left" data-header="프로그램 명"><a href="#!" @click="subRowClick(index)">{{item.PGM_NM}}</a></td>
+						<td data-header="개인정보 사용여부"><a href="#!" @click="subRowClick(index)" :class="{'btn-table-type02':item.GAEINJEONGBO_USE_YN == 'Y', 'btn-table-type01':item.GAEINJEONGBO_USE_YN == 'N'}"><span :class="{'icon-checkmark':item.GAEINJEONGBO_USE_YN == 'Y', 'icon-minus-circle':item.GAEINJEONGBO_USE_YN == 'N'}"></span></a></td>
+						<td data-header="사용여부"><a href="#!" @click="subRowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+						<td data-header="삭제"><a href="#!" @click="messagePopup('PGM_DELETE', index)"><span class="icon-trashcan"></span></a></td>
+					</tr>	
+				</tbody>
+				<tbody v-else>
+					<tr>
+						<td colspan="100">검색결과가 없습니다.</td>
+					</tr>
+				</tbody>
+			</table>
+			<paging :pagingset="programListPaging" :type="'normal'"></paging>
+		</div>
+		
+		<section class="cont_box" v-if="programList.currentRow">
+			<h2 class="h2" id="detail">프로그램 관리 상세</h2>
+			<div class="style_set box-type01">
+                <div class="row form-row">
+					<div class="form-group col s12 m6 l6 xl6">
+			            <label class="label-type01 required" for="pgmId">프로그램 아이디</label>
+			            <input class="size-m" type="text" id="pgmId"  name="pgmId"  placeholder="파일명(확장자 제외)" data-vv-as="프로그램 아이디 " v-model="programList.currentRow.PGM_ID" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('pgmId')}" :disabled="updateDisabled"/>
+			            <invalid-message :visible="programList.currentRow" :name="'pgmId'" :verror="errors"/>
+			        </div>
+			        <div class="form-group col s12 m6 l6 xl6">
+			            <label class="label-type01 required" for="pgmNm">프로그램 명</label>
+			            <input class="size-m" type="text" id="pgmNm"  name="pgmNm"  placeholder="알아보기 쉬운 프로그램 명" data-vv-as="프로그램 명 " v-model="programList.currentRow.PGM_NM" v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('pgmNm')}"/>
+			            <invalid-message :visible="programList.currentRow" :name="'pgmNm'" :verror="errors"/>
+			        </div>
+			    </div>
+				<div class="row form-row">
+					<div class="form-group col s12 m6 l3 xl3">
+			            <label class="label-type01 required" for="gaeinjeongboUseYn">개인정보 사용여부</label>
+			            <div class="form-check">
+			        		<label class="toggle-switch">
+							<input class="size-m" type="checkbox" id="gaeinjeongboUseYn" name="gaeinjeongboUseYn" data-vv-as="개인정보 사용여부 " v-model="programList.currentRow.GAEINJEONGBO_USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('useYn')}"/>
+							<span class="slider round"></span>
+							</label>
+						</div>
+					</div>
+					<div class="form-group col s12 m6 l9 xl9">
+			            <label class="label-type01" for="gaeinjeongboItem">개인정보 항목</label>
+			            <input class="size-m" type="text" id="gaeinjeongboItem"  name="gaeinjeongboItem"  placeholder="ex) 주민등록번호, 휴대폰번호 .." data-vv-as="개인정보 항목 " v-model="programList.currentRow.GAEINJEONGBO_ITEM" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('gaeinjeongboItem')}" :disabled="programList.currentRow.GAEINJEONGBO_USE_YN == 'Y' ? false : true"/>
+			            <invalid-message :visible="programList.currentRow && programList.currentRow.GAEINJEONGBO_USE_YN == 'Y'" :name="'gaeinjeongboItem'" :verror="errors"/>
+			        </div>
+				</div>
+				<div class="row form-row">
+					<div class="form-group col s12 m6 l3 xl3">
+			            <label class="label-type01 required" for="useYn">사용여부</label>
+			            <div class="form-check">
+			        		<label class="toggle-switch">
+							<input class="size-m" type="checkbox" id="useYn" name="useYn" data-vv-as="사용여부 " v-model="programList.currentRow.USE_YN" true-value="Y" false-value="N" v-bind:class="{'invalid': errors.has('useYn')}"/>
+							<span class="slider round"></span>
+							</label>
+						</div>
+					</div>
+					<div class="form-group col s12 m6 l9 xl9">
+			            <label class="label-type01" for="remark">비고</label>
+			            <input class="size-m" type="text" id="remark"  name="remark"  placeholder="비고" data-vv-as="비고 " v-model="programList.currentRow.REMARK" v-validate="'max:300'" v-bind:class="{'invalid': errors.has('remark')}"/>
+			        </div>
+				</div>
+	        </div>
+			<div class="col-inline btn-line right">
+				<div class="col-inline right">
+					<a href="#!" class="btn type01 size-m" @click="messagePopup('PGM_DELETE', programList.rowposition)">삭제</a>
+					<a href="#!" class="btn type02 size-m" @click="saveRow">저장</a>
+				</div>
+			</div>    
+		</section>
+	</section>
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+* vue start 
+********************************************************************************************************************************************************************/
+var rowpos='';
+var date1;
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		serviceList: new Dataset(),
+		serviceListPaging: new PagingSet(5, 5),
+		programList : new Dataset(),
+		programListPaging: new PagingSet(5, 5),
+		pSearchType: '2',
+        pSearchArgv: '',
+		updateDisabled: true,
+		messageModal: new ModalSet('program-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+		sub1ListLoading: {id:'sub1ListLoading', val:false},
+		errorBag: { 
+			name: '' 
+	  	}		  
+	},
+	//생성 될 때 
+	beforeCreate: function(){
+		
+	},
+	created : function(){
+		
+	},
+	//계산된 속성 표현 시
+	computed: {
+		
+	},
+	//데이터 감시
+	watch: {
+		// serviceList(서비스관리) rowposition changed
+		'serviceList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.serviceList.enableevent && val > -1){
+					this.setProgramList();						
+				}
+			}
+		},
+		'serviceList.data': {
+			handler: function (val, oldVal) {
+				if(this.serviceList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.serviceList.beforeData[rowposition][colNm];
+				          	vm.serviceList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.serviceList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'programList.rowposition' :{
+	    	handler: function (val, oldVal) {
+				if(this.programList.enableevent && val > -1){
+					var changeYn = this.programList.dataCompare(oldVal);
+					var rowType = this.programList.getRowType(val);
+					var oldRowType = this.programList.getRowType(oldVal);
+					var self = this;
+					
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.programList.setDefaultRow(oldVal);
+					}
+					
+					if(val != -1){
+						if(rowType == this.ROWTYPE_NORMAL  || rowType == this.ROWTYPE_UPDATE){
+							this.updateDisabled = true;	
+						}else{
+							this.updateDisabled = false;
+						}
+						
+						this.$validator.reset();	
+					}
+				}
+			}
+	    },
+	 	'programList.data': {
+			handler: function (val, oldVal) {
+				if(this.programList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.programList.beforeData[rowposition][colNm];
+				          	vm.programList.getRowType(rowposition); // 데이터셋의 내용이 변경될 때마다 rowType을 변경.
+				          	if(diff) {
+				          		vm.programList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+	    'serviceListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setDefaultinfoList();
+			}
+	    },
+	    'programListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.programList.pageChange(val, this.programListPaging.getRowCnt());
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'sub1ListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.sub1ListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setDefaultinfoList();
+	},
+	//함수
+	methods: {
+		 /* 검색 */
+        search: function(){
+        	var pageNo = this.serviceListPaging.getCurrentPage();
+        	
+        	if(pageNo == 1){
+        		this.setDefaultinfoList();
+        	}else{
+        		this.serviceListPaging.movePage(1);
+        	}  
+        },
+		/* 서비스관리 리스트 조회 */
+		setDefaultinfoList: function(){
+			var self = this;
+			
+			if(isNull(this.pSearchArgv)) this.pSearchArgv = '';
+            if(isNull(this.pSearchType)){
+                this.pSearchType = '';
+                this.pSearchArgv = '';
+            }
+            
+            self.mainListLoading.val = true;
+			var returnVal = serviceApi.service(this.pSearchType, this.pSearchArgv, this.serviceListPaging.currentPage, this.serviceListPaging.getRowCnt(), false);
+			
+			returnVal.then(function(response) {
+				self.serviceList.setData(response.data);
+				if(response.data.length > 0){
+					var totalCnt = self.serviceList.data[0].CNT;
+					self.serviceListPaging.setTotalCnt(totalCnt);
+				}else{
+					self.serviceListPaging.setTotalCnt(0);
+				}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		/*프로그램 관리 리스트 조회 */
+		setProgramList: function(){
+			var rowposition = this.serviceList.rowposition;
+			var self = this;
+			
+			if(rowposition > -1){
+				var serviceCd = self.serviceList.getColumn(rowposition,'SERVICE_CD');
+				
+				self.sub1ListLoading.val = true;
+				var returnVal = programApi.programs({'SERVICE_CD':serviceCd}, false);
+				returnVal.then(function(response) {
+					self.programList.setRawData(response.data, self.programListPaging.getRowCnt());
+					
+					if(response.data.length > 0){
+						self.programListPaging.setTotalCnt(response.data.length);
+					}else{
+						self.programListPaging.setTotalCnt(0);
+					}
+				}).finally(function(){
+					self.sub1ListLoading.val = false;
+				});
+			}
+		},	
+		/*프로그램 관리 신규*/
+		newRow: function(){
+			var addObj = {
+                'SERVICE_CD': this.serviceList.currentRow.SERVICE_CD,
+                'PGM_ID': '',
+                'PGM_NM': '',
+                'GAEINJEONGBO_USE_YN': 'N',
+                'GAEINJEONGBO_ITEM': '',
+                'USE_YN': 'Y',
+                'REMARK': '',
+            };
+			
+			var newRowPosition = this.programList.addRow(addObj);
+			this.programListPaging.setTotalCnt(parseInt(this.programListPaging.totalCnt,10)+1);
+		},
+		/* 프로그램 관리  저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			if(this.errorBag.name == ''){
+				validate.then(function(response) {
+					if(response){
+						var defaultInfoRowpos = self.serviceList.rowposition;
+						var rowposition = self.programList.rowposition;
+						var rowType = self.programList.getRowType(rowposition);
+						var returnVal = null;
+						
+						//신규
+						if(rowType == ROWTYPE_INSERT){
+							returnVal = programApi.programInsert(self.programList.currentRow, true);
+						}
+						//수정
+						else if(rowType == ROWTYPE_UPDATE){
+							returnVal = programApi.programUpdate(self.programList.currentRow, true);
+						}else{
+							notifySubmit('info', '프로그램 정보 저장', '저장할 내역이 없습니다.', 'icon-message');
+						}
+						
+						if(!isNull(returnVal)){
+							returnVal.then(function(response) {
+								var data = response.data;
+								
+								if(parseInt(data,10) > 0 || parseInt(data._INSERT_ROW_CNT,10) > 0){
+									notifySubmit('success', '프로그램 정보 저장', '저장이 완료되었습니다.', 'icon-save');
+									self.setProgramList();
+								}else{
+									notifySubmit('warning', '프로그램 정보 저장', '저장에 실패하였습니다.', 'icon-caution');
+								}
+							});
+						}
+					}
+				});
+			}else{
+				notifySubmit('warning', '프로그램 정보 저장', '입력항목을 확인해주세요.', 'icon-caution');
+			}
+		},
+		/*프로그램 관리 삭제*/
+		deleteRow: function(row){
+			var self = this;
+			var rowType = self.programList.getRowType(row); 
+			var returnVal = null;
+			
+			
+			if(rowType != ROWTYPE_INSERT){
+				returnVal = programApi.programDelete(self.programList.getRow(row), true);
+			
+			 	returnVal.then(function(response) {
+					var data = response.data;
+					if(parseInt(data,10) > 0){
+						self.setProgramList();
+						notifySubmit('success', '프로그램 정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+					}else{
+						notifySubmit('warning', '프로그램 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+					}
+				});	
+			}else{
+				self.programList.deleteRow(row);
+				self.programListPaging.setTotalCnt(parseInt(self.programListPaging.totalCnt,10)-1);
+				notifySubmit('success', '프로그램 정보 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+			}
+			
+		},
+		rowClick: function(index){
+			this.serviceList.selectRow(index)
+		},
+		subRowClick: function(index){
+			this.programList.selectRow(index); 
+			this.moveId('detail');
+		},
+		/* 저장할때 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            var pGb = 'confirm';
+
+            switch(pId) {
+	    		case 'PGM_DELETE':
+	    			title = '삭제';
+	    			cont = '선택 된 프로그램을 삭제하시겠습니까?';
+                    break;
+	    	}
+
+	    	this.messageModal.openModal(pGb, title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'PGM_DELETE':
+	    			this.deleteRow(pData);
+	    			break;
+	    	}
+	    },
+	    moveId: function(id) {
+	    	this.$nextTick(function(){
+	    		location.href = '#'+id;
+          	})
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+}); 
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+
+ </script>
+
+

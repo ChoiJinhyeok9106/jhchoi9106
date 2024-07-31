@@ -1,0 +1,339 @@
+<script type="text/javascript" src="/assets/js/vendor/aui/AUIGrid.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/aui/AUIGridLicense.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/css/aui/AUIGrid_style.css"/>
+
+<h2 id="top">그리드</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<h1 class="h3">AUI GRID</h1>
+
+		<div class="form-group row form-row">
+			<ul class="list-type01">
+				<li style="margin-top: 10px;">AUI Grid Demo URL : <a href="https://www.auisoft.net/demo/auigrid/index.html?a&theme=default&s=0" class="btn type01 size-s c-blue" style="border: 0px" target="_blank">https://www.auisoft.net/demo/auigrid/index.html?a&theme=default&s=0</a></li>
+				<li style="margin-top: 10px;">AUI Grid Documentation URL : <a href="https://www.auisoft.net/documentation/auigrid/index.html" class="btn type01 size-s c-blue" style="border: 0px" target="_blank">https://www.auisoft.net/documentation/auigrid/index.html</a></li>
+			</ul>
+		</div>
+
+		<div class="form-group row form-row">
+			<ul class="list-type01">
+				<li>HTML</li>
+			</ul>
+		</div>
+		<textarea id="codeEditor1">
+<script type="text/javascript" src="/assets/js/vendor/aui/AUIGrid.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/aui/AUIGridLicense.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/css/aui/AUIGrid_style.css"/>
+
+<div id="grid_wrap"></div>
+		</textarea>
+		<br>
+		<div class="form-group row form-row">
+			<ul class="list-type01">
+				<li>Vue Code Example</li>
+			</ul>
+		</div>
+		<textarea id="codeEditor2">
+var subGrid = AUIGrid;
+var myGridID = null;
+
+var vmSub = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		mainList: new Dataset(),
+		gridData: null,
+	},
+	//데이터 감시
+	watch: {
+
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		var self = this;
+
+		self.gridInit();
+	},
+	//함수
+	methods: {
+		gridInit: function() {
+			var self = this;
+			var columnLayout = [];
+
+			columnLayout = [
+				{
+					dataField : "ORG_CD",
+					headerText : "ORG_CD",
+					width : 100
+				},
+				{
+					dataField : "FULL_NM",
+					headerText : "FULL_NM",
+				},
+				{
+					dataField : "ROW_NM",
+					headerText : "ROW_NM",
+				},
+				{
+					dataField : "GAP_NO",
+					headerText : "GAP_NO",
+					width : 100
+				},
+				{
+					dataField : "HIGH_CD",
+					headerText : "HIGH_CD",
+					width : 100
+				},
+				{
+					dataField : "HIGHST_CD",
+					headerText : "HIGHST_CD",
+					width : 100
+				},
+				{
+					dataField : "REP_CD",
+					headerText : "REP_CD",
+					width : 100
+				},
+				{
+					dataField : "CLS_DE",
+					headerText : "CLS_DE",
+					width : 100
+				},
+				{
+					dataField : "STOP_SELT",
+					headerText : "STOP_SELT",
+					width : 100
+				},
+			];
+
+			var params ={
+				'GAP_NO' : '1',
+			}
+
+			var returnVal = farmboardApi.mdiTest(params, false);
+
+			returnVal.then(function(response) {
+				self.gridData = response.data;
+				self.mainList.setData(response.data);
+
+				myGridID = subGrid.create('#grid_wrap', columnLayout);
+				subGrid.setGridData(myGridID, self.gridData);
+			}).catch(function(error) {
+				console.error('error:', error);
+			});
+		}
+	},
+});
+		</textarea>
+		<br>
+		<div class="form-group row form-row">
+			<ul class="list-type01">
+				<li>Result</li>
+			</ul>
+		</div>
+		<div id="grid_wrap22" style="width:100%;height:1000px;"></div>
+	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var subGrid = AUIGrid;
+var myGridID = null;
+
+var vmSub = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		mainList: new Dataset(),
+		gridData: null,
+	},
+	//데이터 감시
+	watch: {
+
+	},
+    //마운트 된 시점수행
+    mounted: function(){
+		var self = this;
+
+		self.setColumnLayout();
+    },
+    //함수
+    methods: {
+		setColumnLayout: function() {
+			var self = this;
+			var columnLayout = [];
+
+			columnLayout = [
+				{
+					dataField : "ORG_CD",
+					headerText : "ORG_CD",
+					width : 100
+				},
+				{
+					dataField : "FULL_NM",
+					headerText : "FULL_NM",
+				},
+				{
+					dataField : "GAP_NO",
+					headerText : "GAP_NO",
+					width : 100
+				},
+				{
+					dataField : "HIGH_CD",
+					headerText : "HIGH_CD",
+					width : 100
+				},
+				{
+					dataField : "HIGHST_CD",
+					headerText : "HIGHST_CD",
+					width : 100,
+					styleFunction: function (rowIndex, columnIndex, value, headerText, item, dataField) {
+						if (item._$isGroupSumField) { // 썸머리 행인 경우
+							return "my-align-right";
+						}
+						return null;
+					}
+				},
+				{
+					dataField : "REP_CD",
+					headerText : "REP_CD",
+					width : 100
+				},
+				{
+					dataField : "STOP_SELT",
+					headerText : "STOP_SELT",
+					width : 100,
+					styleFunction: function (rowIndex, columnIndex, value, headerText, item, dataField) {
+						if (item._$isGroupSumField) { // 썸머리 행인 경우
+							return "my-align-right";
+						}
+						return null;
+					}
+				},
+			];
+
+			self.gridInit(columnLayout);
+		},
+		gridInit: function(columnLayout) {
+			var self = this;
+
+			var params ={
+				'GAP_NO' : '1',
+			}
+
+			var returnVal = farmboardApi.mdiTest(params, false);
+
+			returnVal.then(function(response) {
+				self.gridData = response.data;
+				self.mainList.setData(response.data);
+
+				var auiGridProps = {
+					editable: true,
+
+					// 그룹핑 패널 사용
+					useGroupingPanel: false,
+
+					// 차례로 country, product, name 순으로 그룹핑을 합니다.
+					// 즉, 각 나라별, 각 제품을 구매한 사용자로 그룹핑
+					groupingFields: ["GAP_NO", "HIGH_CD"],
+
+					// 썸머리 텍스트 설정(기본값: 합계)
+					summaryText: "소계",
+
+					// 합계(소계) 설정
+					groupingSummary: {
+						dataFields: ["HIGHST_CD","STOP_SELT"],
+
+						rows: [{
+							expFunction: function (items, dataField) { // 여기서 실제로 출력할 값을 계산해서 리턴시킴.
+								var sum = 0;
+								var count = 0;
+
+								if (items.length <= 0) return sum;
+
+								switch (dataField) {
+									case "STOP_SELT": // 합계 계산
+										items.forEach(function (item) {
+											sum += Number(item.STOP_SELT);
+										});
+										return "합계 : " + subGrid.formatNumber(sum, "#,##0");
+									case "HIGHST_CD": // price 개수 계산
+										count = items.length;
+										return "개수 : " + subGrid.formatNumber(count, "#,##0");
+								}
+
+							}
+						}]
+					},
+
+					// 최초 보여질 때 모두 열린 상태로 출력 여부
+					displayTreeOpen: true,
+
+					// 그룹핑 후 셀 병합 실행
+					enableCellMerge: true,
+
+					// 브랜치에 해당되는 행을 출력 여부
+					showBranchOnGrouping: false,
+
+					// 그리드 ROW 스타일 함수 정의
+					rowStyleFunction: function (rowIndex, item) {
+
+						if (item._$isGroupSumField) { // 그룹핑으로 만들어진 합계 필드인지 여부
+
+							// 그룹핑을 더 많은 필드로 하여 depth 가 많아진 경우는 그에 맞게 스타일을 정의하십시오.
+							// 현재 3개의 스타일이 기본으로 정의됨.(AUIGrid_style.css)
+							switch (item._$depth) {  // 계층형의 depth 비교 연산
+								case 2:
+									return "aui-grid-row-depth1-style";
+								case 3:
+									return "aui-grid-row-depth2-style";
+								case 4:
+									return "aui-grid-row-depth3-style";
+								default:
+									return "aui-grid-row-depth-default-style";
+							}
+						}
+
+						return null;
+					},
+					enableFilter: true,
+					enableCellMerge: true,
+				}
+
+				myGridID = subGrid.create('#grid_wrap22', columnLayout, auiGridProps);
+				subGrid.setGridData(myGridID, self.gridData);
+			}).catch(function(error) {
+				console.error('error:', error);
+			});
+		}
+	},
+
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 90);
+	editor('codeEditor2', 300);
+});
+
+function editor(id, height) {
+	var target = document.getElementById(id);
+	var myCodeMirror = CodeMirror.fromTextArea(target, {
+		mode: "javascript",
+		theme: "neo",
+		lineNumbers: true,
+		readOnly: true
+	});
+
+	myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

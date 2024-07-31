@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.menuApi">
+
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                             사용자 앱                                                     							   -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="authAppList" parameterType="hashMap" resultType="hashMap">
+        SELECT A.APP_ID
+			 , A.APP_NM
+			 , A.APP_VER
+			 , A.APP_JAKSEONGJA_ID
+			 , A.APP_ENM
+			 , A.ENDPOINT
+			 , A.TAG
+			 , A.APP_DESC
+			 , A.COLOR
+			 , A.ICON
+			 , A.USE_DEVICE_GB
+			 , A.DAEPYO_IMG_FILE_NO
+			 , A.USE_YN
+			 , A.DEFAULT_APP_YN
+			 , A.OPEN_TYPE_GB
+			 , A.APP_TYPE_GB
+			 , A.MENUAL_YN 
+		  FROM SMN_APP A JOIN (
+								  SELECT A.APP_ID
+								    FROM SMN_APP_MENU A  			LEFT OUTER JOIN (
+																						SELECT SA.APP_ID
+																							 , COUNT(*) AS AUTH_CNT
+																						  FROM SMN_APP_AUTH SA 
+																						 WHERE 1=1
+																						 GROUP BY SA.APP_ID
+																					 ) B
+									  ON A.APP_ID 	  = B.APP_ID 	LEFT OUTER JOIN SMN_PGM C  
+									  ON A.SERVICE_CD = C.SERVICE_CD
+								     AND A.PGM_ID 	  = C.PGM_ID	LEFT OUTER JOIN (
+																						SELECT SA.APP_ID
+																							 , SA.MENU_CD
+																							 , COUNT(*) AS SUB_PGM_GAEINJEONGBO_USE_CNT
+																						  FROM SMN_APP_MENU_SUBPGM SA  INNER JOIN SMN_PGM SB  
+																							ON SA.SERVICE_CD = SB.SERVICE_CD
+																						   AND SA.PGM_ID 	 = SB.PGM_ID
+																						 WHERE 1=1
+																						   AND COALESCE(SB.GAEINJEONGBO_USE_YN, 'N') = 'Y'
+																						 GROUP BY SA.APP_ID, SA.MENU_CD
+																					 ) D
+									  ON A.APP_ID  = D.APP_ID
+								     AND A.MENU_CD = D.MENU_CD
+								   WHERE 1=1
+								     AND A.USE_YN  = 'Y'
+								     AND (
+											COALESCE(B.AUTH_CNT, 0) = 0 
+											OR
+											EXISTS
+											(
+												SELECT 'X'
+												  FROM SMN_APP_AUTH SA 
+												 WHERE 1=1
+												   AND A.APP_ID = SA.APP_ID
+												   AND (
+															SA.AUTH_CD = #{DEFAULT_AUTH_CD}
+															OR		                      
+															EXISTS
+															(
+																SELECT 'X'
+																  FROM SMN_USER_AUTH SSA 
+																 WHERE 1=1
+																   AND SSA.USER_ID  = #{SYSTEM_ID}
+																   AND (SSA.AUTH_CD = SA.AUTH_CD) 
+															)
+														)
+											)
+									     )
+								   GROUP BY A.APP_ID
+		    ) B
+		   ON A.APP_ID    = B.APP_ID
+		WHERE A.MENUAL_YN = 'Y'
+    </select>
+    
+	<!-- ***************************************************************************************************************************** -->
+	<!--                                                             사용자 메뉴                                                       -->
+	<!-- ***************************************************************************************************************************** -->
+    <select id="authMenuList" parameterType="hashMap" resultType="hashMap">
+    	SELECT A.MENUAL_YN
+    		 , B.*
+    	  FROM SMN_APP A INNER JOIN (
+								        SELECT A.APP_ID
+											 , A.MENU_CD
+											 , A.MENU_NM
+											 , A.UP_MENU_CD
+											 , A.MENU_LV
+											 , A.SERVICE_CD
+											 , A.PGM_ID
+											 , A.LINK_URL
+											 , A.MENU_GB
+											 , A.DAESANG_APP_ID
+											 , A.DAESANG_MENU_CD
+											 , A.PARAMETER
+											 , A.ORD
+											 , A.USE_YN
+											 , A.REMARK
+											 , A.MENU_CD AS CD
+											 , A.UP_MENU_CD AS UP_CD
+											 , A.MENU_LV AS LV
+											 , 'Y' AS OPEN_YN
+											 , COALESCE(B.AUTH_CNT,0) AS AUTH_CNT
+											 , C.GAEINJEONGBO_USE_YN
+											 , C.GAEINJEONGBO_ITEM
+											 , COALESCE(D.SUB_PGM_GAEINJEONGBO_USE_CNT, 0) SUB_PGM_GAEINJEONGBO_USE_CNT
+											 , (SELECT MENU_NM FROM SMN_APP_MENU  WHERE APP_ID = A.APP_ID AND MENU_CD = A.UP_MENU_CD) AS UP_MENU_NM
+											 , (SELECT APP_NM FROM SMN_APP  WHERE APP_ID = A.APP_ID) AS APP_NM
+										  FROM SMN_APP_MENU A 
+										  LEFT OUTER JOIN 
+										       (
+										           SELECT SA.APP_ID
+												        , SA.MENU_CD
+												        , COUNT(*) AS AUTH_CNT
+										             FROM SMN_APP_MENU_AUTH SA 
+										            WHERE 1=1
+												    GROUP BY SA.APP_ID, SA.MENU_CD
+										       ) B
+										    ON A.APP_ID  	= B.APP_ID
+										   AND A.MENU_CD 	= B.MENU_CD
+										  LEFT OUTER JOIN SMN_PGM C  
+										    ON A.SERVICE_CD = C.SERVICE_CD
+										   AND A.PGM_ID 	= C.PGM_ID
+										  LEFT OUTER JOIN
+										       (
+										           SELECT SA.APP_ID
+										                , SA.MENU_CD
+										                , COUNT(*) AS SUB_PGM_GAEINJEONGBO_USE_CNT
+										             FROM SMN_APP_MENU_SUBPGM SA  
+										            INNER JOIN SMN_PGM SB  
+										               ON SA.SERVICE_CD = SB.SERVICE_CD
+										              AND SA.PGM_ID 	= SB.PGM_ID
+										            WHERE 1=1
+										              AND COALESCE(SB.GAEINJEONGBO_USE_YN,'N') = 'Y'
+										            GROUP BY SA.APP_ID, SA.MENU_CD
+										       ) D
+										    ON A.APP_ID  = D.APP_ID
+										   AND A.MENU_CD = D.MENU_CD
+										 WHERE 1=1
+								<!-- 		   AND A.APP_ID = #{APP_ID} -->
+										   <if test="APP_ID != ''.toString() and APP_ID != null">AND A.APP_ID = #{APP_ID}</if>
+										   <if test="pSearchArgv != ''.toString() and pSearchArgv != null">AND A.MENU_NM LIKE CONCAT('%' , #{pSearchArgv} , '%')</if>
+										   AND A.USE_YN = 'Y'
+										   AND (
+										           COALESCE(B.AUTH_CNT,0) = 0 
+										           OR
+										           EXISTS
+										           (
+										               SELECT 'X'
+										                 FROM SMN_APP_MENU_AUTH SA 
+										                WHERE 1=1
+										                  AND A.APP_ID  = SA.APP_ID
+										                  AND A.MENU_CD = SA.MENU_CD
+										                  AND (
+										                          SA.AUTH_CD = #{DEFAULT_AUTH_CD}
+										                  	      OR		                      
+											                      EXISTS
+											                      (
+											                          SELECT 'X'
+											                            FROM SMN_USER_AUTH SSA 
+											                           WHERE 1=1
+											                             AND SSA.USER_ID  = #{SYSTEM_ID}
+											                             AND (SSA.AUTH_CD = SA.AUTH_CD<!--  OR SSA.AUTH_CD = 'U0000' -->) <!-- 전체관리자가 일단 고정되어있음 -->
+											                      )
+										                      )
+										           )
+										       )
+			 ) B													       
+		    ON A.APP_ID    = B.APP_ID
+		 WHERE A.MENUAL_YN = 'Y'
+    </select>
+    
+    <!-- 선택한 메뉴의 매뉴얼 조회 -->
+    <select id="getAppMenuManualList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.APP_ID			
+			 , A.MENU_CD			
+			 , A.MENU_NM			
+			 , A.UP_MENU_CD			
+			 , A.MENU_LV			
+			 , A.MENU_GB			
+			 , A.DAESANG_APP_ID			
+			 , A.DAESANG_MENU_CD		
+			 , A.SERVICE_CD			
+			 , A.PGM_ID			
+			 , A.LINK_URL			
+			 , A.PARAMETER			
+			 , A.ORD			
+			 , A.USE_YN			
+			 , A.REMARK		
+			 , B.TEXT_GB
+			 , B.MANUAL_TEXT
+			 , (SELECT MENU_NM FROM SMN_APP_MENU  WHERE APP_ID = A.APP_ID AND MENU_CD = A.UP_MENU_CD) AS UP_MENU_CDNM
+			 , (SELECT APP_NM FROM SMN_APP  WHERE APP_ID = A.APP_ID) AS APP_NM
+		  FROM SMN_APP_MENU A LEFT JOIN (	
+											SELECT APP_ID
+												 , MENU_CD
+												 , TEXT_GB
+												 , MANUAL_TEXT 
+											  FROM SMN_APP_MENU_MANUAL 
+										) B
+			ON A.APP_ID 	= B.APP_ID
+		   AND A.MENU_CD 	= B.MENU_CD
+		 WHERE A.APP_ID 	= #{APP_ID}  
+		   AND A.MENU_CD 	= #{MENU_CD}
+    </select>
+    
+</mapper>

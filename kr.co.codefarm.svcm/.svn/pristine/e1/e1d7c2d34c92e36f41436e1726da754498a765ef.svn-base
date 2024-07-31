@@ -1,0 +1,256 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/stu_total.css" />  
+
+<h2>시간표 확인</h2>
+<section class="sub_cont_box sub_timetable_wrap">
+    <div class="timetable-top">
+        <h3>나의 시간표</h3>
+        <p>2019년도 1학기</p>
+        <a href="#!" class="btn size-m">출력하기</a>
+    </div>
+    <article class="timetable-cont">
+        <div class="time-list">
+            <ol>
+                <li>
+                    <span>1교시</span>
+                    <p>9 <span>am</span></p>
+                </li>
+                <li>
+                    <span>2교시</span>
+                    <p>10 <span>am</span></p>
+                </li>
+                <li>
+                    <span>3교시</span>
+                    <p>11 <span>am</span></p>
+                </li>
+                <li>
+                    <span>4교시</span>
+                    <p>12 <span>am</span></p>
+                </li>
+                <li>
+                    <span>5교시</span>
+                    <p>1 <span>pm</span></p>
+                </li>
+                <li>
+                    <span>6교시</span>
+                    <p>2 <span>pm</span></p>
+                </li>
+                <li>
+                    <span>7교시</span>
+                    <p>3 <span>pm</span></p>
+                </li>
+                <li>
+                    <span>8교시</span>
+                    <p>4 <span>pm</span></p>
+                </li>
+                <li>
+                    <span>9교시</span>
+                    <p>5 <span>pm</span></p>
+                </li>
+            </ol>
+        </div>
+        <div class="date-list">
+            <div class="monday">
+                <p>월요일</p>
+                <ol>
+                    <li></li>
+                    <li class="type01">
+                        <div class="inner">
+                            <p class="class-name">진로지도 및 자기개발 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B602 강의실</p>
+                            <p class="class-detail">간호/104/홍교수</p>
+                        </div>
+                    </li>
+                    <li class="time-2x first type02">
+                        <div class="inner">
+                            <p class="class-name">지역사회 간호학 Ⅰ</p>
+                            <p class="class-location"><span>화봉관</span> B607 강의실</p>
+                            <p class="class-detail">간호/104/강혜연</p>
+                        </div>
+                    </li>
+                    <li class="time-2x type02">
+                        <div class="inner">
+                            <p class="class-name">지역사회 간호학 Ⅰ</p>
+                            <p class="class-location"><span>화봉관</span> B607 강의실</p>
+                            <p class="class-detail">간호/104/강혜연</p>
+                        </div>
+                    </li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ol>
+            </div>
+            <div class="tuesday">
+                <p>화요일</p>
+                <ol>
+                    <li class="time-2x first type03">
+                        <div class="inner">
+                            <p class="class-name">성인간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B205 강의실</p>
+                            <p class="class-detail">간호/104/정은숙</p>
+                        </div>
+                    </li>
+                    <li class="time-2x type03">
+                        <div class="inner">
+                            <p class="class-name">성인간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B205 강의실</p>
+                            <p class="class-detail">간호/104/정은숙</p>
+                        </div>
+                    </li>
+                    <li class="time-2x first type04">
+                        <div class="inner">
+                            <p class="class-name">성인간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B205 강의실</p>
+                            <p class="class-detail">간호/104/정은숙</p>
+                        </div>
+                    </li>
+                    <li class="time-2x type04">
+                        <div class="inner">
+                            <p class="class-name">성인간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B205 강의실</p>
+                            <p class="class-detail">간호/104/정은숙</p>
+                        </div>
+                    </li>
+                    <li></li>
+                    <li class="time-3x first type05">
+                        <div class="inner">
+                            <p class="class-name">아동간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B605 강의실</p>
+                            <p class="class-detail">간호/104/권봉숙</p>
+                        </div>
+                    </li>
+                    <li class="time-3x type05">
+                        <div class="inner">
+                            <p class="class-name">아동간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B605 강의실</p>
+                            <p class="class-detail">간호/104/권봉숙</p>
+                        </div>
+                    </li>
+                    <li class="time-3x type05">
+                        <div class="inner">
+                            <p class="class-name">아동간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B605 강의실</p>
+                            <p class="class-detail">간호/104/권봉숙</p>
+                        </div>
+                    </li>
+                    <li></li>
+                </ol>
+            </div>
+            <div class="wednesday">
+                <p>수요일</p>
+                <ol>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li class="time-3x first type06">
+                        <div class="inner">
+                            <p class="class-name">성인간호학 Ⅲ</p>
+                            <p class="class-location"><span>화봉관</span> B605 강의실</p>
+                            <p class="class-detail">간호/104/김성은</p>
+                        </div>
+                    </li>
+                    <li class="time-3x type06">
+                        <div class="inner">
+                            <p class="class-name">성인간호학 Ⅲ</p>
+                            <p class="class-location"><span>화봉관</span> B605 강의실</p>
+                            <p class="class-detail">간호/104/김성은</p>
+                        </div>
+                    </li>
+                    <li class="time-3x type06">
+                        <div class="inner">
+                            <p class="class-name">성인간호학 Ⅲ</p>
+                            <p class="class-location"><span>화봉관</span> B605 강의실</p>
+                            <p class="class-detail">간호/104/김성은</p>
+                        </div>
+                    </li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ol>
+            </div>
+            <div class="thursday">
+                <p>목요일</p>
+                <ol>
+                    <li></li>
+                    <li class="time-2x first type07">
+                        <div class="inner">
+                            <p class="class-name">보완대체간호</p>
+                            <p class="class-location"><span>본관</span> A501 대강의실</p>
+                            <p class="class-detail">간호/102/박동미</p>
+                        </div>
+                    </li>
+                    <li class="time-2x type07">
+                        <div class="inner">
+                            <p class="class-name">보완대체간호</p>
+                            <p class="class-location"><span>본관</span> A501 대강의실</p>
+                            <p class="class-detail">간호/102/박동미</p>
+                        </div>
+                    </li>
+                    <li class="type08">
+                        <div class="inner">
+                            <p class="class-name">보건교육 및 학교보건</p>
+                            <p class="class-location"><span>화봉관</span> B302 아동강의실</p>
+                            <p class="class-detail">간호/104/정정희</p>
+                        </div>
+                    </li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ol>
+            </div>
+            <div class="friday">
+                <p>금요일</p>
+                <ol>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li class="time-2x first type09">
+                        <div class="inner">
+                            <p class="class-name">간호정보학</p>
+                            <p class="class-location"><span>화봉관</span> B302 아동강의실</p>
+                            <p class="class-detail">간호/102/신경혜</p>
+                        </div>
+                    </li>
+                    <li class="time-2x type09">
+                        <div class="inner">
+                            <p class="class-name">간호정보학</p>
+                            <p class="class-location"><span>화봉관</span> B302 아동강의실</p>
+                            <p class="class-detail">간호/102/신경혜</p>
+                        </div>
+                    </li>
+                    <li class="time-4x first type10">
+                        <div class="inner">
+                            <p class="class-name">모성간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B316 지역사회강의실</p>
+                            <p class="class-detail">간호/104/한미연</p>
+                        </div>
+                    </li>
+                    <li class="time-4x type10">
+                        <div class="inner">
+                            <p class="class-name">모성간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B316 지역사회강의실</p>
+                            <p class="class-detail">간호/104/한미연</p>
+                        </div>
+                    </li>
+                    <li class="time-4x type10">
+                        <div class="inner">
+                            <p class="class-name">모성간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B316 지역사회강의실</p>
+                            <p class="class-detail">간호/104/한미연</p>
+                        </div>
+                    </li>
+                    <li class="time-4x type10">
+                        <div class="inner">
+                            <p class="class-name">모성간호학 Ⅱ</p>
+                            <p class="class-location"><span>화봉관</span> B316 지역사회강의실</p>
+                            <p class="class-detail">간호/104/한미연</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </article>
+</section>

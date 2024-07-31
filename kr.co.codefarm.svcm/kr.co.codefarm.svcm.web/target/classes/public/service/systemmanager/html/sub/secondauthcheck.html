@@ -1,0 +1,136 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+
+<h2>본인 인증</h2>
+<section class="sub_cont_box password-change" id="app">
+    <div class="head">
+        <p class="name-kor">{{ session.USER_NM }}</p>
+    </div>
+    <div class="cont" id="authLoading">
+        <form autocomplete="off">
+	        <div class="new-pwd">
+	            <input type="password" class="size-l" placeholder="비밀번호를 입력해주세요." v-model="pwd" id="pwd" name="pwd" data-vv-as="비밀번호 " v-validate="'required'" v-bind:class="{'invalid': errors.has('pwd')}"/>
+	            <invalid-message :visible="true" :name="'pwd'" :verror="errors"/>
+	        </div>
+	        <div class="btn-line center">
+	            <a href="#!" class="btn size-l type02" @click="openModal('checkPwd')">비밀번호 확인</a>
+	        </div>
+        </form>
+    </div>
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		pwd: '',
+		key: '',
+		exKey: '',
+	    authLoading: {id:'authLoading', val:false},
+        messageModal: new ModalSet('message-modal'),	// confirm 모달
+	},
+	//데이터 감시
+	watch: {
+	    'authLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.authLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+	},
+	//함수
+	methods: {
+		openModal: function(value){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					self.messageModal.openModal('confirm', '본인인증', '비밀번호확인을 진행하시겠습니까?', 'small', value,'');
+				}else{
+					notifySubmit('warning', '본인인증', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		checkPwd: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					self.authLoading.val = true;
+
+					$.ajax({
+						url: '/publickeys',
+						cache: false,
+						success: function(data) {
+							var rsa = new RSAKey();
+							rsa.setPublic(data.modulus, data.publicExponent);
+							var params = {
+								PWD : rsa.encrypt(sha256Enc(self.pwd)),
+							}
+							var returnVal = userApi.checkSelf(params,false);
+							returnVal.then(function(response){
+								var data = response.data;
+								if(data == '-1'){
+									notifySubmit('warning', '본인인증', '비밀번호 오류로 인증에 실패하였습니다.', 'icon-caution');
+								}else if(response.status>=200 && response.status<300){
+									notifySubmit('success', '본인인증', '비밀번호 확인에 성공하였습니다.', 'icon-save');
+									$('div.sub_cont_wrap').html(data);
+								}else {
+									notifySubmit('warning', '본인인증', '비정상적인 접근으로 실패하였습니다.', 'icon-caution');
+								}
+							}).finally(function(){
+								self.authLoading.val = false;
+							});
+						},
+						error: function(jqXHR){
+							notifySubmit('warning', '본인인증', '암호화오류로 인증에 실패하였습니다.', 'icon-caution');
+							self.authLoading.val = false;
+						}
+					});
+				}else{
+					notifySubmit('warning', '본인인증', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		messagePopupCallback : function(pGb, pId) {
+			
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    	case 'checkPwd' :
+	    		this.checkPwd();
+	    		break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+function sha256Enc(pwd) {
+	var hash = CryptoJS.SHA256(pwd);
+	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+
+	return hashInBase64;
+}
+
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

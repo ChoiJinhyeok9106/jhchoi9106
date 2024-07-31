@@ -1,0 +1,224 @@
+@charset "utf-8";
+
+
+.inquery {
+  line-height: 160%;
+  margin-top:20px;
+}
+.inquery .h2 {
+  font-size:1.18em;
+  margin-bottom:8px;
+}
+.inquery .question {
+  font-size:1.10em;
+  font-weight:600;
+  margin:15px 0 20px 0 !important;
+}
+.inquery .line180 {
+  line-height: 180% !important;
+}
+.h4 {
+	line-height:1.4em !important;
+}
+.inquery .type01 ul {
+	margin:8px 0;
+}
+.inquery .type01 ul .tit {
+	display:inline-block;
+	margin:10px 0;
+}
+.inquery .type01 ul li .txt {
+	margin-top:6px;
+	display:inline-block;
+}
+.inquery .type01 ul li label {
+	margin-right:20px;
+}
+.inquery .type01 ul li label input[type='radio'],
+.inquery .type01 ul li label input[type='checkbox'] {
+	margin-right:5px;
+}
+.inquery .input-size input[type='text'],
+.inquery .input-size select {
+  width:60% !important;
+}
+.inquery .bold {
+  font-weight:600;
+}
+.inquery .question-list > ul,
+.inquery .question-list > div {
+  border-top:1px dashed #9ea4d0;
+  padding:15px 0 15px 10px;
+}
+.inquery .radio-span span,
+.inquery .checkbox-span span   {
+  margin-right:40px !important;
+}
+.inquery .make .tit {
+	margin:10px 0;
+  
+}
+.inquery .make span {
+	display:inline-block;
+	margin:6px 0;
+}
+.inquery .make .txtbox {
+	line-height:1.4em;
+}
+.inquery .make label {
+	margin-right:20px;
+}
+.inquery .make label input[type='radio'],
+.inquery .make label input[type='checkbox'] {
+	margin-right:5px;
+}
+.inquery ul.make.list_num {
+  padding-left:20px;
+}
+.inquery ul.make.list_num li {
+  list-style-type:decimal;
+  word-break:keep-all;
+}
+.inquery ul.list-con,
+.inquery .word-con {
+  padding-left:17px;
+}
+.inquery ul.list-con li {
+  list-style-type:none;
+  word-break:keep-all;
+  margin-bottom:5px;
+}
+.inquery ul.list-con li::before,
+.inquery .word-con::before {
+  content:"\e954";
+  font-size:0.8em;
+  font-family: 'Feather' !important;
+  margin:0 2px 0 -16px;
+
+}
+
+.inquery input[type=radio] {
+  margin-right:5px;
+  width:16px;
+  height:16px;
+}
+.inquery .mt_10 {
+  margin-top:10px;
+}
+.inquery .mt_20 {
+  margin-top:20px !important;
+}
+.inquery .mt_40 {
+  margin-top:40px !important;
+}
+.inquery .mt_0 {
+  margin-top:0 !important;
+}
+.inquery .mb_0 {
+  margin-bottom:0 !important;
+}
+.inquery .mb_5 {
+  margin-bottom:5px  !important;
+}
+.inquery .pl_10 {
+  padding-left:10px  !important;
+}
+.inquery .border_none {
+  border:none !important;
+}
+.inquery .tit-round {
+  border-radius: 10px 50px 50px 10px;
+  border:1px solid rgba(0,0,0,0);
+  background:#9ea4d0;
+  padding:2px 10px;
+  color:#ffffff;
+  font-size:0.9em;
+  display:table;
+  margin:20px 0 5px 0;
+}
+.inquery .info {
+  display: inline-block;
+}
+.inquery .info li {
+  padding:5px 3px;
+  border-bottom:1px solid #9ea4d0;
+}
+.inquery .info li span {
+  margin:0 20px 0 0;
+}
+.inquery .info i {
+  display:inline-block;
+  margin:2px 4px 0 0;
+  color:#888888;
+  font-size:13px;
+}
+.inquery .li3 li {
+  margin:3px 0;
+}
+.inquery .border-none {
+  border:none !important;
+}
+.inquery .border-tb {
+  border:1px solid #9ea4d0;
+  border-width:1px 0;
+  padding:10px;
+  display:block;
+}
+.inquery .bg-gray {
+  background:rgba(0,0,0,0.04);
+  border-radius: 8px;
+  padding:10px;
+  margin-top:10px;
+  display:block !important;
+  line-height: 150%;
+}
+.inquery .border-tb.agree {
+  padding:20px 10px;
+  margin-top:20px;
+  text-align: center;
+  border-width:1px 0 2px 0;
+}
+.inquery .border-tb.agree label {
+  margin:10px 20px 5px 0;
+}
+.inquery .block {
+  display: block;
+}
+.inquery .end-con {
+  font-size: 1.6em;
+  font-weight: 600;
+  text-align: center;
+  padding:20px 0;
+}
+
+.inquery .end-con i {
+  font-size: 2em;
+  color:#7B67D2;
+  padding:20px 0;
+  display: inline-block;
+}
+.inquery .text-warning {
+  color:#EB4800
+}
+.inquery .text-info {
+  color:#00B4A7;
+  font-weight: 400;
+  font-size:15px;
+  margin-left:20px !important;
+}
+
+.inquery .table-td-align td span {
+  display: flex;
+  text-align: left;
+  align-items: center;
+}
+
+.inquery table.table-type07 thead tr:nth-of-type(2) th {
+  background:#666C94 !important;
+}
+
+.inquery input[type="number"]::-webkit-outer-spin-button,
+.inquery input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

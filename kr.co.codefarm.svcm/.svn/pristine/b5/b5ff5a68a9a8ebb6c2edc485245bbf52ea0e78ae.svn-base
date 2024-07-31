@@ -1,0 +1,9 @@
+FROM azul/zulu-openjdk:11-latest
+# FROM eclipse-temurin:11-jdk
+
+COPY kr.co.codefarm.svcm.web/cloud_build/csap.sh /csap.sh
+RUN chmod 700 /csap.sh && /csap.sh
+
+ENV TZ=Asia/Seoul
+RUN apt-get install -y tzdata
+COPY kr.co.codefarm.svcm.web/target/portal.war portal.war

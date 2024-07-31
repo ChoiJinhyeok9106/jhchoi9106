@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+</head>
+
+<body class="jui feather">
+    <div id="wrap">
+        <header id="sub_header" :class="{'mng':  (session.USER_GB >=1 && session.USER_GB <=9), 'pro': (session.USER_GB > 10 && session.USER_GB % 10 == 1) ,'stu': (session.USER_GB > 10 && session.USER_GB % 10 != 1)}">
+            <a href="#!" class="btn_menu"><span class="icon-menu"></span></a>
+			<div class="sub_title">
+				<span class="icon"></span>
+				<h1 class="txt"></h1>
+			</div>
+        </header>
+        <nav id="snb">
+            
+        </nav>
+        <article class="sub_content">
+            <div class="sub_cont_wrap"></div>
+        </article>
+        <a href="#!" class="btn_top">
+            <span>TOP</span>
+        </a>
+        <script id="notify" type="text/template">
+    		<div class="notify <!= color !>">
+				<div class="image"><i class="<!=icon!>" style="font-size: 18px;"></i></div>
+        		<div class="title"><!= title !></div>
+        		<div class="message"><!= message !></div>
+				<a href="#" class="close"><i class="icon-exit"></i></a>
+    		</div>
+		</script>
+    </div>
+</body>
+	
+<script type="text/javascript">
+/**********************************************************	*********************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var appIndexVm = new Vue({
+	el: '#wrap',
+	data: {
+		sessionInfo : '',
+	},
+	watch: {
+		
+	},
+	mounted: function(){
+		this.getUserSession();
+	},
+	methods: {
+		getUserSession: function(){
+			var self = this;
+			var returnVal = getSession();
+			
+			returnVal.then(function(response) {
+				self.sessionInfo = response.data;
+				self.$forceUpdate();
+			}).catch(function(error) {
+				return null;
+			});
+		}
+	},
+});
+/**********************************************************	*********************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+var globalParam = {};
+
+$(document).ready(function(){
+	try{
+		changeAppInfo();
+		$('body').LoadingOverlay("show", true);
+	}catch(err){
+		return false;
+	}
+});
+
+function changeAppInfo(){
+	try{
+		if(self != top){
+			var className = 'icon '+parent.globalAppIcon+' '+parent.globalAppColor;
+			
+			$('#sub_header .sub_title h1.txt').text(parent.globalAppNm);
+			$('#sub_header .sub_title span').attr('class',className);
+		}
+	}catch(err){
+		return false;
+	}
+}
+$(document).ready(function() {
+    // 상단으로 이동 버튼
+    $(window).scroll(function() {
+        var bot = $(document).height() - $(window).height();
+        var height = $(document).scrollTop();
+        if (height == bot) {
+            $('.btn_top').fadeIn();
+            $('.btn_top').on('click', function() {
+                $('html').stop().animate({ scrollTop: 0 }, 100);
+            });
+        } else {
+            $('.btn_top').fadeOut();
+        }
+    });
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+</html>

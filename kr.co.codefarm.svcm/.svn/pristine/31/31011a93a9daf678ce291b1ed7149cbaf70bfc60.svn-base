@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.additional.maria.calendarApi">
+    
+    <select id="selectCalendarList" parameterType="hashMap" resultType="hashMap">
+    	SELECT CAL.USER_ID
+    	     , CAL.CAL_SEQ
+    	     , CAL.CAL_NM
+		     , CAL.CAL_COLOR
+		     , C_EVENT.FR_DTTM
+		     , C_EVENT.TO_DTTM
+		     , C_EVENT.ILJEONG_NM
+		     , CONCAT(IFNULL(CAL.CAL_SEQ,''),'N') AS BONIN_CHK
+		  FROM ADD_CAL CAL
+		 INNER JOIN ADD_CAL_EVENT C_EVENT 
+		    ON CAL.USER_ID = C_EVENT.USER_ID
+		   AND CAL.CAL_SEQ = C_EVENT.CAL_SEQ
+		 WHERE CAL.USER_ID = #{INTERNAL_ID}
+           AND CAL.PYOSI_YN = 'Y'
+         UNION ALL
+		SELECT CAL.USER_ID
+    	     , CAL.CAL_SEQ
+    	     , CAL.CAL_NM
+		     , CAL.CAL_COLOR
+		     , C_EVENT.FR_DTTM
+		     , C_EVENT.TO_DTTM
+		     , C_EVENT.ILJEONG_NM
+		     , CONCAT(IFNULL(CAL.CAL_SEQ,''),'Y') AS BONIN_CHK
+		  FROM ADD_CAL CAL
+		 INNER JOIN ADD_CAL_EVENT C_EVENT 
+		    ON CAL.USER_ID = C_EVENT.USER_ID
+		   AND CAL.CAL_SEQ = C_EVENT.CAL_SEQ
+		 WHERE CAL.USER_ID != #{INTERNAL_ID}
+		   AND CAL.ALL_GONGYU_YN = 'Y'
+		   AND CAL.PYOSI_YN = 'Y'
+    </select>
+    
+    <select id="selectCalEventList" parameterType="hashMap" resultType="hashMap">
+           SELECT CALE.USER_ID
+			    , CALE.ILJEONG_SEQ
+			    , CALE.CAL_SEQ
+			    , CALE.ILJEONG_NM
+			    , CALE.FR_DTTM
+			    , CALE.TO_DTTM
+			    , NVL(CALE.ALLDAY_YN, 'N') AS ALLDAY_YN
+			    , CALE.CAL_EVENT_DESC
+			    , CALE.LOCATIOIN
+			    , CALE.ALARM_GB
+			    , CALE.ALARM_TM_GB
+			    , NVL(CAL.ALL_GONGYU_YN, 'N') AS ALL_GONGYU_YN
+			 FROM ADD_CAL_EVENT CALE
+			 JOIN ADD_CAL CAL
+			   ON CALE.USER_ID = CAL.USER_ID
+			  AND CALE.CAL_SEQ = CAL.CAL_SEQ
+			WHERE 1=1
+			  <if test="USER_ID != null"> 
+		          AND CALE.USER_ID = #{USER_ID}
+			  </if> 
+			UNION ALL
+		   SELECT CALE.USER_ID
+			    , CALE.ILJEONG_SEQ
+			    , CALE.CAL_SEQ
+			    , CALE.ILJEONG_NM
+			    , CALE.FR_DTTM
+			    , CALE.TO_DTTM
+			    , NVL(CALE.ALLDAY_YN, 'N') AS ALLDAY_YN
+			    , CALE.CAL_EVENT_DESC
+			    , CALE.LOCATIOIN
+			    , CALE.ALARM_GB
+			    , CALE.ALARM_TM_GB
+			    , NVL(CAL.ALL_GONGYU_YN, 'N') AS ALL_GONGYU_YN
+			 FROM ADD_CAL_EVENT CALE
+			 JOIN ADD_CAL CAL
+			   ON CALE.USER_ID = CAL.USER_ID
+			  AND CALE.CAL_SEQ = CAL.CAL_SEQ
+			WHERE CAL.ALL_GONGYU_YN = 'Y'
+			  AND CAL.PYOSI_YN = 'Y'
+            <if test="USER_ID != null"> 
+                AND CALE.USER_ID != #{USER_ID}
+			</if> 
+			UNION ALL
+		   SELECT MAIN_TBL.USER_ID
+			    , (ROW_NUMBER() OVER(ORDER BY MAIN_TBL.USER_ID)) * -1 AS ILJEONG_SEQ
+			    , MAIN_TBL.CAL_SEQ
+			    , MAIN_TBL.ILJEONG_NM
+			    , MAIN_TBL.FR_DTTM
+			    , MAIN_TBL.TO_DTTM
+			    , MAIN_TBL.ALLDAY_YN
+			    , MAIN_TBL.CAL_EVENT_DESC
+			    , MAIN_TBL.LOCATIOIN
+			    , MAIN_TBL.ALARM_GB
+			    , MAIN_TBL.ALARM_TM_GB
+			    , MAIN_TBL.ALL_GONGYU_YN
+			 FROM (
+		   SELECT '0000001' AS USER_ID
+			    , -1 AS CAL_SEQ
+			    , TBL.ILJEONG_NM
+			    , TBL.FR_DTTM
+			    , TBL.TO_DTTM
+			    , TBL.ALLDAY_YN
+			    , TBL.CAL_EVENT_DESC
+			    , TBL.LOCATIOIN
+			    , '' AS ALARM_GB
+			    , '' AS ALARM_TM_GB
+			    , 'Y' AS ALL_GONGYU_YN
+			 FROM COMM.TF_CAL_EVENT(#{INTERNAL_ID}, '01') TBL
+			UNION ALL
+		   SELECT '0000001' AS USER_ID
+			    , 0 AS CAL_SEQ
+			    , TBL.ILJEONG_NM
+			    , TBL.FR_DTTM
+			    , TBL.TO_DTTM
+			    , TBL.ALLDAY_YN
+			    , TBL.CAL_EVENT_DESC
+			    , TBL.LOCATIOIN
+			    , '' AS ALARM_GB
+			    , '' AS ALARM_TM_GB
+			    , 'Y' AS ALL_GONGYU_YN
+			 FROM COMM.TF_CAL_EVENT(#{INTERNAL_ID}, '02') TBL
+		   ) MAIN_TBL
+    </select>
+    
+    <select id="selectCalEnvList" parameterType="hashMap" resultType="hashMap">
+        SELECT USER_ID
+             , CAL_THEMA_GB
+             , DEFAULT_CAL_SEQ
+          FROM ADD_CAL_ENV 
+         WHERE 1=1
+            <if test="USER_ID != null"> 
+                AND USER_ID = #{USER_ID}
+			</if> 
+    </select>
+    
+    <insert id="insertCalEnv" parameterType="hashMap">
+    	INSERT INTO ADD_CAL_ENV
+           (
+           	 USER_ID
+           , CAL_THEMA_GB
+           , DEFAULT_CAL_SEQ
+           , INSERT_DTTM
+           , INSERT_ID
+           , INSERT_IP
+           , INSERT_PGM
+           , UPDATE_DTTM
+           , UPDATE_ID
+           , UPDATE_IP
+           , UPDATE_PGM )
+     VALUES
+           ( 
+           	 #{USER_ID}
+           , #{CAL_THEMA_GB}
+           , #{DEFAULT_CAL_SEQ}
+           , SYSDATE()
+           , #{INSERT_ID}
+           , #{INSERT_IP}
+           , #{INSERT_PGM}
+           , SYSDATE()
+           , #{UPDATE_ID}
+           , #{UPDATE_IP}
+           , #{UPDATE_PGM} )
+    </insert>
+    
+    <update id="updateCalEnv" parameterType="hashMap">
+       UPDATE ADD_CAL_ENV
+          SET USER_ID = #{USER_ID}
+            , CAL_THEMA_GB = #{CAL_THEMA_GB}
+            , DEFAULT_CAL_SEQ = #{DEFAULT_CAL_SEQ}
+            , UPDATE_DTTM = SYSDATE()
+            , UPDATE_ID = #{UPDATE_ID}
+            , UPDATE_IP = #{UPDATE_IP}
+            , UPDATE_PGM = #{UPDATE_PGM}
+        WHERE USER_ID = #{USER_ID}
+    </update>
+    
+    <delete id="deleteCalEnv" parameterType="hashMap">
+    	DELETE FROM ADD_CAL_ENV
+		 WHERE USER_ID = #{USER_ID}
+    </delete>
+
+</mapper>

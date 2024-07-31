@@ -1,0 +1,103 @@
+<h2>팝업-사용자 검색 팝업</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">사용자 검색 팝업</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>사용자 검색 팝업 활용법</li>
+	        	<li>popup-user 태그로 사용, callback 함수에서 리턴되는 데이터를 확인, 팝업 오픈이벤트를 활용하기 위한 ref지정</li>
+	        	<li>lovcomp 값을 true로 입력 할 경우 아래 예제와 같이 돋보기를 포함한 검색 컴포넌트가 제공됩니다.</li>
+	        	<li>lovcomp 값을 false로 입력 할 경우 별도의 컴포넌트가 제공 되지 않고 ref를 통한 오픈함수를 이용해 팝업을 오픈합니다.</br>ex) this.refs.popupuser.showUserPopup();</li>
+	        	<li>type이 차후 추가 될 예정입니다.(학생, 교직원, 산업체 등 사용자 검색 구분에 따라)</li>
+	        	<li>'id','usergroupgb','userstatusgb','searchargv' 옵션을 지원합니다. 고유아이디, 사용자구분, 상태구분, 검색어 순서입니다. (태그내 :usergroupgb 형태로 지정)</li>
+	        	<li>':setting' 옵션을 지원합니다. 팝업에서 항목 선택 후 input 컴포넌트에 셋팅 될 컬럼 명입니다. 해당 컬럼 명은 this.$refs.popupuser.lovValue 로 가져올 수 있습니다.</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><popup-user ref="[popupuser:String]"  v-on:callback="[callback:Function]" :lovcomp="[true:Boolean]" :type="[type:String]"></popup-user>
+
+var vm = new Vue({
+	el: '#app',
+    data: {
+		returnMessage : ''
+    },
+	methods: {
+		callback(message){
+			this.returnMessage = JSON.stringify(message);
+		}
+	}
+});</textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3" @click="dataCheck">실행</h3>
+        <popup-user id="userpopup1" ref="popupuser" v-on:callback="callback" :lovcomp="true" :usergroupgb="'9'" :userstatusgb="'Y'" :setting="'USER_NM'"></popup-user>
+        <br/>
+        <textarea id="codeEditor2"><popup-user id="userpopup1" ref="popupuser" v-on:callback="callback" :lovcomp="true" :usergroupgb="'9'" :userstatusgb="'Y'" :setting="'USER_NM'"></popup-user></textarea>
+    </section>
+       
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage}}
+   		</div>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     data: {
+         returnMessage : ''
+     },
+     methods: {
+    	 callback: function(message){
+         	this.returnMessage = JSON.stringify(message);
+         },
+         openPopup: function(){
+        	 this.$refs.popupuser.showUserPopup();	 
+         },
+         dataCheck: function(){
+        	 alert(this.$refs.popupuser.lovValue);
+         }         
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 300, 'javascript');
+	editor('codeEditor2', 40, 'javascript');
+});
+
+function editor(id, height, dataGb) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: dataGb,
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

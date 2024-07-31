@@ -1,0 +1,352 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/counseling.css" /> 
+
+<h2>상담현황</h2>
+<section class="sub_cont_box counsel-student">
+    <aside class="counseling-aside">
+        <h3 class="h3">상담하기</h3>
+        <div class="row form-row">
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput1" class="label-type01">상담일</label>
+                <div class="date-form-wrap">
+                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                    <input type="text" id="exampleFormControlInput1" class="size-m">
+                </div>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput1" class="label-type01">상담분류</label>
+                <select class="size-m" id="formGroupExampleInput1">
+                    <option value="">정기상담</option>
+                </select>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput2" class="label-type01">상담분야</label>
+                <select class="size-m" id="formGroupExampleInput2">
+                    <option value="">상담분야를 선택하세요</option>
+                </select>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput3" class="label-type01">제목</label>
+                <input type="text" id="formGroupExampleInput3" class="size-m">
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput4" class="label-type01">상담내용</label>
+                <textarea id="exampleFormControlInput4" rows="10" class="size-m"></textarea>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput5" class="label-type01">학생전달</label>
+                <textarea id="exampleFormControlInput5" rows="10" class="size-m"></textarea>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput6" class="label-type01">공개여부</label>
+                <select class="size-m" id="formGroupExampleInput6">
+                    <option value="">공개여부</option>
+                </select>
+            </div>
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput7" class="label-type01">비공개메모</label>
+                <textarea id="exampleFormControlInput7" rows="10" class="size-m"></textarea>
+            </div>
+         </div>
+         <div class="row form-row">
+            <div class="form-group col s6">
+                <a href="#!" class="btn type01 size-m" style="width:100%;">신규입력</a>
+            </div>
+            <div class="form-group col s6">
+                <a href="#!" class="btn type02 size-m" style="width:100%;">저장</a>
+             </div>
+         </div>
+         <a href="#!" class="btn-close"><span class="icon-back"></span></a>
+     </aside>
+     <div class="left-zone">
+         <span class="counsel-stu-photo"><img src="/service/design/images/counsel/counsel_stu_photo.jpg" alt="" /></span>
+         <span class="counsel-stu-name">곽미향</span>
+         <span class="counsel-stu-info">
+             <span class="major">간호학부</span>
+             <span class="grade">3학년</span>
+             <span class="number">201822040</span>
+         </span>
+         <span class="counsel-pro-name">전정원 지도</span>
+         <div class="btn-box">
+             <a href="#!" class="btn type02 size-m center-icon "><span class="icon-message-square"></span></a>
+             <a href="#!" class="btn type02 size-m center-icon "><span class="icon-smartphone"></span></a>
+             <a href="#!" class="btn type02 size-m center-icon "><span class="icon-mail"></span></a>
+             <a href="#!" class="btn type01 size-m btn-counsel">상담하기</a>
+         </div>
+         <ul class="counsel-lnb">
+             <li><a href="#!" onclick="contentsOpen('DSN', 'counsel_pro_stu_search01');">학생정보</a></li>
+             <li><a href="#!" onclick="contentsOpen('DSN', 'counsel_pro_stu_search02');" class="active">진로계획<span class="blue">일반</span></a></li>
+             <li><a href="#!">이력개발<span class="yellow">관심</span></a></li>
+             <li><a href="#!">취업지원<span class="red">중점</span></a></li>
+         </ul>
+         <select class="size-l other-stu">
+             <option value="">다른학생 상담하기</option>
+             <option value="">차기준 물리치료학과 3학년</option>
+             <option value="">차세리 간호학부 2학년</option>
+             <option value="">강예리 헤어디자인과 4학년</option>
+         </select>
+     </div>
+     <div class="right-zone">
+         <div class="counsel-statue">
+             <span class="title">지도상대</span>
+             <span class="statue-type blue">일반지도군</span>
+             <a href="#!" class="statue-sel"><span class="icon-grip1"></span></a>
+         </div>
+         <div class="counsel-tab">
+	<div rel="tab1"><a href="#!" class="active">진로계획</a></div>
+</div>
+         <div class="tab-container">
+             <div id="tab1" class="tab-content">
+                 <div class="content-half">
+                     <div class="box-type04 list-label counsel-history">
+                         <h4 class="h4" style="margin-bottom:25px;">상담이력</h4>
+                        <a href="#!" class="btn type03 size-s counsel-history-total">펼쳐보기</a>
+                        <div class="counsel-history-list">
+                            <div class="list">
+                                <div class="question on"><span class="txt">학업계획</span></div>
+                                <div class="answer" style="display:block;">
+                                    <span class="tit">앞으로의 학업계획은 뭔가요?</span>
+                                    <div class="tag-line">
+                                        <span class="counsel-tag">취업</span>
+                                        <span class="counsel-tag on">편입/입학</span>
+                                        <span class="counsel-tag">다음학기 진학</span>
+                                        <span class="counsel-tag">입대</span>
+                                        <span class="counsel-tag">휴학 또는 자퇴</span>
+                                        <span class="counsel-tag">기타</span>
+                                    </div>
+                                    <div class="checkbox size-m">
+                                        <input type="checkbox" id="checkbox01">
+                                        <label for="checkbox01">중점관리필요</label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list">
+                                <div class="question"><span class="txt">전공지원동기</span></div>
+                                <div class="answer">
+                                    <span class="tit">지금 전공을 선택하게 만든 동기가 무엇인가요?</span>
+                                    <div class="tag-line">
+                                        <span class="counsel-tag">취업</span>
+                                        <span class="counsel-tag on">편입/입학</span>
+                                        <span class="counsel-tag">다음학기 진학</span>
+                                        <span class="counsel-tag">입대</span>
+                                        <span class="counsel-tag">휴학 또는 자퇴</span>
+                                        <span class="counsel-tag">기타</span>
+                                    </div>
+                                    <div class="checkbox size-m">
+                                        <input type="checkbox" id="checkbox01">
+                                        <label for="checkbox01">중점관리필요</label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list">
+                                <div class="question"><span class="txt">현상담문제</span></div>
+                                <div class="answer">
+                                    <span class="tit">지금 현재 힘들거나 고민이 되는 부분이 있나요?</span>
+                                    <div class="tag-line">
+                                        <span class="counsel-tag">취업</span>
+                                        <span class="counsel-tag on">편입/입학</span>
+                                        <span class="counsel-tag">다음학기 진학</span>
+                                        <span class="counsel-tag">입대</span>
+                                        <span class="counsel-tag">휴학 또는 자퇴</span>
+                                        <span class="counsel-tag">기타</span>
+                                    </div>
+                                    <div class="checkbox size-m">
+                                        <input type="checkbox" id="checkbox01">
+                                        <label for="checkbox01">중점관리필요</label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list">
+                                <div class="question"><span class="txt">전공적성</span></div>
+                                <div class="answer">
+                                    <span class="tit">지금 현재 힘들거나 고민이 되는 부분이 있나요?</span>
+                                    <div class="tag-line">
+                                        <span class="counsel-tag">취업</span>
+                                        <span class="counsel-tag on">편입/입학</span>
+                                        <span class="counsel-tag">다음학기 진학</span>
+                                        <span class="counsel-tag">입대</span>
+                                        <span class="counsel-tag">휴학 또는 자퇴</span>
+                                        <span class="counsel-tag">기타</span>
+                                    </div>
+                                    <div class="checkbox size-m">
+                                        <input type="checkbox" id="checkbox01">
+                                        <label for="checkbox01">중점관리필요</label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list">
+                                <div class="question"><span class="txt">전공만족도</span></div>
+                                <div class="answer">
+                                    <span class="tit">지금 현재 힘들거나 고민이 되는 부분이 있나요?</span>
+                                    <div class="tag-line">
+                                        <span class="counsel-tag">취업</span>
+                                        <span class="counsel-tag on">편입/입학</span>
+                                        <span class="counsel-tag">다음학기 진학</span>
+                                        <span class="counsel-tag">입대</span>
+                                        <span class="counsel-tag">휴학 또는 자퇴</span>
+                                        <span class="counsel-tag">기타</span>
+                                    </div>
+                                    <div class="checkbox size-m">
+                                        <input type="checkbox" id="checkbox01">
+                                        <label for="checkbox01">중점관리필요</label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-half">
+                    <div class="box-type04 list-label">
+                        <h4 class="h4" style="margin-bottom:25px;">목표달성현황</h4>
+                        <div class="row">
+                            <div class="col s12 m12">
+                                <dl class="row">
+                                    <dt class="col s12 l3 label-type01">학점</dt>
+                                    <dd class="col s12 l9"><span class="strong">3.7</span> / 4.5</dd>
+                                </dl>
+                            </div>
+                            <div class="col s12 m12">
+                                <dl class="row">
+                                    <dt class="col s12 l3 label-type01">어학점수</dt>
+                                    <dd class="col s12 l9"><span class="strong">905</span> / 990</dd>
+                                </dl>
+                            </div>
+                            <div class="col s12 m12">
+                                <dl class="row">
+                                    <dt class="col s12 l3 label-type01">자격증</dt>
+                                    <dd class="col s12 l9"><span class="strong">3개</span> / 5개</dd>
+                                </dl>
+                            </div>
+                            <div class="col s12 m12">
+                                <dl class="row">
+                                    <dt class="col s12 l3 label-type01">수상</dt>
+                                    <dd class="col s12 l9"><span class="strong">2개</span> / 4개</dd>
+                                </dl>
+                            </div>
+                            <div class="col s12 m12">
+                                <dl class="row">
+                                    <dt class="col s12 l3 label-type01">실무</dt>
+                                    <dd class="col s12 l9"><span class="strong">30시간</span> / 62시간</dd>
+                                </dl>
+                            </div>
+                            <div class="col s12 m12">
+                                <dl class="row">
+                                    <dt class="col s12 l3 label-type01">봉사</dt>
+                                    <dd class="col s12 l9"><span class="strong">200시간</span> / 260시간</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-half">
+                    <div class="box-type04 list-label">
+                        <h4 class="h4" style="margin-bottom:25px;">목표대비달성도</h4>
+                        <div class="purpose-chart">
+                            <div class="info-txt">현재 <span>목표계획</span>이 설정 되지 않았습니다.</div>
+                            <a href="#!" class="btn type03 size-s">목표계획 설정하기</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-half">
+                    <div class="box-type04 list-label">
+                        <h4 class="h4" style="margin-bottom:25px;">적성검사결과</h4>
+                        <div class="stu-counsel-list-box">
+                            <div class="stu-counsel-list">
+                                <a href="#!">
+                                    <span class="title">적성탐색검사(Holland)</span>
+                                    <span class="date">2019-01-29</span>
+                                </a>
+                            </div>
+                            <div class="stu-counsel-list">
+                                <a href="#!">
+                                    <span class="title">성격유형검사(MBTI)</span>
+                                    <span class="date">2019-01-29</span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- 페이징 -->
+                        <div class="paginate">
+                        	<a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                        	<a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                        	<span>
+                        		<span class="present">1</span>/<span class="total">10</span>
+                        	</span>
+                        	<a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                        	<a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-half">
+                    <div class="box-type04 list-label">
+                        <h4 class="h4" style="margin-bottom:25px;">비공개 메모</h4>
+                        <textarea rows="10" class="size-m"></textarea>
+                        <div class="btn-line center">
+                            <a href="#!" class="btn type02 size-s">저장</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>
+                
+<script>
+$(function($){
+	//탭메뉴
+	$(".tab-content").hide();
+	$(".tab-content:first").show();
+	$(".counsel-tab div a").click(function() {
+		$(".counsel-tab div a").removeClass("active");
+		$(this).addClass("active");
+		$(".tab-content").hide()
+		var activeTab = $(this).parent().attr("rel");
+		$("#"+activeTab).fadeIn()
+	});
+
+       //상담하기 레이어
+       $('.btn-counsel').on('click', function(){
+           $('.counseling-aside').addClass('on');
+           $('.counseling-aside').css({'transition':'.3s'});
+       });
+       $('.counseling-aside .btn-close').on('click', function(){
+           $('.counseling-aside').removeClass('on');
+           $('.counseling-aside').css({'transition':'.3s'});
+       })
+
+       //상담이력 열고 닫기
+       $('.counsel-history-list .question').on('click', function() {
+           if ($(this).hasClass('on')) {
+               $(this).removeClass('on');
+               $(this).siblings('.answer').slideUp();
+
+           } else {
+               $('.counsel-history-list .answer').slideUp();
+               $('.counsel-history-list .question').removeClass('on');
+               $(this).siblings('.answer').slideDown();
+               $(this).addClass('on');
+           }
+       });
+       $('.counsel-history-total').on('click', function() {
+           if ($(this).text() == '펼쳐보기') {
+               switchtext($(this), '모두닫기');
+               $('.counsel-history-list .answer').slideDown();
+           } else {
+               switchtext($(this), '펼쳐보기');
+               $('.counsel-history-list .answer').slideUp();
+           }
+       });
+});
+
+   function switchtext(target, value) {
+       target.contents().filter(function() {
+           return this.nodeType == 3;
+       }).remove().end().end().append(value);
+   }
+
+
+</script>

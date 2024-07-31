@@ -1,0 +1,61 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio.css" />  
+
+<h2>포트폴리오 관리</h2>
+<section class="sub_cont_box portfolio-area">
+    <div class="portfolio-area-top">
+        <div class="row form-row">
+            <div class="form-group col s12 l12 xl10">            
+                <div class="user-info-box">
+                    <div class="photo-line">
+                        <span class="photo"><img src="/service/design/images/portfolio/counsel_main_photo04.jpg" alt=""></span>
+                    </div>
+                    <span class="user"><span class="name">강수민</span><span class="grade">(201600212)</span>님의 포트폴리오</span>
+                    <ul class="pf-list">
+                        <li class="list new">
+                            <a href="#!" class="color01">테</a>
+                        </li>
+                        <li class="list">
+                            <a href="#!" class="color02">전</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group col s12 l12 xl2">                                     
+                <div class="user-info-box f-right">                                    
+                    <div class="btn-line">
+                        <a href="#!" class="btn type01 size-m right-icon icon-folder btn-portfolio">포트폴리오 생성</a>
+                    </div>
+                </div>                              
+            </div>
+        </div>
+    </div>  
+    <div class="row form-row portfolio-area-title">
+        <div class="form-group col s12 l6">
+            <h2>나의 포트폴리오 리스트</h2>
+        </div>                        
+    </div>     
+    <div class="pf-default">
+        <a href="#!" class="pf-making">
+            <p class="txt">지금 나만의 포트폴리오를 시작해보세요</p>
+            <span class="link">포트폴리오 생성하기</span>
+        </a>
+    </div>
+                        
+</section>
+
+            
+
+<script>
+    $(document).ready(function() {
+        /* 포트폴리오 선택 */
+        $('.portfolio-list .list input').on('click', function(){
+            if ($(this).is(':checked')) {
+                $(this).parent().addClass('on');
+                $(this).next().addClass('on')
+            } else {
+                $(this).parent().removeClass('on');
+                $(this).next().removeClass('on');
+            }
+        })        
+    });    
+</script>

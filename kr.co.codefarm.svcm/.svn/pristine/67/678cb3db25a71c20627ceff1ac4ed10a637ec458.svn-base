@@ -1,0 +1,10 @@
+   -> height:i===1/0?i:Math.round(this.rowHeight*i+Math.max(0,i-1)*this.margin[1])   
+       ----->(����) height:i===1/0?i:this.rowHeight*i
+   -> top:Math.round(this.rowHeight*e+(e+1)*this.margin[1])
+       ----->(����) top:Math.round(this.rowHeight*e+(e*0.2+1)*this.margin[1])
+   -> height:i===1/0?i:Math.round(this.rowHeight*i+Math.max(0,i-1)*this.margin[1])
+       ----->(����) height:i===1/0?i:this.rowHeight*i
+   -> top:Math.round(this.rowHeight*e+(e+1)*this.margin[1])
+       ----->(����) top:Math.round(this.rowHeight*e+(e*0.2+1)*this.margin[1])
+       
+   /*"no-touch":t.isAndroid*/ --> 주석처리

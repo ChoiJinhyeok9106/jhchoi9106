@@ -1,0 +1,194 @@
+﻿@font-face {
+  font-family: 'xcloud-icon';
+  src:  url('fonts/xcloud.eot?anti2e');
+  src:  url('fonts/xcloud.eot?anti2e#iefix') format('embedded-opentype'),
+    url('fonts/xcloud.ttf?anti2e') format('truetype'),
+    url('fonts/xcloud.woff?anti2e') format('woff'),
+    url('fonts/xcloud.svg?anti2e#xcloud') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-xcloud"], [class*=" icon-xcloud"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class*="icon-xcloud"]:before,
+input[type="checkbox"]+label:after {
+    font-family: 'xcloud-icon' !important;
+}
+
+.icon-xcloud001:before {
+  content: "\e900";
+}
+.icon-xcloud002:before {
+  content: "\e901";
+}
+.icon-xcloud003:before {
+  content: "\e902";
+}
+.icon-xcloud004:before {
+  content: "\e903";
+}
+.icon-xcloud005:before {
+  content: "\e904";
+}
+.icon-xcloud006:before {
+  content: "\e905";
+}
+.icon-xcloud007:before {
+  content: "\e906";
+}
+.icon-xcloud097:before {
+  content: "\e906";
+}
+.icon-xcloud008:before {
+  content: "\e907";
+}
+.icon-xcloud009:before {
+  content: "\e908";
+}
+.icon-xcloud010:before {
+  content: "\e909";
+}
+.icon-xcloud011:before {
+  content: "\e90a";
+}
+.icon-xcloud012:before {
+  content: "\e90b";
+}
+.icon-xcloud013:before {
+  content: "\e90c";
+}
+.icon-xcloud014:before {
+  content: "\e90d";
+}
+.icon-xcloud015:before {
+  content: "\e90e";
+}
+.icon-xcloud016:before {
+  content: "\e90f";
+}
+.icon-xcloud017:before {
+  content: "\e910";
+}
+.icon-xcloud018:before {
+  content: "\e911";
+}
+.icon-xcloud019:before {
+  content: "\e912";
+}
+.icon-xcloud020:before {
+  content: "\e913";
+}
+.icon-xcloud021:before {
+  content: "\e914";
+}
+.icon-xcloud022:before {
+  content: "\e915";
+}
+.icon-xcloud023:before {
+  content: "\e916";
+}
+.icon-xcloud024:before {
+  content: "\e917";
+}
+.icon-xcloud025:before {
+  content: "\e918";
+}
+.icon-xcloud026:before {
+  content: "\e919";
+}
+.icon-xcloud027:before {
+  content: "\e91a";
+}
+.icon-xcloud028:before {
+  content: "\e91b";
+}
+.icon-xcloud029:before {
+  content: "\e91c";
+}
+.icon-xcloud030:before {
+  content: "\e91d";
+}
+.icon-xcloud031:before {
+  content: "\e91e";
+}
+.icon-xcloud032:before {
+  content: "\e91f";
+}
+.icon-xcloud033:before {
+  content: "\e920";
+}
+.icon-xcloud034:before {
+  content: "\e921";
+}
+.icon-xcloud035:before {
+  content: "\e922";
+}
+.icon-xcloud036:before {
+  content: "\e923";
+}
+.icon-xcloud037:before {
+  content: "\e924";
+}
+.icon-xcloud038:before {
+  content: "\e925";
+}
+.icon-xcloud039:before {
+  content: "\e926";
+}
+.icon-xcloud040:before {
+  content: "\e927";
+}
+.icon-xcloud041:before {
+  content: "\e928";
+}
+.icon-xcloud042:before {
+  content: "\e929";
+}
+.icon-xcloud043:before {
+  content: "\e92a";
+}
+.icon-xcloud044:before {
+  content: "\e92b";
+}
+.icon-xcloud045:before {
+  content: "\e92c";
+}
+.icon-xcloud046:before {
+  content: "\e92d";
+}
+.icon-xcloud047:before {
+  content: "\e92e";
+}
+.icon-xcloud048:before {
+  content: "\e92f";
+}
+.icon-xcloud201:before {
+  content: "\e930";
+}
+.icon-xcloud202:before {
+  content: "\e931";
+}
+.icon-xcloud203:before {
+  content: "\e932";
+}
+.icon-xcloud204:before {
+  content: "\e933";
+}
+.icon-xcloud205:before {
+  content: "\e934";
+}
+.icon-xcloud206:before {
+  content: "\e935";
+}

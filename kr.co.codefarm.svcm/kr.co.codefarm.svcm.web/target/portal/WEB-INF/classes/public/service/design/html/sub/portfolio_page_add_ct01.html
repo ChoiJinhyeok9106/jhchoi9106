@@ -1,0 +1,622 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio.css" />  
+
+<h2>페이지 관리</h2>
+<section class="sub_cont_box" id="app">
+    <h2 class="h2">페이지 작성하기</h2>     
+    <div class="tab-outter">
+        <div class="tab-type01">
+            <div class="tab-inner">
+                <div rel="tab1"><a href="#!">표지</a></div>
+                <div rel="tab2"><a href="#!" class="active">컨텐츠</a></div>
+                <div rel="tab3"><a href="#!">이력서</a></div>
+                <div rel="tab4"><a href="#!">프로젝트</a></div>
+                <div rel="tab5"><a href="#!">자기소개서</a></div>
+                <div rel="tab6"><a href="#!">목차</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-container">
+        <div id="tab1" class="tab-content">
+            <div class="page-layout-list">
+                <div class="list">
+                    <label class="thumb" for="layout-select101"><img src="/service/design/images/portfolio/mtype_cv01.png" alt=""></label>
+                    <p class="thumb-info">중앙제목</p>
+                    <input type="radio" name="layout_select" id="layout-select101" class="out">
+                    <label class="radio_btn" for="layout-select101"></label>
+                </div>
+                <div class="list">
+                    <label class="thumb" for="layout-select102"><img src="/service/design/images/portfolio/mtype_cv02.png" alt=""></label>
+                    <p class="thumb-info">좌측제목</p>
+                    <input type="radio" name="layout_select" id="layout-select102" class="out">
+                    <label class="radio_btn" for="layout-select102"></label>
+                </div>
+                <div class="list">
+                    <label class="thumb" for="layout-select103"><img src="/service/design/images/portfolio/mtype_cv03.png" alt=""></label>
+                    <p class="thumb-info">우측제목</p>
+                    <input type="radio" name="layout_select" id="layout-select103" class="out">
+                    <label class="radio_btn" for="layout-select103"></label>
+                </div>
+                <div class="list">
+                    <label class="thumb" for="layout-select104"><img src="/service/design/images/portfolio/mtype_cv04.png" alt=""></label>
+                    <p class="thumb-info">이미지</p>
+                    <input type="radio" name="layout_select" id="layout-select104" class="out">
+                    <label class="radio_btn" for="layout-select104"></label>
+                </div>
+            </div>
+        </div>
+        <div id="tab2" class="tab-content">
+            <div class="row form-row page-type-wrap">
+                <div class="form-group col s12 xl6">
+                    <div class="page-type-summary">
+                        <span class="thumb"><img src="/service/design/images/portfolio/mtype_ct01.png" alt=""></span>
+                        <div class="cont">
+                            <span class="tit">레이아웃</span>
+                            <span class="type-icon">컨텐츠</span><span class="type-txt">상단이미지</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col s12 xl6 right">
+                    <a href="#!" class="btn type01 size-m left-icon icon-repeat">다른 레이아웃 선택하기</a>
+                    <a href="#!"  onclick="modal_open('modal1');return false;" class="btn type01 size-m left-icon icon-eye">미리보기</a>
+                </div>                                
+            </div>
+            <div class="page-write-wrap">
+                <div class="write-header">                                    
+                    <div class="form-group row form-row">
+                        <div class="col s12 l2 col-label">
+                            <label for="inlineFormInputName10" class="label-type01 size-m">요약제목</label>
+                        </div>
+                        <div class="col s12 l5">
+                            <input type="text" id="inlineFormInputName10" class="size-m" placeholder="Ex.공모전, 팀프로젝트, 기획서 등">
+                        </div>
+                        <div class="col s12 l5 col-form-txt">
+                            <small class="form-txt">해당 제목은 포트폴리오 메뉴에 적용되오니 정확히 입력해주세요<br/><span>(6자 이하로 입력)</span></small>
+                        </div>
+                    </div>
+                    <div class="form-group row form-row">                                        
+                        <div class="col s12">
+                            <input type="text" id="inlineFormInputName11" class="size-m" placeholder="타이틀을 입력하세요">
+                        </div>
+                    </div>                                    
+                </div>
+                <perfect-scrollbar>
+                <div class="write-content">
+                    <div class="form-wrap">
+                        <div class="image-wrap w100">
+                            <div class="image">
+                                <div id="cma_image" class="cma_image"></div>
+                                <div class="cma_file_wrap">
+                                    <div class="label_wrap">
+                                        <label for="cma_file">이미지추가</label>
+                                        <p class="info_txt">( 최소 1M에서 최대 5M까지 <br/>업로드 가능합니다. )</p>
+                                        <div class="file_wrap"><span class="txt">이미지 찾아보기</span>
+                                            <input type="file" name="cma_file" id="cma_file" accept="image/*" capture="camera" onchange="getThumbnailPrivew(this,$('#cma_image'))">
+                                        </div>
+                                    </div>                                              
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-wrap">
+                        <div class="text w100 h50">
+                            <textarea placeholder="내용을 입력하세요."></textarea>
+                            <p class="count_num">(<span class="cur_num">0</span>/<span class="max_num">1000</span>)</p>
+                        </div>
+                    </div>
+                </div>
+                </perfect-scrollbar>
+            </div>
+            <div class="btn-line center">
+                <p class="info-txt02">위의 내용으로 페이지가 생성됩니다.</p>
+                <a href="#!" class="btn type03 size-l">취소</a><a href="#!" class="btn type02 size-l">완료</a>
+            </div>
+        </div>
+        <div id="tab3" class="tab-content">
+            <div class="portfolio-page-type">
+                <div class="radio size-m">
+                    <input type="radio" name="radio" id="page-type01" checked="">
+                    <label for="page-type01">이력서 리스트</label>
+                    <i class="radio-icon"></i>
+                </div>
+                <div class="radio size-m">
+                    <input type="radio" name="radio" id="page-type02">
+                    <label for="page-type02">개인 이력서</label>
+                    <i class="radio-icon"></i>
+                </div>
+                <div class="radio size-m">
+                    <input type="radio" name="radio" id="page-type03">
+                    <label for="page-type03">추가 이력 사항</label>
+                    <i class="radio-icon"></i>
+                </div>
+            </div>
+            <div class="portfolio-page-layout">
+                <article class="page-type01">
+                    <div class="box-type03 pd20 row form-row">
+                        <div class="col s12">
+                            <div class="col-inline left">
+                                <label class="label-type00 size-m icon-search">검색</label> 
+                                <select name="pSearchType" id="pSearchType" class="size-m" style="width: 180px;">
+                                    <option value="">이력서명</option>
+                                </select> 
+                                <input type="text" id="formGroupExampleInput3" class="size-m" placeholder="검색어를 입력하세요.">                                  
+                                <input type="button" value="조회" class="btn type01 size-m"> 
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="checkbox size-m">
+                            <input type="checkbox" id="checkbox03">
+                            <label for="checkbox03">자기소개서 포함</label>
+                            <i class="icon-check"></i>
+                        </div>
+                    </div>
+                    <!-- 테이블 -->
+                    <table class="table-type02 response">
+                        <caption>이력서리스트 테이블로 선택, 제목, 작성자, 작성일 항목별 순서대로 안내하는 표입니다</caption>
+                        <colgroup>
+                            <col width="10%" />
+                            <col>
+                            <col width="15%" />
+                            <col width="20%" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col">선택</th>
+                                <th scope="col">제목</th>
+                                <th scope="col">작성자</th>
+                                <th scope="col">작성일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 이력서</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 이력서</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 이력서</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 이력서</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 이력서</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- 페이징 -->
+                    <div class="paginate">
+                        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                        <span>
+                            <a href="#" class="active" title="1 페이지">1</a>
+                            <a href="#" title="2 페이지">2</a>
+                            <a href="#" title="3 페이지">3</a>
+                            <a href="#" title="4 페이지">4</a>
+                            <a href="#" title="5 페이지">5</a>
+                            <a href="#" title="6 페이지">6</a>
+                            <a href="#" title="7 페이지">7</a>
+                            <a href="#" title="8 페이지">8</a>
+                            <a href="#" title="9 페이지">9</a>
+                            <a href="#" title="10 페이지">10</a>
+                        </span>
+                        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+                    </div>
+                </article>
+                <article class="page-type02">
+                    <div class="page-layout-list">
+                        <div class="list">
+                            <label class="thumb" for="layout-select3101"><img src="/service/design/images/portfolio/mtype_re01.png" alt=""></label>
+                            <p class="thumb-info">기본이력서</p>
+                            <input type="radio" name="layout_select" id="layout-select3101" class="out">
+                            <label class="radio_btn" for="layout-select3101"></label>
+                        </div>
+                        <div class="list">
+                            <label class="thumb" for="layout-select3102"><img src="/service/design/images/portfolio/mtype_re03.png" alt=""></label>
+                            <p class="thumb-info">이미지</p>
+                            <input type="radio" name="layout_select" id="layout-select3102" class="out">
+                            <label class="radio_btn" for="layout-select3102"></label>
+                        </div>                           
+                    </div>
+                </article>
+                <article class="page-type03">
+                    <div class="page-layout-list">
+                        <div class="list">
+                            <label class="thumb" for="layout-select3201"><img src="/service/design/images/portfolio/mtype_re02.png" alt=""></label>
+                            <p class="thumb-info">경력추가</p>
+                            <input type="radio" name="layout_select" id="layout-select3201" class="out">
+                            <label class="radio_btn" for="layout-select3201"></label>
+                        </div>
+                        <div class="list">
+                            <label class="thumb" for="layout-select3202"><img src="/service/design/images/portfolio/mtype_re03.png" alt=""></label>
+                            <p class="thumb-info">이미지</p>
+                            <input type="radio" name="layout_select" id="layout-select3202" class="out">
+                            <label class="radio_btn" for="layout-select3202"></label>
+                        </div>                           
+                    </div>
+                </article>
+            </div>
+            
+        </div>
+        <div id="tab4" class="tab-content">
+            <div class="portfolio-page-type">
+                <div class="radio size-m">
+                    <input type="radio" name="radio2" id="page-type11" checked="">
+                    <label for="page-type11">프로젝트 리스트</label>
+                    <i class="radio-icon"></i>
+                </div>
+                <div class="radio size-m">
+                    <input type="radio" name="radio2" id="page-type12">
+                    <label for="page-type12">개별 프로젝트</label>
+                    <i class="radio-icon"></i>
+                </div>
+            </div>
+            <div class="portfolio-page-layout">
+                <article class="page-type11">
+                    <div class="box-type03 pd20 row form-row">
+                        <div class="col s12">
+                            <div class="col-inline left">
+                                <label class="label-type00 size-m icon-search">검색</label> 
+                                <select name="pSearchType" id="pSearchType" class="size-m" style="width: 180px;">
+                                    <option value="">프로젝트명</option>
+                                </select> 
+                                <input type="text" id="formGroupExampleInput3" class="size-m" placeholder="검색어를 입력하세요.">                                  
+                                <input type="button" value="조회" class="btn type01 size-m"> 
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 테이블 -->
+                    <table class="table-type02 response">
+                        <caption>프로젝트리스트 테이블로 선택, 제목, 작성자, 작성일 항목별 순서대로 안내하는 표입니다</caption>
+                        <colgroup>
+                            <col width="10%" />
+                            <col>
+                            <col width="15%" />
+                            <col width="20%" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col">선택</th>
+                                <th scope="col">제목</th>
+                                <th scope="col">작성자</th>
+                                <th scope="col">작성일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 프로젝트1</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 프로젝트2</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 프로젝트3</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 프로젝트4</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                            <tr>
+                                <td data-header="선택">
+                                    <div class="checkbox type01 size-s single">
+                                        <input type="checkbox" id="checkbox04">
+                                        <label for="checkbox04"></label>
+                                        <i class="icon-check"></i>
+                                    </div>
+                                </td>
+                                <td data-header="제목" class="left"><a href="#!">윤지원 프로젝트1</a></td>
+                                <td data-header="작성자">윤지원</td>
+                                <td data-header="작성일">2018.12.13</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- 페이징 -->
+                    <div class="paginate">
+                        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                        <span>
+                            <a href="#" class="active" title="1 페이지">1</a>
+                            <a href="#" title="2 페이지">2</a>
+                            <a href="#" title="3 페이지">3</a>
+                            <a href="#" title="4 페이지">4</a>
+                            <a href="#" title="5 페이지">5</a>
+                            <a href="#" title="6 페이지">6</a>
+                            <a href="#" title="7 페이지">7</a>
+                            <a href="#" title="8 페이지">8</a>
+                            <a href="#" title="9 페이지">9</a>
+                            <a href="#" title="10 페이지">10</a>
+                        </span>
+                        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+                    </div>
+                </article>
+                <article class="page-type12">
+                    <div class="page-layout-list">
+                        <div class="list">
+                            <label class="thumb" for="layout-select4101"><img src="/service/design/images/portfolio/mtype_pj01.png" alt=""></label>
+                            <p class="thumb-info">개별입력</p>
+                            <input type="radio" name="layout_select" id="layout-select4101" class="out">
+                            <label class="radio_btn" for="layout-select4101"></label>
+                        </div>
+                        <div class="list">
+                            <label class="thumb" for="layout-select4102"><img src="/service/design/images/portfolio/mtype_pj02.png" alt=""></label>
+                            <p class="thumb-info">이미지</p>
+                            <input type="radio" name="layout_select" id="layout-select4102" class="out">
+                            <label class="radio_btn" for="layout-select4102"></label>
+                        </div>                           
+                    </div>
+                </article>
+                
+            </div>
+        </div>
+        <div id="tab5" class="tab-content">
+            <div class="page-layout-list">
+                <div class="list">
+                    <label class="thumb" for="layout-select501"><img src="/service/design/images/portfolio/mtype_me01.png" alt=""></label>
+                    <p class="thumb-info">텍스트</p>
+                    <input type="radio" name="layout_select" id="layout-select501" class="out">
+                    <label class="radio_btn" for="layout-select501"></label>
+                </div>
+                <div class="list">
+                    <label class="thumb" for="layout-select502"><img src="/service/design/images/portfolio/mtype_me02.png" alt=""></label>
+                    <p class="thumb-info">이미지텍스트</p>
+                    <input type="radio" name="layout_select" id="layout-select502" class="out">
+                    <label class="radio_btn" for="layout-select502"></label>
+                </div>
+                <div class="list">
+                    <label class="thumb" for="layout-select503"><img src="/service/design/images/portfolio/mtype_me03.png" alt=""></label>
+                    <p class="thumb-info">이미지</p>
+                    <input type="radio" name="layout_select" id="layout-select503" class="out">
+                    <label class="radio_btn" for="layout-select503"></label>
+                </div>                                
+            </div>
+        </div>
+        <div id="tab6" class="tab-content">
+            <div class="page-layout-list">
+                <div class="list">
+                    <label class="thumb" for="layout-select601"><img src="/service/design/images/portfolio/mtype_li01.png" alt=""></label>
+                    <p class="thumb-info">텍스트</p>
+                    <input type="radio" name="layout_select" id="layout-select601" class="out">
+                    <label class="radio_btn" for="layout-select601"></label>
+                </div>
+                <div class="list">
+                    <label class="thumb" for="layout-select602"><img src="/service/design/images/portfolio/mtype_li02.png" alt=""></label>
+                    <p class="thumb-info">이미지텍스트</p>
+                    <input type="radio" name="layout_select" id="layout-select602" class="out">
+                    <label class="radio_btn" for="layout-select602"></label>
+                </div>
+                <div class="list">
+                    <label class="thumb" for="layout-select603"><img src="/service/design/images/portfolio/mtype_li03.png" alt=""></label>
+                    <p class="thumb-info">이미지</p>
+                    <input type="radio" name="layout_select" id="layout-select603" class="out">
+                    <label class="radio_btn" for="layout-select603"></label>
+                </div>                                
+            </div>
+        </div>
+    </div> 
+    
+    <!-- modal layer popup -->
+<div class="modal-layer-wrap">        
+    <div id="modal1" class="modal-layer modal-large">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">미리보기</p>
+            </div>
+            <div class="modal-content">                    
+                <div class="page-write-wrap">
+                    <div class="write-header">                                    
+                        <div class="form-group row form-row">
+                            <div class="col s12 l2 col-label">
+                                <label for="inlineFormInputName10" class="label-type01 size-m">요약제목</label>
+                            </div>
+                            <div class="col s12 l5">
+                                <input type="text" id="inlineFormInputName10" class="size-m" placeholder="Ex.공모전, 팀프로젝트, 기획서 등">
+                            </div>
+                            <div class="col s12 l5 col-form-txt">
+                                <small class="form-txt">해당 제목은 포트폴리오 메뉴에 적용되오니 정확히 입력해주세요<br><span>(6자 이하로 입력)</span></small>
+                            </div>
+                        </div>
+                        <div class="form-group row form-row">                                        
+                            <div class="col s12">
+                                <input type="text" id="inlineFormInputName11" class="size-m" placeholder="타이틀을 입력하세요">
+                            </div>
+                        </div>                                    
+                    </div>
+                    <perfect-scrollbar>
+                    <div class="write-content">
+                        <div class="form-wrap">
+                            <div class="image-wrap w100">
+                                <div class="image">
+                                    <img src="/service/design/images/portfolio/ability_main_bg.jpg" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <div class="text w100 h50">
+                                <span>계절이 지나가는 하늘에는 가을로 가득 차 있습니다.
+                                나는 아무 걱정도 없이 가을 속의 별들을 다 헤일 듯합니다...
+                                가슴 속에 하나 둘 새겨지는 별을 이제 다 못 헤는 것은 쉬이 아침이 오는 까닭이요, 내일 밤이 남은 까닭이요, 아직 나의 청춘이 다하지 않은 까닭입니다.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    </perfect-scrollbar>
+                </div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type01 size-l layer_close">확인</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>                                        
+</section>
+
+
+            
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+    $(document).ready(function() {
+        //탭메뉴
+        $(".tab-content").hide();
+        $(".tab-content:nth-child(2)").show();
+        $(".tab-type01 .tab-inner div a").click(function() {
+            $(".tab-type01 .tab-inner div a").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").hide()
+            var activeTab = $(this).parent().attr("rel");
+            $("#"+activeTab).fadeIn()
+        });
+
+        /* 페이지 타입 선택 */
+        $('.page-layout-list .list input').on('click', function(){
+            if ($(this).is(':checked')) {
+                $('.page-layout-list .list').removeClass('on');
+                $('.radio_btn').removeClass('on');
+                $(this).parent().addClass('on');
+                $(this).next().addClass('on')
+            }
+        })
+
+        /* 2차 라디오 tab */
+        $('.page-type01').show();
+        $('.page-type11').show();
+        $('.portfolio-page-type input').on('click', function(){
+             var that = $(this);
+            if ($(that).is(':checked')) {
+                var typeNum = $(this).attr('id');   
+                that.parent().parent().next('.portfolio-page-layout').find('article').hide();
+                $('.'+typeNum).show()
+            }
+        })
+    });    
+</script>
+<script>
+    $(document).ready(function() {
+        
+        var maxNum = $('.max_num').html();
+        $('textarea').keydown(function(){
+            var numChar = $(this).val().length;
+            $(this).next().children('.cur_num').text(numChar);
+            if (numChar > maxNum) {
+                window.alert('내용은 최대'+maxNum+'자를 넘을 수 없습니다.');
+                $(this).val($(this).val().substr(0, maxNum))
+            }
+        })
+    });
+    // input file 이미지 미리보기
+    function getThumbnailPrivew(html, $target) {
+        if (html.files && html.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $target.css('display', 'block');
+                //$target.css('background-image', 'url(\"' + e.target.result + '\")'); // 배경으로 지정시
+                $target.html('<img src="' + e.target.result + '" alt="" />');
+                $('.image_wrap .image').css('border','0');
+            }
+            reader.readAsDataURL(html.files[0]);
+        }
+    }       
+</script>

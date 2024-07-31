@@ -1,0 +1,525 @@
+<h2>사용자 추가권한 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!authList.currentRow"> 
+		<h2 class="h2">권한 리스트</h2>
+		<div class="box-type03 col-inline">
+	        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+            <select class="size-m" name="pSearchType" v-model="pSearchType">
+				<option value="1">권한코드</option>
+				<option value="2">권한명</option>
+			</select>
+            <input type="text" v-model="pSearchArgv" name="pSearchArgv" style="width:304px;" class="size-m" placeholder="권한명/권한코드를 입력하세요" v-on:keyup.13="search">
+	        <input type="button" value="검색" class="btn type01 size-m" @click="search">
+	    </div>
+	    
+	    <div class="col s12 l12">
+		    <span class="board-info-txt size-m">총 <span>{{authListPaging.totalCnt}}</span>건의 권한이 있습니다. (<span>{{authListPaging.getCurrentPage()}}</span> / {{authListPaging.getTotalPage()}})</span>
+		</div>
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+	        	<table class="table-type04 response" id="mainListLoading">
+					<caption></caption>
+					<colgroup>
+						<col width="15%" />
+						<col width="15%" />
+						<col width="" />
+						<col width="10%" />
+						<col width="10%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th scope="col">권한구분</th>
+							<th scope="col">권한코드</th>
+							<th scope="col">권한명</th>
+							<th scope="col">순서</th>
+							<th scope="col">사용여부</th>
+						</tr>
+					</thead>
+					<tbody v-if="authList.getRowCount() > 0">
+						<tr v-for="(item, index) in authList.data" v-if="authList.getRowType(index) != '8'">
+							<td data-header="권한구분"><a href="#!" @click="rowClick(index)">{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',item.AUTH_GB,'CD_NM')}}</a></td>
+							<td data-header="권한코드"><a href="#!" @click="rowClick(index)">{{item.AUTH_CD}}</a></td>
+							<td class="left" data-header="권한명"><a href="#!" @click="rowClick(index)">{{item.AUTH_NM}}</a></td>
+							<td data-header="순서"><a href="#!" @click="rowClick(index)">{{item.ORD}}</a></td>
+							<td data-header="사용여부"><a href="#!" @click="rowClick(index)" :class="{'btn-table-type02':item.USE_YN == 'Y', 'btn-table-type01':item.USE_YN == 'N'}"><span :class="{'icon-checkmark':item.USE_YN == 'Y', 'icon-minus-circle':item.USE_YN == 'N'}"></span></a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="authListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+	
+	<!-- 권한 대상 권한 -->
+	<section class="cont_box board-view-page nonsubject-info" v-if="authList.currentRow">
+		<div class="row form-row head-box">
+   			<div class="form-group col s12 l8">
+	   			<p class="title">[{{smnCommcode.getCommcodeNm('SMN','AUTH_GB',authList.currentRow.AUTH_GB,'CD_NM')}}] {{authList.currentRow.AUTH_NM}}</p>
+	        	<p class="description">{{authList.currentRow.AUTH_DESC}}</p>
+   			</div>
+    		<div class="form-group col s12 l4 right">
+	    		<a href="#!" class="btn type01 size-m left-icon icon-corner-left-up" @click="authList.selectRow(-1); tabPage = 1; userList.clear(); userListPaging.setTotalCnt(0);">목록</a>
+    		</div>
+   		</div>
+   		
+		<template>
+			<div class="tab-container">
+				<div id="tab1" class="tab-content">
+			   		<div class="box-type03 col-inline">
+						<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+			            <select name="pUserStatusGb" class="size-m" id="pUserStatusGb" v-model="pUserStatusGb">
+			                <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'USER_STATUS_GB', 'all', 'CD_NM', 'N', 'all'), function(e){return e.CD1 == pUserGroupGb || e.CD == '';})" :value="item.CD">{{item.CD_NM}}</option>
+			            </select>
+			   			<input type="text" name="pUserSearchArgv" class="size-m" id="pUserSearchArgv" v-model="pUserSearchArgv" :placeholder="searchPlaceHolder('text')" @keyup.13="setUserList"  data-vv-as="사용자 명/아이디 " v-validate="searchPlaceHolder('validate')" v-bind:class="{'invalid':errors.has('pUserSearchArgv')}">
+				        <input type="button" value="검색" class="btn type01 size-m" @click="setUserList('default')">
+				    </div>
+			
+					<div class="col s12 l12">
+					    <span class="board-info-txt size-m">총 <span>{{userListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{userListPaging.getCurrentPage()}}</span> / {{userListPaging.getTotalPage()}})</span>
+					</div>		
+					<div class="table-type04-wrap">
+			            <table class="table-type04 response" id="userListLoading">
+							<caption>사용자 아이디, 사용자 명, 부서 코드, 권한 코드, 성별 구분, 생년월일, 사용 여부를 조회 항목별 순서대로 안내하는 표입니다</caption>	
+							<colgroup>
+								<col width="30%" />
+								<col width="15%" />
+								<col width="15%" />
+								<col width="20%" />
+								<col width="10%" />
+								<col width="10%" />
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="left">사용자 아이디</th>
+									<th scope="col" class="left">사용자 명</th>
+									<th scope="col" class="left">직종</th>
+									<th scope="col">생년월일</th>
+									<th scope="col">상태</th>
+									<th scope="col">등록</th>
+								</tr>
+							</thead>
+							<tbody v-if="userList.getRowCount() > 0">
+								<tr v-for="(item, index) in userList.data" v-if="userList.getRowType(index) != 8">
+									<td class="left" data-header="사용자 아이디">{{item.USER_ID}}</td>
+									<td class="left" data-header="사용자 명">{{item.USER_NM}}</td>
+									<td class="left" data-header="직종">{{item.USER_TYPE_GBNM}}</td>
+									<td data-header="생년월일">{{item.BIRTHDAY}}</td>
+									<td data-header="상태">{{item.USER_STATUS_GBNM}}</td>
+									<td data-header="등록">
+										<label class="toggle-switch size-m" v-show="item.AUTH_YN!=null">
+											<input class="size-m" type="checkbox" id="authYn" name="authYn" data-vv-as="여부 " true-value="Y" false-value="N" v-model="item.AUTH_YN" @click="userList.selectRow(index); regUserAddAuth(item.USER_ID)"/>
+			                                <span class="slider bg-red round"></span>
+			                            </label>
+									</td>
+								</tr>
+							</tbody>
+							<tbody v-else>
+								<tr>
+									<td colspan="100">검색결과가 없습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<paging :pagingset="userListPaging" :type="'normal'"></paging>
+				</div>
+			</div>
+		</template>
+	</section>
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+    
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	/* 사용할 데이터 */
+	data: {
+		/* 권한 관련 */
+		pAuthGb: '', /* 검색조건 */
+		pSearchType: '2', /* 검색조건 */
+        pSearchArgv: '', /* 검색조건 */
+        authList: new Dataset(),				// 실적 목록(상하위 공용))
+        authListPaging: new PagingSet(5, 5),	// 페이징
+        /* 권한 관련 */
+        authList: new Dataset(),				//
+        authListPaging: new PagingSet(5, 5),	// 페이징(page, row)
+        /* 사용자 관련 */
+        pUserGroupGb: '4', /* 검색조건 */
+	    pUserStatusGb: '1',/* 검색조건 */
+	    pUserSearchArgv: '', /* 검색조건 */
+	    pUserSearchArgvSec: '', /* 검색조건 */
+	    pUserTypeGb: '',
+	    pDeptCd: '',
+	    pDeptNm: '',
+        userList: new Dataset(),
+        userListPaging: new PagingSet(10, 5),
+	    tabPage: 1,
+        /* 권한 대상자 관련 */
+        userAddAuthList: new Dataset(),
+        /* 기타 */
+        messageModal: new ModalSet('userAdd-modal'),	// confirm 모달
+		mainListLoading: {id:'mainListLoading', val:false},
+		userListLoading: {id:'userListLoading', val:false},
+		userListLoadingSec: {id:'userListLoadingSec', val:false},
+		restApiCodeSet: new CustomcodeSet('/system-manager/rest-api'),
+		detailSearch: false,
+	},
+	/* 생성 될 때 */ 
+	beforeCreate: function(){
+		
+	},
+	/* 계산된 속성 표현 시 */
+	computed: {
+		
+	},
+	/* 데이터 감시 */
+	watch: {
+		'authList.rowposition': {
+			handler: function (val, oldVal) {
+				if(val != -1){
+					this.initToggle();
+	                this.setUserAddAuthList();
+	                this.pUserSearchArgv = '%%';
+                	this.setUserList('default');
+                	this.pUserSearchArgv = '';
+				}
+			}
+		},		
+		'authList.data': {
+			handler: function (val, oldVal) {                
+				if(this.authList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data ).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.authList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.authList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+                }
+			},
+			deep: true
+	    },	
+		'authListPaging.currentPage': {
+			handler: function (val, oldVal) {
+                this.authList.pageChange(val, this.authListPaging.getRowCnt());
+                this.setUserAddAuthInfo();
+			}
+        },
+	    'userListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.userList.pageChange(val, this.userListPaging.getRowCnt());
+				this.setUserAddAuthInfo();
+			}
+	    },
+	    'pUserGroupGb': {
+	    	handler: function (val, oldVal) {
+
+	    		if(val == '1'){
+	    			this.pUserStatusGb = '11';
+	    		}
+	    		
+	    		else if(val == '4'){
+	    			this.pUserStatusGb = '1';
+	    		}
+
+	    		else if(val == '5'){
+	    			this.pUserStatusGb = '91';
+	    		}
+
+				else if(val == '9'){
+					this.pUserStatusGb = '81';
+	    		}else{
+	    			this.pUserStatusGb = '';
+	    		}
+	    		
+	    		this.pUserTypeGb = '';
+	    	    this.pDeptCd = '';
+	    	    this.pDeptNm = '';
+	    		this.$validator.reset();
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'userListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userListLoading.id), val);
+			}
+	    },
+	    'userListLoadingSec.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userListLoadingSec.id), val);
+			}
+	    },
+	    'tabPage': {
+	    	handler: function (val, oldVal) {
+				/* this.userList.clear(); */
+			}
+	    },
+	},
+	/* 마운트 된 시점수행 */
+	mounted: function(){
+		var self = this;
+		self.setAuthList();
+	},
+	/* 함수 */
+	methods: {
+		/* 권한 검색 */
+		search: function(){
+			var pageNo = this.authListPaging.getCurrentPage();
+
+			if(pageNo == 1){
+				this.setAuthList();
+			}else{
+				this.authListPaging.movePage(1);
+			}  
+		},
+		/* 권한목록 리스트 */
+		setAuthList: function(){
+			var self = this;
+			self.mainListLoading.val = true;
+			var returnVal = authApi.subAuthList(self.pSearchType, self.pSearchArgv, false);
+           
+			returnVal.then(function(response) {
+				self.authList.setRawData(response.data, self.authListPaging.getRowCnt());
+               	if(self.authList.getRowCount() > 0){
+					self.authListPaging.setTotalCnt(self.authList.getRowCount());
+               	}else{
+                   	self.authListPaging.setTotalCnt(0);
+               	}
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+        },
+        /* 사용자 리스트 조회 */
+		setUserList: function(pGubun){
+			var self = this;
+			//var validate = this.$validator.validateAll();
+			var validate = null;
+			
+			if(pGubun == 'daesangja'){
+				validate = Promise.all([true]);
+			}else{
+				validate = Promise.all([
+					// this.$validator.validate('pUserGroupGb'),
+					// this.$validator.validate('pUserSearchArgv'),
+				]);	
+			}
+			
+			validate.then(function(response) {
+				if(response[0] && response[1] || pGubun == 'daesangja'){
+					
+					if(pGubun == 'daesangja'){
+						self.userListLoadingSec.val = true;
+						var returnVal = authApi.daesangUserOrg(self.authList.currentRow.AUTH_CD, self.authList.currentRow.ALARM_DAESANG_GB, null, self.pUserSearchArgvSec, false);
+					}else{
+						self.userListLoading.val = true;
+						var param = {
+							pUserGroupGb: self.pUserGroupGb, 
+							pUserStatusGb: self.pUserStatusGb, 
+							pSearchArgv: self.pUserSearchArgv,
+							pUserTypeGb: self.pUserTypeGb,
+							pDeptCd: self.pDeptCd,
+							pDeptNm: self.pDeptNm,
+							pPageNo: self.userListPaging.currentPage, 
+							pRowCnt: self.userListPaging.getRowCnt(),
+						}
+						
+						var returnVal = userApi.userOrg(param, false);
+					}
+					
+					self.userListPaging.currentPage = 1;
+					
+					returnVal.then(function(response) {
+						self.userList.setRawData(response.data, self.userListPaging.getRowCnt());
+						self.setUserAddAuthList();	
+						
+						if(response.data.length > 0){
+							self.userListPaging.setTotalCnt(response.data.length);
+						}else{
+							self.userListPaging.setTotalCnt(0);
+						}
+					}).finally(function(){
+						self.userListLoading.val = false;
+						self.userListLoadingSec.val = false;
+					});
+				}
+			});
+		},
+        /* 권한 대상자 리스트를 가져온다. */
+        setUserAddAuthList: function(){
+			var self = this;
+			var returnVal = authApi.userAddAuth(this.authList.currentRow.AUTH_CD);
+               
+			returnVal.then(function(response) {
+				self.userAddAuthList.setData(response.data);
+				self.setUserAddAuthInfo();
+			});
+        },
+        /* 토글을 초기화 한다. */
+        initToggle: function(){
+        	var self = this;
+        	
+           	this.userList.data.forEach(function(userObj, idx) {
+           		self.userList.data[idx].AUTH_YN = 'N';
+            });
+        },
+	    /* 대상자 리스트 획득 후 권한, 사용자 테이블에 정보 셋팅 */
+	    setUserAddAuthInfo: function(){
+	    	if(this.authList.rowposition > -1){
+            	this.userList.data.forEach(function(userObj, idx) {
+                    userObj.AUTH_YN = vm.isUserAddAuthInfo(userObj.USER_ID);
+                    Vue.set(vm.userList.data, idx, userObj);  
+                    //vue.set(객체명, 인덱스, newVal) -> 객체의 값을 직접 변경. 객체명[idx] = newVal 로 변경시 vue가 감지하지 못함. 해당 함수를 이용해서 변경하면 감지 가능.
+                });
+	    	}
+        },
+        //권한 대상자에 해당 정보가 존재하는지 확인
+        isUserAddAuthInfo: function(userId) {			
+			if(isNull(userId)) return;
+            
+			var findObj = _.filter(this.userAddAuthList.data, function(userAddAuth) {return  userAddAuth.USER_ID == userId});
+			try {
+                return isNull(findObj[0].USER_ID) ? 'N':'Y';
+			} catch (err) {
+                return 'N';
+			}
+		},
+	    messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'ID_SAVE':
+	    			this.saveRow();
+	    			break;
+	    		case 'ID_DELETE':
+	    			this.deleteRow();
+	    			break;
+	    	}
+	    },
+	    regUserAddAuth: function(pUserId){
+            var dataObj = {
+                'USER_ID': pUserId,
+                'AUTH_CD': this.authList.currentRow.AUTH_CD
+            }
+			
+           	switch(this.userList.currentRow.AUTH_YN) {
+                case 'N':   //현재 상태가 'N'인 경우 등록(insert)
+                    this.saveUserAddAuth(dataObj);
+                    break;
+                case 'Y':   //현재 상태가 'Y'인 경우 삭제(delete)
+                    this.deleteUserAddAuth(dataObj);
+                    break;
+                default:
+                    break;
+            }
+        },
+        saveUserAddAuth: function(pUserAddAuthInfo) {
+            var self = this;
+            var returnVal = authApi.userSubAddAuthInsert(pUserAddAuthInfo, true);
+                    
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+                    var data = response.data;    
+
+                    if(data == '1'){									
+                         notifySubmit('success', '앱권한 등록', '등록이 완료되었습니다.', 'icon-save');
+                         self.setUserAddAuthList();     //저장 후 앱권한 리스트 갱신
+                    }else{
+                        notifySubmit('warning', '앱권한 등록', '등록에 실패하였습니다.', 'icon-caution');
+                    }
+				});
+			}
+        },
+        deleteUserAddAuth: function(pUserAddAuthInfo) {
+            var self = this;
+			var returnVal = authApi.userSubAddAuthDelete(pUserAddAuthInfo, true);
+						
+			if(!isNull(returnVal)){
+			    returnVal.then(function(response) {
+				    var data = response.data;
+					
+					if(data == '1'){									
+                        notifySubmit('success', '앱권한 해제', '해제가 완료되었습니다.', 'icon-save');
+                        self.setUserAddAuthList();      //삭제 후 앱권한 리스트 갱신
+					}else{
+						notifySubmit('warning', '앱권한 해제', '해제에 실패하였습니다.', 'icon-caution');
+					}
+				});
+			}
+        },
+	    changeText: function(pText, pGb){
+			var userGroupGb = this.pUserGroupGb;
+			
+			if(pText == '가입 일자'){
+				if(userGroupGb == '1') return '입사일자';
+				else if(userGroupGb == '4') return '입학 일자';
+			}else if(pText == '내부 아이디'){
+				if(userGroupGb == '1') return '사번';
+				else if(userGroupGb == '4') return '학번';
+			}else if(pText == '부서'){
+				if(userGroupGb == '1') return '부서';
+				else if(userGroupGb == '4') return '학과';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속';
+			}else if(pText == '부서 코드'){
+				if(userGroupGb == '1') return '부서 코드';
+				else if(userGroupGb == '4') return '학과 코드';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속 코드';
+			}else if(pText == '부서 명'){
+				if(userGroupGb == '1') return '부서 명';
+				else if(userGroupGb == '4') return '학과 명';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속 명';
+			}else if(pText == '상태 구분'){
+				if(userGroupGb == '1') return '재직 구분';
+				else if(userGroupGb == '4') return '학적상태';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '사용 여부';
+			}else if(pText == '종류 구분'){
+				if(userGroupGb == '1') return '직종';
+				else if(userGroupGb == '4') return '학년';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '해당 없음';
+			}else if(pText == '등급 구분'){
+				if(userGroupGb == '1') return '직급';
+				else if(userGroupGb == '4') return '분반';
+			}
+			
+			return pText;
+		},
+		rowClick: function(index){
+			this.authList.selectRow(index);
+		},
+	    searchPlaceHolder: function(pGb) {
+	    	if(pGb == 'text'){
+	    		return '사용자 명/아이디';
+	    	}else if(pGb == 'validate'){
+	    		return '';	
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

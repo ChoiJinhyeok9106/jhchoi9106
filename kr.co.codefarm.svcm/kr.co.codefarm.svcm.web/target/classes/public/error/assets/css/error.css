@@ -1,0 +1,35 @@
+html, body {
+  height: 100%;
+  
+}
+
+.error-con {
+  height: 100%;
+  width:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 1s;
+}
+.error-bottom {
+  position:fixed;
+  bottom:0;
+  left:30px;
+}
+.error-bottom img {
+  width:80%;
+  transition: 1s;
+}
+@media all and (max-width:768px){
+  .error-con {
+    margin-top:-100px;
+    transition: 1s;
+  }
+  .error-con img {
+    width:80%;
+  }
+  .error-bottom img {
+    width:50%;
+    transition: 1s;
+  }
+}

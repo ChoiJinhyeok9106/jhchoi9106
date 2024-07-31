@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.amanager.maria.usrloccd">
+
+	 <!--건물,층코드 조회 -->
+	 <select id="getBldgList" parameterType="hashmap" resultType="hashmap">
+	SELECT
+	       A_.* 
+	         FROM 
+	              (SELECT 
+	                     COUNT(*) OVER() TOTAL_CNT,
+	                     <if test="pPageNo != null and pPageNo != ''.toString()">
+						ROW_NUMBER() OVER(ORDER BY CD) AS RNUM,
+						</if>  
+		                 UP_CD,
+					     CD,
+					     CD_NM,
+					     USE_YN,
+					     CASE USE_YN WHEN 'Y' THEN '사용' ELSE '미사용' END AS USE_AT_NM
+				   FROM EAM_COMMON
+					where 1=1
+					AND AGENCY_ID = '00000000'
+					<!-- 공통코드값-->
+					<if test="pUpcd != null and pUpcd != ''.toString()">
+						AND UP_CD = #{pUpcd}
+					</if>
+					<!-- 사용여부 -->
+					<if test="pUseYn != null and pUseYn != ''.toString()">
+						<if test="pUseYn != 'ALL'">
+							AND USE_YN = #{pUseYn}
+						</if>
+					</if>
+	              ) A_ 
+ 				WHERE 1=1
+	           <if test="pPageNo != null and pPageNo != ''.toString()">
+      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    			</if>
+	            ORDER BY A_.CD ASC
+	 </select>
+	 
+	 <!-- 위치 조회 -->
+	 <select id="getLocList" parameterType="hashmap" resultType="hashmap">
+	SELECT
+	       A_.*
+		FROM 
+		(SELECT
+			COUNT(*) OVER() TOTAL_CNT
+			<if test="pPageNo != null and pPageNo != ''.toString()">
+			, ROW_NUMBER() OVER(ORDER BY LOC_CD) AS RNUM
+			</if> 
+			, LOC_CD
+			, LOC_NM
+			, BLDG_NM
+			, SUBSTRING(LOC_CD,1,3) AS BLDG_CD
+			, SUBSTRING(LOC_CD,4,3) AS STAIR_CD
+			, STAIR_NM
+			, USE_AT
+			, CASE USE_AT WHEN 'Y' THEN '사용' ELSE '미사용' END AS USE_AT_NM
+
+			FROM TA_USE_LOC_CD  
+				where 1=1
+				AND AGENCY_ID = '00000000'
+				<!-- 건물코드 -->
+				<if test="bldgCd != null and bldgCd != ''.toString()">
+					AND BLDG_CD = #{bldgCd}
+				</if>
+				<!-- 층코드 -->
+				<if test="stairCd != null and stairCd != ''.toString()">
+					AND STAIR_CD = #{stairCd}
+				</if>
+				<!-- 사용여부 -->
+				<if test="pUseAt != null and pUseAt != ''.toString()">
+					<if test="pUseAt != 'ALL'">
+						AND USE_AT = #{pUseAt}
+					</if>
+				</if>
+				<!-- 건물이름검색 -->
+				<if test='BLDG_NM != null and BLDG_NM != ""'>
+					AND upper(BLDG_NM) LIKE CONCAT('%',upper(#{BLDG_NM}),'%')
+				</if>
+				<!-- 층이름검색 -->
+				<if test='STAIR_NM != null and STAIR_NM != ""'>
+					AND upper(STAIR_NM) LIKE CONCAT('%',upper(#{STAIR_NM}),'%')
+				</if>
+				<!-- 위치검색 -->
+				<if test='LOC_NM != null and LOC_NM != ""'>
+					AND upper(LOC_NM) LIKE CONCAT('%',upper(#{LOC_NM}),'%')
+				</if>
+	            ) A_
+	            WHERE 1=1
+	           <if test="pPageNo != null and pPageNo != ''.toString()">
+      			AND RNUM BETWEEN ((CAST(COALESCE(#{pPageNo},'1') AS INTEGER)-1)*CAST(#{pRowCount} AS INTEGER))+1 AND CAST(COALESCE(#{pPageNo},'1') AS INTEGER)*CAST(#{pRowCount} AS INTEGER)
+    			</if>  
+	            ORDER BY A_.LOC_CD DESC         
+	 </select>
+	 
+	 
+	  <!-- 건물 입력 -->
+	 <insert id="insertBldg"  parameterType="hashmap">
+		INSERT
+		INTO   EAM_COMMON
+		       (
+		              UP_CD ,
+		              CD ,
+		              SERVICE_CD ,
+		              CD_NM ,
+		              LV,
+		              USE_YN ,
+		              SYS_CD_YN ,
+		              INPUT_LMT_YN ,
+		              INSERT_DTTM ,
+		              INSERT_ID ,
+		              ORD,
+		              AGENCY_ID
+		       )
+		       VALUES
+		       (
+		              #{UP_CD} ,
+		              (SELECT CD FROM 
+		              	(SELECT CASE WHEN 
+		              					(SELECT CD FROM EAM_COMMON WHERE UP_CD =#{UP_CD} AND CD = #{BLDG_CD}
+		              					AND AGENCY_ID = '00000000') IS NOT NULL 
+		              			THEN #{BLDG_CD}
+								ELSE (SELECT LPAD(IFNULL(MAX(CD)+1,0), 3, '0') AS CD
+									              FROM    EAM_COMMON
+									              WHERE   UP_CD = #{UP_CD}
+									              AND AGENCY_ID = '00000000') 
+								END CD ) tmp
+					   ) ,
+					  'EAM' ,
+		              #{CD_NM} ,
+		              1,
+		              #{USE_YN} ,
+		              'N' ,
+		              'N' ,
+		              NOW() ,
+		              #{SYSTEM_ID} ,
+		              (SELECT ORD FROM (SELECT IFNULL(MAX(ORD)+10,0) AS ORD
+		              FROM    EAM_COMMON
+		              WHERE   UP_CD =#{UP_CD}
+		              AND AGENCY_ID = '00000000') tmp),
+		              '00000000'
+		       )
+	 </insert>
+	 
+	 <!-- 건물 수정 -->
+	 <update id="updateBldg" parameterType="hashMap">
+			UPDATE EAM_COMMON
+			SET   
+		    CD_NM = #{CD_NM} 
+		   , USE_YN      = #{USE_YN} 
+		   , UPDATE_DTTM = NOW() 
+		   , UPDATE_ID  = #{SYSTEM_ID}   
+			WHERE UP_CD = #{UP_CD}
+			AND CD = #{CD}
+			
+	 </update>
+	 
+	 
+     <!-- 층 입력 -->
+	 <insert id="insertStair"  parameterType="hashmap">
+		INSERT
+		INTO   EAM_COMMON
+		       (
+		              UP_CD ,
+		              CD ,
+		              SERVICE_CD ,
+		              CD_NM ,
+		              LV,
+		              USE_YN ,
+		              SYS_CD_YN ,
+		              INPUT_LMT_YN ,
+		              INSERT_DTTM ,
+		              INSERT_ID ,
+		              ORD,
+		              AGENCY_ID
+		       )
+		       VALUES
+		       (
+		              #{UP_CD} ,
+		              (SELECT CD FROM 
+		              	(SELECT CASE WHEN
+		              					(SELECT CD FROM EAM_COMMON WHERE UP_CD =#{UP_CD} AND CD = #{STAIR_CD} AND AGENCY_ID = #{AGENCY_ID}) IS NOT NULL
+								THEN #{STAIR_CD}
+								ELSE (SELECT LPAD(IFNULL(MAX(CD)+1,0), 3, '0') AS CD
+								              FROM    EAM_COMMON
+								              WHERE   UP_CD = #{UP_CD}
+								              AND AGENCY_ID = '00000000')
+								END CD) tmp
+					  ),
+					  'EAM' ,
+		              #{CD_NM} ,
+		              1,
+		              #{USE_YN} ,
+		              'N' ,
+		              'N' ,
+		              NOW() ,
+		              #{SYSTEM_ID} ,
+		              (SELECT ORD FROM (SELECT IFNULL(MAX(ORD)+10,0) AS ORD
+		              FROM    EAM_COMMON
+		              WHERE   UP_CD = #{UP_CD}
+		              AND AGENCY_ID = '00000000') tmp),
+		              '00000000'
+		       )
+	 </insert>
+	 
+	 <!-- 층 수정 -->
+	 <update id="updateStair" parameterType="hashMap">
+		UPDATE EAM_COMMON
+		SET
+		CD_NM = #{CD_NM} 
+		 , USE_YN      = #{USE_YN} 
+		 , UPDATE_DTTM = NOW() 
+		 , UPDATE_ID  = #{SYSTEM_ID}
+		WHERE UP_CD = #{UP_CD}
+		AND CD = #{CD}
+	 </update>
+	 
+	<!-- 건물, 층 중복 체크 -->
+	<select id="checkCodeList"  parameterType="hashmap" resultType="hashmap">
+		SELECT
+			COUNT(*) AS CNT FROM TA_USE_LOC_CD A
+		WHERE 1=1
+		AND A.AGENCY_ID = '00000000'
+		<if test="BLDG_CD != null and BLDG_CD != ''.toString()">
+			AND BLDG_CD = #{BLDG_CD}
+		</if>
+		<if test="STAIR_CD != null and STAIR_CD != ''.toString()">
+			AND STAIR_CD = #{STAIR_CD}
+		</if>
+	</select>
+	
+	 <!-- 위치 입력 -->
+	 <insert id="insertLoc"  parameterType="hashmap">
+		INSERT
+		INTO   TA_USE_LOC_CD
+		       (
+		              LOC_CD ,
+		              BLDG_CD ,
+		              BLDG_NM ,
+		              STAIR_CD ,
+		              STAIR_NM ,
+		              LOC_NM ,
+		              USE_AT ,
+		              REGUSER_ID ,
+		              REG_DATE,
+		              AGENCY_ID
+		       )
+		       VALUES
+		       (
+		          (SELECT CONCAT(#{BLDG_CD}, #{STAIR_CD}, LPAD(IFNULL(MAX(CAST(SUBSTR(b.LOC_CD, -3) AS UNSIGNED)) + 1, 1), 3, '0'))
+			           FROM TA_USE_LOC_CD b
+			           WHERE b.BLDG_CD = #{BLDG_CD}
+			           AND b.STAIR_CD = #{STAIR_CD}
+			           AND b.AGENCY_ID = '00000000'),
+		              #{BLDG_CD} ,
+		              #{BLDG_NM} ,
+		              #{STAIR_CD} ,
+		              #{STAIR_NM} ,
+		              #{LOC_NM} ,
+		              #{USE_AT} ,
+		              #{SYSTEM_ID} ,
+		              NOW(),
+		              '00000000'
+		       )
+	 </insert>
+	 
+	 <!-- 위치 수정 -->
+	 <update id="updateLoc" parameterType="hashMap">
+		UPDATE TA_USE_LOC_CD
+		SET
+   		LOC_NM = #{LOC_NM} 
+		, USE_AT      = #{USE_AT} 
+		, CHR_DATE = NOW() 
+		, CHGR_ID  = #{SYSTEM_ID} 
+		WHERE LOC_CD = #{LOC_CD}
+     </update>
+
+ 	</mapper>

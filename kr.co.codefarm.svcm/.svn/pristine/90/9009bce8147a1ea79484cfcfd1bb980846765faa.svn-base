@@ -1,0 +1,21 @@
+function GdsCdMgmtApi(){}
+var gdsCdMgmtApi = new GdsCdMgmtApi(); // => 함수로 객체를 생성
+
+/********************************************************************************************
+ * 물품코드관리 리스트 조회 
+ * @param: 검색어
+ * @return: 조회 리스트
+ ********************************************************************************************/
+GdsCdMgmtApi.prototype.getAssetClList = function(pEntry, pLoading){
+	var loadingYn = pLoading;
+	
+	if(isNull(loadingYn)) 		loadingYn 		= false;
+    
+    return axios.get("/amanager/gdscdmgmt/gdscd-list",
+	{
+		//post는 data사용 
+		params: pEntry,
+    	loading: loadingYn
+    });
+}
+

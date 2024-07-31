@@ -1,0 +1,42 @@
+/**
+ * 
+ */
+package kr.co.codefarm.svcm.amanager.haveexcel.service;
+
+import kr.co.codefarm.svcm.commons.dao.ICommonMainDao;
+import kr.co.codefarm.svcm.commons.service.file.FileService;
+import kr.co.codefarm.svcm.commons.map.ParameterMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author YJAHN
+ *
+ */
+@Service
+public class HaveexcelService {
+	@Autowired
+	private ICommonMainDao commonDao;
+	
+	@Autowired
+	private FileService fileService;
+	
+	private static String DEFAULT_MAPPER_PATH = "kr.co.codefarm.svcm.amanager.{databse.main}.haveexcel";
+
+
+	public List<Map<String, Object>> getHaveExcelList(Map<String, Object> pMap) {
+		return commonDao.selectList(DEFAULT_MAPPER_PATH + ".getHaveExcelList", pMap);
+	}
+	
+	 public int insertHaveExcel(Map<String, Object> pHaveExcelRow) {
+		 System.out.println("insertHaveExcel pHaveExcelRow: " + pHaveExcelRow); // 추가: 전달된 데이터 확인
+            int insCnt = commonDao.insert(DEFAULT_MAPPER_PATH + ".insertHaveExcel", pHaveExcelRow);
+            return insCnt;
+        
+    }
+
+}

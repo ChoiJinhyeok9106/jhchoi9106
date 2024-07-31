@@ -1,0 +1,197 @@
+<h2>템플릿-Loading Overlay</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">ScrolLoading Overlay</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li><a href="https://gasparesganga.com/labs/jquery-loading-overlay/img/custom.svg" target="_blank">https://gasparesganga.com/labs/jquery-loading-overlay/img/custom.svg</a> 오픈소스 사용</li>
+	        	<li>부분적인 Loading 이미지 표시 시 사용</li>
+	        	<li>표시 하려는 DOM에 id 지정(고유한)</li>
+	        	<li>Vue에 해당 loading 상태를 나타낼 Boolean Data변수선언</li>
+	        	<li>해당 변수를 Watch로 감시</li>
+	        	<li>조회 전 Data를 true로 설정, 조회 후 Promise 객체의 finally에 false로 설정</li>
+			</ul>
+		</div>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">api 호출 전 data값 변경 및 호출 후 finally설정 예제 (9행, 22행)</h3>
+        <textarea id="codeEditor1">methods: {
+	/* 사용자 리스트 조회 */
+	setUserList: function(){
+		var validate = this.$validator.validateAll();
+		var self = this;
+		
+		validate.then(function(response) {
+			if(response){
+				self.userListLoading.val = true;
+				var returnVal = userApi.user(self.pUserGroupGb, self.pUserStatusGb, self.pSearchArgv, self.userListPaging.currentPage, self.userListPaging.getRowCnt(), false);
+				self.userListPaging.currentPage = 1;
+				
+				returnVal.then(function(response) {
+					self.userList.setRawData(response.data, self.userListPaging.getRowCnt());
+					if(self.userList.getRowCount() > 0){
+						self.userListPaging.setTotalCnt(self.userList.getRowCount());
+					}else{
+						self.userListPaging.setTotalCnt(0);
+					}
+				}).catch(function(error) {
+					console.error('error:', error);
+				}).finally(function(){
+					self.userListLoading.val = false;
+				});
+			}
+		});
+	},
+},</textarea>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">실행 결과</h3>
+        <div class="box-type04">
+        	<div class="row form-row">
+    			<div class="form-group col s12 l6">
+					<label for="appNm" class="label-type01">Overlay Test1</label>
+					<input type="button" value="widgetLoading1 Data toggle" class="btn type02 size-m" @click="widgetLoading1.val = !widgetLoading1.val">
+				</div>
+    			<div class="form-group col s12 l6">
+					<label for="appNm" class="label-type01">Overlay Test2</label>
+					<input type="button" value="widgetLoading2 Data toggle" class="btn type02 size-m" @click="widgetLoading2.val = !widgetLoading2.val">
+				</div>
+			</div>
+        	<div class="row form-row">
+    			<div class="form-group col s12 l6">
+					<div style="overflow:hidden; width:100%; height:100%;"><img src="http://sian.codefarm.co.kr/kmu/images/main/app_cont01.jpg" alt="" id="widgetLoading1"></div>
+				</div>
+    			<div class="form-group col s12 l6">
+					<div style="overflow:hidden; width:100%; height:100%;"><img src="http://sian.codefarm.co.kr/kmu/images/main/app_cont02.jpg" alt="" id="widgetLoading2"></div>
+				</div>
+			</div>
+		</div>
+        <br/>
+        <textarea id="codeEditor2"><div class="box-type04">
+	<div class="row form-row">
+  		<div class="form-group col s12 l6">
+			<label for="appNm" class="label-type01">Overlay Test1</label>
+			<input type="button" value="widgetLoading1 Data toggle" class="btn type02 size-m" @click="widgetLoading1.val = !widgetLoading1.val">
+		</div>
+  			<div class="form-group col s12 l6">
+			<label for="appNm" class="label-type01">Overlay Test2</label>
+			<input type="button" value="widgetLoading2 Data toggle" class="btn type02 size-m" @click="widgetLoading2.val = !widgetLoading2.val">
+		</div>
+	</div>
+    <div class="row form-row">
+  		<div class="form-group col s12 l6">
+			<div style="overflow:hidden; width:100%; height:100%;"><img src="http://sian.codefarm.co.kr/kmu/images/main/app_cont01.jpg" alt="" id="widgetLoading1"></div>
+		</div>
+  			<div class="form-group col s12 l6">
+			<div style="overflow:hidden; width:100%; height:100%;"><img src="http://sian.codefarm.co.kr/kmu/images/main/app_cont02.jpg" alt="" id="widgetLoading2"></div>
+		</div>
+	</div>
+</div>
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+    //사용할 데이터
+    data: {
+    	widgetLoading1: {id:'widgetLoading1', val:false},
+    	widgetLoading2: {id:'widgetLoading2', val:false},
+    },
+	//데이터 감시
+	watch: {
+		'widgetLoading1.val': {
+			handler: function (val, oldVal) {
+				console.log(val);
+				this.LoadingOverlay($('#'+this.widgetLoading1.id), val);
+			}
+	    },
+	    'widgetLoading2.val': {
+	    	handler: function (val, oldVal) {
+	    		console.log(val);
+				this.LoadingOverlay($('#'+this.widgetLoading2.id), val);
+			}
+	    },
+	},
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+</textarea>
+   	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+    //사용할 데이터
+    data: {
+    	widgetLoading1: {id:'widgetLoading1', val:false},
+    	widgetLoading2: {id:'widgetLoading2', val:false},
+    },
+	//데이터 감시
+	watch: {
+		'widgetLoading1.val': {
+			handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.widgetLoading1.id), val);
+			}
+	    },
+	    'widgetLoading2.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.widgetLoading2.id), val);
+			}
+	    },
+	},
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 300);
+	editor('codeEditor2', 700);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

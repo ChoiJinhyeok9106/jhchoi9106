@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.downloadcenterApi">
+
+	<select id="selectInstList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.INST_SEQ		AS INST_SEQ
+			 , A.INST_NM		AS INST_NM
+			 , A.PBLR_NM		AS PBLR_NM
+			 , A.UPDATE_DTTM	AS UPDATE_DTTM
+			 , B.FILE_PATH		AS INST_FILE_PATH
+			 , B.FILE_NM		AS INST_FILE_NM
+			 , C.FILE_ID		AS EXE_FILE_ID
+			 , C.FILE_KEY		AS EXE_FILE_KEY
+			 , C.FILE_HANGMOK	AS EXE_FILE_HANGMOK
+			 , C.FILE_NM		AS EXE_FILE_NM
+			 , C.FILE_PATH		AS EXE_FILE_PATH
+			 , C.VERSION		AS EXE_VERSION
+			 , D.FILE_ID		AS HWP_FILE_ID
+			 , D.FILE_KEY		AS HWP_FILE_KEY
+			 , D.FILE_HANGMOK	AS HWP_FILE_HANGMOK
+			 , D.FILE_NM		AS HWP_FILE_NM
+			 , D.FILE_PATH		AS HWP_FILE_PATH
+			 , D.VERSION		AS HWP_VERSION
+		  FROM SMN_INST_BASS A
+		  LEFT
+		 OUTER
+		  JOIN (SELECT FILE_ID
+		  			 , FILE_KEY
+		  			 , FILE_HANGMOK
+		  			 , FILE_PATH
+		  			 , FILE_NM
+		  	      FROM SMN_FILE
+		  	     WHERE 1=1
+		  	       AND FILE_ID = 'SMN_LOGO'
+		 	   ) B
+		 	ON A.INST_SEQ = B.FILE_KEY
+		  LEFT 
+		  JOIN ( SELECT A.FILE_KEY
+		  			  , A.FILE_ID
+		  			  , A.FILE_HANGMOK
+		  			  , A.FILE_NO
+		  			  , A.FILE_NM
+		  			  , A.FILE_SIZE
+		  			  , A.FILE_PATH
+		  			  , B.VERSION
+		  		   FROM SMN_FILE	A
+		  		   JOIN INST_FILE	B
+		  		     ON A.FILE_KEY = B.INST_SEQ
+		  		    AND A.FILE_HANGMOK = B.VERSION
+		  	      WHERE 1=1
+		  	        AND A.FILE_ID = 'SMN_DOWNLOAD'
+		  	        AND B.EXPOSURE_YN = '1'
+		  	   ) C
+		  	ON A.INST_SEQ = C.FILE_KEY
+		  LEFT 
+		  JOIN ( SELECT A.FILE_KEY
+		  			  , A.FILE_ID
+		  			  , A.FILE_HANGMOK
+		  			  , A.FILE_NO
+		  			  , A.FILE_NM
+		  			  , A.FILE_SIZE
+		  			  , A.FILE_PATH
+		  			  , B.VERSION
+		  		   FROM SMN_FILE	A
+		  		   JOIN INST_HWP_FILE	B
+		  		     ON A.FILE_KEY = B.INST_SEQ
+		  		    AND A.FILE_HANGMOK = B.VERSION
+		  	      WHERE 1=1
+		  	        AND A.FILE_ID = 'SMN_HWP'
+		  	        AND B.EXPOSURE_YN = '1'
+		  	   ) D 
+		  	ON A.INST_SEQ = D.FILE_KEY
+		 WHERE 1=1
+		   AND A.USE_YN = '1'
+		  <if test="pSearchArgv != null and pSearchArgv != ''">
+		   AND A.INST_NM LIKE CONCAT('%',#{pSearchArgv},'%') collate utf8mb4_unicode_ci
+		  </if>
+		  <if test="pUseYn != null and pUseYn != ''">
+		   AND C.USE_YN = #{pUseYn}
+		  </if>	
+	</select>
+</mapper>

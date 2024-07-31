@@ -1,0 +1,1443 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability2.css" />  
+
+<section id="app">
+<section class="sub_cont_box">
+  <h2 class="menu_3depth" v-if="session.MENU_NM_VISIBLE">{{session.MENU_NM}}</h2>
+    <form>
+      <div class="search-box">
+        <div class="form-group">
+          <div class="col-inline">
+                    <label class="label-type00 size-m icon-search">검색</label>
+                    <input type="text" name="" id="" style="width:304px;" class="size-m" placeholder="팜보드 명을 입력하세요" v-model="pSearchArgv" @keyup.13="setFarmBoardList()">
+                    <input type="button" value="검색" class="btn type01 size-m" @click="setFarmBoardList()">
+                    <input type="button" value="보드추가" class="btn type02 size-m f-right" @click="modalOpen('addFarmBoardPopup')">
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <div class="form-group row form-row top-info-line">
+        <div class="col s12 l6">
+            <span class="board-info-txt size-m">총 <span>{{ farmBoardList.rawData.length }}</span>건의 게시물이 있습니다. (<span>{{ farmBoardListPaging.currentPage }}</span> / {{ farmBoardListPaging.getTotalPage() }})</span>
+        </div>
+        <div class="col s12 l6 right">
+        	<div class="note-main-util">
+	            <span class="note-list-sort" @click="sortMenuOpen">
+				    <input type="radio" name="sortType" value="최신순" id="sort-new" checked="" @change="sortFarmBoardList('최신순');"><label for="sort-new">최신순</label>
+				    <input type="radio" name="sortType" value="오래된순" id="sort-old" @change="sortFarmBoardList('오래된순');"><label for="sort-old">오래된순</label>
+				    <input type="radio" name="sortType" value="북마크" id="sort-bookmark" @change="sortFarmBoardList('북마크');"><label for="sort-bookmark">북마크</label>
+				    <input type="radio" name="sortType" value="이름순" id="sort-name" @change="sortFarmBoardList('이름순');"><label for="sort-name">이름순</label>
+				</span>
+	            <a href="javascript:void(0)" @click="modalOpen('invitePopup')" class="notemain-mail-btn icon-mail"><span :class="invitedCnt > 0 ? 'new' : ''"></span></a>
+	    	</div>
+        </div>
+    </div>
+    
+    <div class="note-main-list" id="mainListLoading">
+    	<div v-for="(fbItem, fbIndex) in farmBoardList.data" :class="'note-list theme' + fbItem.FB_THEME_GB" @click="farmBoardList.selectRow(fbIndex)" v-if="farmBoardList.getRowCount() > 0">
+    		<div class="bookmark">
+                <input type="checkbox" :id="'ex_chk'+fbIndex" v-model="fbItem.BOOKMARK_YN" true-value="Y" false-value="N" @click="farmBoardList.selectRow(fbIndex);" @change="updateBookMarkYn">
+                <label :for="'ex_chk'+fbIndex"></label>
+            </div>
+            <a href="javascript:void(0)" class="btn-menu" @focus="menuOpen(fbIndex)" @blur="menuClose(fbIndex)"><span class="icon-grip1"></span></a>
+            <ul :id="'menu'+fbIndex" class="menu-layer">
+            	<li v-if="fbItem.CHAMYEOJA_YN == 'N'"><a href="javascript:void(0)" @click="farmBoardList.selectRow(fbIndex); modalOpen('modiFarmBoardPopup')">보드수정</a></li>
+            	<li v-if="fbItem.CHAMYEOJA_YN == 'N'"><a href="javascript:void(0)" @click="farmBoardList.selectRow(fbIndex); modalOpen('partiPopup')">참여자관리</a></li>
+            	<li v-if="fbItem.CHAMYEOJA_YN == 'Y'"><a href="javascript:void(0)" @click="farmBoardList.selectRow(fbIndex); confirmOpen('secessionFarmBoard')">보드탈퇴</a></li>
+            	<li v-if="fbItem.CHAMYEOJA_YN == 'N'"><a href="javascript:void(0)" @click="farmBoardList.selectRow(fbIndex); confirmOpen('deleteFarmBoard')">보드삭제</a></li>
+            </ul>
+            <div class="list-cont">
+            	<a href="javascript:void(0)" @click="farmBoardList.selectRow(fbIndex); goToList()">
+	            	<span class="cate">{{ addCommcode.getCommcodeNm('ADD','FB_GB',fbItem.FB_GB,'CD_NM') }}</span>
+	            	<span class="tit">{{ fbItem.FB_NM }}</span>
+	            	<div class="etc-box">
+	            		<span class="etc icon-menu">{{ fbItem.LIST_CNT }}</span> 
+	            		<span class="etc icon-credit-card">{{ fbItem.CARD_CNT }}</span> 
+					</div>
+					<span class="user"><span class="count" v-show="fbItem.CHAMYEOJA_CNT > 0">{{ fbItem.CHAMYEOJA_CNT }}</span><img :src="modiImgAddr(fbItem.USER_PIC,fbItem.USER_PHOTO)" alt=""></span>
+				</a>
+            </div>
+    		<span class="bg-dark"></span>
+    	</div>
+    	<div class="note-list-no" v-show="farmBoardList.getRowCount() == 0">
+    		<div class="list-no-box">
+    			<p class="text">생성된 보드가 없습니다<span class="big">새로운 보드를 만들어 보세요</span></p>
+    			<a href="javascript:void(0)" class="btn-link" @click="modalOpen('addFarmBoardPopup')">GO</a>
+    		</div>
+    	</div>
+    </div>
+    
+	<paging :pagingset="farmBoardListPaging" :type="'normal'"></paging>
+</section>
+
+<!-- modal layer popup -->
+<div class="modal-layer-wrap">        
+	<div id="addFarmBoardPopup" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">보드추가</p>
+            </div>
+            <div class="modal-content" v-if="addFarmBoardPopup == true">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput1" class="label-type01">구분</label>
+				            <select id="exampleFormControlInput1" class="size-m" v-model="farmBoardList.currentRow.FB_GB" disabled>
+								<option v-for="(addFbGbItem, addFbGbIndex) in addCommcode.getCommcode('ADD', 'FB_GB', 'blank', 'CD_NM', 'N')" :value="addFbGbItem.CD">{{ addFbGbItem.CD_NM }}</option>
+							</select>
+				        </div>
+				    </div>
+				   	<div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="fbTitle" class="label-type01">제목</label>
+				            <input type="text" id="fbTitle" name="fbTitle" placeholder="제목을 입력하세요" class="size-m" v-model="farmBoardList.currentRow.FB_NM" data-vv-as="제목 " v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('fbTitle')}">
+				        	<invalid-message :visible="farmBoardList.currentRow" :name="'fbTitle'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">라벨관리</label>
+				            <div class="note-label-setting">				            	
+				            	<div class="label-set-box">
+				            		<div :class="'label-list label-clr' + labelListItem.LABEL_COLOR_GB" v-for="(labelListItem, labelListIndex) in labelList.data" @click="labelList.selectRow(labelListIndex)">
+				            			<input type="text" placeholder="라벨명을 입력하세요" :id="'label'+labelListIndex" v-model="labelListItem.LABEL_NM"/>
+				            			<a href="javascript:void(0)" class="btn-delete" @click="labelList.selectRow(labelListIndex);deleteLabel();"><span class="icon-trashcan"></span></a>
+				            		</div>
+				            		<div class="label-color">
+				            			<div v-for="(labelItem, labelIndex) in addCommcode.getCommcode('ADD', 'LABEL_COLOR_GB', 'blank', 'CD_NM', 'N')" class="color-sel">
+				            				<input type="radio" :id="'color_rd'+labelItem.CD" name="color" :value="labelItem.CD_NM" @click="changeLabelClr(labelItem.CD)"> 
+				            				<label :for="'color_rd'+labelItem.CD" :class="labelItem.CD_NM"></label>
+				            			</div>
+				            		</div>
+				            	</div>
+				            </div>
+				            <div class="btn-line center">
+                                <a href="javascript:void(0)" class="btn type03 size-s left-icon icon-plus" @click="addLabel()">추가</a>
+                            </div>
+				        </div>				        
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">테마</label>
+				            <div class="note-theme-setting">
+				            	<div v-for="(themeItem, themeIndex) in addCommcode.getCommcode('ADD', 'FB_THEME_GB', 'blank', 'CD_NM', 'N')" class="theme-sel">
+		            				<input type="radio" :id="'theme_rd' + themeItem.CD" name="theme" :value="'theme-sel' + themeItem.CD" v-model="farmBoardList.currentRow.FB_THEME_GB"> 
+		            				<label :for="'theme_rd' + themeItem.CD" :class="'theme-sel' + themeItem.CD"></label>
+		            			</div>
+				            </div>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="useYn" class="label-type01">사용여부</label>
+				            <div class="form-check">
+				            	<label class="toggle-switch">
+				            		<input type="checkbox" class="size-m" v-model="farmBoardList.currentRow.USE_YN" true-value="Y" false-value="N"> 
+				            		<span class="slider round"></span>
+				            	</label>
+				            </div>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="modal-footer center">
+                <a href="javascript:void(0)" class="btn type02 size-m" @click="saveFarmBoard">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="addFarmBoardPopup = false; farmBoardList.deleteRow(farmBoardList.rowposition); labelList.clear();"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="modiFarmBoardPopup" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">보드수정</p>
+            </div>
+            <div class="modal-content" v-if="modiFarmBoardPopup == true">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput1" class="label-type01">구분</label>
+				            <select id="exampleFormControlInput1" class="size-m" v-model="farmBoardList.currentRow.FB_GB" disabled>
+								<option v-for="(addFbGbItem, addFbGbIndex) in addCommcode.getCommcode('ADD', 'FB_GB', 'blank', 'CD_NM', 'N')" :value="addFbGbItem.CD">{{ addFbGbItem.CD_NM }}</option>
+							</select>
+				        </div>
+				    </div>
+				   	<div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="fbTitle" class="label-type01">제목</label>
+				            <input type="text" id="fbTitle" placeholder="제목을 입력하세요" class="size-m" v-model="farmBoardList.currentRow.FB_NM" data-vv-as="제목 " v-validate="'required|max:300'" v-bind:class="{'invalid': errors.has('fbTitle')}">
+				        	<invalid-message :visible="farmBoardList.currentRow" :name="'fbTitle'" :verror="errors"/>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">라벨관리</label>
+				            <div class="note-label-setting">				            	
+				            	<div class="label-set-box">
+				            		<div :class="'label-list label-clr' + labelListItem.LABEL_COLOR_GB" v-for="(labelListItem, labelListIndex) in labelList.data" @click="labelList.selectRow(labelListIndex)" v-if="labelList.getRowType(labelListIndex) != 8">
+				            			<input type="text" placeholder="라벨명을 입력하세요" :id="'label'+labelListIndex" v-model="labelListItem.LABEL_NM"/>
+				            			<a href="javascript:void(0)" class="btn-delete" @click="labelList.selectRow(labelListIndex);confirmOpen('deleteLabel');"><span class="icon-trashcan"></span></a>
+				            		</div>
+				            		<div class="label-color">
+				            			<div v-for="(labelItem, labelIndex) in addCommcode.getCommcode('ADD', 'LABEL_COLOR_GB', 'blank', 'CD_NM', 'N')" class="color-sel">
+				            				<input type="radio" :id="'color_rd'+labelItem.CD" name="color" :value="labelItem.CD_NM" @click="changeLabelClr(labelItem.CD)"> 
+				            				<label :for="'color_rd'+labelItem.CD" :class="labelItem.CD_NM"></label>
+				            			</div>
+				            		</div>
+				            	</div>
+				            </div>
+				            <div class="btn-line center">
+                                <a href="javascript:void(0)" class="btn type03 size-s left-icon icon-plus" @click="addLabel()">추가</a>
+                            </div>
+				        </div>				        
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="formGroupExampleInput2" class="label-type01">테마</label>
+				            <div class="note-theme-setting">
+				            	<div v-for="(themeItem, themeIndex) in addCommcode.getCommcode('ADD', 'FB_THEME_GB', 'blank', 'CD_NM', 'N')" class="theme-sel">
+		            				<input type="radio" :id="'theme_rd' + themeItem.CD" name="theme" :value="themeItem.CD" v-model="farmBoardList.currentRow.FB_THEME_GB"> 
+		            				<label :for="'theme_rd' + themeItem.CD" :class="'theme-sel' + themeItem.CD"></label>
+		            			</div>
+				            </div>
+				        </div>
+				    </div>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <label for="useYn" class="label-type01">사용여부</label>
+				            <div class="form-check">
+				            	<label class="toggle-switch">
+				            		<input type="checkbox" class="size-m" v-model="farmBoardList.currentRow.USE_YN" true-value="Y" false-value="N"> 
+				            		<span class="slider round"></span>
+				            	</label>
+				            </div>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="modal-footer center">
+                <a href="javascript:void(0)" class="btn type02 size-m" @click="saveFarmBoard">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="setFarmBoardList();modiFarmBoardPopup=false"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="partiPopup" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">참여자관리</p>
+            </div>
+            <div class="modal-content" v-if="partiPopup == true">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <p class="label-type01">참여자목록</p>				        
+				            <p class="heading-txt2">현재인원을 조회하고 리스트 관리 권한을 부여하고 참여 인원을 삭제할 수 있습니다.</p>
+				            <perfect-scrollbar class="group-list-box note-people-adm">
+				               <div v-for="(fcItem, fcIndex) in chamyeojaList.data" v-if="chamyeojaList.getRowCount() > 0" @click="chamyeojaList.selectRow(fcIndex)">
+                                 <div class="group-list" v-if="fcItem.USER_ID != fcItem.CHAMYEOJA_ID">
+                                     <div><span class="name">{{ fcItem.USER_NM }}</span><span class="code-num">{{ fcItem.CHAMYEOJA_ID }}</span></div>
+                                     <div><span class="major">{{ fcItem.DEPT_NM }}</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" :id="'write-check'+fcIndex" true-value="Y" false-value="N" v-model="fcItem.LIST_GWANRI_AUTH_YN" @change="updateChamyeoja">
+			                            <label :for="'write-check'+fcIndex"></label>
+			                         </div>
+                                     <a href="javascript:void(0)" class="btn-close" @click="confirmOpen('deleteChamyeoja')"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                               </div>
+                             </perfect-scrollbar>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="chamyeojaList.clear();partiPopup = false;"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="invitePopup" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">초대관리</p>
+            </div>
+            <div class="modal-content">
+                <div class="tab-type04 note-main-tab">
+			        <div id="tab1"><a href="javascript:void(0)" :class="inviteMenu == '1' ? 'active' : ''" @click="setInviteList('INVITED'); inviteMenu = '1';">받은초대</a></div>
+			        <div id="tab2"><a href="javascript:void(0)" :class="inviteMenu == '2' ? 'active' : ''" @click="setInviteList('INVITE'); inviteMenu = '2';">보낸초대</a></div>
+			        <div id="tab3"><a href="javascript:void(0)" class="" @click="modalOpen('inviteListPopup')">초대 보내기</a></div>
+			    </div>
+			    <div class="tab-container">
+			        <div id="tab-1" class="tab-content" v-if="inviteMenu == '1'">
+			            <div class="note-invite-list" v-for="(imItem, imIndex) in inviteMngList.data" v-if="inviteMngList.getRowCount() > 0" @click="inviteMngList.selectRow(imIndex)">
+			            	<div class="invite-list" v-if="imItem.USER_ID != imItem.CHAMYEOJA_ID">
+			            		<span class="cate">{{ addCommcode.getCommcodeNm('ADD','FB_GB',imItem.FB_GB,'CD_NM') }}</span>
+			            		<p class="tit">{{ imItem.FB_NM }}</p>
+			            		<p class="cont">{{ imItem.CHODAE_TITLE }}</p>
+			            		<span class="etc icon-user">{{ imItem.FB_USER_NM }}</span>
+			            		<span class="etc icon-realtime">{{ getDateForm(imItem.INSERT_DTTM) }}</span>
+			            		<div class="btn-set">
+			            			<a href="javascript:void(0)" class="btn-ok icon-checkmark on" v-if="imItem.CHAMYEO_STATUS_GB == '01'&&imItem.CHAMYEO_STATUS_GB != '02'" @click="inviteMngList.selectRow(imIndex); answInvitiation('02')">수락</a>
+			            			<span class="btn-ok icon-checkmark on" v-if="imItem.CHAMYEO_STATUS_GB != '01'&&imItem.CHAMYEO_STATUS_GB == '02'">수락</span>
+			            			<a href="javascript:void(0)" class="btn-no icon-slash on" v-if="imItem.CHAMYEO_STATUS_GB != '02' && imItem.CHAMYEO_STATUS_GB != '03'" @click="inviteMngList.selectRow(imIndex); confirmOpen('disagreeInvitiation')">거절</a>
+        						    <span class="btn-no icon-slash on" v-if="imItem.CHAMYEO_STATUS_GB != '02'&&imItem.CHAMYEO_STATUS_GB == '03'">거절</span>
+			            		</div>
+			            	</div>
+			            </div>
+			            <div class="note-invite-list" v-else>
+	                        <div class="invite-list">
+							    <div class="no-cont">
+							    	받은 초대가 없습니다.
+							    </div>
+							</div>
+	                    </div>
+			        </div>
+			        <div id="tab-2" class="tab-content" v-if="inviteMenu == '2'">
+			            <div class="note-invite-list" v-for="(imItem, imIndex) in inviteMngList.data" v-if="inviteMngList.getRowCount() > 0" @click="inviteMngList.selectRow(imIndex)">
+			            	<div class="invite-list" v-if="imItem.USER_ID != imItem.CHAMYEOJA_ID">
+			            		<span class="cate">{{ addCommcode.getCommcodeNm('ADD','FB_GB',imItem.FB_GB,'CD_NM') }}</span>
+			            		<p class="tit">{{ imItem.FB_NM }}</p>
+			            		<p class="cont">{{ imItem.CHODAE_TITLE }}</p>
+			            		<span class="etc icon-user">{{ imItem.USER_NM }}</span>
+			            		<span class="etc icon-realtime">{{ getDateForm(imItem.INSERT_DTTM) }}</span>
+			            		<div class="btn-set">
+			            			<span class="btn-ok icon-checkmark on" v-if="imItem.CHAMYEO_STATUS_GB == '02'">수락</span>
+			            			<span class="btn-no icon-slash on" v-if="imItem.CHAMYEO_STATUS_GB == '03'">거절</span>			            			
+			            			<a href="javascript:void(0)" class="btn-del icon-trashcan on" v-if="imItem.CHAMYEO_STATUS_GB == '03'" @click="inviteMngList.selectRow(imIndex); confirmOpen('deleteDisagree')">삭제</a>
+			            			
+			            		</div>
+			            	</div>
+			            </div>
+			            <div class="note-invite-list" v-else>
+	                        <div class="invite-list">
+							    <div class="no-cont">
+							    	보낸 초대가 없습니다.
+							    </div>
+							</div>
+	                    </div>
+			        </div>
+			    </div>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기" @click="partiPopup = false"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-layer-wrap">
+    <div id="inviteListPopup" class="modal-layer modal-xlarge">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">초대 관리</p>
+            </div>
+            <div class="modal-content">
+	            <div class="app-info-layer">
+	                <div class="left-zone">
+	                	<div class="box-type03">
+	                     <div class="left-zone-box">
+                            <h3 class="h3 tit">보낼 내용</h3>
+				            <div class="row form-row">
+						        <div class="form-group col s12">
+						            <label for="pFarmBoardNm" class="label-type01">보드명</label>
+							        <select name="pFarmBoardNm" id="pFarmBoardNm" class="size-m" style="width:200px;" @change="selectBoard()">
+					                    <option v-for="(fbItem, fbIndex) in sendFarmBoardList.data" :value="fbIndex">{{ fbItem.FB_NM }}</option>
+					                </select>
+						        </div>
+						    </div>
+						    <div class="row form-row">
+						        <div class="form-group col s12">
+						            <label for="formGroupExampleInput2" class="label-type01">초대메세지</label>
+						            <textarea id="formGroupExampleInput2" rows="10" class="size-m" placeholder="초대메세지를 입력하세요" v-model="invitationDescVal"></textarea>
+						        </div>
+						    </div>
+				            <div class="row form-row right">
+				               <a href="javascript:void(0)" class="btn type02 size-m" @click="confirmOpen('sendInvitationMsg')">초대</a>
+				            </div>
+					  		<div class="group-list-wrap">
+	                            <h3 class="h3 tit">받는 사람 목록</h3>
+	                               <span class="heading-txt">초대인원을 조회하고 참여할 인원을 검색, 추가, 삭제할 수 있습니다.</span>
+                                   <perfect-scrollbar class="group-list-box">
+                                     <div class="group-list" v-for="(item, index) in inviteList.data">
+                                         <div><span class="name">{{item.USER_NM}}</span><span class="code-num">{{item.USER_ID}}</span></div>
+                                         <div><span class="major">{{item.DEPT_NM}}</span></div>
+	                                     <a href="javascript:void(0)" class="btn-close" @click="inviteList.selectRow(index);deleteInvite();"><span class="icon-minus-circle"></span></a>
+	                                 </div>
+                                   </perfect-scrollbar>
+						     </div>
+		                  </div>
+		                </div>
+		             </div>
+			         <div class="right-zone">
+                       <form>
+							<div class="box-type03">
+								<div class="row">
+									<div class="form-group col s12 col-inline">
+										<label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+								        <select name="pUserGroupGb" class="size-m" id="pUserGroupGb" v-model="pUserGroupGb" data-vv-as="사용자 구분" v-validate="'required'" v-bind:class="{'invalid':errors.has('pUserGroupGb')}">
+							                <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'USER_GROUP_GB', 'select', 'CD_NM', 'N'),function(o){return o.CD != '9'})" :value="item.CD">{{item.CD_NM}}</option>
+							            </select>
+<!--								        <select name="pUserStatusGb" class="size-m" id="pUserStatusGb" v-model="pUserStatusGb">-->
+<!--							                <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'USER_STATUS_GB', 'all', 'CD_NM', 'N', 'all'), function(e){return e.CD1 == pUserGroupGb || e.CD ==  '';})" :value="item.CD">{{item.CD_NM}}</option>-->
+<!--							            </select>-->
+							   			<input type="text" name="pPopupSearchArgv" class="size-m" id="pPopupSearchArgv" v-model="pPopupSearchArgv" :placeholder="searchPlaceHolder('text')" @keyup.13="setUserList"  data-vv-as="사용자 명/아이디 " v-validate="searchPlaceHolder('validate')" v-bind:class="{'invalid':errors.has('pPopupSearchArgv')}">
+								    </div>
+							    </div>
+						    </div>
+						    
+						    <div class="btn-line right">
+						        <input type="button" value="검색" class="btn type01 size-m" @click="setUserList">
+					        </div>
+                       </form>
+	                    <!-- 테이블 -->
+	                    <table class="table-type01 response">
+	                        <caption>학번, 이름, 학과, 추가 순서대로 안내하는 표입니다</caption>
+	                        <colgroup>
+	                            <col/>
+	                            <col width="25%" />
+	                            <col width="25%" />
+	                            <col width="10%" />
+	                        </colgroup>
+	                        <thead>
+	                            <tr>
+	                                <th scope="col">계정</th>
+	                                <th scope="col">이름</th>
+	                                <th scope="col">병원</th>
+	                                <th scope="col">추가</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody v-if="userList.getRowCount()>0">
+	                            <tr v-for="(item,index) in userList.data">
+	                                <td data-header="학번">{{item.USER_ID}}</td>
+	                                <td data-header="이름">{{item.USER_NM}}</td>
+	                                <td data-header="학과">{{item.DEPT_NM}}</td>
+	                                <td data-header="추가">
+	                                	<a href="javascript:void(0)" class="btn-table-type01" v-if="!userList.isFilterRow(index)" @click="userList.selectRow(index);addInvite();"><span class="icon-more"></span></a>
+	                                	<a class="btn-table-type02" v-if="userList.isFilterRow(index)"><span class="icon-checkmark"></span></a>
+	                                </td>
+	                            </tr>
+	                        </tbody>
+		                    <tbody v-else>
+		                       <tr>
+		                          <td data-header="검색결과 없음" colspan="100">검색결과가 없습니다.</td>
+		                       </tr>
+		                    </tbody>
+	                    </table>
+						<!-- 페이징 -->
+					    <paging :pagingset="userListPaging" :type="'mobile'"></paging>
+		           </div>
+		        </div>
+	            <div class="btn-r">
+	                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+	            </div>
+	        </div>
+        </div>
+    </div>
+ </div>
+
+<!-- 모달팝업 -->
+<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+</section>
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	//데이터셋
+    	farmBoardList: new Dataset(),
+    	labelList: new Dataset(),
+    	userList: new Dataset(),
+    	inviteList: new Dataset(),
+    	chamyeojaList: new Dataset(),
+    	allChamyeojaList: new Dataset(),
+    	//초대 관리 데이터셋
+    	inviteMngList: new Dataset(),
+	    //초대 메세지를 보낼 보드 데이터셋
+    	sendFarmBoardList: new Dataset(),
+    	//페이징
+		farmBoardListPaging: new PagingSet(10, 8),
+		userListPaging: new PagingSet(10, 5),
+		//검색 조건 변수
+		pSearchType : '',
+		pSearchArgv: '',
+    	//팝업 오픈 변수
+    	addFarmBoardPopup: false,
+    	modiFarmBoardPopup: false,
+    	partiPopup: false,
+    	invitePopup: false,
+    	//초대자 검색 팝업 변수
+    	pPopupSearchArgv: '',
+	    pUserGroupGb: '1',
+	    pUserStatusGb: '',
+	    pUserTypeGb: '',
+	    pDeptCd: '',
+	    pDeptNm: '',
+	    //나의 역량에서 넘어온 변수
+	    pUserId: '',
+	    pFbSeq: '',
+	    pFbNm: '',
+	    pFbGb: '',
+	    pFbThemeGb: '',
+	    pChamyeojaYn: '',
+	    pListGwanriAuthYn: '',
+	    pUseYn: '',
+	    //초대 내용 변수
+	    invitationDescVal: '',
+	    inviteMenu: '1',
+	    //초대 카운트
+	    invitedCnt: 0,
+	    //초대자 조회 세팅
+	    authCodeSet: new CustomcodeSet('/system-manager/auth',{pUseYn:'Y',pAuthGb:'02'}),
+	    detailSearch: false,
+    	//loading
+		mainListLoading: {id:'mainListLoading', val:false},
+		messageModal: new ModalSet('modal-message')
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	if(!isNull(globalParam.pSearchType)){
+    		this.pSearchType = globalParam.pSearchType;
+    	}
+    	
+    	if(!isNull(globalParam.pSearchArgv)){
+    		this.pSearchArgv = globalParam.pSearchArgv;
+    	}
+    	
+    	if(!isNull(globalParam.USER_ID) 
+    	&& !isNull(globalParam.FB_SEQ)){
+    		this.pUserId = globalParam.USER_ID;
+    		this.pFbSeq = globalParam.FB_SEQ;
+    		this.pFbNm = globalParam.FB_NM;
+    		this.pFbGb = globalParam.FB_GB;
+    		this.pFbThemeGb = globalParam.FB_THEME_GB;
+    		this.pChamyeojaYn = globalParam.CHAMYEOJA_YN;
+    		this.pListGwanriAuthYn = globalParam.LIST_GWANRI_AUTH_YN;
+    		this.pUseYn = globalParam.USE_YN;
+    		
+    		this.goToList();
+    	}else{
+        	this.setInvitedCnt();
+        	this.setFarmBoardList();  
+    	}
+    },
+  //데이터 감시
+	watch: {
+		'farmBoardList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.farmBoardList.enableevent){
+					var changeYn = this.farmBoardList.dataCompare(oldVal);
+					
+					if(!changeYn){
+						this.farmBoardList.setDefaultRow(oldVal);
+					}
+					
+
+					this.$validator.reset();
+				}
+			}
+		},		
+		'farmBoardList.data': {
+			handler: function (val, oldVal) {
+				if(this.farmBoardList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data	).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.farmBoardList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.farmBoardList.beforeData[rowposition][colNm] = data[colNm];
+				          	}
+				      	})
+				  	});
+				}
+			},
+			//Objects 내부의 중첩된 값 변경을 감지
+			deep: true
+	    },		
+		'farmBoardListPaging.currentPage': {
+			handler: function (val, oldVal) {
+// 				this.setfarmBoardList();
+				this.farmBoardList.pageChange(val, this.farmBoardListPaging.getRowCnt());
+			}
+	    },
+	    'userList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.userList.enableevent){
+					var changeYn = this.userList.dataCompare(oldVal);
+					var rowType = this.userList.getRowType(val);
+					var oldRowType = this.userList.getRowType(oldVal);
+					
+					if(!changeYn || oldRowType == this.ROWTYPE_INSERT){
+						this.userList.setDefaultRow(oldVal);
+					}
+					
+					if(val != -1){
+						if(rowType == this.ROWTYPE_NORMAL  || rowType == this.ROWTYPE_UPDATE){
+							this.updateDisabled = true;	
+						}else{
+							this.updateDisabled = false;
+						}	
+						
+						this.$validator.reset();	
+					}
+				}
+			}
+		},			
+		'userListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setUserList()
+// 				this.userList.pageChange(val, this.userListPaging.getRowCnt());
+			}
+	    },
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'pUserGroupGb': {
+	    	handler: function (val, oldVal) {
+	    		/* 시스템관리자 */
+	    		if(val == '1'){
+	    			this.pUserStatusGb = '11';
+	    		}
+				if(val == '2'){
+	    			this.pUserStatusGb = '21';
+	    		}else{
+					this.pUserStatusGb = '';
+				}
+
+	    	    this.pUserTypeGb = '';
+	    	    this.pDeptCd = '';
+	    	    this.pDeptNm = '';
+	    		this.$validator.reset();
+			}
+	    },
+	},
+    //함수
+    methods: {
+    	setInvitedCnt: function(){
+			var self = this;
+			
+			var returnVal = farmboardApi.invitedCnt({}, false);
+            
+			returnVal.then(function(response){
+				self.invitedCnt = response.data[0].INVITED_CNT;
+			});
+    	},
+    	setFarmBoardList: function(){
+			var param = {
+				"pSearchType": this.pSearchType,
+				"pSearchArgv": this.pSearchArgv
+			};
+			
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardMainList(param, false);
+
+            self.mainListLoading.val = true;
+            
+			returnVal.then(function(response){
+				self.farmBoardList.setRawData(response.data, self.farmBoardListPaging.getRowCnt());
+				
+				//최신순으로 조회되기 때문에 정렬 세팅하는 부분 미리 초기화
+				$("#sort-new").prop("checked", true);
+				
+				if(response.data.length > 0){
+					self.farmBoardListPaging.setTotalCnt(response.data.length);
+
+					self.farmBoardList.selectRow(0);
+				}else{
+					self.farmBoardListPaging.setTotalCnt(0);
+				}
+			})finally(function(){
+				self.mainListLoading.val = false;
+			});
+    	},
+    	addFarmBoard: function(){
+    		this.labelList.clear();
+    		
+    		this.addLabel();
+    		
+    		var addObj = {
+    			'FB_GB': '99',
+    			'FB_NM': '',
+    			'FB_DESC': '',
+    			'MAPPING_TABLE': '',
+    			'MAPPING_KEY': '',
+    			'FB_THEME_GB': 'theme-sel01',
+    			'USE_YN': 'Y'
+    		};
+    		
+    		this.farmBoardList.addRow(addObj);
+    	},
+    	saveFarmBoard: function(){
+    		var self = this;
+    		
+    		var validate = self.$validator.validateAll();
+    		
+    		var saveData = {
+    			"FARMBOARD_LIST": self.farmBoardList.currentRow,
+    			"LABEL_LIST": self.labelList.data
+    		};
+			
+			validate.then(function(response) {
+				if(response){			
+					var rowposition = self.farmBoardList.rowposition;
+					var rowType = self.farmBoardList.getRowType(rowposition); 
+
+					var labelRowposition = self.labelList.rowposition;
+					var labelRowType = self.labelList.getRowType(labelRowposition); 
+					
+					var returnVal = '';
+
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = farmboardApi.farmBoardInsert(saveData, true);
+					}
+					//수정 (라벨 신규, 수정, 삭제 포함)
+					else{
+						returnVal = farmboardApi.farmBoardUpdate(saveData, true);
+					}
+					
+					if(!isNull(returnVal)){
+						returnVal.then(function(response){
+							if(response.status == '200'){
+								self.setFarmBoardList();
+								
+								if(rowType == ROWTYPE_INSERT){
+									modal_close('addFarmBoardPopup');
+									
+									self.addFarmBoardPopup = false;
+								}else{
+									modal_close('modiFarmBoardPopup');
+									
+									self.modiFarmBoardPopup = false;
+								}
+								
+								notifySubmit('success', '팜보드 저장', '저장이 완료되었습니다.', 'icon-save');
+							}else{
+								notifySubmit('warning', '팜보드 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						}).catch(function(error){
+							notifySubmit('warning', '팜보드 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}else{
+					notifySubmit('warning', '팜보드 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+    	},
+    	setLabelList: function(){
+    		var rowposition = this.farmBoardList.rowposition;
+
+    		var pUserId = this.farmBoardList.getColumn(rowposition, "USER_ID");
+    		var pFbSeq = this.farmBoardList.getColumn(rowposition, "FB_SEQ");
+    		
+    		var param = {
+    			"USER_ID": pUserId,
+    			"FB_SEQ": pFbSeq
+    		};
+    		
+			var self = this;
+			
+			var returnVal = farmboardApi.labelList(param, true);
+
+			returnVal.then(function(response){
+				self.labelList.setData(response.data);
+				
+				if(response.data.length == 0){
+					self.addLabel();
+				}
+				
+    			modal_open('modiFarmBoardPopup');
+
+				self.$forceUpdate();
+			});
+    	},
+    	setChamyeojaList: function(){
+    		var rowposition = this.farmBoardList.rowposition;
+
+    		var pUserId = this.farmBoardList.getColumn(rowposition, "USER_ID");
+    		var pFbSeq = this.farmBoardList.getColumn(rowposition, "FB_SEQ");
+    		
+    		var param = {
+    			"USER_ID": pUserId,
+    			"FB_SEQ": pFbSeq,
+				"GB" : "CHAMYEOJA"
+    		};
+    		
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaList(param, true);
+
+			returnVal.then(function(response){
+				self.allChamyeojaList.setData(response.data);
+				
+				//참여 완료인 데이터만 filter
+				var filtedData = _.filter(response.data, ['CHAMYEO_STATUS_GB', '02']);
+				
+				self.chamyeojaList.setData(filtedData);
+			});
+    	},
+    	setSendFarmBoardChamyeojaList: function(){
+    		var rowposition = this.sendFarmBoardList.rowposition;
+
+    		var pUserId = this.sendFarmBoardList.getColumn(rowposition, "USER_ID");
+    		var pFbSeq = this.sendFarmBoardList.getColumn(rowposition, "FB_SEQ");
+    		
+    		var param = {
+    			"USER_ID": pUserId,
+    			"FB_SEQ": pFbSeq,
+				"GB" : "CHAMYEOJA"
+    		};
+    		
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaList(param, true);
+
+			returnVal.then(function(response){
+				self.allChamyeojaList.setData(response.data);
+			});
+    	},
+		updateChamyeoja: function(){
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaUpdate(self.chamyeojaList.currentRow, true);
+			
+			returnVal.then(function(response){
+				if(response.status == '200'){
+					notifySubmit('success', '리스트 관리 권한', '권한 변경에 성공하였습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '리스트 관리 권한', '권한 변경에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '리스트 관리 권한', '권한 변경에 실패하였습니다.', 'icon-caution');
+			});
+		},
+		deleteChamyeoja: function(){
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaDelete(self.chamyeojaList.currentRow, true);
+			
+			returnVal.then(function(response){
+				if(response.status == '200'){
+					self.setChamyeojaList();
+					
+					notifySubmit('success', '참여자 삭제', '삭제에 성공하였습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '참여자 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+		},
+    	updateBookMarkYn: function(){
+    		var self = this;
+    		
+			var returnVal = farmboardApi.bookmarkUpdate(self.farmBoardList.currentRow, true);
+			
+			returnVal.then(function(response){
+				if(response.status == '200'){
+					notifySubmit('success', '북마크', '북마크 변경에 성공하였습니다.', 'icon-save');
+					self.setFarmBoardList();
+				}else{
+					notifySubmit('warning', '북마크', '북마크 변경에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '북마크', '북마크 변경에 실패하였습니다.', 'icon-caution');
+			});
+     	},
+     	secessionFarmBoard: function(){
+			var self = this;
+    		
+    		var param  = {
+   				"CHAMYEOJA_ID": self.session.USER_ID,
+   				"FB_SEQ": self.farmBoardList.currentRow.FB_SEQ
+    		};
+    		
+    		var returnVal = farmboardApi.farmBoardSecession(param, true);
+			
+			returnVal.then(function(response){
+				if(response.status == '200'){
+					self.setFarmBoardList();
+					
+					notifySubmit('success', '팜보드 삭제', '삭제에 성공하였습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '팜보드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '팜보드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+     	},
+    	deleteFarmBoard: function(){
+    		var self = this;
+    		
+    		var param  = {
+   				"USER_ID": self.farmBoardList.currentRow.USER_ID,
+   				"FB_SEQ": self.farmBoardList.currentRow.FB_SEQ
+    		};
+    		
+    		var returnVal = farmboardApi.farmBoardDelete(param, true);
+			
+			returnVal.then(function(response){
+				if(response.status == '200'){
+					self.setFarmBoardList();
+					
+					notifySubmit('success', '팜보드 삭제', '삭제에 성공하였습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '팜보드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '팜보드 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+    	},
+    	menuOpen: function(pIndex){
+			var self = this;
+    		
+    		_.forEach(self.farmBoardList.data, function(obj, index){
+    			if(index != pIndex) $('#menu'+index).removeClass('on');
+    		});
+    		
+			$('#menu'+pIndex).addClass('on');
+    	},
+    	menuClose: function(pIndex){
+    		setTimeout(function() { 
+    			// Code here 
+    			$('#menu'+pIndex).removeClass('on');
+    		}, 200);
+    	},
+    	sortMenuOpen: function(){
+			if($('.note-list-sort').hasClass('expanded') == true){
+				$('.note-list-sort').removeClass('expanded');
+			}else{
+				$('.note-list-sort').addClass('expanded');
+			}    		
+    	},
+    	sortFarmBoardList: function(val){
+    		var preData = this.farmBoardList.rawData;
+			var pRowCount = this.farmBoardListPaging.getRowCnt();
+			
+    		var data = '';
+    		
+			if(val == '최신순'){
+				$('#sort-new').prop('checked',true);
+				data = _.orderBy(preData, ['INSERT_DTTM', 'FB_NM'], ['desc', 'asc']);
+				
+				this.farmBoardList.setRawData(data, pRowCount);
+			}else if(val == '오래된순'){
+				$('#sort-old').prop('checked',true);
+				data = _.orderBy(preData, ['INSERT_DTTM', 'FB_NM'], ['asc', 'asc']);
+				
+				this.farmBoardList.setRawData(data, pRowCount);
+			}else if(val == '북마크'){
+				$('#sort-bookmark').prop('checked',true);
+				data = _.orderBy(preData, ['BOOKMARK_YN', 'FB_NM'], ['desc', 'asc']);
+				
+				this.farmBoardList.setRawData(data, pRowCount);
+			}else if(val == '이름순'){
+				$('#sort-name').prop('checked',true);
+				data = _.orderBy(preData, ['FB_NM'], ['asc']);
+				
+				this.farmBoardList.setRawData(data, pRowCount);
+			}
+
+			$('.note-list-sort').removeClass('expanded');
+
+			this.farmBoardListPaging.movePage(1);
+    	},
+    	addLabel: function(){
+    		var addObj = {
+       			'LABEL_COLOR_GB': '01',
+       			'LABEL_NM': ''
+       		};
+       		
+       		this.labelList.addRow(addObj);
+    	},
+    	deleteLabel: function(){
+			var rowposition = this.labelList.rowposition;
+			var rowType = this.labelList.getRowType(rowposition); 
+			
+			this.labelList.deleteRow(rowposition);
+			
+// 			if(rowType == ROWTYPE_INSERT){
+// 				this.labelList.deleteRow(rowposition);
+// 			}else{
+// 				var self = this;
+				
+// 				var param = {
+// 					"USER_ID": self.labelList.getColumn(rowposition, "USER_ID"), 
+// 					"FB_SEQ": self.labelList.getColumn(rowposition, "FB_SEQ"), 
+// 					"LABEL_SEQ": self.labelList.getColumn(rowposition, "LABEL_SEQ")	
+// 				};
+				
+// 				var returnVal = farmboardApi.labelDelete(param, true);
+			
+// 				returnVal.then(function(response){
+// 					var data = response.data;
+			
+// 					if(data > 0){
+// 						self.setLabelList();
+// 					}else{
+// 						notifySubmit('warning', '라벨 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+// 					}
+// 				}).catch(function(error){
+// 					notifySubmit('warning', '라벨 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+// 				});
+// 			}
+    	},
+    	changeLabelClr: function(pClr){
+    		var rowposition = this.labelList.rowposition;
+    		
+    		this.labelList.setColumn(rowposition, "LABEL_COLOR_GB", pClr);
+    	},
+    	setInviteList: function(pParam){
+    		var rowposition = this.farmBoardList.rowposition;
+    		this.inviteMngList.clear();
+    		
+    		
+    		var param = '';
+    		
+    		if(pParam == 'INVITED'){
+    			param = {
+					"CHAMYEOJA_ID" : this.session.USER_ID,
+     				"CHAMYEOJA_NM" : this.session.USER_NM,
+					"GB" : pParam
+    			};
+    		}else if(pParam == 'INVITE'){
+    			param = {
+     				"USER_ID" : this.session.USER_ID,
+     				"USER_NM" : this.session.USER_NM,
+					"GB" : pParam
+       			};
+    		}
+			
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaList(param, true);
+
+			returnVal.then(function(response){
+				self.inviteMngList.setData(response.data);
+
+			});
+    	},
+    	deleteDisagree: function(){
+			var self = this;
+			
+			var returnVal = farmboardApi.farmBoardChamyeojaDelete(self.inviteMngList.currentRow, true);
+			
+			returnVal.then(function(response){
+				var data = response.data;
+		
+				if(data > 0){
+					self.setInviteList('INVITE');
+					
+					notifySubmit('success', '거절 삭제', '삭제에 성공하였습니다.', 'icon-save');
+				}else{
+					notifySubmit('warning', '거절 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '거절 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+			});
+    	},
+    	/* 초대할 인원 리스트 조회 */
+		setUserList: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			validate.then(function(response) {
+				if(response){
+					self.mainListLoading.val = true;
+					var param = {
+						pUserGroupGb: self.pUserGroupGb, 
+						pUserStatusGb: self.pUserStatusGb, 
+						pSearchArgv: self.pPopupSearchArgv, 
+						pUserTypeGb: self.pUserTypeGb,
+						pDeptCd: self.pDeptCd,
+						pDeptNm: self.pDeptNm,
+						pPageNo: self.userListPaging.currentPage, 
+						pRowCnt: self.userListPaging.getRowCnt(),
+					}
+					
+					var returnVal = userApi.user(param, false);
+					
+					returnVal.then(function(response) {
+						self.userList.setData(response.data);
+
+						if(response.data.length > 0){
+							var totalCnt = self.userList.data[0].CNT;
+							self.userListPaging.setTotalCnt(totalCnt);
+
+							for(var i = 0; i < self.userList.getRowCount(); i++){
+								for(var j = 0; j < self.inviteList.getRowCount(); j ++){
+									if(!isNull(self.inviteList.getColumn(j, 'USER_ID')) 
+									&& !isNull(self.userList.getColumn(i, 'USER_ID'))){
+										if(self.inviteList.getColumn(j, 'USER_ID') == self.userList.getColumn(i, 'USER_ID')){
+											self.userList.setFilter({USER_ID:self.inviteList.getColumn(j, 'USER_ID')});
+										}
+									}
+								}
+							}
+							
+							//보드 참여자
+							for(var i = 0; i < self.userList.getRowCount(); i++){
+								for(var j = 0; j < self.allChamyeojaList.getRowCount(); j ++){
+									if(!isNull(self.allChamyeojaList.getColumn(j, 'CHAMYEOJA_ID')) 
+									&& !isNull(self.userList.getColumn(i, 'USER_ID'))){
+										if(self.allChamyeojaList.getColumn(j, 'CHAMYEOJA_ID') == self.userList.getColumn(i, 'USER_ID')){
+											self.userList.setFilter({USER_ID:self.allChamyeojaList.getColumn(j, 'CHAMYEOJA_ID')});
+										}
+									}
+								}
+							}
+						}else{
+							self.userListPaging.setTotalCnt(0);
+						}
+					}).finally(function(){
+						self.mainListLoading.val = false;
+					});
+				}else {
+					notifySubmit('warning', '초대 관리', '검색항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		addInvite: function(){
+			var userId = this.userList.getColumn(this.userList.rowposition, 'USER_ID');
+			var userNm = this.userList.getColumn(this.userList.rowposition, "USER_NM");
+			var deptNm = this.userList.getColumn(this.userList.rowposition, "DEPT_NM");
+			var returnVal = null;
+			
+			var self = this;
+	
+			var addObj = 
+			{
+				"USER_ID": userId,
+				"USER_NM": userNm,
+				"DEPT_NM": deptNm
+			};
+			
+			this.inviteList.addRow(addObj);
+			
+			this.setUserList();
+		},
+		deleteInvite: function(){
+			var rowposition = this.inviteList.rowposition;
+			
+			this.inviteList.deleteRow(rowposition);
+			
+			this.setUserList();
+		},
+		selectBoard: function(){	    	
+			var pIndex = $("#pFarmBoardNm option:selected").val();
+			
+			if(isNull(pIndex)) pIndex = 0;
+			
+			this.sendFarmBoardList.selectRow(pIndex);
+			
+			//보드 참여자 조회
+			this.pPopupSearchArgv = '';
+			this.setSendFarmBoardChamyeojaList();
+			this.setUserList();
+		},
+	    sendInvitationMsg: function(){
+	    	var rowposition = this.sendFarmBoardList.rowposition;
+	    	
+			var sendObj = {
+				"FB_SEQ": this.sendFarmBoardList.getColumn(rowposition, "FB_SEQ"),
+				"FB_USER_ID": this.sendFarmBoardList.getColumn(rowposition, "USER_ID"),
+				"USER_NM": this.sendFarmBoardList.getColumn(rowposition, "USER_NM"),
+				"CHODAE_TITLE" : this.invitationDescVal,
+				"CHAMYEOJA_DESC" : '',
+				"INVITE_LIST": this.inviteList.data,
+				"GB": "SEND"
+			};	
+			
+			var self = this;
+			
+			var returnVal = farmboardApi.sendInvitation(sendObj, true);
+			
+			returnVal.then(function(response){
+				if(response.status == '200'){
+					notifySubmit('success', '팜보드 초대', '초대에 성공하였습니다.', 'icon-save');
+					
+					//팜보드 리스트 조회
+					self.setFarmBoardList();
+					
+					modal_close("inviteListPopup");
+				}else{
+					notifySubmit('warning', '팜보드 초대', '초대에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '팜보드 초대', '초대에 실패하였습니다.', 'icon-caution');
+			});
+	    },
+	    answInvitiation: function(pChamyeoStatusGb){
+	    	var rowposition = this.inviteMngList.rowposition;
+	    	
+	    	if(pChamyeoStatusGb == '02'){
+	    		this.inviteMngList.setColumn(rowposition, "CHAMYEO_STATUS_GB", "02");
+	    		this.inviteMngList.setColumn(rowposition, "LIST_GWANRI_AUTH_YN", "Y");
+	    	}else if(pChamyeoStatusGb == '03'){
+	    		this.inviteMngList.setColumn(rowposition, "CHAMYEO_STATUS_GB", "03");
+	    		this.inviteMngList.setColumn(rowposition, "LIST_GWANRI_AUTH_YN", "N");
+	    	}
+	    	
+	    	var self = this;
+	    	
+			var returnVal = farmboardApi.answInvitiation(this.inviteMngList.currentRow, true);
+			
+			returnVal.then(function(response){
+				var data = response.data;
+		
+				if(data > 0){
+					notifySubmit('success', '참여 상태 변경', '상태 변경에 성공하였습니다.', 'icon-save');
+
+					self.setInvitedCnt();
+					self.setFarmBoardList();
+					
+					modal_close("inviteListPopup");
+				}else{
+					notifySubmit('warning', '참여 상태 변경', '상태 변경에 실패하였습니다.', 'icon-caution');
+				}
+			}).catch(function(error){
+				notifySubmit('warning', '참여 상태 변경', '상태 변경에 실패하였습니다.', 'icon-caution');
+			});
+	    	
+	    },
+    	modalOpen: function(pPopupNm){
+    		if(pPopupNm == 'addFarmBoardPopup'){
+    			this.addFarmBoard();
+    			
+    			this.addFarmBoardPopup = true;
+
+    			modal_open(pPopupNm);
+    		}else if(pPopupNm == 'modiFarmBoardPopup'){
+    			//라벨 조회 (안에 모달 오픈하는 함수가 들어있음.)
+    			this.setLabelList(); 
+    			
+    			this.modiFarmBoardPopup = true;
+    		}else if(pPopupNm == 'partiPopup'){
+    			//참여자 조회
+    			this.setChamyeojaList();
+
+    			this.partiPopup = true;
+    			modal_open(pPopupNm);
+    		}else if(pPopupNm == 'invitePopup'){
+    			this.inviteMenu = '1';
+    			
+    			this.setInviteList("INVITED");
+    			
+    			this.invitePopup = true;
+
+    			modal_open(pPopupNm);
+    		}else if(pPopupNm == 'inviteListPopup'){
+    			//처음 켜졌을때 0번째 항목을 선택함
+    			$("#pFarmBoardNm option:eq(0)").prop("selected", true);
+    			
+    			//셀렉트 박스에 들어갈 데이터셋 초기화
+    			this.sendFarmBoardList.setData(_.filter(this.farmBoardList.rawData, {'CHAMYEOJA_YN': 'N'}));
+    			
+    			//초대할 보드가 없을 시 notify 처리
+    			if(this.sendFarmBoardList.getRowCount() == 0){
+    				notifySubmit('warning', '보드 초대', '본인이 생성한 보드만 초대메시지를 보낼 수 있습니다.', 'icon-caution');
+    				
+    				return;
+    			}
+    			
+    			//초대 인원 목록 초기화
+    			this.inviteList.clear();
+    			
+    			//선택된 보드 초기화
+    			this.selectBoard();
+    			
+    			//초대 인원 조회 및 이미 초대 되어진 인원 필터 처리
+    			this.setUserList();
+    			//초대 메시지 초기화
+    			this.invitationDescVal = '';
+    			modal_close('invitePopup');
+    			//초대 팝업 메뉴 첫번째 항목으로 초기화
+    			this.inviteMenu = '1';
+				//모달 오픈
+    			modal_open(pPopupNm);
+    		}
+    	},
+    	confirmOpen: function(pParam){
+    		if(pParam == 'deleteFarmBoard'){
+    			this.messageModal.openModal('confirm', '팜보드 삭제', '삭제하시면 해당 보드 관련 모든 내용이 삭제됩니다.<br>정말로 삭제하시겠습니까?', 'small', 'deleteFarmBoard', '');	
+    		}else if(pParam == 'secessionFarmBoard'){
+    			this.messageModal.openModal('confirm', '팜보드 탈퇴', '삭제하시면 보드에 작성한 모든 내용이 삭제됩니다.<br>정말로 탈퇴하시겠습니까?', 'small', 'secessionFarmBoard', '');
+    		}else if(pParam == 'sendInvitationMsg'){
+    			if(this.inviteList.getRowCount() == 0){
+    				notifySubmit('warning', '팜보드 초대', '받는 사람 목록에 초대할 사람이 없습니다.', 'icon-caution');
+    			}else{
+        			this.messageModal.openModal('confirm', '팜보드 초대', '정말로 초대하시겠습니까?', 'small', 'sendInvitationMsg', '');
+    			}
+    		}else if(pParam == 'deleteChamyeoja'){
+       			this.messageModal.openModal('confirm', '참여자 삭제', '정말로 삭제하시겠습니까?', 'small', 'deleteChamyeoja', '');
+    		}else if(pParam == 'disagreeInvitiation'){
+       			this.messageModal.openModal('confirm', '초대 거절', '정말로 거절하시겠습니까?', 'small', 'disagreeInvitiation', '');
+    		}else if(pParam == 'deleteDisagree'){
+       			this.messageModal.openModal('confirm', '거절 삭제', '정말로 거절 기록을 삭제하시겠습니까?', 'small', 'deleteDisagree', '');
+    		}else if(pParam == 'deleteLabel'){
+    			var rowposition = this.labelList.rowposition;
+    			
+    			var rowType = this.labelList.getRowType(rowposition);
+    			
+    			if(rowType == ROWTYPE_INSERT){
+    				this.deleteLabel();
+    			}else{
+        			this.messageModal.openModal('confirm', '라벨 삭제', '삭제하시면 보드에 사용된 해당 라벨이 모두 삭제됩니다.<br>정말로 삭제하시겠습니까?', 'small', 'deleteLabel', '');
+    			}
+    		}
+    	},
+    	messagepoppupcallback : function(gb, currentId, customData){
+    	 	//alert('버튼 구분 : '+gb+'\n'+'ID : '+currentId+'\n'+'returnData : '+customData);
+    	 	if(gb == 'confirm' && currentId == 'deleteFarmBoard'){
+    	 		this.deleteFarmBoard();
+    	 	}else if(gb == 'confirm' && currentId == 'secessionFarmBoard'){
+    	 		this.secessionFarmBoard();
+    	 	}else if(gb == 'confirm' && currentId == 'sendInvitationMsg'){
+    	 		this.sendInvitationMsg();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteChamyeoja'){
+    	 		this.deleteChamyeoja();
+    	 	}else if(gb == 'confirm' && currentId == 'disagreeInvitiation'){
+    	 		this.answInvitiation('03');
+    	 	}else if(gb == 'confirm' && currentId == 'deleteDisagree'){
+    	 		this.deleteDisagree();
+    	 	}else if(gb == 'confirm' && currentId == 'deleteLabel'){
+    	 		this.deleteLabel();
+    	 	}
+    	},
+	    searchPlaceHolder: function(pGb) {
+	    	if(pGb == 'text'){
+	    		if(this.pUserGroupGb == '4' && isNull(this.pDeptCd) && isNull(this.pUserTypeGb)){
+		    		return '사용자 명/아이디(2자이상)';	
+		    	}else{
+		    		return '사용자 명/아이디';
+		    	}
+	    	}else if(pGb == 'validate'){
+	    		if(this.pUserGroupGb == '4' && isNull(this.pDeptCd) && isNull(this.pUserTypeGb)){
+		    		return 'required|min:2';	
+		    	}else{
+		    		return '';	
+		    	}
+	    	}
+	    },
+    	changeText: function(pText, pGb){
+			var userGroupGb = '';
+			
+			if(pGb == 'search') userGroupGb = this.pUserGroupGb;
+			else userGroupGb = this.userList.currentRow.USER_GROUP_GB;
+			
+			if(pText == '가입 일자'){
+				if(userGroupGb == '1') return '입사일자';
+				else if(userGroupGb == '4') return '입학 일자';
+			}else if(pText == '내부 아이디'){
+				if(userGroupGb == '1') return '사번';
+				else if(userGroupGb == '4') return '학번';
+			}else if(pText == '부서'){
+				if(userGroupGb == '1') return '부서';
+				else if(userGroupGb == '4') return '학과';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속';
+			}else if(pText == '부서 코드'){
+				if(userGroupGb == '1') return '부서 코드';
+				else if(userGroupGb == '4') return '학과 코드';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속 코드';
+			}else if(pText == '부서 명'){
+				if(userGroupGb == '1') return '부서 명';
+				else if(userGroupGb == '4') return '학과 명';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '소속 명';
+			}else if(pText == '상태 구분'){
+				if(userGroupGb == '1') return '재직 구분';
+				else if(userGroupGb == '4') return '학적상태';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '사용 여부';
+			}else if(pText == '종류 구분'){
+				if(userGroupGb == '1') return '직종';
+				else if(userGroupGb == '4') return '학년';
+				else if(userGroupGb == '5' || userGroupGb == '9') return '해당 없음';
+			}else if(pText == '등급 구분'){
+				if(userGroupGb == '1') return '직급';
+				else if(userGroupGb == '4') return '분반';
+			}
+			
+			return pText;
+		},
+	    getDateForm: function(pDate){
+			var date = '';
+			if(!isNull(pDate)){
+				date = moment(pDate).format("YYYY-MM-DD");
+			}
+			return date;
+		},
+		goToList: function(){
+			var self = this;
+			
+			var pPageNo = self.farmBoardListPaging.getCurrentPage();
+			var pRowCount = self.farmBoardListPaging.getRowCnt();
+			
+			var param = {};
+			
+			if(isNull(self.pUserId) && isNull(self.pFbSeq)){
+				param = {
+					"pSearchType": self.pSearchType,
+					"pSearchArgv": self.pSearchArgv,
+					"pPageNo": pPageNo,
+					"pRowCount": pRowCount,
+					"USER_ID": self.farmBoardList.currentRow.USER_ID,
+					"FB_SEQ": self.farmBoardList.currentRow.FB_SEQ,
+					"FB_NM": self.farmBoardList.currentRow.FB_NM,
+					"FB_GB": self.farmBoardList.currentRow.FB_GB,
+					"FB_THEME_GB": self.farmBoardList.currentRow.FB_THEME_GB,
+					"CHAMYEOJA_YN": self.farmBoardList.currentRow.CHAMYEOJA_YN,
+					"LIST_GWANRI_AUTH_YN": self.farmBoardList.currentRow.LIST_GWANRI_AUTH_YN,
+					"USE_YN": self.farmBoardList.currentRow.USE_YN
+				};
+			}else{
+				param = {
+					"pSearchType": self.pSearchType,
+					"pSearchArgv": '',
+					"USER_ID": self.pUserId,
+					"FB_SEQ": self.pFbSeq,
+					"FB_NM": self.pFbNm,
+					"FB_GB": self.pFbGb,
+					"FB_THEME_GB": self.pFbThemeGb,
+					"CHAMYEOJA_YN": self.pChamyeojaYn,
+					"LIST_GWANRI_AUTH_YN": self.pListGwanriAuthYn,
+					"USE_YN": self.pUseYn
+				};
+			}
+			    
+			contentsOpen('ADD', 'farmboardlist', param);
+		},
+		modiImgAddr: function(pAddr1,pAddr2){
+			var modiAddr = '';
+			if(!isNull(pAddr1)){
+				modiAddr = pAddr1.replace(/\\/g, '/');
+
+				if(modiAddr.substring(1,4) == 'SMN'){
+					
+					modiAddr = '/upload' + modiAddr;
+				}
+			}
+			else if(!isNull(pAddr2)){
+				modiAddr = pAddr2.replace(/\\/g, '/');
+				
+				if(modiAddr.substring(1,4) == 'SMN'){
+					modiAddr = '/upload' + modiAddr;
+				}
+			}else{
+				modiAddr = '/service/design/images/mypage/noimage.png';
+			}
+			
+			return modiAddr;
+		}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/	
+
+</script>
+
+

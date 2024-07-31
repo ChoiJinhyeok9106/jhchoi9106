@@ -1,0 +1,1101 @@
+@charset "utf-8";
+
+/*사전진단평가*/
+
+.stu-report-wrap {
+    position: relative;
+}
+
+.stu-report-wrap>div {
+    float: left;
+}
+
+.stu-report-wrap>div:first-child {
+    width: 32.45%;
+    margin-right: 0.66%;
+}
+
+.stu-report-wrap>div:last-child {
+    width: 66.22%;
+    margin-left: 0.66%;
+}
+
+.stu-report-infobox {
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #666faf;
+    margin: 10px 0;
+}
+
+.stu-report-infobox .header-line {
+    background-color: #f1f2f8;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    border-bottom: 1px solid #cfd2e0;
+}
+
+.stu-report-infobox .header-line .number {
+    display: inline-block;
+    font-size: 26px;
+    color: #fff;
+    font-weight: 500;
+    background-color: #666faf;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    border-top-left-radius: 6px;
+}
+
+.stu-report-infobox .header-line .text {
+    display: inline-block;
+    font-size: 16px;
+    color: #364085;
+    padding: 0 20px 10px;
+    vertical-align: middle;
+}
+
+.stu-report-infobox .mid-area {
+    background-color: #fff;
+    padding: 20px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+
+/*지난학기 성적조회*/
+
+.check-grades-box {
+    position: relative;
+    overflow: hidden;
+    margin-bottom:30px;
+}
+
+.check-grades-box .stu-info-part {
+    float: left;
+    width: 50%;
+    border: 2px solid #9ea4d0;
+    background-color: #fff;
+    border-right: 0;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding: 30px;
+    min-height: 170px;
+}
+
+.check-grades-box .stu-info-part .stu-profile {
+    float: left;
+    width: 50%;
+    padding-right: 30px;
+    display: table;
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-photo {
+    position: relative;
+    float: left;
+    width: 100px;
+    height: 100px;
+    background-color: #e3e5ed;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-photo:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    content: '\e9f6';
+    font-family: 'feather';
+    color: #b6b7be;
+    font-size: 46px;
+    z-index: 1;
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-photo img {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-profile-text {
+    overflow: hidden;
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-profile-text .inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-profile-text .name {
+    display: block;
+    padding-top: 2px;
+    font-size: 24px;
+    color: #000;
+    font-family: 'noto sans kr';
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-profile-text .name .eng {
+    display: block;
+    font-size: 14px;
+    color: #afb2cf;
+    font-family: 'montserrat';
+    font-weight: 600;
+    line-height: 1.6em;
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-profile-text .major {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 15px;
+    color: #364085;
+    line-height: 1.4em;
+    font-family: 'noto sans kr';
+}
+
+.check-grades-box .stu-info-part .stu-profile .stu-profile-text .major .grade {
+    display: block;
+}
+
+.check-grades-box .stu-info-part .stu-info {
+    float: left;
+    width: 50%;
+    padding-left: 30px;
+    border-left: 1px solid #9ea4d0;
+}
+
+.check-grades-box .stu-info-part .stu-info.list-label dt:nth-last-child(2),
+.check-grades-box .stu-info-part .stu-info.list-label dd:nth-last-child(1) {
+    margin-bottom: 0;
+}
+
+.check-grades-box .stu-grades-part {
+    float: left;
+    width: 50%;
+    min-height: 170px;
+    border: 2px solid #364085;
+    background-color: #364085;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 50px 30px;
+}
+
+.check-grades-box .stu-grades-part .grades-list {
+    display: table;
+    width: 100%;
+}
+
+.check-grades-box .stu-grades-part .grades-list li {
+    position: relative;
+    width: 20%;
+    display: table-cell;
+    vertical-align: bottom;
+    padding: 0 5px;
+    text-align: center;
+}
+
+.check-grades-box .stu-grades-part .grades-list li:before {
+    position: absolute;
+    content: '';
+    left: 0;
+    bottom: 6px;
+    width: 1px;
+    height: 30px;
+    background-color: #9ea4d0;
+}
+
+.check-grades-box .stu-grades-part .grades-list li:first-child:before {
+    width: 0px;
+}
+
+.check-grades-box .stu-grades-part .grades-list li .num {
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    font-family: 'montserrat';
+}
+
+.check-grades-box .stu-grades-part .grades-list li.avg .num {
+    font-size: 40px;
+    font-weight: 600;
+    color: #ff6a8d;
+}
+
+.check-grades-box .stu-grades-part .grades-list li .txt {
+    display: block;
+    padding-top: 10px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #d7daf1;
+    font-family: 'noto sans kr';
+}
+
+/* 강의평가 */
+.lecture-report-infobox {
+	float:right;
+	margin:10px 0;
+}
+.lecture-report-infobox span {
+	display:inline-block;
+	float:left;
+	height:48px;
+}
+.lecture-report-infobox span:first-child {
+	width:48px;
+	padding:15px 0 0 14px;
+	background:#666faf;
+	border-radius:8px 0 0 8px;
+	font-size:20px;
+	color:#fff;
+}
+.lecture-report-infobox span+span {
+	padding:16px 20px;
+	border:1px solid #d7daf1;
+	border-width:1px 1px 1px 0;
+	border-radius:0 8px 8px 0;	
+	background:#f1f2f8;
+}
+.lecture-report-infobox span i {
+	position:relative;
+	padding-right:15px;
+	margin-right:15px;
+	font-size:17px;
+	font-weight:500;
+	color:#4f5685;
+}
+.lecture-report-infobox span i:after {
+	content:'';
+	display:inline-block;
+	position:absolute;
+	top:4px;
+	right:0;
+	width:1px;
+	height:14px;
+	background:#9ea4d0;
+}
+
+
+/*등록금 납부현황*/
+
+.tuition-wrap {
+    position: relative;
+}
+
+.tuition-wrap .tuition-box {
+    float: left;
+    width: 49.33%;
+    margin: 0.66%;
+    border-radius: 8px;
+}
+
+.tuition-wrap .tuition-box:nth-child(2n+1) {
+    margin-left: 0;
+}
+
+.tuition-wrap .tuition-box:nth-child(2n) {
+    margin-right: 0;
+}
+
+.tuition-wrap .tuition-box .header-line {
+    overflow: hidden;
+    padding: 15px 25px;
+    background-color: #364085;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.tuition-wrap .tuition-box .header-line div {
+    float: left;
+    width: 33.333%;
+}
+
+.tuition-wrap .tuition-box .header-line .division {
+    padding-top: 3px;
+    text-align: left;
+}
+
+.tuition-wrap .tuition-box .header-line .division .semester span {
+    font-weight: 700;
+}
+
+.tuition-wrap .tuition-box .header-line .division .semester {
+    padding-right: 15px;
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.6em;
+}
+
+.tuition-wrap .tuition-box .header-line .division .type {
+    position: relative;
+    padding-left: 15px;
+    font-size: 15px;
+    color: #fff;
+}
+
+.tuition-wrap .tuition-box .header-line .division .type:before {
+    position: absolute;
+    content: '';
+    top: 3px;
+    left: 0;
+    width: 1px;
+    height: 13px;
+    background-color: #caccd9;
+}
+
+.tuition-wrap .tuition-box .header-line .year {
+    font-size: 28px;
+    color: #fff;
+    font-weight: 600;
+    font-family: 'montserrat';
+    text-align: center;
+}
+
+.tuition-wrap .tuition-box .header-line .payment {
+    padding-top: 3px;
+    text-align: right;
+    font-size: 15px;
+    color: #fff;
+}
+
+.tuition-wrap .tuition-box .header-line .payment .type01 {
+    font-size: 22px;
+    margin-right: 5px;
+    color: #fff581;
+}
+
+.tuition-wrap .tuition-box .header-line .payment .type02 {
+    font-size: 22px;
+    margin-right: 5px;
+    color: #9ea4d0;
+}
+
+.tuition-wrap .tuition-box .content-line {
+    overflow: hidden;
+    border: 1px solid #666faf;
+    border-top: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.tuition-wrap .tuition-box .content-line .content-inner {
+    float: left;
+    width: 50%;
+    padding: 30px 20px;
+}
+
+.tuition-wrap .tuition-box .content-line .content-inner:first-child {
+    border-right: 1px solid #cfd2e0;
+}
+
+.tuition-wrap .tuition-box .content-line .content-inner dt:nth-last-child(2),
+.tuition-wrap .tuition-box .content-line .content-inner dd:nth-last-child(1) {
+    margin-bottom: 0;
+}
+
+
+/*영수증출력*/
+
+.receipt-wrap {
+    position: relative;
+}
+
+.receipt-wrap .receipt-box {
+    float: left;
+    width: 23.69%;
+    margin: 0.65%;
+    border-radius: 8px;
+}
+
+.receipt-wrap .receipt-box .header-line {
+    overflow: hidden;
+    padding: 15px 25px;
+    background-color: #364085;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    text-align: center;
+}
+
+.receipt-wrap .receipt-box .header-line .year {
+    font-size: 28px;
+    color: #fff;
+    font-weight: 600;
+    font-family: 'montserrat';
+    text-align: center;
+}
+
+.receipt-wrap .receipt-box .content-line {
+    overflow: hidden;
+    border: 1px solid #666faf;
+    border-top: 0;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 25px 20px;
+    background-color: #f1f2f8;
+    min-height:311px;
+}
+
+.receipt-wrap .receipt-box .content-line .tit {
+    display: block;
+    font-size: 16px;
+    color: #364085;
+    font-weight: 500;
+    padding: 6px 0;
+    margin-top: 15px;
+}
+
+.receipt-wrap .receipt-box .content-line .tit:first-of-type {
+	margin-top: 0;
+}
+
+.receipt-wrap .receipt-box .content-line .detail-box {
+    display: inline-block;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #d7daf1;
+    padding: 15px;
+    margin: 2px 0;
+}
+
+.receipt-wrap .receipt-box .content-line .detail-box .grade {
+    float: left;
+    width: 25%;
+    font-size: 15px;
+    color: #364085;
+    line-height: 1.4em;
+    font-family: 'noto sans kr';
+}
+
+.receipt-wrap .receipt-box .content-line .detail-box .date {
+    float: left;
+    width: 50%;
+    font-size: 15px;
+    color: #444;
+    text-align: center;
+    line-height: 1.4em;
+    font-family: 'noto sans kr';
+}
+
+.receipt-wrap .receipt-box .content-line .detail-box .print {
+    float: left;
+    text-align: right;
+    width: 25%;
+}
+
+.receipt-wrap .receipt-box .content-line .detail-box .print span {
+    font-size: 22px;
+    color: #f35988;
+}
+
+
+/*설문*/
+
+.total-survey-box {
+    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #666faf;
+    margin: 10px 0;
+}
+
+.total-survey-box .header-line {
+    display: table;
+    width: 100%;
+    background-color: #f1f2f8;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    border-bottom: 1px solid #cfd2e0;
+}
+
+.total-survey-box .header-line .number {
+    float: left;
+    margin-right: 10px;
+    font-size: 26px;
+    color: #fff;
+    font-weight: 500;
+    background-color: #666faf;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    border-top-left-radius: 6px;
+}
+
+.total-survey-box .header-line .text {
+    display: table-cell;
+    width: 100%;
+    font-size: 16px;
+    color: #364085;
+    vertical-align: middle;
+    line-height: 1.4em;
+}
+
+.total-survey-box .mid-area {
+    background-color: #fff;
+    padding: 20px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.total-survey-box .mid-area .sub-title-line {
+    position: relative;
+    display: table;
+}
+
+.total-survey-box .mid-area .sub-title-line .number {
+    float: left;
+    margin-right: 10px;
+    font-size: 12px;
+    color: #fff;
+    font-weight: 600;
+    background-color: #666faf;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    border-radius: 50%;
+}
+
+.total-survey-box .mid-area .sub-title-line .text {
+    display: table-cell;
+    font-size: 15px;
+    color: #444;
+    vertical-align: middle;
+    line-height: 1.4em;
+}
+
+.total-survey-box .mid-area .survey-cont-box {
+    display: inline-block;
+    margin: 10px 0 10px 30px;
+    padding: 0 10px;
+    background-color: #f1f2f8;
+    border-radius: 8px;
+}
+
+.total-survey-box .mid-area .survey-cont-wrap {
+    margin: 10px 0 10px 25px;
+}
+
+
+/* 시간표 */
+
+.sub_cont_wrap .sub_timetable_wrap {
+    padding: 0;
+}
+
+.sub_timetable_wrap .timetable-top {
+    padding: 30px 40px;
+    background: #364085;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    position: relative;
+}
+
+.sub_timetable_wrap .timetable-top.style02 {
+	padding: 30px;
+}
+
+.sub_timetable_wrap .timetable-top.style02 .col-inline select {
+	border:0;
+}
+
+.sub_timetable_wrap .timetable-top.style02 .col-inline .size-s {
+	padding: 0 20px !important;
+}
+
+.sub_timetable_wrap .timetable-top.style02 .col-inline .size-s:focus {
+	box-shadow: none;
+	border: 0;
+}
+
+.sub_timetable_wrap .timetable-top h3 {
+    width: 50%;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.sub_timetable_wrap .timetable-top.style02 h3 {
+	display: inline-block;
+	width: auto;
+	margin-top:20px;
+	font-size: 22px;
+}
+
+.sub_timetable_wrap .timetable-top p {
+    width: 50%;
+    font-family: 'Noto sans KR', sans-serif;
+    font-weight: 300;
+    color: #fff;
+    margin-top: 10px;
+}
+
+.sub_timetable_wrap .timetable-top.style02 p {
+	display: inline-block;
+	width: auto;
+	margin-left:15px;
+	font-size: 15px;
+}
+
+.sub_timetable_wrap .timetable-top>a {
+    background: #fff;
+    position: absolute;
+    top: 30px;
+    right: 40px;
+}
+
+.sub_timetable_wrap .timetable-top.style02>a {
+	top: auto;
+	bottom: 20px;
+	right: 30px;
+} 
+
+.sub_timetable_wrap .timetable-cont {
+    padding: 20px 50px 80px 50px;
+    font-size: 0;
+}
+
+.timetable-cont .time-list {
+    display: inline-block;
+    width: 90px;
+    padding-top: 45px;
+    vertical-align: top;
+}
+
+.timetable-cont .date-list {
+    display: inline-block;
+    width: 1130px;
+}
+
+.timetable-cont .time-list li {
+    height: 80px;
+    padding-top: 15px;
+    border-bottom: 1px solid #e3e5ed;
+}
+
+.timetable-cont .time-list li:last-child {
+    border-bottom: 0;
+}
+
+.timetable-cont .time-list li>span {
+    font-size: 15px;
+    color: #666faf;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.timetable-cont .time-list li>p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #383838;
+    margin-top: 7px;
+}
+
+.timetable-cont .date-list:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.timetable-cont .date-list>div {
+    float: left;
+    width: 212px;
+    margin-right: 15px;
+}
+
+.timetable-cont .date-list>div:last-child {
+    margin-right: 0;
+}
+
+.timetable-cont .date-list>div>p {
+    font-size: 15px;
+    color: #364085;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px 0 20px 0;
+}
+
+.timetable-cont .date-list>div>ol {
+    position: relative;
+}
+
+.timetable-cont .date-list>div li {
+    display: table;
+    width: 100%;
+    height: 80px;
+    background: #f1f2f8;
+    border-bottom: 1px solid #dadde6;
+    padding-left: 15px;
+    padding-right: 5px;
+}
+
+.timetable-cont .date-list>div li:last-child {
+    border-bottom: 0;
+}
+
+.timetable-cont .date-list>div li .inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.timetable-cont .date-list .class-name {
+    font-size: 14px;
+    color: #111;
+    font-weight: 500;
+    word-break: break-all;
+}
+
+.timetable-cont .date-list .class-location {
+    font-family: 'Noto sans KR', sans-serif;
+    font-size: 13px;
+    color: #333;
+    margin-top: 4px;
+    word-break: break-all;
+}
+
+.timetable-cont .date-list .class-location span {
+    color: #364085;
+    font-weight: 500;
+}
+
+.timetable-cont .date-list .class-detail {
+    font-family: 'Noto sans KR', sans-serif;
+    font-size: 12px;
+    color: #777;
+    margin-top: 7px;
+}
+
+.timetable-cont .date-list>div li.time-2x {
+    height: 160px;
+}
+
+.timetable-cont .date-list>div li.time-3x {
+    height: 240px;
+}
+
+.timetable-cont .date-list>div li.time-4x {
+    height: 320px;
+}
+
+.timetable-cont .date-list>div li.time-2x:not(.first),
+.timetable-cont .date-list>div li.time-3x:not(.first),
+.timetable-cont .date-list>div li.time-4x:not(.first) {
+    display: none;
+}
+
+.timetable-cont .date-list>div li.type01 {
+    border-left: 5px solid #62c2ef;
+    background: #d4e8f6;
+}
+
+.timetable-cont .date-list>div li.type02 {
+    border-left: 5px solid #f56e6e;
+    background: #f2d8dc;
+}
+
+.timetable-cont .date-list>div li.type03 {
+    border-left: 5px solid #4fca86;
+    background: #d1eae1;
+}
+
+.timetable-cont .date-list>div li.type04 {
+    border-left: 5px solid #f9bd67;
+    background: #f3e7db;
+}
+
+.timetable-cont .date-list>div li.type05 {
+    border-left: 5px solid #4bd7c8;
+    background: #d0edee;
+}
+
+.timetable-cont .date-list>div li.type06 {
+    border-left: 5px solid #8a72e2;
+    background: #e2dff5;
+}
+
+.timetable-cont .date-list>div li.type07 {
+    border-left: 5px solid #5373ea;
+    background: #d8def7;
+}
+
+.timetable-cont .date-list>div li.type08 {
+    border-left: 5px solid #f97d46;
+    background: #f3dbd4;
+}
+
+.timetable-cont .date-list>div li.type09 {
+    border-left: 5px solid #83d656;
+    background: #dbecd8;
+}
+
+.timetable-cont .date-list>div li.type10 {
+    border-left: 5px solid #ed487f;
+    background: #f1e1ec;
+}
+
+/* 2019.05.13 | 정다영 | 디버깅 수정 */
+.mng-test-apply-wrap .table-type04-wrap {
+	margin-bottom: 30px;
+}
+
+.mng-test-apply-wrap .apply-info {
+	padding: 20px;
+}
+
+.mng-test-apply-wrap .apply-info ol li {
+	margin-bottom: 1rem;
+	font-size: 15px;
+	line-height: 1.4;
+}
+
+.mng-test-apply-wrap .apply-info p {
+	margin-top: 30px;
+	font-size: 16px;
+	font-weight: 500;
+	color: #364085;
+	line-height: 1.4;
+}
+
+.mng-test-apply-wrap .mng-test-apply .box-type03 p {
+	font-size: 17px;
+	text-align: center;
+	margin: 15px 0;
+	color: #111;
+	line-height: 1.4;
+}
+
+/*
+================================================================================
+반응형 콘텐츠
+================================================================================
+*/
+
+@media only screen and (max-width: 1400px) {
+	/*지난학기 성적조회*/
+    .check-grades-box .stu-info-part {
+        float: none;
+        width: 100%;
+        border-right: 2px solid #9ea4d0;
+        border-bottom: 0;
+        border-top-right-radius: 8px;
+        border-bottom-left-radius: 0;
+    }
+    .check-grades-box .stu-grades-part {
+        float: none;
+        width: 100%;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 8px;
+    }
+    /* 시간표 */
+    .sub_timetable_wrap .timetable-cont {
+        padding: 20px 30px 80px 30px;
+    }
+    .timetable-cont .time-list {
+        width: 70px;
+    }
+    .timetable-cont .date-list {
+        width: calc(100% - 70px);
+    }
+    .timetable-cont .date-list>div {
+        width: calc(20% - 10px);
+        margin-right: 10px;
+    }
+    .timetable-cont .date-list .class-detail {
+        display: none;
+    }
+    .timetable-cont .time-list li {
+        height: 100px;
+    }
+    .timetable-cont .date-list>div li {
+        height: 100px;
+        padding-left: 10px;
+    }
+    .timetable-cont .date-list .class-location span {
+        display: block;
+        margin-bottom: 4px;
+    }
+    .timetable-cont .date-list>div li.time-2x {
+        height: 200px;
+    }
+    .timetable-cont .date-list>div li.time-3x {
+        height: 300px;
+    }
+    .timetable-cont .date-list>div li.time-4x {
+        height: 400px;
+    }
+}
+
+@media only screen and (max-width: 1300px) {
+    
+    /*등록금 납부현황*/
+    .tuition-wrap .tuition-box {
+        display: inline-block;
+        float: none;
+        width: 100%;
+        margin: 6px 0;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    /*영수증출력*/
+    .receipt-wrap .receipt-box {
+        width: 47.38%;
+    }
+    /*사전진단평가*/
+    .stu-report-wrap>div {
+        float: none;
+        width: 100% !important;
+        margin: 0;
+    }
+}
+
+@media only screen and (max-width: 990px) {
+    /*사전진단평가*/
+    .stu-report-wrap>div {
+        float: none;
+        width: 100% !important;
+        margin: 0;
+    }
+    .stu-report-wrap>div:last-child {
+    	margin-left:0;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    /*등록금 납부현황*/
+    .tuition-wrap .tuition-box .content-line .content-inner {
+        float: none;
+        width: 100%;
+    }
+    .tuition-wrap .tuition-box .content-line .content-inner:first-child {
+        border-right: 0;
+        border-bottom: 1px solid #cfd2e0;
+    }
+}
+
+@media only screen and (max-width: 850px) {
+	/*지난학기 성적조회*/
+    .check-grades-box .stu-info-part .stu-profile {
+        float: none;
+        width: 100%;
+        padding-right: 0;
+    }
+    .check-grades-box .stu-info-part .stu-info {
+        float: none;
+        width: 100%;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-left: 0;
+        border-top: 1px solid #9ea4d0;
+        padding-left: 15px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    /*지난학기 성적조회*/    
+    .check-grades-box .stu-grades-part {
+        padding: 30px 20px;
+    }
+    .check-grades-box .stu-grades-part .grades-list li {
+        float: left;
+        width: 50%;
+        padding: 15px 0;
+    }
+    .check-grades-box .stu-grades-part .grades-list li:before {
+        width: 0;
+    }
+    .check-grades-box .stu-grades-part .grades-list li.avg {
+        width: 100%;
+    }
+    /* 시간표 */
+    .sub_timetable_wrap .timetable-cont {
+        padding: 20px 15px 80px 15px;
+    }
+    .timetable-cont .time-list {
+        width: 40px;
+    }
+    .timetable-cont .date-list {
+        width: calc(100% - 40px);
+    }
+    .timetable-cont .date-list>div {
+        width: calc(20% - 5px);
+        margin-right: 5px;
+    }
+    .timetable-cont .time-list li>span {
+        display: none;
+    }
+    .timetable-cont .time-list li>p>span {
+        display: none;
+    }
+    .timetable-cont .time-list li>p {
+        letter-spacing:-1px;
+    }
+    .timetable-cont .date-list>div li {
+        border-left: 0 !important;
+        padding: 5px;
+    }
+    .timetable-cont .date-list .class-name {
+        font-size: 13px;
+    }
+    .timetable-cont .date-list .class-location {
+        font-size: 12px;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    /*영수증출력*/
+    .receipt-wrap .receipt-box {
+        width: 100%;
+        margin: 8px 0;
+    }
+    .receipt-wrap .receipt-box .content-line {
+    	min-height:auto;
+    }
+    /* 시간표 */
+    .sub_timetable_wrap .timetable-top.style02 p {
+    	display: block;
+    	margin-left:0;
+    }
+    .sub_timetable_wrap .timetable-top.style02>a {
+    	bottom: 35px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .stu-report-infobox .mid-area dt {
+    	margin-bottom:5px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    /* 시간표 */
+    .timetable-cont .date-list>div {
+        width: 20%;
+        margin-right: 0;
+        border-right: 1px solid #fff;
+    }
+    .sub_timetable_wrap .timetable-cont {
+	    padding: 20px 0 80px 0;
+	}
+    .sub_timetable_wrap .timetable-top a {
+        top: 35px;
+    }
+}
+
+@media only screen and (max-width: 380px) {
+    /*지난학기 성적조회*/
+    .check-grades-box .stu-info-part {
+        padding: 20px;
+    }
+    .check-grades-box .stu-grades-part {
+        padding: 20px;
+    }
+    /*등록금 납부현황*/
+    .tuition-wrap .tuition-box .header-line .division {
+        padding-top: 0;
+    }
+}

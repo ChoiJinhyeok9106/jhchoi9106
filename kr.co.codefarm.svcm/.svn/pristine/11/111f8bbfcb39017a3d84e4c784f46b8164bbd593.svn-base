@@ -1,0 +1,232 @@
+<script type="text/javascript" src="/app-assets/js/api/systemmanager/subscribe.api.js"></script>
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />
+
+<h2>구독 신청</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box">
+		<h2 class="h3">구독 신청 승인 및 취소가 가능합니다.</h2>
+
+		<div class="col s12 m12 xl12">
+			<div class="table-type04-wrap">
+				<table class="table-type04 response" id="subscribeListLoading">
+					<colgroup>
+						<col width="80%" />
+						<col width="20%" />
+					</colgroup>
+					<thead class="title-line">
+						<tr>
+							<th>구독 서비스명</th>
+							<th>신청 여부</th>
+						</tr>
+					</thead>
+					<tbody v-if="subscribeList.data.length > 0" v-for="(item, index) in subscribeList.data" :key="index">
+						<tr class="app-list-box" :class="{'active': index == subscribeList.rowposition}" @click="subscribeList.selectRow(index);">
+							<td data-header="구독 서비스명">{{item.AUTH_NM}}</td>
+							<td data-header="신청 여부" :class="{'font-color-red' : item.STATUS == 'NONE','font-color-green' : item.STATUS == 'ACCESS','font-color-blue' : item.STATUS == 'WAITING'}">{{item.STATUS | statusFormatter}}</td>
+						</tr>
+						<tr class="hidden-tr" v-show="index == subscribeList.rowposition">
+							<td colspan="99" data-header="앱 정보">
+								<div class="btn-line right" v-if="item.STATUS != 'ACCESS'">
+									<input v-if="item.STATUS == 'NONE'" type="button" class="btn type01 size-m" value="구독 신청" @click="messagePopup('subscription', item)">
+									<input v-if="item.STATUS == 'WAITING'"  type="button" class="btn type01 size-m" value="신청 취소" @click="messagePopup('cancel', item)">
+								</div>
+								<h3 class="h4 left">서비스앱 리스트</h3>
+								<div class="attend-list app-list">
+									<div class="col s12 m12 l12" v-for="(item2, index2) in item.APP_LIST">
+										<div class="app-list-box">
+											<div data-header="앱명" style="width: 45%;">
+												<span>
+													<span class="icon-bg" :class="[item2.ICON]"></span>
+													<span class="text">{{item2.APP_NM}}</span>
+												</span>
+											</div>
+											<div data-header="앱 영문 명" style="width: 35%;">
+												<span>
+													<span class="text">{{item2.APP_ENM}}</span>
+												</span>
+											</div>
+											<div data-header="버전" style="width: 10%;">
+												<span>
+													<span class="text">{{item2.APP_VER}}</span>
+												</span>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">사용가능한 앱이 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<paging :pagingset="subscribeListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+
+
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		subscribeList : new Dataset(),
+		subscribeListPaging : new PagingSet(10,10),
+        appList: new Dataset(), 
+        appListPaging: new PagingSet(3, 50),
+        subscribeListLoading: {id:'subscribeListLoading', val:false},
+        messageModal: new ModalSet('modal'),    // confirm 모달
+	},
+	filters: {
+		statusFormatter: function(value){
+			switch(value){
+			case 'ACCESS' : return '구독중';
+			case 'NONE' : return '미구독';			
+			case 'WAITING' : return '구독신청중';			
+			}
+		}
+	},
+	//데이터 감시
+	watch: {
+		'subscribeList.data': {
+			handler: function(val, oldVal) {
+				if(this.subscribeList.enableevent) {
+					var vm = this;
+					val.filter(function(data, rowposition) {
+						return Object.keys(data).some(function(colNm) {
+							var diff = data[colNm] !== vm.subscribeList.beforeData[rowposition][colNm];
+							if(diff) {
+								vm.subscribeList.beforeData[rowposition][colNm] = data[colNm];
+							}
+						});
+					});
+				}
+			},
+			deep: true
+		},
+		'subscribeListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.subscribeList.pageChange(val, this.subscribeListPaging.getRowCnt());
+			}
+		},
+	    'subscribeListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.subscribeListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setSubscribeList();
+	},
+	//함수
+	methods: {
+		/* 사용자 리스트 조회 */
+		setSubscribeList: function(){
+			var self = this;
+			self.subscribeListLoading.val = true;
+			
+			var returnVal = subscribeApi.getSubscribeList({}, false);
+			self.subscribeListPaging.currentPage = 1;
+			
+			returnVal.then(function(response) {
+				self.subscribeList.setRawData(response.data, self.subscribeListPaging.getRowCnt());
+				if(response.data.length > 0){
+					self.subscribeListPaging.setTotalCnt(response.data.length);
+				}else{
+					self.subscribeListPaging.setTotalCnt(0);
+				}
+				vm.$forceUpdate();
+			}).finally(function(){
+				self.subscribeListLoading.val = false;
+			});
+		},
+		subscriptionService: function(item){
+			var self = this;
+			var params = {
+				AUTH_CD : item.AUTH_CD,
+			}
+			var returnVal = subscribeApi.subscription(params, false);
+			
+			returnVal.then(function(response) {
+				if(response.data > 0){
+					notifySubmit('success', '서비스 구독 신청', '서비스 구독 신청이 완료되었습니다.', 'icon-save');
+				}else{
+                	notifySubmit('warning', '서비스 구독 신청', '서비스 구독 신청에 실패하였습니다.', 'icon-caution');
+				}
+			}).finally(function (){
+				self.setSubscribeList();
+			});
+		},
+		cancelService: function(item){
+			var self = this;
+			var params = {
+				AUTH_CD : item.AUTH_CD,
+			}
+			var returnVal = subscribeApi.cancelSubscription(params, false);
+
+			returnVal.then(function(response) {
+				if(response.data > 0){
+					notifySubmit('success', '서비스 구독 신청 취소', '서비스 구독 신청 취소가 완료되었습니다.', 'icon-save');
+				}else{
+                	notifySubmit('warning', '서비스 구독 신청 취소', '서비스 구독 신청 취소에 실패하였습니다.', 'icon-caution');
+				}
+			}).finally(function (){
+				self.setSubscribeList();
+			});
+		},
+    	messagePopup: function(pId, pData) {
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+
+            switch(pId) {
+	    		case 'subscription':
+                    title = '신청';
+                    cont = '해당 서비스를 구독 신청하시겠습니까?';
+	    			break;
+	    		case 'cancel':
+                    title = '취소';
+                    cont = '해당 서비스구독 신청을 취소하시겠습니까?';
+	    			break;
+	    	}
+
+	    	this.messageModal.openModal('confirm', title, cont, 'small', pId, pData);
+        },
+	    messagePopupCallback: function(pGb, pId, pData) {
+	    	if(pGb!='confirm') return;
+	    	
+	    	switch(pId) {
+	    		case 'subscription':
+	    			this.subscriptionService(pData);
+	    			break;
+	    		case 'cancel':
+	    			this.cancelService(pData);
+	    			break;
+	    	}
+	    },
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

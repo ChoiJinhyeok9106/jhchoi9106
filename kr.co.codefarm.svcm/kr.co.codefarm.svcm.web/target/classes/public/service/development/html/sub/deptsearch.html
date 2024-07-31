@@ -1,0 +1,155 @@
+<h2>팝업-부서 검색 팝업</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">부서 검색 팝업</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>부서 검색 팝업 활용법</li>
+	        	<li>popup-dept 태그로 사용, callback 함수에서 리턴되는 데이터를 확인, 팝업 오픈이벤트를 활용하기 위한 ref지정</li>
+	        	<li>lovcomp 값을 true로 입력 할 경우 아래 예제와 같이 돋보기를 포함한 검색 컴포넌트가 제공됩니다.</li>
+	        	<li>lovcomp 값을 false로 입력 할 경우 별도의 컴포넌트가 제공 되지 않고 ref를 통한 오픈함수를 이용해 팝업을 오픈합니다.</br>ex) this.$refs.popupdept.showDeptPopup();</li>
+	        	<li>type값을 입력하면 부서검색 팝업의 종류를 구분하여 오픈 합니다. 1~4 가 존재합니다.(본부행정(1), 대학원(2), 대학(학부)(3), 기타부속기관(4)) -> 문자열로 입력, '' 혹은 null로 전송할 경우 전체 검색 </li>
+	        	<li>id : 고유 아이디</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><popup-dept ref="[popupdept:String]"  v-on:callback="[callback:Function]" :lovcomp="[true:Boolean]" :type="[type:String]"></popup-dept>
+
+var vm = new Vue({
+	el: '#app',
+    data: {
+		returnMessage : ''
+    },
+	methods: {
+		callback(message){
+			this.returnMessage = JSON.stringify(message);
+		}
+	}
+});</textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3">실행</h3>
+        <popup-dept id="deptpopup1" ref="popupdept1"  v-on:callback="callback1" :lovcomp="true" :type="'1'"></popup-dept>
+        <popup-dept id="deptpopup2" ref="popupdept2"  v-on:callback="callback2" :lovcomp="true" :type="'2'"></popup-dept>
+        <popup-dept id="deptpopup3" ref="popupdept3"  v-on:callback="callback3" :lovcomp="true" :type="'3'"></popup-dept>
+        <popup-dept id="deptpopup4" ref="popupdept4"  v-on:callback="callback4" :lovcomp="true" :type="'4'"></popup-dept>
+        <popup-dept id="deptpopup5" ref="popupdept5"  v-on:callback="callback5" :lovcomp="true" :type="''" :hyn="'Y'" :multiyn="'Y'"></popup-dept>
+        <br/>
+        <textarea id="codeEditor2"><popup-dept id="deptpopup1" ref="popupdept"  v-on:callback="callback" :lovcomp="true" :type="'1'"></popup-dept></textarea>
+    </section>
+       
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과1(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage1}}
+   		</div>
+    </section>
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과2(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage2}}
+   		</div>
+    </section>
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과3(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage3}}
+   		</div>
+    </section>
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과4(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage4}}
+   		</div>
+    </section>
+    <section class="cont_box">
+		<h3 class="h3">팝업 리턴 결과5(json)</h3>
+        <div class="box-type04">
+    		{{returnMessage5}}
+   		</div>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     data: {
+         returnMessage1 : '',
+         returnMessage2 : '',
+         returnMessage3 : '',
+         returnMessage4 : '',
+         returnMessage5 : '',
+     },
+     methods: {
+    	 callback1: function(message){
+         	this.returnMessage1 = JSON.stringify(message);
+         },
+    	 callback2: function(message){
+          	this.returnMessage2 = JSON.stringify(message);
+         },
+         callback3: function(message){
+           	this.returnMessage3 = JSON.stringify(message);
+         },
+      	 callback4: function(message){
+           	this.returnMessage4 = JSON.stringify(message);
+         },
+      	 callback5: function(message){
+            	this.returnMessage5 = JSON.stringify(message);
+         },
+         openPopup1: function(){
+        	 this.$refs.popupdept1.showDeptPopup();	 
+         },
+         openPopup2: function(){
+        	 this.$refs.popupdept2.showDeptPopup();	 
+         },
+         openPopup3: function(){
+        	 this.$refs.popupdept3.showDeptPopup();	 
+         },
+         openPopup4: function(){
+        	 this.$refs.popupdept4.showDeptPopup();	 
+         },
+         openPopup5: function(){
+        	 this.$refs.popupdept5.showDeptPopup();	 
+         }
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 300, 'javascript');
+	editor('codeEditor2', 40, 'javascript');
+});
+
+function editor(id, height, dataGb) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: dataGb,
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

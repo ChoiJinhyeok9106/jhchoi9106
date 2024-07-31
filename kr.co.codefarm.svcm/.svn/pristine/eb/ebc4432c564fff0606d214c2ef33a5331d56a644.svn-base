@@ -1,0 +1,2320 @@
+@charset "utf-8";
+
+.sub_cont_box.counsel-student {
+	overflow:hidden;
+}
+.sub_cont_box.counsel-student:before {
+    position:absolute;
+    top:0;
+    left:0;
+    content:'';
+    width:100%;
+    height:400px;
+    background-color:#364085;
+    z-index:1;
+}
+.sub_cont_wrap .sub_cont_box.counsel-list-wrap {
+	overflow:hidden;
+	min-height:1100px;
+}
+.sub_cont_wrap .counsel-student.counsel-list-wrap {
+	min-height:1000px;
+}
+.sub_cont_wrap .visit.counsel-list-wrap {
+	min-height:1500px;
+}
+
+/*메인*/
+.main-left {
+    float:left;
+    width:900px;
+    padding-right:25px;
+    border-right:1px solid #caccd9;
+}
+.main-right {
+    overflow:hidden;
+}
+.main-today-counsel {
+    border-radius:15px;
+}
+.main-today-counsel .today-header {
+    position: relative;
+    height:150px;
+    background:#364085;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding:30px;
+}
+.main-today-counsel .today-header .date {
+    display: inline-block;
+    min-width:75px;
+    font-size:56px;
+    font-weight:600;
+    color:#fff;
+    font-family:'montserrat';
+    text-align:center;
+    padding:8px 35px 12px 0;
+    border-right:1px solid #9ea4d0;
+}
+.main-today-counsel .today-header .date .day {
+    font-size:14px;
+    display:block;
+}
+.main-today-counsel .today-header .today-cont {
+    padding-left:30px;
+    display: inline-block;
+}
+.main-today-counsel .today-header .today-cont .title {
+    display:block;
+    font-size:22px;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:10px;
+}
+.main-today-counsel .today-header .today-cont .info-txt {
+    display:block;
+    font-size:15px;
+    font-weight:300;
+    color:#fff;
+    font-family:'noto sans kr';
+    margin-bottom:10px;
+}
+.main-today-counsel .today-header .today-cont .info-txt span {
+    font-weight:500;
+}
+.main-today-counsel .today-header .today-cont .btn-box {
+    display:block;
+    font-size:0;
+}
+.main-today-counsel .today-header .today-cont .btn-box .today-btn {
+    display:inline-block;
+    padding:8px 20px;
+    font-size:14px;
+    color:#364085;
+    margin:2px;
+    background-color:#fff;
+    border-radius:6px;
+}
+.main-today-counsel .today-header .today-statue {
+    position: absolute;
+    top:55px;
+    right:30px;
+}
+.main-today-counsel .today-header .today-statue > a {
+    display:inline-block;
+    position: relative;
+    margin:0 20px;
+    font-size:12px;
+    color:#afb2cf;
+    text-align:center;
+}
+.main-today-counsel .today-header .today-statue > a .icon {
+    display:block;
+    font-size:26px;
+    color:#fff;
+    margin-bottom:3px;
+}
+.main-today-counsel .today-header .today-statue > a .new {
+    display:inline-block;
+    position:absolute;
+    top:-5px;
+    right:-5px;
+    width:16px;
+    height:16px;
+    background-color:#f35a7e;
+    text-align:center;
+    font-size:10px;
+    font-weight:700;
+    line-height:16px;
+    color:#fff;
+    border-radius:50%;
+}
+
+.main-today-counsel .today-content {
+    position: relative;
+    background:#f1f2f8;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    padding:30px;
+    max-height: 350px;
+    border:1px solid #d7daf1;
+}
+.main-today-counsel .today-content:before {
+    position: absolute;
+    content:'';
+    top:0;
+    left:60px;
+    width:1px;
+    height:100%;
+    background-color:#c7cbe4;
+    z-index:10;
+}
+.main-today-counsel .today-content .today-cont-list {
+    position:relative;
+    display:inline-block;
+    width:100%;
+    padding:20px 16px;
+    z-index:20;
+    font-size:0;
+    border-radius:10px;
+    border:1px solid transparent;
+    transition: background .3s, box-shadow .3s;
+}
+
+.main-today-counsel .today-content .today-cont-list:hover:before,
+.main-today-counsel .today-content .today-cont-list.active:before {
+    position: absolute;
+    content: "";
+    top:0;
+    right:230px;
+    width:1px;
+    height:100%;
+    background-color: #e3e5ed;
+}
+.main-today-counsel .today-content .today-cont-list:hover,
+.main-today-counsel .today-content .today-cont-list.active {
+    border:1px solid #9ea4d0;
+    border-radius:10px;
+    background-color:#fff;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+}
+.main-today-counsel .today-content .today-cont-list .icon {
+    display:inline-block;
+    float:left;
+    position: relative;
+    width:28px;
+    height:28px;
+    background-color:#666faf;
+    border-radius:50%;
+    font-size:20px;
+    color:#fff;
+    vertical-align: top;
+}
+.main-today-counsel .today-content .today-cont-list .icon:before {
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform: translate(-50%, -50%);
+}
+.main-today-counsel .today-content .today-cont-list .time {
+    display:inline-block;
+    font-size:18px;
+    color:#666faf;
+    font-weight:700;
+    padding:5px 0 0 20px;
+    vertical-align: top;
+}
+.main-today-counsel .today-content .today-cont-list .title {
+    display:inline-block;
+    padding:7px 0 0 20px;
+    vertical-align: top;
+}
+.main-today-counsel .today-content .today-cont-list .title .txt {
+    display:block;
+    font-size:16px;
+    color:#444;
+    margin-bottom:10px;
+/*     line-height:1.4em; */
+}
+.main-today-counsel .today-content .today-cont-list .title .etc {
+    font-size:14px;
+    margin-right:15px;
+}
+.main-today-counsel .today-content .today-cont-list .title .etc span {
+    font-size:18px;
+    margin-right:5px;
+}
+.main-today-counsel .today-content .today-cont-list .title .etc.type01 {
+    color:#e07b64;
+}
+.main-today-counsel .today-content .today-cont-list .title .etc.type02 {
+    color:#6a73b1;
+}
+.main-today-counsel .today-content .today-cont-list .stu-info {
+    position:absolute;
+    top:50%;
+    transform: translateY(-50%);
+    right:20px;
+    width:190px;
+}
+.main-today-counsel .today-content .today-cont-list .stu-info .photo {
+    display: inline-block;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    margin-right:15px;
+    vertical-align: middle;
+}
+.main-today-counsel .today-content .today-cont-list .stu-info .photo .icon {
+    display: inline-block;
+    width:36px;
+    height:36px;
+    background-color:#666faf;
+    color:#fff;
+}
+.main-today-counsel .today-content .today-cont-list .stu-info .photo img {
+    position: relative;
+    width:36px;
+    height:36px;
+    z-index: 20;
+    border-radius:50%;
+}
+.main-today-counsel .today-content .today-cont-list .stu-info .info {
+    display:inline-block;
+    font-size:14px;
+    color:#888;
+    line-height: 1.4em;
+    vertical-align: middle;
+}
+.main-today-counsel .today-content .today-cont-list .stu-info .info .major {
+    display:block;
+}
+.main-today-counsel .tab_btn {
+    margin-top: 40px;
+    text-align: center;
+}
+.main-today-counsel .btn_type02 {
+    position: relative;
+    overflow: visible;
+    display: -moz-inline-stack;
+    display: inline-block;
+    margin: 2px 3px;
+    line-height: 1.5em;
+    text-align: center;
+    vertical-align: top;
+    text-decoration: none;
+    background-color: #364085;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 2.5em;
+    border-radius: 30px;
+}
+.main-counsel-stu {
+    margin-top:40px;
+}
+
+/*20200611 추가*/
+.counsel-statue-info {
+    position:relative;
+    margin-bottom:0 !important;
+}
+.counsel-statue-info .statue-tit {
+	position:relative;
+    color:#000;
+    font-weight:600;
+    padding-left:34px;
+}
+.counsel-statue-info .statue-tit:before {
+	position:absolute;
+	content:'';
+	top:5px;
+	left:0;
+    width:24px;
+    height:8px;
+    border-radius:5em;
+}
+.counsel-statue-info .statue-tit.red:before {
+	background:#ef6666;
+}
+.counsel-statue-info .statue-tit.green:before {
+	background:#42cb8c;
+}
+.counsel-statue-info .statue-tit.yellow:before {
+	background:#f6d86e;
+}
+.counsel-statue-info .statue-tit.blue:before {
+	background:#617ad6;
+}
+.counsel-statue-info .statue-tit.gray:before {
+	background:#dcdff1;
+}
+.counsel-statue-info .statue-txt {
+    color:#666;
+    line-height:1.4em;
+}
+/*20200611 추가 끝*/
+
+.main-counsel-stu .counsel-list-wrap {
+	width:100%;
+    position:relative;
+    display:inline-block;
+}
+.main-counsel-stu .counsel-list-wrap:after {
+	display:block;
+	content:"";
+	clear:both;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list {
+    position: relative;
+    float:left;
+    width:32.4%;
+    height:260px;
+    margin:0.66%;
+    border:1px solid #d7daf1;
+    border-radius: 10px;
+    transition: box-shadow .25s, border-color .25s;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list:hover,
+.main-counsel-stu .counsel-list-wrap .counsel-list.on {
+    border:1px solid #9ea4d0;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list:hover .link-btn {
+    background-color:#666faf;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list:nth-child(3n+1) {
+    margin-left:0;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list:nth-child(3n) {
+    margin-right:0;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .bg-box {
+    position: absolute;
+    width:6px;
+    top:50%;
+    left:0;
+    transform:translateY(-50%);
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .bg-box .bg-line {
+    display:inline-block;
+    width:6px;
+    height:48px;
+    border-top-right-radius:10px;
+    border-bottom-right-radius:10px;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .bg-box .bg-line.blue {
+    background-color:#617ad6;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .bg-box .bg-line.red {
+    background-color:#ef6666;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .bg-box .bg-line.yellow {
+    background-color:#f6d86e;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .bg-box .bg-line.green {
+    background-color:#42cb8c;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .bg-box .bg-line.gray {
+    background-color:#dcdff1;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .photo-line {
+    margin:30px 0 0 30px;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .photo-line .photo {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .photo-line .photo img {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    z-index: 20;
+    border-radius: 50%;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .photo-line .info {
+    display: inline-block;
+    font-size: 14px;
+    color: #888;
+    line-height: 1.4em;
+    vertical-align: middle;
+    color:#7e84ae;
+    font-weight:600;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .photo-line .info .name {
+    display:block;
+    font-size:18px;
+    color:#364085;
+    font-weight:500;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .info-line {
+	margin:15px 0 0px;
+    padding:0 10px 0 30px;
+    max-height:156px;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .info-line .ps__rail-x {
+    opacity:0 !important;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .info-line.list-label dt,
+.main-counsel-stu .counsel-list-wrap .counsel-list .info-line.list-label dd {
+    margin-bottom:5px;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .info-line.list-label dd {
+    color:#666;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .link-btn {
+    position: absolute;
+    top:10px;
+    right:10px;
+    display: inline-block;
+    width:36px;
+    height:36px;
+    background-color:#dcdff1;
+    border-radius:50%;
+    text-align:center;
+    line-height: 36px;
+    transition: background-color .25s;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .link-btn span {
+    color:#fff;
+    font-size:20px;
+}
+
+.main-counsel-stu .counsel-list-wrap .counsel-list .check-btn {
+    position:absolute;
+    top:10px;
+    right:10px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
+    border: 1px solid #9ea4d0;
+    border-radius: 3px;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .check-btn.on {
+    position: absolute;
+    background-color:#364085;
+    border:1px solid #364085;
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .check-btn.on:before {
+    position: absolute;
+    content:'\e92b';
+    left:0;
+    color:#fff;
+    font-size:14px;
+    font-family: 'feather';
+}
+.main-counsel-stu .counsel-list-wrap .counsel-list .out {
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: -9999px !important;
+}
+
+
+
+.counsel-calendar-wrap {
+    position:relative;
+    margin-left:20px;
+    margin-top:20px;
+}
+.counsel-calendar-wrap .year {
+    float:left;
+    display:block;
+    font-size:14px;
+    color:#b5b5b5;
+    font-weight:600;
+    text-align: center;
+    margin-bottom:20px;
+}
+.counsel-calendar-wrap .year .month {
+    display:block;
+    font-size:48px;
+    color:#666faf;
+    font-weight:700;
+}
+
+.counsel-calendar-wrap .btn-box {
+    float:right;
+    margin-top:33px;
+}
+.counsel-calendar-wrap .btn-box a {
+    display: inline-block;
+    width:30px;
+    height:30px;
+    text-align: center;
+    margin:0 5px;
+}
+.counsel-calendar-wrap .btn-box a span {
+    font-size:24px;
+    color:#666faf;
+    line-height: 30px;
+}
+
+.counsel-calendar-table {
+    width:100%;
+    border-collapse:separate;
+    table-layout:fixed;
+}
+.counsel-calendar-table thead tr th {
+    height:40px;
+    font-family:'montserrat';
+    font-size:14px;
+    font-weight:600;
+    color:#aaa;
+    text-align:center;
+    vertical-align:middle;
+}
+.counsel-calendar-table thead tr th:nth-child(7n+1) {
+    color:#e65959;
+}
+.counsel-calendar-table thead tr th:nth-child(7n) {
+    color:#5673d3;
+}
+.counsel-calendar-table tbody tr td {
+    position:relative;
+    height:40px;
+    padding:5px 0;
+    text-align:center;
+}
+.counsel-calendar-table tbody tr td a {
+    display:inline-block;
+    width:28px;
+    height:28px;
+    line-height: 28px;
+}
+.counsel-calendar-table tbody tr td .date {
+    color:#787878;
+    font-size:12px;
+}
+.counsel-calendar-table tbody tr td .on:before {
+    position:absolute;
+    content:'';
+    top:35px;
+    left:50%;
+    transform: translateX(-50%);
+    width:6px;
+    height:6px;
+    border-radius: 50%;
+    background-color:#f35a7e;
+}
+.counsel-calendar-table tbody tr td .today {
+    display:inline-block;
+    background-color:#f35a7e;
+    width:28px;
+    height:28px;
+    line-height: 28px;
+    color:#fff;
+    border-radius:50%;
+}
+.counsel-calendar-table tbody tr td:nth-child(7n+1) .date {
+    color:#e65959;
+}
+.counsel-calendar-table tbody tr td:nth-child(7n) .date {
+    color:#5673d3;
+}
+
+.counsel-schedule {
+    position: relative;
+    margin-left:20px;
+    margin-top:50px;
+}
+.counsel-schedule > h2 {
+    font-size:16px;
+    font-weight:700;
+    font-family: 'montserrat';
+    color:#364085;
+    margin-bottom:10px;
+}
+.counsel-schedule .schedule-list-wrap {
+    position: relative;
+    overflow-y: auto;
+    max-height:420px;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list {
+    display: inline-block;
+    width:100%;
+    height:80px;
+    border-radius:8px;
+    border:1px solid #dcdff1;
+    padding:15px 20px;
+    margin:2px 0;
+    transition: box-shadow .25s, border-color .25s, background-color .25s, font-size .25s;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list:hover {
+    background-color:#f1f2f8;
+    border:1px solid #9ea4d0;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+}
+.counsel-schedule .schedule-list-wrap .schedule-list a {
+    display: table;
+    width:100%;
+    height:100%;
+    
+}
+.counsel-schedule .schedule-list-wrap .schedule-list .date {
+    display: inline-block;
+    min-width:56px;
+    float:left;
+    font-size:28px;
+    font-weight:700;
+    color:#afb2cf;
+    font-family:'montserrat';
+    text-align:center;
+    padding:0 20px 2px 0;
+    border-right:1px solid #dcdff1;
+    transition: color .25s;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list:hover .date {
+    color:#666faf;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list .date .day {
+    font-size:12px;
+    display:block;
+    margin-top:3px;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list .schedule-cont {
+	display: table-cell;
+	vertical-align: middle;
+	overflow:hidden;
+    padding:0 0 0 15px;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list .schedule-cont .text {
+    float:left;
+    font-size:14px;
+    color:#888;
+    line-height:1.2em;
+    transition: color .25s;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list:hover .schedule-cont .text {
+    color:#444;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list .schedule-cont .text .bold {
+    font-weight:700;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list .schedule-cont .local {
+    font-size:13px;
+    margin-right:15px;
+    color:#888;
+    display: inline-block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list .schedule-cont .local span {
+    font-size:14px;
+    margin-right:5px;
+    color:#afb2cf;
+    transition: color .25s;
+}
+.counsel-schedule .schedule-list-wrap .schedule-list:hover .schedule-cont .local span {
+    color:#666faf;
+}
+
+.stu-counsel-history {
+    position:relative;
+}
+.stu-counsel-history .content-half {
+    display:inline-block;
+    margin:0.66%;
+    width:49.33%;
+    float:left;
+}
+.stu-counsel-history .content-half:first-child {
+    margin-left:0;
+}
+.stu-counsel-history .content-half:last-child {
+    margin-right:0;
+}
+.stu-counsel-history .content-half .box-type04 {
+    padding:30px 30px 10px;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    min-height:400px;
+}
+
+.main-stu-register {
+    margin-top:40px;
+    margin-bottom:10px;
+}
+.main-stu-register .h2 {
+    margin-bottom:10px;
+}
+.main-stu-register .stu-register-box {
+    position: relative;
+    overflow:hidden;
+    padding:30px;
+    background-color:#f1f2f8;
+    border: 1px solid #d7daf1;
+    border-radius: 10px;
+}
+.main-stu-register .stu-register-box .bg-box {
+    position: absolute;
+    width: 6px;
+    top: 30px;
+    left: 0;
+}
+.main-stu-register .stu-register-box .bg-box .bg-line {
+    display: inline-block;
+    width: 6px;
+    height: 48px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+.main-stu-register .stu-register-box .bg-box .bg-line.blue {
+    background-color:#617ad6;
+}
+.main-stu-register .stu-register-box .bg-box .bg-line.red {
+    background-color:#ef6666;
+}
+.main-stu-register .stu-register-box .bg-box .bg-line.yellow {
+    background-color:#f6d86e;
+}
+.main-stu-register .stu-register-box .bg-box .bg-line.gray {
+    background-color:#dcdff1;
+}
+.stu-register-box {
+    position: relative;
+}
+.stu-register-box .profile-box {
+    position: relative;
+    float: left;
+    width: 210px;
+    text-align: center;
+}
+.stu-register-box .profile-box .profile-photo {
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+}
+.stu-register-box .profile-box .profile-photo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+.stu-register-box .profile-box .profile-name {
+    display: block;
+    margin-top: 20px;
+    font-size: 24px;
+    color: #000;
+    font-weight: 500;
+}
+.stu-register-box .profile-box .profile-name .eng {
+    display: block;
+    font-size:14px; 
+    margin-top: 5px;
+    color:#afb2cf;
+    font-weight: 600;
+}
+.stu-register-box .profile-box .profile-major {
+    display: block;
+    margin-top: 20px;
+    font-size: 15px;
+    color: #364085;
+    line-height:1.4em;
+    font-family: 'noto sans kr';
+}
+.stu-register-box .profile-box .profile-major .grade {
+    position: relative;
+    margin-left:10px;
+    padding-left:10px;
+}
+.stu-register-box .profile-box .profile-major .grade:before {
+    position: absolute;
+    content: '';
+    width:1px;
+    height:13px;
+    background-color:#caccd9;
+    top:3px;
+    left:0;
+}
+.stu-register-box .profile-box .profile-number {
+    display: block;
+    font-size: 15px;
+    color: #364085;
+    font-family: 'noto sans kr';
+}
+.stu-register-box .stu-info-box { 
+    overflow: hidden;
+}
+.stu-register-box .link-btn {
+    position: absolute;
+    bottom:20px;
+    right:20px;
+    display: inline-block;
+    width:36px;
+    height:36px;
+    background-color:#666faf;
+    border-radius:50%;
+    text-align:center;
+    line-height: 36px;
+}
+.stu-register-box .link-btn span {
+    color:#fff;
+    font-size:20px;
+}
+
+
+
+
+/*상단 안내 문구*/
+.counsel-info-txt {
+    position:relative;
+}
+.counsel-info-txt .icon {
+    font-size:24px;
+    color:#364085;
+    margin-right:10px;
+}
+.counsel-info-txt .text {
+    font-size:16px;
+    color:#364085;
+}
+
+/*학생조회*/
+.counsel-student .left-zone {
+    position:relative;
+    float:left;
+    width:230px;
+    margin-right:30px;
+    text-align:center;
+    z-index:10;
+}
+
+.counsel-student .holland-result-wrap .left-zone {
+	margin-right:0;
+	text-align:left;
+}
+
+.counsel-student .left-zone .counsel-stu-photo {
+    display: block;
+    width:150px;
+    height:150px;
+    margin:0 auto;
+    border-radius:50%;
+    -webkit-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.35);
+    -moz-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.35);
+    box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.35);
+}
+.counsel-student .left-zone .counsel-stu-name {
+    display: block;
+    margin-top:20px;
+    font-size:24px;
+    color:#fff;
+}
+.counsel-student .left-zone .counsel-stu-info {
+    display: block;
+    margin-top:15px;
+    text-align:center;
+}
+.counsel-student .left-zone .counsel-stu-info > span {
+    position: relative;
+    padding:0 10px;
+    color:#fff;
+    font-size:14px;
+    font-weight:300;
+    font-family:'noto sans kr';
+}
+.counsel-student .left-zone .counsel-stu-info > span:before {
+    position: absolute;
+    content: '';
+    top:5px;
+    left:0;
+    width:1px;
+    height:12px;
+    background-color:rgba(255,255,255,0.2);
+}
+.counsel-student .left-zone .counsel-stu-info > span:first-child:before {
+    width:0;
+    height:0;
+}
+.counsel-student .left-zone .counsel-pro-name {
+    display: block;
+    margin-top:15px;
+    font-size:14px;
+    color:#b4b9e0;
+}
+.counsel-student .left-zone .btn-box {
+    margin-top:15px;
+}
+.counsel-student .left-zone .btn-box .btn.type02 {
+    background-color:#232b66;
+    border:1px solid #232b66;
+}
+.counsel-student .left-zone .btn-box .btn.type01 {
+    background-color:#fff;
+    border:1px solid #fff;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.counsel-student .left-zone .counsel-stu-photo img {
+    width:150px;
+    height:150px;
+    border-radius:50%;
+}
+
+.counsel-student .left-zone .counsel-lnb {
+    margin-top:90px;
+    margin-bottom:30px;
+}
+
+.counsel-student .left-zone .counsel-lnb li {
+    position:relative;
+    text-align:left;
+    margin:20px 0;
+}
+
+.counsel-student .left-zone .counsel-lnb li a {
+    display:inline-block;
+    width:100%;
+    height:50px;
+    line-height:50px;
+    padding-left:30px;
+    font-size:17px;
+    color:#7e84ae;
+}
+.counsel-student .left-zone .counsel-lnb li a.active {
+    position:relative;
+    background-color:#364085;
+    border-radius:3em;
+    color:#fff;
+    -webkit-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.25);
+    box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.25);
+}
+.counsel-student .left-zone .counsel-lnb li a.active:before {
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    content:'\e930';
+    font-family:'feather';
+    font-size:20px;
+}
+.counsel-student .left-zone .counsel-lnb li a > span {
+    padding:3px 10px;
+    font-weight:500;
+    margin-left:10px;
+    font-size:14px;
+    border-radius:2em;
+}
+.counsel-student .left-zone .counsel-lnb li a > span.blue {
+    color:#3977f6;
+    background-color:#dfedff;
+}
+.counsel-student .left-zone .counsel-lnb li a > span.yellow {
+    color:#fd9c1f;
+    background-color:#fff3d6;
+}
+.counsel-student .left-zone .counsel-lnb li a > span.red {
+    color:#f76b6b;
+    background-color:#ffe7e7;
+}
+.counsel-student .left-zone .counsel-lnb li a > span.gray {
+    color: #8b8e9a;
+    background-color: #eaebf3;
+}
+
+.counsel-student .right-zone {
+    position:relative;
+    overflow:auto;
+    z-index:10;
+}
+
+.counsel-student .right-zone .counsel-statue {
+    position: absolute;
+    right:0;
+    top:10px;
+}
+
+.counsel-student .right-zone .counsel-statue .title {
+    font-size:15px;
+    color:#fff;
+    font-family: 'noto sans kr';
+}
+
+.counsel-student .right-zone .counsel-statue .statue-type {
+    display: inline-block;
+    padding: 5px 10px;
+    font-weight: 500;
+    margin-left: 10px;
+    font-size: 14px;
+    border-radius: 2em;
+}
+.counsel-student .right-zone .counsel-statue .statue-type.blue {
+    color: #3977f6;
+    background-color: #dfedff;
+}
+.counsel-student .right-zone .counsel-statue .statue-type.yellow {
+    color:#f19b34;
+    background-color:#fff3d6;
+}
+.counsel-student .right-zone .counsel-statue .statue-type.red {
+    color:#f76b6b;
+    background-color:#ffe7e7;
+}
+.counsel-student .right-zone .counsel-statue .statue-type.gray {
+    color: #8b8e9a;
+    background-color: #eaebf3;
+}
+.counsel-student .right-zone .counsel-statue .statue-sel {
+    display:inline-block;
+    width:24px;
+    height:24px;
+}
+.counsel-student .right-zone .counsel-statue .statue-sel span {
+    color:#fff;
+    font-size:20px;
+}
+.counsel-student .right-zone .counsel-history {
+    position:relative;
+    min-height:1000px;
+}
+.counsel-student .right-zone .counsel-history .counsel-history-total {
+    position:absolute;
+    right:15px;
+    top:10px;
+}
+
+/*상담이력리스트*/
+.counsel-history-list {
+    position: relative;
+    max-height: 1000px;
+    border-top: 2px solid #7e84ae;
+}
+.counsel-history-list .list {
+    position: relative;
+    border-bottom: 1px solid #dcdff1;
+}
+
+.counsel-history-list .list .question {
+    position: relative;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.counsel-history-list .list .question:before {
+    position: absolute;
+    content: '\e92e';
+    font-family: 'feather';
+    font-size: 22px;
+    color: #7b83ba;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.counsel-history-list .list .question .txt {
+    font-size: 14px;
+    color: #384286;
+    line-height: 1.6em;
+    font-family: 'noto sans kr';
+}
+
+.counsel-history-list .list .answer {
+    display: block;
+    position: relative;
+    padding: 20px 20px;
+    background-color: #f1f2f8;
+}
+.counsel-history-list .list .answer .tag-line {
+    margin:5px 0 0;
+    font-size:0;
+}
+.counsel-history-list .list .answer .tag-line .counsel-tag {
+    display:inline-block;
+    margin:2px;
+    font-size:14px;
+    color:#666faf;
+    padding:7px 20px;
+    background-color:#fff;
+    border-radius:6px;
+    border:2px solid #9ea4d0;
+}
+.counsel-history-list .list .answer .tag-line .counsel-tag.on {
+    background-color:#364085;
+    color:#fff;
+    border:2px solid #364085;
+}
+
+.counsel-history-list .list .answer .tit {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    color: #384286;
+    line-height: 1.6em;
+    font-family: 'noto sans kr';
+}
+
+.counsel-history-list .list .answer .txt {
+    display: block;
+    overflow: hidden;
+    font-size: 15px;
+    color: #444;
+    font-weight: 300;
+    line-height: 1.6em;
+    font-family: 'noto sans kr';
+}
+
+.right-zone .purpose-chart {
+    position:relative;
+    text-align:center;
+    padding:50px 0 20px 0;
+}
+.right-zone .purpose-chart:before {
+    position:absolute;
+    top:0;
+    left:50%;
+    transform:translateX(-50%);
+    content:'\e902';
+    font-family:'feather';
+    color:#364085;
+    font-size:46px;
+}
+.right-zone .purpose-chart .info-txt {
+    color:#444;
+    font-size:15px;
+    margin-bottom:10px;
+}
+.right-zone .purpose-chart .info-txt span {
+    color:#364085;
+    font-weight:500;
+}
+
+.counsel-tab {
+    position:relative;
+    display:inline-block;
+    z-index:10;
+}
+.counsel-tab > div {
+    float:left;
+}
+.counsel-tab > div a {
+    position:relative;
+    display:inline-block;
+    padding:8px 0;
+    font-size:16px;
+    font-weight:500;
+    color:#fff;
+    margin:4px 15px;
+}
+.counsel-tab > div a.active {
+    border-bottom:2px solid #fff;
+}
+.counsel-tab > div a.active:before {
+    position:absolute;
+    content:'';
+    left:50%;
+    bottom:-14px;
+    transform:translateY(-50%);
+    display:inline-block;
+    width:0;
+    height:0;
+    border-style:solid;
+    border-width:4px;
+    border-color:#fff transparent transparent transparent;
+}
+.tab-container {
+    position:relative;
+    margin-top:10px;
+    width:100%;
+    z-index:30;
+}
+.tab-container .tab-content {
+    position:relative;
+}
+.tab-container .tab-content .content-full {
+    display:inline-block;
+    margin:1.1%;
+    width:97.7%;
+}
+
+.tab-container .tab-content .content-half {
+    display:inline-block;
+    margin:1.1%;
+    width:47.6%;
+    float:left;
+}
+
+.tab-container .tab-content .content-half.counselor-history .box-type04 {    
+    min-height: 430px;
+}
+
+.sub_cont_box.counseling {
+	overflow:hidden;
+}
+
+.counseling-aside {
+    position:absolute;
+    left:-51%;
+    top:40px;
+    width:50%;
+    background-color:#fff;
+    border-top-right-radius:20px;
+    border-bottom-right-radius:20px;
+    padding:30px 20px;
+    -webkit-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.15);
+    box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.15);
+    z-index:30;
+}
+.counseling-aside.on {
+    left:0;
+}
+.counseling-aside .btn-close {
+    position:absolute;
+    top:20px;
+    right:20px;
+    display:inline-block;
+    width:40px;
+    height:40px;
+    line-height:40px;
+    text-align:center;
+    background-color:#e9ebf8;
+    border-radius:50%;
+}
+.counseling-aside .btn-close span {
+    font-size:18px;
+    color:#364085;
+}
+
+/*문항리스트 게시판*/
+.board-card-question {}
+
+.board-card-question .list-wrap {
+    position: relative;
+    display: inline-block;
+    width:100%;
+}
+
+.board-card-question .list {
+    float: left;
+    display: inline-block;
+    width: 32%;
+    height: 260px;
+    border: 1px solid #caccd9;
+    border-radius: 8px;
+    transition: border-color .3s, box-shadow .3s;
+    margin: 0.653%;
+    padding: 30px;
+    min-height:244px;
+}
+
+.board-card-question .list:hover {
+    border: 1px solid #9ea4d0;
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(158, 164, 208, 0.3);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(158, 164, 208, 0.3);
+    box-shadow: 0px 0px 5px 0px rgba(158, 164, 208, 0.3);
+}
+
+.board-card-question .list .cate-tit {
+    float: left;
+    text-align: left;
+    color:#8e8e8e;
+    font-weight:500;
+}
+
+.board-card-question .list .cate-tit .cate {
+    color:#666faf;
+}
+
+.board-card-question .list .cate-tit .tit {
+    position:relative;
+    margin-left:10px;
+    padding-left:10px;
+}
+
+/* 추가 2020-09-01 (김성래) */
+.board-card-question .list .cate-tit .template-tit {
+    position:relative;
+    margin-left:10px;
+    padding-left:10px;
+    color:#C90000;
+}
+
+.board-card-question .list .cate-tit .tit:before {
+    position: absolute;
+    left:0;
+    top:3px;
+    content:'';
+    width:1px;
+    height:13px;
+    background-color:#d7d9e7;
+}
+
+/* 추가 2020-09-01 (김성래) */
+.board-card-question .list .cate-tit .template-tit:before {
+    position: absolute;
+    left:0;
+    top:3px;
+    content:'';
+    width:1px;
+    height:13px;
+    background-color:#d7d9e7;
+}
+
+.board-card-question .list .button-line {
+    float: right;
+    text-align: left;
+}
+
+.board-card-question .list .button-line a span {
+    font-size: 18px;
+    color: #9a9dac;
+    padding:5px;
+}
+
+
+
+.board-card-question .list .cont-tit {
+    clear: both;
+    display: inline-block;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 18px;
+    color: #000;
+    font-family: 'noto-sans-kr';
+    line-height:1.4em;
+}
+
+.board-card-question .list .cont-tit a {
+    font-family: 'noto sans kr';
+    display: inline-block;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 18px;
+    color: #000;
+    line-height: 1.4em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    height: 4.0em;
+    text-align: left;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.board-card-question .list .ex-list {
+    position:relative;
+    margin-top:15px;
+}
+.board-card-question .list .ex-list li {
+    position:relative;
+    float:left;
+    width:50%;
+    line-height:1.6em;
+    padding-left:10px;
+    font-size:15px;
+    font-weight:300;
+    color:#444;
+}
+.board-card-question .list .ex-list li:before {
+    position:absolute;
+    content:'';
+    top:10px;
+    left:0;
+    width:5px;
+    height:2px;
+    background-color:#7e84ae;
+}
+
+/*일정*/
+.pro-info-box {
+    position:relative;
+}
+.pro-info-box .pro-photo {
+    float:left;
+    display:table;
+    width:70px;
+    height:70px;
+    border:1px solid #9ea4d0;
+    border-radius:50%;
+    margin-right:10px;
+    -webkit-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.15);
+    box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.15);
+}
+.pro-info-box .pro-photo img {
+    width:68px;
+    height:68px;
+    border-radius:50%;
+}
+.pro-info-box .pro-kind {
+    display:block;
+    font-size:16px;
+    color:#7e84ae;
+    font-weight:500;
+    padding-top:12px;
+}
+.pro-info-box .pro-name {
+    display:block;
+    font-size:22px;
+    color:#000;
+    font-weight:500;
+    padding-top:10px;
+}
+
+.date-line {
+    position:relative;
+    margin-top:60px;
+}
+.date-line:first-of-type {
+    margin-top:0px;
+}
+.date-line .date-input {
+    font-size:30px;
+    color:#111;
+    border:0;
+    width:182px;
+    font-family:'noto sans kr';
+}
+
+/*일정 카렌다*/
+.table-calendar {
+    margin-top: 30px;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-top:1px solid #e6e9f5;
+}
+.table-calendar thead th {
+    padding: 12px 20px 10px;
+    text-align: left;
+    line-height: 1.4em;
+    font-size: 30px;
+    color: #364085;
+    font-weight: 500;
+    font-family: 'montserrat';
+    border-right: 1px solid #e6e9f5;
+}
+.table-calendar thead th:last-child {
+    border-right: 0;
+}
+.table-calendar thead th a {
+    position:relative;
+    width:100%;
+    display:inline-block;
+}
+.table-calendar thead th a:before {
+    position:absolute;
+    right:0;
+    content:'\e92c';
+    font-family:'feather';
+    font-size:20px;
+    color:#afb2cf;
+
+}
+
+.table-calendar thead th a .small {
+    padding-left:5px;
+    font-size:15px;
+    color:#afb2cf;
+}
+
+.table-calendar thead th > span {
+    position:relative;
+    width:100%;
+    display:inline-block;
+}
+.table-calendar thead th > span .small {
+    padding-left:5px;
+    font-size:15px;
+    color:#afb2cf;
+}
+
+.table-calendar tbody td,
+.table-calendar tbody th {
+    padding: 18px 20px 16px;
+    text-align: left;
+    line-height: 1em;
+    font-size: 20px;
+    color: #364085;
+    font-weight: 500;
+    font-family: 'montserrat';
+    border-right: 1px solid #e6e9f5;
+    border-top: 1px solid #9ea4d0;
+    border-bottom: 1px solid #e6e9f5;
+}
+.table-calendar tbody td:last-child {
+    border-right:0;
+}
+.table-calendar tbody th .small {
+    padding-left:10px;
+    font-size:14px;
+    color:#aaa;
+}
+.table-calendar tbody td .btn-reserve {
+    display:inline-block;
+    width:100%;
+    border-radius:6px;
+    padding:7px 20px 5px;
+    font-size:14px;
+    color:#24a7ba;
+    font-family:'noto sans kr';
+    font-weight:500;
+    text-align:center;
+    transition: background-color 0.3s;
+}
+
+.table-calendar tbody td .btn-reserve.type01 {
+    background-color:rgba(36,167,186,0.1);
+    color:#24a7ba;
+}
+.table-calendar tbody td .btn-reserve.type01:hover {
+    background-color:rgba(36,167,186,0.15);
+}
+.table-calendar tbody td .btn-reserve.type02 {
+    background-color:rgba(34,191,221,0.1);
+    color:#225bdd;
+}
+.table-calendar tbody td .btn-reserve.type02:hover {
+    background-color:rgba(34,191,221,0.15);
+}
+.table-calendar tbody td .btn-reserve.type03 {
+    background-color:rgba(247,82,82,0.1);
+    color:#f75353;
+}
+.table-calendar tbody td .btn-reserve.type03:hover {
+    background-color:rgba(247,82,82,0.15);
+}
+
+.table-calendar tbody td .btn-reserve .icon {
+    font-size:22px;
+    margin-right:7px;
+}
+.table-calendar tbody td .btn-reserve.type01 .icon {
+    color:#24a7ba;
+}
+.table-calendar tbody td .btn-reserve.type02 .icon {
+    color:#225bdd;
+}
+.table-calendar tbody td .btn-reserve.type03 .icon {
+    color:#f75353;
+}
+
+/*그룹관리 그룹인원 목록*/
+.group-list-wrap {
+    position:relative;
+    width:388px;
+}
+.group-list-wrap .tit {
+    color:#364085;
+    font-weight:400;
+    margin-bottom:10px;
+}
+.group-list-wrap .info-txt {
+    font-size:14px;
+    color:#777;
+    line-height:1.4em;
+    font-family:'noto sans kr';
+}
+.group-list-box {
+    position:relative;
+    margin-top:20px;
+    height:384px;
+    overflow-y:scroll;
+}
+.group-list-box .checkbox-all {
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+.group-list-box .checkbox-all label {
+    font-size:15px !important;
+}
+
+.group-list-box .group-list {
+    position:relative;
+    display: inline-block;
+    width:100%;
+    border:1px solid #dcdff1;
+    background-color:#fff;
+    padding:10px 20px;
+    border-radius:8px;
+    margin:4px 0;
+    transition: border-color .3s, box-shadow .3s;
+}
+.group-list-box .group-list:hover {
+    border-color:#9ea4d0;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+}
+.group-list-box .group-list div {
+    margin:5px 0;
+}
+.group-list-box .group-list div span {
+    font-family:'noto sans kr';
+}
+.group-list-box .group-list .checkbox.single {
+	margin-right:5px;
+}
+.group-list-box .group-list .name {
+    display:inline-block;
+    font-size:15px;
+    color:#333;
+    margin-right:5px;
+}
+.group-list-box .group-list .code-num {
+    display:inline-block;
+    font-size:12px;
+    color:#666faf;
+    font-weight:600;
+    padding:3px 10px;
+    background-color:#e9ebf8;
+    border-radius:2em;
+}
+.group-list-box .group-list .major {
+    display:inline-block;
+    font-size:14px;
+    color:#777;
+    margin-right:5px;
+}
+.group-list-box .group-list .grade {
+    display:inline-block;
+    font-size:14px;
+    color:#777;
+}
+.group-list-box .group-list > .btn-close {
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:20px;
+    color:#7e84ae;
+}
+
+/*상담이력 리스트*/
+.stu-counsel-list-box {
+    position:relative;
+}
+.stu-counsel-list {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    border: 1px solid #dcdff1;
+    background-color: #fff;
+    border-radius: 8px;
+    margin: 4px 0;
+    transition: .3s;
+}
+.stu-counsel-list:hover {
+    border-color:#9ea4d0;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+    box-shadow: 0px 0px 3px 0px rgba(158, 164, 208, 1);
+}
+.stu-counsel-list a {
+    display: inline-block;
+    padding: 20px 20px;
+    width:100%;
+    font-family:'noto sans kr';
+}
+.stu-counsel-list .title {
+    display: block;
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 8px;
+}
+.stu-counsel-list .name {
+    display: inline-block;
+    font-size: 14px;
+    color: #888;
+}
+.stu-counsel-list .date {
+    float:right;
+    display: inline-block;
+    font-size: 14px;
+    color: #9ea4d0;
+}
+
+/*설문*/
+.counsel-survey-box {
+    border-radius:8px;
+    background-color:#fff;
+    border:1px solid #666faf;
+    margin:10px 0;
+}
+.counsel-survey-box .header-line {
+    display: table;
+    width:100%;
+    background-color:#f1f2f8;
+    border-top-right-radius:8px;
+    border-top-left-radius:8px;
+    border-bottom:1px solid #cfd2e0;
+}
+.counsel-survey-box .header-line .number {
+    float:left;
+    margin-right:10px;
+    font-size:26px;
+    color:#fff;
+    font-weight:500;
+    background-color:#666faf;
+    width:50px;
+    height:50px;
+    text-align:center;
+    line-height:50px;
+    border-top-left-radius:6px;
+}
+.counsel-survey-box .header-line .text {
+    display: table-cell;
+    width:100%;
+    font-size:16px;
+    color:#364085;
+    vertical-align: middle;
+    line-height: 1.4em;
+}
+.counsel-survey-box .mid-area {
+    background-color:#fff;
+    padding:20px;
+    border-bottom-right-radius:8px;
+    border-bottom-left-radius:8px;
+}
+.counsel-survey-box .mid-area .sub-title-line {
+    position:relative;
+    display: table;
+}
+.counsel-survey-box .mid-area .sub-title-line .number {
+    float:left;
+    margin-right:10px;
+    font-size:12px;
+    color:#fff;
+    font-weight:600;
+    background-color:#666faf;
+    width:24px;
+    height:24px;
+    text-align:center;
+    line-height:24px;
+    border-radius:50%;
+}
+.counsel-survey-box .mid-area .sub-title-line .text {
+    display:table-cell;
+    font-size:15px;
+    color:#444;
+    vertical-align: middle;
+    line-height: 1.4em;
+}
+.counsel-survey-box .mid-area .survey-cont-box {
+    display: inline-block;
+    margin:10px 0 10px 30px;
+    padding:0 10px;
+    background-color:#f1f2f8;
+    border-radius:8px;
+}
+
+/* 20190523 | 상담출력부분 디자인수정 | 정다영 */
+/*.print-select-form .row {
+	margin-bottom: 1rem;
+}
+.print-select-form .row > .form-group {
+	margin-bottom: 0;
+}*/
+.print-select-form .btn-line {
+	margin-top: 30px;
+}
+
+/*
+================================================================================
+반응형 콘텐츠
+================================================================================
+*/
+
+@media only screen and (max-width: 1400px) {
+	.main-left {	    
+	    width: 72%;
+	    padding-right: 2%;
+	}
+}
+
+@media only screen and (max-width: 1280px) {
+	/*메인*/    
+    .sub_cont_wrap .sub_cont_box.main {
+        display:flex;
+        flex-flow: column nowrap;
+    }
+    .sub_cont_wrap .sub_cont_box.main > * {
+        flex:1;
+    }    
+    .sub_cont_wrap .sub_cont_box.main > .main-right {
+        order:-1;
+    }
+    .main-right {        
+        display:inline-flex;
+    }
+    .main-right > * {
+        flex: 0 50%;
+        flex-flow: column wrap;
+    }
+    .main-left {
+        float:none;
+        width:auto;
+        padding-right:0;
+        border-right: 0;
+        margin-top:30px;
+    }
+    .counsel-calendar-wrap {
+        margin-top:0;
+        margin-left:0;
+        margin-right:20px;
+    }
+    .counsel-schedule {
+        margin-top:0;
+    }
+    .counsel-schedule .schedule-list-wrap {
+        max-height:335px;
+    }
+    
+    .table-calendar tbody td .btn-reserve {
+        font-size:0;
+        padding:9px;
+    }
+    .table-calendar tbody td .btn-reserve .icon {
+        margin-right:0;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    /*일정 카렌다*/
+    .table-wrap {
+        overflow-x: scroll;
+    }
+    .table-calendar {
+        min-width:700px;
+    }
+    .table-calendar tbody td, .table-calendar tbody th {
+        font-size:16px;
+    }
+    .table-calendar tbody th .small {
+        font-size:13px;
+    }
+    .table-calendar thead th {
+        font-size:16px;
+    }
+    .table-calendar thead th a .small {
+        font-size:13px;
+    }
+    .table-calendar thead th a:before {
+        font-size:18px;
+    }
+    
+
+}
+
+@media only screen and (max-width: 1024px) {
+    /*학생조회*/
+    .counsel-student .left-zone {
+        float:none;
+        width:100%;
+    }
+    .counsel-student .right-zone {
+        margin-top:20px;
+    }
+    .counsel-tab > div a {
+        color:#999;
+    }
+    .counsel-tab > div a.active {
+        color:#111;
+    }
+    .counsel-student .right-zone .counsel-statue {
+        top:7px;
+    }
+    .counsel-student .right-zone .counsel-statue .title {
+        color:#333;
+        font-size:14px;
+    }
+    .counsel-student .right-zone .counsel-statue .statue-sel span {
+        color:#333;
+    }
+    .counsel-student .right-zone .counsel-statue .statue-type {
+        font-size:13px;
+    }
+
+    
+
+}
+
+@media only screen and (max-width: 1000px) {
+    /*문항리스트 게시판 카드형*/
+    .board-card-question .list {
+        width: 48%;
+        margin: 0.98%;
+    }
+    /*메인*/
+    .main-counsel-stu .counsel-list-wrap .counsel-list {
+        width:48.68%;
+    }
+    .main-counsel-stu .counsel-list-wrap .counsel-list:nth-child(2n) {
+	    margin-right: 0;
+	    margin-left:0.66%;
+	}
+	.main-counsel-stu .counsel-list-wrap .counsel-list:nth-child(2n+1) {
+	    margin-left: 0;
+	    margin-right:0.66%;
+	}
+}
+
+@media only screen and (max-width: 980px) {
+    /*메인*/
+    .main-today-counsel .today-header {        
+        height:auto;
+        overflow:hidden;
+    }
+    .main-today-counsel .today-header .today-statue {        
+        top:65px;
+        left:145px;
+    }
+    .main-today-counsel .today-header .date {
+        vertical-align:top;
+    }
+    .main-today-counsel .today-header .today-cont .title {
+        margin-bottom:70px;
+    }
+    .main-today-counsel .today-content .today-cont-list .stu-info {
+        position: relative;
+        top:0;
+        right:0;
+        margin-top: 30px;
+        margin-left: 125px;
+    }
+    .main-today-counsel .today-content .today-cont-list:hover:before, 
+    .main-today-counsel .today-content .today-cont-list.active:before {
+        width:0;
+    }
+
+
+
+}
+
+@media only screen and (max-width: 900px) {
+    /*문항리스트 게시판 카드형*/
+    .board-card-question .list .ex-list {
+        min-height:144px;
+    }
+    .board-card-question .list .ex-list li {
+        float:none;
+        width:100%;
+    }
+    .board-card-question .list .cate-tit {
+        float:none;
+        display:block;
+        width:100%;
+    }
+    .board-card-question .list .button-line {
+        float:none;
+        width:100%;
+        display:block;
+        margin:10px 0;
+    }
+}
+
+@media only screen and (max-width: 820px) {
+	.sub_cont_wrap .visit.counsel-list-wrap {
+		min-height:1800px;
+	}
+}
+
+@media only screen and (max-width: 780px) {
+    /*메인*/
+    .main-right {
+        display: inline-block;
+    }
+    .main-right > * {
+        flex-flow: column nowrap;
+    }
+    .counsel-calendar-wrap {
+        margin-right:0;
+    }
+    .counsel-schedule {
+        margin-left:0;
+    }
+    .stu-counsel-history .content-half {
+        width:100%;
+        margin:5px 0;
+    }
+    .stu-register-box .profile-box {
+        float:none;
+        width:auto;
+    }
+    .stu-register-box .stu-info-box {
+        margin-top:30px;
+    }
+    .main-today-counsel .today-header .date {
+        font-size:42px;
+        border-right:0;
+        padding:0 20px 0 0;
+    }
+    .main-today-counsel .today-header {
+        height:160px;
+        padding:20px;
+    }
+    .main-today-counsel .today-header .date .day {
+        font-size:10px;
+    }
+    .main-today-counsel .today-header .today-cont {
+        padding-left:0;
+    }
+    .main-today-counsel .today-header .today-cont .title {
+        font-size:18px;
+        position: absolute;
+        top:25px;
+    }
+    .main-today-counsel .today-header .today-statue {
+        left:80px;
+        top:55px;
+    }
+    .main-today-counsel .today-header .today-cont .info-txt {
+        display:none;
+    }
+    .main-today-counsel .today-header .today-cont .btn-box {
+        position: absolute;
+        top:110px;
+        left:20px;
+    }
+    .main-today-counsel .today-content .today-cont-list .stu-info {
+        margin-left:45px;
+    }
+    .main-today-counsel .today-content {
+        padding:10px;
+    }
+    .main-today-counsel .today-content:before {
+        left:35px;
+    }
+    .main-today-counsel .today-content .today-cont-list .title {
+        padding: 7px 0 0 45px;
+        display:block;
+    }
+    .main-today-counsel .today-content .today-cont-list {
+        padding:10px 10px;
+    }
+    .main-counsel-stu .counsel-list-wrap .counsel-list {
+        width:100%;
+        margin-left:0 !important;
+        margin-right:0 !important;
+    }
+    .counseling-aside {
+	    left:-310px;
+	    width:294px;
+	}
+	.jui .counseling-aside textarea.size-m {
+		height:130px !important;
+	}
+	
+}
+
+@media only screen and (max-width: 720px) {
+    /*문항리스트 게시판 카드형*/
+    .board-card-question .list {
+        width: 96%;
+        margin: 1.96%;
+    }
+    .board-card-question .list .cont-tit a {
+        font-size: 15px;
+    }
+    .board-card-question .list .cont-text {
+        font-size: 14px;
+    }
+    .board-card-question .list .num .notice:before {
+        font-size: 20px;
+    }
+    .board-card-question .list .etc {
+        font-size: 13px;
+    }
+    .board-card-question .list .etc:before {
+        font-size: 18px;
+    }
+    .board-card-question .list .ex-list li {
+        font-size:14px;
+    }
+    .board-card-question .list .cate-tit {
+        float:left;
+        width:50%;
+    }
+    .board-card-question .list .button-line {
+        float:right;
+        width:50%;
+        margin:0;
+        text-align:right;
+    }
+
+    /*학생조회*/
+    .tab-container .tab-content .content-half {
+        margin: 1.1%;
+        width: 97.7%;
+    }
+    .counsel-student .right-zone .counsel-history {
+        min-height:auto;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .pro-info-box {
+        margin-bottom:15px;
+    }
+
+    /*학생조회*/
+    .sub_cont_box.counsel-student:before {
+        height:200px;
+    }
+    .counsel-student .left-zone {
+        position:relative;
+        margin-top:10px;
+    }
+    .counsel-student .left-zone .counsel-stu-photo {
+        margin-left:0;
+        width:70px;
+        height:70px;
+    }
+    .counsel-student .left-zone .counsel-stu-photo img {
+        width:70px;
+        height:70px;
+    }
+    .counsel-student .left-zone .counsel-stu-name {
+        position:absolute;
+        left:80px;
+        top:2px;
+        margin-top:0;
+        font-size:19px;
+    }
+    .counsel-student .left-zone .counsel-stu-info {
+        position:absolute;
+        left:70px;
+        top:15px;
+    }
+    .counsel-student .left-zone .counsel-stu-info > span {
+        font-size:13px;
+    }
+    .counsel-student .left-zone .counsel-pro-name {
+        position:absolute;
+        left:80px;
+        top:40px;
+    }
+    .counsel-student .left-zone .btn-box {
+        margin-top:25px;
+        text-align:left;
+    }
+    .other-stu {
+        position: absolute;
+        right:0;
+        top:0;
+    }
+    .other-stu.size-l {
+        height:22px !important;
+        width:22px !important;
+        padding:0 !important;
+        border-radius:4px;
+        text-indent:20px;
+        background-position: calc(100% - 5px) center;
+    }
+    .counsel-student .left-zone .counsel-lnb {
+        display:inline-block;
+        width:100%;
+        text-align: center;
+        margin-top:50px;
+        margin-bottom:0;
+        border-bottom:1px solid #dfe0e8;
+    }
+    .counsel-student .left-zone .counsel-lnb li {
+        display: inline-block;
+    }
+    .counsel-student .left-zone .counsel-lnb li a {
+        font-size:14px;
+        height:auto;
+        line-height:0;
+        padding-left:20px;
+    }
+    .counsel-student .left-zone .counsel-lnb li:first-child a {
+        padding-left:0;
+    }
+    .counsel-student .left-zone .counsel-lnb li a.active {
+        background-color:transparent;
+        color:#364085;
+        box-shadow:none;
+    }
+    .counsel-student .left-zone .counsel-lnb li a.active:before {
+        font-size:0;
+    }
+    .counsel-student .left-zone .counsel-lnb li a > span {
+        display:none;
+    }
+    .counsel-student .right-zone {
+        margin-top:10px;
+    }
+    .counsel-tab {
+        width:100%;
+    }
+    .counsel-tab > div {
+        float:none;
+        display:inline-block;
+    }
+    .counsel-tab > div a {
+        font-size:14px;
+        margin:4px 7px;
+    }
+    .tab-container .tab-content .content-half {
+        margin: 1.1%;
+        width: 97.7%;
+    }
+	
+	/*학생정보페이지*/
+	.sub_cont_wrap .counsel-student.counsel-list-wrap {
+		min-height:2000px;
+	}
+	.sub_cont_wrap .visit.counsel-list-wrap {
+		min-height:2000px;
+	}
+
+}
+
+@media only screen and (max-width: 480px) {
+    /*메인*/
+    .main-today-counsel .today-header .today-statue {
+        left:90px;
+    }
+    .main-today-counsel .today-header .today-statue > a {
+        margin:0 10px;
+    }
+    .main-today-counsel .today-header {
+    	height:190px;
+        padding:10px;
+    }
+    .main-today-counsel .today-header .today-cont .title {
+        top:15px;
+    }
+    .main-today-counsel .today-header .today-statue {
+        left:80px;
+        top:45px;
+    }
+    .stu-counsel-history .content-half .box-type04 {
+        padding:20px 10px 10px;
+    }
+    .main-today-counsel .today-header .today-cont .btn-box {
+        left:10px;
+    }  
+    /* 20190523 | 상담출력부분 디자인수정 | 정다영 */
+	.print-select-form .row {
+		margin-bottom: 0;
+	}
+	.print-select-form .row .form-group,
+	.print-select-form .row.form-group {
+		margin-bottom: 1rem !important;		
+	}
+	.print-select-form .row:last-of-type .form-group:last-of-type {
+		margin-bottom: 0 !important;
+	}
+}
+
+@media only screen and (max-width: 360px) {
+    /*문항리스트 게시판 카드형*/
+    .board-card-question .list .cate-tit {
+        float:none;
+        display:block;
+        width:100%;
+    }
+    .board-card-question .list .button-line {
+        float:none;
+        width:100%;
+        display:block;
+        margin:10px 0;
+        text-align:left;
+    }
+    /*메인*/
+    .main-today-counsel .today-header .today-cont .btn-box .today-btn {
+        padding:8px 14px;
+    }
+}

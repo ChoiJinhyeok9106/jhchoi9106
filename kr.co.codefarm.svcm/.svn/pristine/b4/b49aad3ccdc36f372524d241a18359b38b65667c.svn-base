@@ -1,0 +1,105 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/career.css" />  
+
+<h2>진로동영상</h2>
+<section class="sub_cont_box">
+	<div class="row career-mov-list">
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type01 icon-video"></span>
+				<p class="cont">
+					<span class="time">1~2주차 분</span>
+					<span class="title">꿈을 향한 첫 단추</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">동영상보기</a>
+			</div>
+		</div>
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type02 icon-edit"></span>
+				<p class="cont">
+					<span class="time">3주차 분 - 1</span>
+					<span class="title">자기분석 검사</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">검사하기</a>
+			</div>
+		</div>
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type01 icon-video"></span>
+				<p class="cont">
+					<span class="time">3주차 분 - 2</span>
+					<span class="title">나를 찾아 떠나는 여행</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">동영상보기</a>
+			</div>
+		</div>
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type01 icon-video"></span>
+				<p class="cont">
+					<span class="time">4주차 분</span>
+					<span class="title">나를 찾아 떠나는 여행 2</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">동영상보기</a>
+			</div>
+		</div>
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type01 icon-video"></span>
+				<p class="cont">
+					<span class="time">5주차 분</span>
+					<span class="title">나를 찾아 떠나는 여행 3</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">동영상보기</a>
+			</div>
+		</div>
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type01 icon-video"></span>
+				<p class="cont">
+					<span class="time">6주차 분</span>
+					<span class="title">나를 찾아 떠나는 여행 4</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">동영상보기</a>
+			</div>
+		</div>
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type01 icon-video"></span>
+				<p class="cont">
+					<span class="time">11주차 분</span>
+					<span class="title">취업의 필수~ 기초스펙을 쌓아라</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">동영상보기</a>
+			</div>
+		</div>
+		<div class="col s12 xl6">
+			<div class="box-type03">
+				<span class="icon-box type01 icon-video"></span>
+				<p class="cont">
+					<span class="time">12주차 분</span>
+					<span class="title">취업의 필수~ 기초스펙을 쌓아라</span>
+				</p>
+				<a href="#!" class="btn type01 size-m">동영상보기</a>
+			</div>
+		</div>
+	</div>	
+	<div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+            <a href="#" class="active" title="1 페이지">1</a>
+            <a href="#" title="2 페이지">2</a>
+            <a href="#" title="3 페이지">3</a>
+            <a href="#" title="4 페이지">4</a>
+            <a href="#" title="5 페이지">5</a>
+            <a href="#" title="6 페이지">6</a>
+            <a href="#" title="7 페이지">7</a>
+            <a href="#" title="8 페이지">8</a>
+            <a href="#" title="9 페이지">9</a>
+            <a href="#" title="10 페이지">10</a>
+        </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+</section>

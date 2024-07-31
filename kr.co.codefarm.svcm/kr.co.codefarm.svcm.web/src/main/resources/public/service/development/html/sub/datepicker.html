@@ -1,0 +1,114 @@
+<h2>템플릿-Date Picker</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Date Picker</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li><a href="https://vcalendar.netlify.com" target="_blank">https://vcalendar.netlify.com</a> 의 v-calendar - Date Picker 사용</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><v-date-picker :mode="'single'" v-model="testDate" :popover-visibility="'focus'">
+	<input type="text" class="size-m" slot-scope="{ inputValue }" :value="inputValue">
+</v-date-picker></textarea>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">실행 결과</h3>
+        <div class="box-type04">
+        	<div class="row form-row">
+    			<div class="form-group col s12 l4">
+					<label for="appNm" class="label-type01">DatePicker Test</label>
+					<div class="date-form-wrap">
+						<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+						<v-date-picker :mode="'single'" v-model="testDate" :popover-visibility="'focus'">
+							<input type="text" class="size-m" slot-scope="{ inputValue, updateValue }" :value="inputValue">
+						</v-date-picker>
+					</div>
+				</div>
+				<div class="form-group col s12 l8">
+					<label for="appNm" class="label-type01">DatePicker Test RealValue</label>
+					<input v-model="testDate" type="text" class="size-m">
+				</div>
+			</div>
+		</div>
+        <br/>
+        <textarea id="codeEditor2"><div class="row form-row">
+	<div class="form-group col s12 l4">
+		<label for="appNm" class="label-type01">DatePicker Test</label>
+		<div class="date-form-wrap">
+			<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			<v-date-picker :mode="'single'" v-model="testDate" :popover-visibility="'focus'">
+				<input type="text" class="size-m" slot-scope="{ inputValue }" :value="inputValue">
+			</v-date-picker>
+		</div>
+	</div>
+	<div class="form-group col s12 l8">
+		<label for="appNm" class="label-type01">DatePicker Test RealValue</label>
+		<input type="text" class="size-m" v-model.trim="testDate">
+	</div>
+</div></textarea>
+   	</section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	testDataset: new Dataset(),
+    	testDate: '20180101',
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    	var addObj = {
+       		'DATE' : '20170101',
+       	};
+    	
+     	var row = this.testDataset.addRow(addObj);
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 100);
+	editor('codeEditor2', 300);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

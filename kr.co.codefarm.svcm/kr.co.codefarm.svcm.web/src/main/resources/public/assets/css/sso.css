@@ -1,0 +1,292 @@
+@charset "utf-8";
+#wrap {
+    background-color:#efefef;
+}
+.sso_wrap {
+    overflow:hidden;
+    width: 100%;
+    min-height: 1000px;
+    background-image:url(/images/sso/sso_bg.jpg);
+    background-repeat: no-repeat;
+    background-position: center 330px;
+}
+
+.sso-inner {
+    position: relative;
+    width:1200px;
+    margin:0 auto;
+    margin-top:215px;
+    min-height:700px;
+}
+
+.sso-inner .sso-tit {
+    position: absolute;
+    top:0;
+    left:0;
+    font-size:100px;
+    color:#ff663d;
+    font-family: 'montserrat';
+    font-weight:700;
+}
+.sso-inner .sso-tit .white {
+    display: block;
+    color:#fff;
+    margin-top:20px;
+}
+
+.sso-form {
+    position: absolute;
+    top:0;
+    right:0;
+    width: 480px;
+    text-align: center;
+    border-radius:20px;
+    background-color:#fff;
+    -webkit-box-shadow: 13px 20px 50px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 13px 20px 50px 0px rgba(0,0,0,0.3);
+    box-shadow: 13px 20px 50px 0px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.sso-form .logo {
+    width: 170px;
+    margin-top:25px;
+    margin-bottom:20px;
+}
+
+.sso-form .eng-tit {
+    font-size: 18px;
+    font-weight: 300;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 3px;
+}
+
+.sso-form h2 {
+    font-size: 44px;
+    font-weight: 500;
+    color: #fff;
+    margin-top: 15px;
+}
+
+.sso-form .identify-select {
+    font-size: 0;
+}
+
+.sso-form .identify-select li {
+    display: inline-block;
+    margin-right: 9px;
+}
+
+.sso-form .identify-select li:last-child {
+    margin-right: 0;
+}
+
+.sso-form .identify-select li .radio {
+    padding: 0;
+}
+
+.sso-form .identify-select li .radio>label {
+    display: block;
+    width: 94px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 40px;
+    background: rgba(255, 255, 255, .2);
+    font-size: 16px;
+    color: #fff;
+    padding-left: 21px;
+}
+
+.sso-form .identify-select li .radio input:checked+label {
+    background: #fff;
+    color: #1d2b59;
+}
+
+.sso-form .identify-select li .radio i {
+    margin-top: -8px;
+    left: 18px;
+    background: none;
+    border-color: #8b8d9c;
+}
+
+.sso-form .login-form {
+    margin-top: 7px;
+    border-top:1px solid #dbdde4;
+    margin:0 40px;
+}
+.sso-form .login-form .login-tit {
+    text-align: left;
+    font-size:30px;
+    color:#ff663d;
+    font-family:'noto sans kr';
+    font-weight:700;
+    padding:40px 0 20px;
+}
+
+.sso-form .login-form .input-wrap {
+    position: relative;
+    margin-bottom: 7px;
+}
+
+.sso-form .login-form .input-wrap input {
+    height: 56px !important;
+    border-radius: 8px;
+    font-size: 15px;
+    padding-left: 60px !important;
+    background-color:#f4f4f4;
+    color:#999999;
+    font-weight: 300;
+    border:0;
+}
+
+.sso-form .login-form .input-wrap:before {
+    font-size: 24px;
+    color: #c4c4c4;
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    margin-top: -11px;
+    font-weight:300;
+}
+
+/*아이디저장*/
+.checks {
+    position: relative;
+    text-align: right;
+    margin:20px 0 30px;
+}
+.checks input[type="checkbox"] { /* 실제 체크박스는 화면에서 숨김 */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip:rect(0,0,0,0);
+    border: 0
+}
+.checks input[type="checkbox"] + label {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    font-size:14px;
+    color:#666666;
+    font-weight: 300;
+    padding-left:30px;
+}
+.checks input[type="checkbox"] + label:before { /* 가짜 체크박스 */
+    position: absolute;
+    left:0;
+    top:-5px;
+    content: '\e92c';
+    display: inline-block;
+    color:#dededf;
+    font-size:24px;
+    font-family:'feather';
+}
+.checks input[type="checkbox"]:checked + label:before { /* 체크박스를 체크했을때 */
+    color: #ff663d;
+}
+
+.sso-form .login-form .btn-login {
+    display: block;
+    width: 100%;
+    height: 56px;
+    border-radius: 8px;
+    border: 0;
+    background: #ff663d;
+    line-height: 56px;
+    font-size: 18px;
+    color: #fff;
+    margin-top: 11px;
+    font-family: 'noto sans kr';
+}
+
+.sso-form .login-menu {
+    padding:15px 40px;
+    margin-top: 56px;
+    font-size: 0;
+    background-color:#252553;
+    overflow: hidden;
+    text-align:left;
+}
+
+.sso-form .login-menu a {
+	position:relative;
+    display: inline-block;
+    width:50%;
+    text-align:left;
+    padding: 7px 15px;
+    font-size: 14px;
+    color: #fff;    
+}
+.sso-form .login-menu a:before {
+	position:absolute;
+	left:0;
+	top:50%;
+	transform:translateY(-50%);
+    content:'';
+    width:3px;
+    height:3px;
+    background-color:#ff663d;    
+}
+.sso-form .login-menu a:first-child {
+	color:#ff663d;  
+}
+
+.sso-form .login-menu a.join {
+    float:left;
+    border-right:0;
+}
+.sso-form .login-menu .find {
+    
+}
+
+
+
+.sso-form .login-menu a:last-child {
+    padding-right: 0;
+    border-right: 0;
+}
+
+.sso-form .login-menu a span {
+	display: none;
+}
+
+
+
+@media only screen and (max-width: 480px) {
+    .sso-form {
+        width:100%;
+        left:50%;
+        right:auto;
+        transform:translateX(-50%);
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .sso-inner .sso-tit {
+        display: none;
+    }
+    .sso-form {
+        left:50%;
+        right:auto;
+        transform:translateX(-50%);
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .sso-inner {
+        width:100%;
+    }
+    .sso-inner .sso-tit {
+        left:40px;
+    }
+    .sso-form {
+        right:40px;
+    }
+}

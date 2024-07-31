@@ -1,0 +1,225 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/jobsupport.css">
+
+<h2>교내채용정보</h2>
+<section class="sub_cont_box inner-hire">
+    <div class="box-type03 col-inline">
+        <label for="InputText02" class="label-type00 size-m icon-search">검색</label>
+        <select class="size-m">
+            <option value="분류선택">분류선택</option>
+        </select>
+        <input type="text" id="InputText02" class="size-m" placeholder="입력하세요">
+        <input type="button" value="검색" class="btn type01 size-m">
+    </div>
+    <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+    <ul class="inner-hire-list">
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <span class="d-day">D-15</span>
+                            <span class="state on">채용중</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="#!" class="row">
+                <div class="col s12 l2 company-name">주식회사 모터트랜</div>
+                <div class="col s12 l10">
+                    <div class="cont">
+                        <p>마케팅·광고 및 상품기획 사무원</p>
+                        <ul class="info">
+                            <li><span class="icon-clock"></span>2019-02-27~2019-03-05</li>
+                            <li><span class="icon-map-pin"></span>대구광역시 동구</li>
+                            <li><span class="icon-eye"></span>243</li>
+                        </ul>
+                        <div class="hire-state">
+                            <!-- <span class="d-day">D-15</span> -->
+                            <span class="state off">채용종료</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+    </ul>
+    <!-- 페이징 -->
+    <div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+</section>

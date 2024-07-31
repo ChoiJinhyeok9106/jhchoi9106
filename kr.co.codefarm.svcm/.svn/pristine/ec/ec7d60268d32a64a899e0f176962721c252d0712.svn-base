@@ -1,0 +1,156 @@
+<h2>팝업-메세지 팝업</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">메세지 팝업</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>메세지 팝업 활용법</li>
+	        	<li>modal-message 태그로 사용</li>
+	        	<li>태그 호출 시 :modalset 지정(vue의 data영역 messageModal: new ModalSet('[id:String]') 형태로 사용)</li>
+	        	<li>ModalSet의 openModal('[Type:String]', [Title:String], [Contents:String], [Size:String], [CURRENT_ID:String], [CURRENT_DATA]) 메소드로 메시지 오픈 가능</li>
+	        	<li>[Type:String] : Message Modal 의 종류를 지정, 종류로는 message, confirm 이 있습니다. (나타나는 버튼 차이)</li>
+	        	<li>[Title:String] : 팝업의 제목</li>
+	        	<li>[Contents:String] : 팝업의 내용</li>
+	        	<li>[Size:String] : 팝업의 크기(small, middle, large)</li>
+	        	<li>[CURRENT_ID:String] : 현재 오픈되는 팝업의 ID (닫기나 확인 버튼 눌릴 시 아이디가 반환)</li>
+	        	<li>[CURRENT_DATA] : 현재 오픈되는 팝업의 추가정보 (닫기나 확인 버튼 눌릴 시 해당 정보가 반환)</li>
+	        	<li>messagepoppupcallback 함수는 콜백 함수로, 콜백이 필요할 경우 v-on:messagepoppupcallback=["부모창의 콜백함수"] 형태로 지정해야 합니다.</li>
+	        	<li>콜백함수는 3가지 파라메터로 구성되어있습니다.</li>
+	        	<li>[1] btnTyep : 어떤 버튼을 클릭하여 팝업을 종료하였는지를 나타냅니다.('confirm','cancel','close')</li>
+	        	<li>[2] id : 팝업 오픈 시 지정 된 id를 반환합니다.</li>
+	        	<li>[3] data : 팝업 오픈 시 지정 된 data를 반환합니다.</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+        
+        
+this.messageModal.openModal('confirm', 'TEST TITLE', 'TEST-CONTENTS', 'small', 'id', 'customData'); //오픈 시
+var vm = new Vue({
+	el: '#app',
+    //사용할 데이터
+    data: {
+    	messageModal: new ModalSet('modal-test'),
+    },
+    //함수
+    methods: {
+    	confirmOpen : function(){
+    	 	this.messageModal.openModal('confirm', 'TEST TITLE', 'TEST-CONTENTS', 'small', 'id1', '{a:b,c:d}');
+    	},
+    	messageOpen : function(){
+    	 	this.messageModal.openModal('message', 'TEST TITLE', 'TEST-CONTENTS', 'middle', 'id2', '{a:b,c:d}');
+    	},
+    	messagepoppupcallback : function(gb, currentId, customData){
+    	 	alert('버튼 구분 : '+gb+'\n'+'ID : '+currentId+'\n'+'returnData : '+customData);
+    	}
+	}
+ });
+</textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3">Message Popup 실행(Confirm)</h3>
+        <textarea id="codeEditor2">this.messageModal.openModal('confirm', 'confirm 메세지 팝업 테스트', 'confirm 메시지 팝업 내용', 'small', 'id1', '{a:b,c:d}');</textarea>
+        <br/>
+       	<a href="#!" class="btn type01 size-m" @click="confirmOpen()">confirm 메시지 모달</a>
+    </section>
+    <section class="cont_box">
+    	<h3 class="h3">Message Popup 실행(Message)</h3>
+        <textarea id="codeEditor3">this.messageModal.openModal('message', 'message 메세지 팝업 테스트', 'message 메시지 팝업 내용', 'middle', 'id2', '{a:b,c:d}');</textarea>
+        <br/>
+       	<a href="#!" class="btn type01 size-m" @click="messageOpen()">message 메시지 모달</a>
+    </section>
+    <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+    
+    <!-- 버튼 클릭 -->
+<!-- 	<a href="#!" class="btn type02 size-l" onclick="modal_open('modal4');return false;">open modal</a> -->
+	
+	<!-- modal layer popup -->
+	<div class="modal-layer-wrap">
+	    <div id="modal4" class="modal-layer modal-large">
+	        <div class="modal-container">
+	            <div class="modal-header">
+	                    <p class="modal-title">Modal Header</p>
+	                </div>
+	                <div class="modal-content">
+	                    <div class="row">
+	                        <div class="col s12">
+	                            <a href="#!" class="btn type01 size-m" onclick="modal_close('modal4')">닫기</a>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="modal-footer center">
+	                    <a href="#!" class="btn type02 size-m layer_close">Close</a>
+	                </div>
+	                <div class="btn-r">
+	                    <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+    //사용할 데이터
+    data: {
+    	messageModal: new ModalSet('modal-test'),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	confirmOpen : function(){
+    	 	this.messageModal.openModal('confirm', 'confirm 메세지 팝업 테스트', 'confirm 메시지 팝업 내', 'small', 'id1', '{a:b,c:d}');
+    	},
+    	messageOpen : function(){
+    	 	this.messageModal.openModal('message', 'message 메세지 팝업 테스트', 'message 메시지 팝업 내용', 'middle', 'id2', '{a:b,c:d}');
+    	},
+    	messagepoppupcallback : function(gb, currentId, customData){
+    	 	alert('버튼 구분 : '+gb+'\n'+'ID : '+currentId+'\n'+'returnData : '+customData);
+    	}
+	}
+ });
+ /*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 500);
+	editor('codeEditor2', 40);
+	editor('codeEditor3', 40);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

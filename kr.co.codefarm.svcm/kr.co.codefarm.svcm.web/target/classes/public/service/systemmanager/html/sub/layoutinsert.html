@@ -1,0 +1,275 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/webbuilder.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css">
+<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.js"></script>
+
+<h2>메인 설정</h2>
+<section class="sub_cont_box widget_setting" id="app">
+    <div class="left-area">
+        <h3>메인 {{layoutList.getRowType(layoutList.rowposition) == ROWTYPE_INSERT ? '등록' : '수정'}}</h3>
+        <p>원하는 위젯을 Drag &amp; Drop하여 메인화면을 구성할 수 있습니다. 앱을 먼저 선택한 후 위젯을 설정하세요.</p>
+        <a href="#!" class="left-area-toggle icon-arrow-right">펼치기</a>
+        <section class="widget-list-wrap">
+        	<select class="size-m" @change="setWidgetList" v-model="appId">
+        		<option v-for="(item, index) in appListCodeSet.getCustomcode('APP_ID', 'APP_NM', 'select', 'WIDGET_CNT')" :value="item.CD" v-if="item.WIDGET_CNT > 0 || item.CD == ''">{{item.CD_NM}} {{item.WIDGET_CNT ? ' ['+item.WIDGET_CNT+']' : ''}}</option>
+            </select>
+            <perfect-scrollbar class="widget-list widget-add" id="mainListLoading">
+                <ul>
+                	<draggable class="draggable" :list="widgetList.data" :options="{group:{name:'widgetArea', pull:'clone', put: false}, handle:'.handle', sort:false}">
+                    <li  class="handle" v-for="(item, index) in widgetList.getData()">
+                    	<span>{{item.WIDGET_NM}}</span>
+                        <a href="#!" class="icon-plus-circle" @click="addWidget(item)">추가</a>
+                        <div class="widget-img">
+	                        <img :src="item.DEFAULT_IMAGE_PATH ? item.DEFAULT_IMAGE_PATH : '/upload'+item.FILE_PATH" :alt="item.WIDGET_NM">
+                        </div>
+                    </li>
+                    </draggable>
+                </ul>
+            </perfect-scrollbar>
+        </section>
+    </div>
+    <div class="right-area" v-if="layoutList.currentRow">
+    	<div class="btn-line right" v-if="layoutList.currentRow && layoutList.currentRow.USER_PAGE_SEQ != '0'">
+			<a href="#!" class="btn type02 size-m center-icon" @click="this.leftVm.clickMenu(this.leftVm.currentMenuCd)"><span class="icon-return"></span></a>
+			<a href="#!" class="btn type02 size-m center-icon" @click="updateLayout"><span class="icon-save"></span></a>
+		</div>
+        <section class="widget-setting-detail">
+            <div class="title main-title">
+            	<!-- @change="updateLayout" -->
+                <input type="text" placeholder="메인 화면 타이틀을 입력하세요." v-model="layoutList.currentRow.USER_PAGE_NM">
+            </div>
+            <div class="widget-list">
+	            <draggable class="draggable widget-add-area" :list="layoutContentList" :options="{group:{name:'widgetArea'}, handle:'.handle'}" @add="addDragWidget">
+	            	<div class="no-list" v-if="layoutContentList.length == 0">
+	                   	<p>위젯을 <strong>Drag &amp; Drop</strong> 하거나 위치를 이동하여 메인화면을 구성하세요.</p>
+	                </div>
+	                <!-- @layout-updated="layoutUpdatedEvent" -->
+	                <grid-layout v-if="layoutContentList.length > 0" :layout.sync="layoutContentList" :col-num="3" :row-height="60" :is-resizable="false" :vertical-compact="true" :responsive="true" :cols="{lg:3, md:3, sm:3, xs:3, xxs:3}">
+						<grid-item class="handle" v-for="(item, index) in layoutContentList" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="index" style="background:#e5e5e5;">
+							<article class="widget-box" class="handle">	
+			                    <a href="#!" class="icon-close" @click="removecWidget(index)">삭제</a>
+			                    <div class="widget-img">
+			                        <img :src="item.DEFAULT_IMAGE_PATH ? item.DEFAULT_IMAGE_PATH : '/upload'+item.FILE_PATH" :alt="item.WIDGET_NM" style="width:100%; height:100%;">
+			                    </div>
+			                </article>
+						</grid-item>
+					</grid-layout>
+	            </draggable>
+            </div>
+        </section>
+        <div class="btn-line center">
+            <a href="#!" class="btn size-l type01" @click="this.leftVm.clickMenu(this.leftVm.currentMenuCd)">돌아가기</a>
+            <a href="#!" class="btn size-l type02" @click="updateLayout">저장</a>
+        </div>
+    </div>
+</section>
+
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	layoutList: new Dataset(),
+    	layoutContentList: [],
+    	appListCodeSet: new CustomcodeSet('/api/system-manager/app/subscribe-apps', {'FIXED_AUTH_CD':globalParam.AUTH_CD}),
+    	widgetList: new Dataset(),
+	    mainListLoading: {id:'mainListLoading', val:false},
+	    appId: '',
+	    authCd: globalParam.AUTH_CD,
+    },
+  //데이터 감시
+	watch: {
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+    //마운트 된 시점수행
+    mounted: function(){
+		if(!isPc()){
+			notifySubmit('warning', '알림', '모바일환경에서 레이아웃관리를 지원하지 않습니다.', 'icon-caution');
+			if(self != top) parent.portalOpen('portal_main');
+		}
+    	this.newRow();
+    },
+    //함수
+    methods: {
+    	/* 내 레이아웃 조회 */
+		setMyLayoutContent: function(){
+			var self = this;
+            self.mainListLoading.val = true;
+			var returnVal = layoutApi.layoutContent(globalParam.CURRENT_ROW, false);
+			returnVal.then(function(response) {
+                response.data.forEach(function(item,i){
+                    item.x = item.X
+                    item.y = item.Y
+                    item.w = item.W
+                    item.h = item.H
+                    item.i = item.I
+                })
+				self.layoutContentList = response.data;
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+    	/* 서비스 리스트 조회 */
+		setWidgetList: function(){
+			var self = this;
+			var authCd = self.authCd;
+			var userId = 'None';
+			
+			
+			if(isNull(authCd)){
+				authCd = self.session.DEFAULT_AUTH_CD;
+				userId = null
+			}
+			
+            self.mainListLoading.val = true;
+			var returnVal = widgetApi.widget(this.appId, 'auth', authCd, null, userId, false); //pSearchAppId, pSearchType, pSearchArgv, pPageNo, pRowCount, pLoading
+			
+			returnVal.then(function(response) {
+                response.data.forEach(function(item,i){
+                    item.x = item.X
+                    item.y = item.Y
+                    item.w = item.W
+                    item.h = item.H
+                    item.i = item.I
+                })
+				self.widgetList.setData(response.data);
+				/* self.layoutContentList = response.data; */
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+    	newRow: function(){
+        	var addObj = {
+           		'USER_ID' : this.session.USER_ID,
+           		'USER_PAGE_SEQ' : '',
+           		'AUTH_CD' : this.authCd,
+           		'USER_PAGE_NM' : '',
+           		'ORD' : '99',
+           		'USE_YN' : 'Y',
+           	};
+        	if(!isNull(globalParam.CURRENT_ROW.USER_PAGE_SEQ)) addObj = globalParam.CURRENT_ROW;
+			var newRowPosition = this.layoutList.addRow(addObj);
+			if(!isNull(globalParam.CURRENT_ROW.USER_PAGE_SEQ)){
+				this.layoutList.setRowType(newRowPosition, this.ROWTYPE_NORMAL);
+				this.setMyLayoutContent();
+			}
+		},
+		//현재 화면의 myApp을 저장한다.
+		updateLayout: function(){
+			var self = this;
+			var rowposition = self.layoutList.rowposition;
+			var rowType = self.layoutList.getRowType(rowposition); 
+			var returnVal = null;
+			
+			//신규
+			if(rowType == self.ROWTYPE_INSERT){
+				returnVal = layoutApi.layoutInsert(self.layoutList.currentRow, false);
+			}
+			//수정
+			else if(rowType == self.ROWTYPE_UPDATE){
+				returnVal = layoutApi.layoutUpdate(self.layoutList.currentRow, false);
+			}else{
+				//레이아웃 명이 변경되지 않았다면 레이아웃 컨텐츠를 업데이트 한다.
+				this.updateLayoutContent();
+			}
+			
+			if(!isNull(returnVal)){
+				returnVal.then(function(response) {
+					var data = response.data;
+					if(data == '1' || data._INSERT_ROW_CNT == '1'){
+						//신규저장이라면
+						if(data._INSERT_ROW_CNT == '1'){
+							self.layoutList.setColumn(self.layoutList.rowposition, 'USER_ID', response.data.USER_ID);
+							self.layoutList.setColumn(self.layoutList.rowposition, 'USER_PAGE_SEQ', response.data.NEW_USER_PAGE_SEQ);
+							self.layoutList.setRowType(self.layoutList.rowposition, self.ROWTYPE_UPDATE);	
+						}
+						//수정이라면
+						else{
+							self.layoutList.setRowType(self.layoutList.rowposition, self.ROWTYPE_NORMAL);
+						}
+					}else{
+						notifySubmit('warning', '레이아웃 저장', '저장에 실패하였습니다.', 'icon-caution');
+					}
+					
+					self.updateLayoutContent();
+				});
+			}
+		},
+		//현재 화면의 레이아웃 컨텐츠를 저장한다.
+		updateLayoutContent: function(){
+			var self = this;
+			var returnVal = null;
+			var userId = self.layoutList.getColumn(self.layoutList.rowposition, 'USER_ID');
+			var userPageSeq = self.layoutList.getColumn(self.layoutList.rowposition, 'USER_PAGE_SEQ');
+			
+			_.forEach(self.layoutContentList, function(obj, index){
+				obj['USER_ID'] = userId;
+				obj['USER_PAGE_SEQ'] = userPageSeq;
+			});
+			if(self.layoutContentList.length > 0){
+				returnVal = layoutApi.layoutContentInsert(_.uniqBy(self.layoutContentList, function(o){ return o['APP_ID'] + ' ' + o['WIDGET_SEQ']}), false);
+			}else{
+				returnVal = layoutApi.layoutContentDelete(userPageSeq, null, false);
+			}
+			
+			returnVal.then(function(response) {
+				var data = response.data;
+				notifySubmit('success', '레이아웃 저장', '저장이 완료되었습니다.', 'icon-save');
+				//contentsOpen('SMN', 'layout');
+			});
+		},
+        layoutUpdatedEvent: function(newLayout){
+        	this.updateLayout();
+        },
+        addWidget: function(pItem){
+        	var self = this;
+        	self.layoutContentList.push(pItem);
+        	var beforeCnt = this.layoutContentList.length;
+        	
+        	self.layoutContentList = _.uniqBy(self.layoutContentList, function(o){ return o['APP_ID'] + ' ' + o['WIDGET_SEQ']});
+        	if(beforeCnt != self.layoutContentList.length){
+        		notifySubmit('warning', '위젯 추가', '해당 위젯은 이미 등록되어 있습니다.', 'icon-caution');
+        	}
+        	/* this.updateLayout(); */
+        },
+        addDragWidget: function(pItem){
+        	var self = this;
+        	var beforeCnt = this.layoutContentList.length;
+        	self.layoutContentList = _.uniqBy(self.layoutContentList, function(o){ return o['APP_ID'] + ' ' + o['WIDGET_SEQ']});
+        	if(beforeCnt != self.layoutContentList.length){
+        		notifySubmit('warning', '위젯 추가', '해당 위젯은 이미 등록되어 있습니다.', 'icon-caution');
+        	}
+        	/* this.updateLayout(); */
+        },
+        removecWidget: function(pIndex){
+        	this.layoutContentList.splice(pIndex, 1);
+        	/* this.updateLayout(); */
+        },
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+    $(function() {
+        $('.left-area-toggle').on('click', function() {
+            $(this).toggleClass('on');
+            $(this).next('section').slideToggle();
+            if ($(this).hasClass('on')) {
+                $(this).removeClass('icon-arrow-right');
+                $(this).addClass('icon-arrow-left');
+                $(this).next('section').children('div').css('opacity', '1');
+            } else {
+                $(this).removeClass('icon-arrow-left');
+                $(this).addClass('icon-arrow-right');
+                $(this).next('section').children('div').css('opacity', '0');
+            }
+        })
+    });
+</script>

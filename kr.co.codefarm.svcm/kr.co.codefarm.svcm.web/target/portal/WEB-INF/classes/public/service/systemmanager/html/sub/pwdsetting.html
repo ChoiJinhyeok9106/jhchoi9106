@@ -1,0 +1,155 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+
+<h2>패스워드 설정</h2>
+<section class="sub_cont_box password-change" id="app">
+    <div class="head">
+        <p class="name-kor">{{session.USER_NM}}</p>
+        <p class="major"><span>{{session.DEPT_NM}}</span><span>{{session.USER_GB == '4' ? session.USER_TYPE_GBNM : session.DEFAULT_AUTH_NM}}</span></p>
+    </div>
+    <div class="cont" id="mainListLoading">
+        <div class="notice">
+            <p class="icon-alert-circle">비밀번호 변경시 주의사항</p>
+            <ul class="list-type02">
+                <li>8~16자의 영문 대소문자, 숫자, <br/>특수문자(?!@#$%\^&amp;*()-+=) 사용</li>
+                <li>다른 아이디 / 사이트에서 사용한 적 없는 비밀번호(권장)</li>
+                <li>이전에 사용한 적 없는 비밀번호(권장)</li>
+            </ul>
+        </div>
+        <form autocomplete="off">
+	        <div class="current-pwd">
+	            <input type="password" class="size-l" placeholder="현재 비밀번호 입력" v-model="currPwd" id="curr-pwd" name="curr-pwd" data-vv-as="현재 비밀번호 " v-validate="'required'" v-bind:class="{'invalid': errors.has('curr-pwd')}"/>
+	            <invalid-message :visible="true" :name="'curr-pwd'" :verror="errors"/>
+	        </div>
+	        <div class="new-pwd">
+	            <input type="password" class="size-l" placeholder="새 비밀번호 입력" ref="newPwd1" v-model="newPwd1" id="newPwd1" name="newPwd1" data-vv-as="새 비밀번호 입력 " v-validate="{ required: true, regex: /^(?=.*[a-zA-Z])(?=.*[?!@#$%^&*()+=-])(?=.*[0-9]).{8,16}/ }" v-bind:class="{'invalid': errors.has('newPwd1')}"/>
+	            <invalid-message :visible="true" :name="'newPwd1'" :verror="errors"/>
+<!--	            <input type="password" class="size-l" placeholder="새 비밀번호 확인" v-model="newPwd2" id="newPwd2" name="newPwd2" data-vv-as="새 비밀번호 확인 " v-validate="{ required: true, regex: /^(?=.*[a-zA-Z])(?=.*[?!@#$%^&*()+=-])(?=.*[0-9]).{8,16}/, confirmed: newPwd1 }" v-bind:class="{'invalid': errors.has('newPwd2')}"/>-->
+<!--	            <invalid-message :visible="true" :name="'newPwd2'" :verror="errors"/>-->
+	        </div>
+            <div class="new-pwd">
+<!--	            <input type="password" class="size-l" placeholder="새 비밀번호 입력" ref="newPwd1" v-model="newPwd1" id="newPwd1" name="newPwd1" data-vv-as="새 비밀번호 입력 " v-validate="{ required: true, regex: /^(?=.*[a-zA-Z])(?=.*[?!@#$%^&*()+=-])(?=.*[0-9]).{8,16}/ }" v-bind:class="{'invalid': errors.has('newPwd1')}"/>-->
+<!--	            <invalid-message :visible="true" :name="'newPwd1'" :verror="errors"/>-->
+	            <input type="password" class="size-l" placeholder="새 비밀번호 확인" v-model="newPwd2" id="newPwd2" name="newPwd2" data-vv-as="새 비밀번호 확인 " v-validate="{ required: true, regex: /^(?=.*[a-zA-Z])(?=.*[?!@#$%^&*()+=-])(?=.*[0-9]).{8,16}/, confirmed: newPwd1 }" v-bind:class="{'invalid': errors.has('newPwd2')}"/>
+	            <invalid-message :visible="true" :name="'newPwd2'" :verror="errors"/>
+	        </div>
+	        <div class="btn-line right">
+	            <a href="#!" class="btn size-m type01" onclick="contentsOpen('SMN', 'mypage');">취소</a>
+	            <a href="#!" class="btn size-m type02" @click="messageModal.openModal('confirm', '패스워드 수정', '비밀번호를 변경하시겠습니까?', 'small', 'pwdchanged', '')">비밀번호 변경</a>
+	        </div>
+        </form>
+    </div>
+
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		currPwd: '',
+		newPwd1: '',
+		newPwd2: '',
+	    mainListLoading: {id:'mainListLoading', val:false},
+		messageModal: new ModalSet('modal-message'),
+	},
+	//데이터 감시
+	watch: {
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+
+	},
+	//함수
+	methods: {
+		/* 패스워드 수정 */
+		savePwd: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					self.mainListLoading.val = true;
+
+					var returnVal = userApi.updateUserPwd(self.session.USER_ID, sha256Enc(self.currPwd), sha256Enc(self.newPwd1), sha256Enc(self.newPwd2), false);
+
+					returnVal.then(function(response) {
+						var data = response.data;
+
+						var updateCnt = parseInt(data.UPDATE_CNT, 10);
+						var outMsg = data.OUT_MSG;
+
+						if(updateCnt == '1') {
+							// self.messageModal.openModal('message', '패스워드 수정', '수정이 완료되었습니다.', 'small', 'pwdchanged', '');
+							notifySubmit('success', '패스워드 수정', '수정이 완료되었습니다.', 'icon-save');
+							self.currPwd= '';
+                            self.newPwd1= '';
+                            self.newPwd2= '';
+//                             portalOpen(); /* IE 오류로 인해 임시로 메세지모달 제외 */
+						} else {
+// 							self.messageModal.openModal('message', '패스워드 수정', '수정이 실패하였습니다.', 'small', '', '');
+							notifySubmit('warning', '패스워드 수정', '수정에 실패하였습니다.\n'+'(ERROR_MSG: '+outMsg+')', 'icon-caution');
+						}
+					}).finally(function(){
+						self.mainListLoading.val = false;
+					});
+				}else{
+					notifySubmit('warning', '패스워드 수정', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+
+		openModal: function(){
+			this.sendKey();
+			modal_open('signModal');
+		},
+		sendKey: function(){
+			var self = this;
+			self.mainListLoading.val = true;
+			var returnVal = userApi.sendKey({}, false);
+			returnVal.then(function(response) {
+				self.userObj['EXKEY'] = response.data;
+				notifySubmit('success', '인증번호 발송', '인증번호가 메일로 발송되었습니다.', 'icon-save');
+			}).catch(function(error) {
+				notifySubmit('success', '인증번호 발송', '인증번호 발송에 실패하였습니다.', 'icon-save');
+				modal_close('signModal');
+			}).finally(function(){
+				self.mainListLoading.val = false;
+				self.$forceUpdate();
+			});
+		},
+		messagepoppupcallback : function(gb, rId) {
+		    if(rId == 'pwdchanged') this.savePwd();
+        }
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+
+});
+
+function sha256Enc(pwd) {
+	var hash = CryptoJS.SHA256(pwd);
+	var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+
+	return hashInBase64;
+}
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>

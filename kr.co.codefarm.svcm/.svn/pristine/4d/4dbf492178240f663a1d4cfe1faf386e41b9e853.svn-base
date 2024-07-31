@@ -1,0 +1,139 @@
+<h2>템플릿-JSON to Excel Download</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">커스텀 엘리먼트</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li><a href="https://github.com/jecovier/vue-json-excel" target="_blank">https://github.com/jecovier/vue-json-excel</a> 오픈소스참고</li>
+	        	<li>data(Array)	- Data to be exported</li>
+				<li>fields(Object) - fields inside the Json Object that you want to export. If no given, all the properties in the Json are exported</li>
+				<li>export-fields:exportFields(Object) - this prop is used to fix the problem with other components that use the variable fields, like vee-validate. exportFields works exactly like fields</li>
+				<li>type(string) - mime type [xls, csv], default: xls</li>
+				<li>name(string) - filename to export, deault: data.xls</li>
+				<li>title(string/Array) - Title(s) for the data, could be a string or an array of strings (multiple titles)</li>
+				<li>footer(string/Array) - Footer(s) for the data, could be a string or an array of strings (multiple footers)</li>
+				<li>default-value:defaultValue(string) - Use as fallback when the row has no field values, default: ''</li>
+				<li>worksheet(string) - Name of the worksheet tab. default: 'Sheet1'</li>
+				<li>fetch(Function) - Callback to fetch data before download, if it's set it runs immediately after mouse pressed and before download process. IMPORTANT: only works if no data prop is defined</li>
+				<li>before-generate(Function) - Callback to call a method right before the generate / fetch data, eg:show loading progress</li>
+				<li>before-finish(Function) - Callback to call a method right before the download box pops out, eg:hide loading progress</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><download-excel :data="jsonDataset.getData()"> Download Data </download-excel></textarea>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">테스트 데이터</h3>
+        <div class="form-group row form-row">        
+	        <ul class="list-type01">
+	        	<li>트리 구성 시 사용했던 JSON 형태의 데이터를 재활용 하여 테스트 합니다.</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor2">var data = [
+	{CD: 'M010000', UP_CD: '', LV:0, ORD: 1},
+	{CD: 'M010200', UP_CD: 'M010000', LV:1, ORD: 2},
+	{CD: 'M060000', UP_CD: '', LV:0, ORD: 6},
+	{CD: 'M020000', UP_CD: '', LV:0, ORD: 2},
+	{CD: 'M040000', UP_CD: '', LV:0, ORD: 4},
+	{CD: 'M040100', UP_CD: 'M040000', LV:1, ORD: 1},
+	{CD: 'M010100', UP_CD: 'M010000', LV:1, ORD: 1},
+	{CD: 'M040200', UP_CD: 'M040000', LV:1, ORD: 2},
+	{CD: 'M030000', UP_CD: '', LV:0, ORD: 3},
+	{CD: 'M040101', UP_CD: 'M040200', LV:2, ORD: 1},
+	{CD: 'M010300', UP_CD: 'M010000', LV:1, ORD: 3},
+	{CD: 'M050000', UP_CD: '', LV:0, ORD: 5},
+	{CD: 'M040102', UP_CD: 'M040200', LV:2, ORD: 2}
+]</textarea>
+    </section>
+    <section class="cont_box">
+        <h3 class="h3">커스텀 엘리먼트 실행 결과</h3>
+        <textarea id="codeEditor3"><download-excel :data="jsonDataset.getData()"> Download Data </download-excel></textarea>
+        <br/>
+        <div class="box-type04">
+        	<download-excel :data="jsonDataset.getData()"> Download Data </download-excel>
+   		</div>
+    </section>
+    
+</section>
+
+<style>
+/* 임시 CSS 차후 디자인 작없뒤에 삭제해야 함 */
+/* ul { */
+/*   	padding-left: 1em; */
+/*   	line-height: 1.5em; */
+/*   	list-style-type: dot; */
+/* }  */
+</style>
+
+
+<script type="text/javascript">
+var data = [
+	{CD: 'M010000', UP_CD: '', LV:0, ORD: 1},
+	{CD: 'M010200', UP_CD: 'M010000', LV:1, ORD: 2},
+	{CD: 'M060000', UP_CD: '', LV:0, ORD: 6},
+	{CD: 'M020000', UP_CD: '', LV:0, ORD: 2},
+	{CD: 'M040000', UP_CD: '', LV:0, ORD: 4},
+	{CD: 'M040100', UP_CD: 'M040000', LV:1, ORD: 1},
+	{CD: 'M010100', UP_CD: 'M010000', LV:1, ORD: 1},
+	{CD: 'M040200', UP_CD: 'M040000', LV:1, ORD: 2},
+	{CD: 'M030000', UP_CD: '', LV:0, ORD: 3},
+	{CD: 'M040101', UP_CD: 'M040200', LV:2, ORD: 1},
+	{CD: 'M010300', UP_CD: 'M010000', LV:1, ORD: 3},
+	{CD: 'M050000', UP_CD: '', LV:0, ORD: 5},
+	{CD: 'M040102', UP_CD: 'M040200', LV:2, ORD: 2}
+]
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     //사용할 데이터
+     data: {
+    	 jsonDataset: new Dataset()
+     },
+     //마운트 된 시점수행
+     mounted: function(){
+    	 this.jsonDataset.setData(data, 'tree');
+     },
+     //함수
+     methods: {
+    	 
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 40);
+	editor('codeEditor2', 330);
+	editor('codeEditor3', 40);
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

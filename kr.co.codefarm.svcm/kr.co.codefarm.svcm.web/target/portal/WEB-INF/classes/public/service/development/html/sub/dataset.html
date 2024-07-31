@@ -1,0 +1,137 @@
+<h2 id="top">Dataset-Dataset</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">Method</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type02">
+	        	<li v-for="(item, index) in methodData" style="margin-top:10px;"><a :href="'#item'+index" class="btn type01 size-s c-blue" style="border:1px solid #2549b0;" >{{item.name}} {{item.param}}</a> : {{item.description}}</li>
+			</ul>
+		</div>
+    </section>
+    
+    <section class="cont_box" v-for="(item, index) in methodData" :id="'item'+index">
+        <h3 class="h3">{{item.name}} {{item.param}}</h3>
+        <div class="row form-row">
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Description</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description.split('\n').join('<br />')"></p>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.description2.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Syntax</label>
+	            <!-- <p class="txt_info" v-html="item.syntax.split('\n').join('<br />')"></p> -->
+<textarea :id="'codeEditor'+index" style="line-height:30px; margin-left:20px;" v-html="item.syntax">
+</textarea>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Parameters</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.parameters.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <label :for="'row'+index" class="label-type01">@Return</label>
+	            <p class="txt_info" style="line-height:30px; margin-left:20px;" v-html="item.returnVal.split('\n').join('<br />')"></p>
+	        </div>
+	        <div class="form-group col s12 l12" style="margin-top:10px;">
+	            <p class="right" style="line-height:30px; margin-left:20px;"><a href="#top" class="btn type01 size-m c-sky icon-arrow-up-circle" style="border:1px; font-size:20px;"></a></p>
+	        </div>
+	    </div>
+        <br/>
+   	</section>
+</section>
+
+<style>
+html {
+    scroll-behavior: smooth;
+}
+</style>
+
+<script type="text/javascript">
+//{name:'',param:'()',description:'',description2:'',syntax:'',parameters:'',returnVal:''},
+var method = [
+	{name:'Dataset',param:'()',description:'데이타를 테이블 형태로 저장하는 오브젝트입니다.',description2:'',syntax:'new Dataset();\nvar ds = new Dataset;',parameters:'',returnVal:'Dataset()'},
+	{name:'setData',param:'(pData, pDatasetGb)',description:'데이터셋의 조회 된 자료를 로드하는 메소드 입니다.',description2:'트리 템플릿에 데이터셋을 사용할 때에는 Dataset.setData()사용 시 두번째 파라메터(데이터셋 구분)에 "tree"를\n명시해야 합니다. 그리고 트리는 기본적으로 CD, UP_CD, LV, ORD 컬럼이 존재해야 구성될 수 있습니다.',syntax:'Dataset.setData(pData:JsonArray, pDatasetGb:String)',parameters:'pData(JsonArray) : 데이터셋에 입력 될 데이터 입니다.\npDatasetGb(JsonArray) : 일반 데이터셋 구성인지, 트리용 데이터셋 구성인지 구분 합니다. [normal, tree]',returnVal:'성공여부를 반환합니다.(Boolean)'},
+	{name:'treeDataChange',param:'(pData)',description:'데이터 셋을 트리콤포넌트에 맞게 재구성하는 메소드 입니다.',description2:'Dataset.setData()시 옵션에 의해 실행 될 메소드로 별도 사용을 자제 바랍니다.',syntax:'Dataset.treeDataChange(pData:JsonArray)',parameters:'pData(JsonArray) : 데이터셋에 입력 된 데이터 입니다.',returnVal:'JsonArray(JsonArray) : 트리컴포넌트에 맞게 변경 된 데이터셋'},
+	{name:'getData',param:'(pData, pDatasetGb)',description:'데이터셋에 입력 된 데이터 전체를 가져오는 메소드 입니다.',description2:'',syntax:'Dataset.getData()',parameters:'',returnVal:'JsonArray : 데이터 셋에 등록 된 데이터를 반환 합니다.\n오류발생 시 null 반환'},
+	{name:'clear',param:'()',description:'데이터셋에 존재하는 모든 상태값 및 데이터를 초기화 합니다.(최초 데이터 셋팅 이전)',description2:'',syntax:'Dataset.clear()',parameters:'',returnVal:'성공여부를 반환합니다.(Boolean)'},
+	{name:'addRow',param:'(pObjectList)',description:'데이터셋의 마지막에 새로운 행(row)을 추가하는 메소드입니다.',description2:'',syntax:'Dataset.addRow(pObjectList)\n\nSample Call:\nvar nRow = this.Dataset00.addRow(["COLID1","COLID2"]);',parameters:'pObjectList(Array) : 초기 셋팅 될 컬럼이름을 배열형태로 받아서 입력한다.',returnVal:'Integer : 성공하면 새로 추가된 행의 위치값(zero-based)을 반환하고, 실패하면 -1을 반환합니다.'},
+	{name:'getRowType',param:'(nRow, sReturnType)',description:'데이터셋에서 지정된 행(row)의 타입을 구하는 메소드입니다.',description2:'',syntax:'Dataset.getRowType(nRow:Integer, sReturnType:String)',parameters:'nRow(String) : 대상 행의 위치(zero-based 인덱스)\nsReturnType(String) : 반환타입, class일 경우 아이콘 클래스를 리턴, null일 경우 타입(0,1,2,4,8) 반환\nSample Call:\nvar nRowType = this.Dataset00.getRowType(0);',returnVal:'데이터셋에서 지정된 행의 타입을 반환합니다.\n만일 지정한 행이 존재하지 않으면 0(타입없음)을 반환합니다.'},
+	{name:'setRowType',param:'(nRow, sType)',description:'데이터셋에서 지정된 행(row)의 타입을 정의합니다.',description2:'',syntax:'Dataset.setRowType(nRow:Integer, sType:Const)',parameters:'nRow(String) : 대상 행의 위치(zero-based 인덱스)\n sType(const) : \nconst ROWTYPE_EMPTY = 0;\nconst ROWTYPE_NORMAL = 1;\nconst ROWTYPE_INSERT = 2;\nconst ROWTYPE_UPDATE = 4;\nconst ROWTYPE_DELETE = 8;\nconst ROWTYPE_GROUP = 16;\n\nSample Call:\nvar nRowType = this.Dataset00.setRowType(0, this.ROWTYPE_NORMAL);',returnVal:'데이터셋에서 지정된 행의 타입을 정의합니다.\n만일 지정한 행이 존재하지 않으면 실패(false)를 반환합니다.'},
+	{name:'dataCompare',param:'(nRow)',description:'지정된 행(row)이 초기값과 비교하여 변경되었는지 확인하여 리턴합니다.',description2:'',syntax:'Dataset.dataCompare(nRow)',parameters:'nRow(String) : 대상 행의 위치(zero-based 인덱스)\nSample Call:\nboolean isEqual = this.Dataset00.dataCompare(0);',returnVal:'지정 된 행이 Dataset.setData()를 통해 셋팅 된 초기값과 비교하여 같은지 다른지를 boolean값으로 반환'},
+	{name:'setDefaultRow',param:'(nRow)',description:'지정된 행(row)을 초기값으로 복원 합니다.(조회 시점)',description2:'',syntax:'Dataset.setDefaultRow(nRow)',parameters:'nRow(String) : 대상 행의 위치(zero-based 인덱스)\nSample Call:\nthis.Dataset00.setDefaultRow(0);',returnVal:'지정 된 행을 조회 초기값으로 되돎림'},
+	{name:'setCurrentRow',param:'()',description:'Dataset.currentRow에 Dataset.data의 현재 rowposition에 해당하는 정보를 입력합니다.',description2:'',syntax:'Dataset.setCurrentRow()',parameters:'',returnVal:'성공여부를 반환 합니다.(Boolean)'},
+	{name:'selectRow',param:'(nRow)',description:'지정된 행(nRow)으로 현재행 번호와 선택 된 행 정보를 입력 합니다.',description2:'',syntax:'Dataset.selectRow(nRow)',parameters:'nRow(Integer) : 지정된 행',returnVal:'성공여부를 반환 합니다.(Boolean)'},
+	{name:'deleteRow',param:'(nRow)',description:'지정된 행(nRow)의 ROW_TYPE을 8(삭제)로 변경 합니다.',description2:'',syntax:'Dataset.deleteRow(nRow)',parameters:'nRow(Integer) : 지정된 행',returnVal:'성공여부를 반환 합니다.(Boolean)'},
+	{name:'getColumn',param:'(nRow, strColID)',description:'데이터셋에서 지정한 행(row)의 열(column)에 해당하는 값을 구하는 메소드입니다.',description2:'',syntax:'Dataset.getColumn(nRow,nColIdx)\nDataset.getColumn(nRow,strColID)',parameters:'nRow(Integer) : 값을 구하려는 행의 위치입니다. 행 위치의 시작값은 0입니다.\nnColIdx(Integer) : 값을 구하려는 열의 인덱스입니다.\nstrColID(String) : 값을 구하려는 열의 ID입니다.\nSample Call:\nvar varCol;\nvarCol = this.Dataset00.getColumn(2,1);\nvarCol = this.Dataset00.getColumn(2,"cust_addr");',returnVal:'대상 열의 값을 반환합니다. 만약, 지정한 열이 존재하지 않으면 undefined를 반환합니다.'},
+	{name:'setColumn',param:'(nRow, nColIdx, varVal)',description:'데이터셋에서 지정한 행(row)의 열(column)에 해당하는 값을 변경하는 메소드입니다.',description2:'',syntax:'Dataset.setColumn(nRow,nColIdx,varVal)\nset.setColumn(nRow,strColID,varVal)',parameters:'nRow(Integer) : 값을 변경하려는 행의 위치입니다. 행 위치의 시작값은 0입니다.\nnColIdx(Integer) : 값을 변경하려는 열의 인덱스입니다.\nvarVal(Variant) : 변경하려는 값입니다.\nstrColID(String) : 값을 변경하려는 열의 ID입니다.\nSample Call:\nvar bSucc;\nbSucc = this.Dataset00.setColumn(1,0,"078543");\nbSucc = this.Dataset00.setColumn(1,"cust_zip","078543");',returnVal:'성공하면 true를 반환하고, 실패하면 false를 반환합니다.'},
+	{name:'getRow',param:'(nRow)',description:'지정된 행(nRow)의 데이터를 반환 합니다.',description2:'',syntax:'Dataset.getRow(nRow)',parameters:'nRow(Integer) : 지정된 행',returnVal:'지정된 행의 정보를 반환한다.'},
+	{name:'set_enableevent',param:'(pEnableevent)',description:'Dataset의 이벤트를 발생시킬지 여부를 설정하는 속성입니다',description2:'',syntax:'Dataset(bEnableEvent) // set\nDataset.enableevent // get',parameters:'val : 값(boolean)',returnVal:'성공여부를 반환 합니다.(Boolean)'},
+	{name:'getRowCount',param:'()',description:'현재 데이터의 행 개수를 반환합니다.',description2:'',syntax:'Dataset(bEnableEvent) // set\nDataset.getRowCount // get',parameters:'val : 값(boolean)',returnVal:'성공여부를 반환 합니다.(Boolean)'},
+	{name:'setFilter',param:'(pFilterColumn)',description:'데이터셋에서 지정된 행(row)의 필터여부를 설정하는 메소드입니다.',description2:'',syntax:'Dataset.setFilter(pFilterColumn)',parameters:'pFilterColumn(Object) : 필터 조건\nSample Call:\nvar nRowType = this.Dataset00.setFilter({A:"filter String"});',returnVal:'데이터셋에서 해당 조건으로 필터를 설정합니다.'},
+	{name:'initFilter',param:'(pFilterColumn)',description:'데이터셋에서 지정된 행(row)의 필터여부를 해제하는 메소드입니다.',description2:'',syntax:'Dataset.initFilter(pFilterColumn)',parameters:'pFilterColumn(Object) : 필터 조건\nSample Call:\nvar nRowType = this.Dataset00.initFilter({A:"filter String"});',returnVal:'데이터셋에서 해당 조건으로 필터를 해제합니다.'},
+	{name:'isFilterRow',param:'(nRow)',description:'데이터셋에서 지정된 행(row)의 필터여부를 구하는 메소드입니다.',description2:'',syntax:'Dataset.isFilterRow(nRow)',parameters:'nRow(String) : 대상 행의 위치(zero-based 인덱스)\nSample Call:\nvar nRowType = this.Dataset00.isFilterRow(0);',returnVal:'데이터셋에서 지정된 행의 필터여부를 반환합니다.\n만일 지정한 행이 존재하지 않으면 false를 반환합니다.'},
+	{name:'setRawData',param:'(pData, pRowCnt)',description:'frontend 자체 페이징 구현할 경우 rawData에 조회 된 자료를 로드하는 메소드 입니다.',description2:'',syntax:'Dataset.setRawData(pData:JsonArray, pRowcnt:Integer)',parameters:'pData(JsonArray) : 데이터셋에 입력 될 데이터 입니다.\npRowcnt(Integer) : 페이지 별 나타낼 개수 입니다.',returnVal:'성공여부를 반환합니다.(Boolean)'},
+	{name:'pageChange',param:'(pPage, pRowCnt)',description:'frontend 자체 페이징 구현 시 페이지 변경 이벤트 입니다.',description2:'',syntax:'Dataset.pageChange(pPage, pRowCnt)\n\nSample Call:\nthis.Dataset00.pageChange(1, 5);',parameters:'pPage(Integer) : 페이지 변호\npRowCnt(Integer) : 페이지당 보여질 데이터 건수',returnVal:'성공여부를 반환합니다.'},
+	{name:'setDefault',param:'()',description:'데이터셋을 초기 조회 상태로 되돌립니다.',description2:'',syntax:'Dataset.setDefault()',parameters:'',returnVal:'성공여부를 반환합니다.(Boolean)'},
+]
+
+
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+		testDate: new Date(),
+		methodData: _.sortBy(method, ['name']),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+     
+    },
+    //함수
+    methods: {
+    	test: function(a){
+    		alert(a);
+    	}
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	_.forEach(vm.methodData, function(n, key) {
+		editor('codeEditor'+key, 100);
+	});
+	
+});
+
+function editor(id, height) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

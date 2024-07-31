@@ -1,0 +1,306 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+
+<h2>내 정보 관리</h2>
+<section class="sub_cont_box" id="app">
+    <section class="form-section myinfo-modify" id="mainListLoading">
+        <h2 class="h2">개인정보</h2>                    
+        <div class="row form-row resume-basic">
+            <div class="form-group col s12 xl8">
+                <div class="row form-row">
+					<div class="form-group col s12 l6">
+			            <label class="label-type01" for="userId">사용자 아이디</label>
+			            <input class="size-m" type="text" id="userId"  name="userId" data-vv-as="사용자 아이디" v-model="userObj.USER_ID" v-validate="'required|max:30'" v-bind:class="{'invalid':errors.has('userId')}" disabled="true"/>
+			            <invalid-message :visible="true" :name="'userId'" :verror="errors"/>
+			        </div> 
+			    	<div class="form-group col s12 l6">
+			            <label class="label-type01" for="userId">사용자 명</label>
+			            <input class="size-m" type="text" id="userNm"  name="userNm" data-vv-as="사용자 명" v-model="userObj.USER_NM" v-validate="'required|max:300'" v-bind:class="{'invalid':errors.has('userNm')}" disabled="true"/>
+			    		<invalid-message :visible="true" :name="'userNm'" :verror="errors"/>
+			        </div> 
+			    </div>
+				<div class="row form-row">
+			    	<div class="form-group col s12 l4">
+			    		<label class="label-type01" for="birthday">생년월일</label>
+			    		<div class="date-form-wrap">
+							<a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+							<date-picker :value="userObj.BIRTHDAY" @input="function(value){ userObj.BIRTHDAY = value }" :invalid="errors.has('birthday')"></date-picker>
+							<input type="hidden" id="birthday" name="birthday" data-vv-as="생년월일 " v-model="userObj.BIRTHDAY" v-validate="'required'">
+				            <invalid-message :visible="true" :name="'birthday'" :verror="errors"></invalid-message>
+						</div>
+					</div>
+			    	<div class="form-group col s12 m6 l4">
+			    		<label class="label-type01" for="genderGb">성별 구분</label>
+			    		<select class="size-m" id="genderGb" name="genderGb" v-model="userObj.GENDER_GB" data-vv-as="성별 구분" v-validate="'required'" v-bind:class="{'invalid': errors.has('genderGb')}">
+			    			<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'GENDER_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+						</select>
+						<invalid-message :visible="true" :name="'genderGb'" :verror="errors"/>
+			    	</div>
+			        <div class="form-group col s12 m6 l4">
+		            	<label class="label-type01" for="genderGb">{{changeText('상태 구분', null)}}</label>
+		            	<select name="userStatusGb" class="size-m" id="userStatusGb" v-model="userObj.USE_YN" :disabled="true">
+			                <option v-for="(item, index) in _.filter(smnCommcode.getCommcode('SMN', 'USER_STATUS_GB', 'select', 'CD_NM', 'N', 'CD1'), function(e){return e.CD1 == userObj.USER_GROUP_GB || e.CD == '';})" :value="item.CD">{{item.CD_NM}}</option>
+			            </select>
+			        </div>
+				</div>
+				<div class="row form-row">
+			        <div class="form-group col s12 m6">
+			            <label class="label-type01" for="hpNo">휴대폰 번호</label>
+			            <input class="size-m" type="text" id="hpNo"  name="hpNo" data-vv-as="휴대폰 번호" v-model="userObj.HP_NO" v-validate="'max:100'"/>
+			        </div> 
+			    	<div class="form-group col s12 m6">
+			            <label class="label-type01" for="telNo">전화 번호</label>
+			            <input class="size-m" type="text" id="telNo"  name="telNo" data-vv-as="전화번호" v-model="userObj.TEL_NO" v-validate="'max:100'"/>
+			        </div>
+				</div>
+            </div>
+            <div class="col s12 xl4 center">                                
+                <div class="box-type03 d-inline-block">
+                    <single-file-uploader  :fileset="userPicFile" :type="'img'" :fileid="'SMN_USER_V'" :filekey="session.USER_ID" :filehangmok="'USER_PIC'" :modify="true" v-on:uploadcallback="userPicUploadCallback" v-on:filedelcallback="userPicFileDelCallBack"></single-file-uploader>
+<!--                      <div class="photo-add-wrap" v-else  style="height:223px;"> -->
+<!--                         <div class="photo-box type02"> -->
+<!--                             <div id="photo_image"> -->
+<!--                             	<img :src="userObj.USER_PIC" border="0" alt=""  style="height:220px;"> -->
+<!--                             </div>                                                -->
+<!--                         </div> -->
+<!--                     </div> -->
+                </div>
+            </div>
+        </div>
+        
+		<div class="row form-row">
+	        <!-- <div class="form-group col s12 m4 l4 xl4">
+				<label class="label-type01" for="userGb">사용자 구분</label>
+	    		<select class="size-m" id="userGb" name="userGb" v-model="userObj.USER_GB" disabled>
+	    			<option v-for="(item, index) in smnCommcode.getCommcode('SMN', 'USER_GB', 'select', 'CD_NM', 'N')" :value="item.CD">{{item.CD_NM}}</option>
+				</select>
+			</div> -->
+			<div class="form-group col s12 m6 xl4">
+	            <label class="label-type01" for="defaultAuthCd">신분 권한</label>
+	            <input class="size-m" type="text" id="defaultAuthCd"  name="defaultAuthCd" :value="userObj.DEFAULT_AUTH_CD ? authCodeSet.getCustomcodeNm('AUTH_CD',userObj.DEFAULT_AUTH_CD,'AUTH_NM') : ''" disabled="disabled"/>
+	        </div>
+			<!-- <div class="form-group col s12 m4 l4 xl4">
+	            <label class="label-type01" for="deptCd">{{changeText('부서 코드'), null}}</label>
+	            <input class="size-m" type="text" id="deptCd"  name="deptCd" v-model="userObj.DEPT_CD" />
+	        </div> --> 
+	        <div class="form-group col s12 m6 xl8">
+	            <label class="label-type01" for="deptNm">{{changeText('부서 명', null)}}</label>
+	            <input class="size-m" type="text" id="deptNm"  name="deptNm" v-model="userObj.DEPT_NM" :data-vv-as="changeText('부서 명', null)" v-validate="'required'" v-bind:class="{'invalid': errors.has('deptNm')}"/>
+				<invalid-message :visible="true" :name="'deptNm'" :verror="errors"/>
+	        </div>
+	    </div>
+	    <div class="row form-row">
+	        <div class="form-group col s12 l3 xl2">
+	            <label class="label-type01" for="zipno">우편번호</label>
+	            <div class="btn-input">
+	                <a href="#!" class="btn type02 size-m center-icon" @click="postSearch"><span class="icon-search"></span></a> 
+	                <input class="size-m" type="text" id="zipno"  name="zipno" data-vv-as="우편번호" v-model="userObj.ZIPNO" v-validate="'max:10'" disabled="disabled"/>
+                </div>
+	        </div>
+	        <div class="form-group col s12 l6">
+	            <label class="label-type01" for="addr1">주소</label>
+	            <input class="size-m" type="text" id="addr1"  name="addr1" data-vv-as="주소" v-model="userObj.ADDR1" v-validate="'max:500'" disabled="disabled"/>
+	        </div> 
+	        <div class="form-group col s12 l3 xl4">
+	            <label class="label-type01" for="addr2">주소상세</label>
+	            <input class="size-m" type="text" id="addr2"  name="addr2" data-vv-as="주소상세" v-model="userObj.ADDR2" v-validate="'max:500'"/>
+	        </div> 
+	    </div>
+		<div class="row form-row">
+	    	<div class="form-group col s12 xl4">
+	    		<label class="label-type01" for="pwdLastChgDt">{{changeText('가입 일자',null)}}</label>
+	    		<input class="size-m" type="text" id="pwdLastChgDt" name="pwdLastChgDt" :data-vv-as="changeText('가입 일자',null)"  v-model="userObj.PWD_LAST_CHG_DT" disabled/>
+	    	</div> 
+	    </div>
+	    <div class="btn-line right">	    	
+	    	<a href="#!" class="btn type02 size-m" v-if="userObj.USER_GB == '9'"@click="saveRow">저장</a>
+	    </div>
+    </section>
+    <!-- <div class="btn-line large center">
+        <a href="#!" class="btn type01 size-m">취소</a>
+        <a href="#!" class="btn type02 size-m">다음</a>
+    </div> -->
+</section>
+
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		userObj: {},
+		userPicFile: new SingleFileSet('SMN'),
+		updateDisabled: false,
+		componentKey: 0,
+	    mainListLoading: {id:'mainListLoading', val:false},
+	    fileInfoUpdateFlag: false,
+	    authCodeSet: new CustomcodeSet('/system-manager/auth',{pUseYn:'Y',pAuthGb:'02'}),
+	    pUserGroupGb: '1',
+	},
+	//데이터 감시
+	watch: {
+	    'mainListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.mainListLoading.id), val);
+			}
+	    },
+	    'userPicFile.fileList': {
+            handler: function (val, oldVal) {
+            	if(this.fileInfoUpdateFlag){
+            		var fileCnt = this.userPicFile.getFileCnt();
+        			var sendObj = {};
+            		
+            		if(fileCnt == 0){
+            			sendObj['USER_ID'] = this.session.USER_ID;
+            			sendObj['USER_PIC'] = '';
+            		}else if(fileCnt == 1){
+            			var fileObj = this.userPicFile.getFileList()[0];
+            			var globalProtocol = window.location.protocol;
+            			var globalHost = window.location.host;
+            			var filePath = fileObj.FILE_PATH.replaceAll('\\','/');
+            			
+            			sendObj['USER_ID'] = this.session.USER_ID;
+            			sendObj['USER_PIC'] = globalProtocol+'//'+globalHost+'/upload'+filePath;
+            		}
+            		
+            		if(fileCnt == 0 || fileCnt == 1){
+						var returnVal = userApi.updateUserPic(sendObj, false);
+            			
+            			returnVal.then(function(response) {
+            				if(response.data == 0){
+            					if(fileCnt == 0){
+            						//notifySubmit('warning', '프로필 사진', '삭제에 실패하였습니다.', 'icon-caution');
+            					}else if(fileCnt == 1){
+            						//notifySubmit('warning', '프로필 사진', '등록에 실패하였습니다.', 'icon-caution');
+            					}
+            				}else if(response.data == 1){
+            					if(fileCnt == 0){
+            						//notifySubmit('warning', '프로필 사진', '삭제되었습니다.', 'icon-save');
+            					}else if(fileCnt == 1){
+            						//notifySubmit('warning', '프로필 사진', '등록되었습니다.', 'icon-save');
+            					}
+            				}else{
+            					notifySubmit('warning', '프로필 사진', '오류가 발생하였습니다.', 'icon-caution');
+            				}
+            			});
+            		}else{
+            			notifySubmit('warning', '프로필 사진', '저장에 실패하였습니다.', 'icon-caution');
+            		}
+            		
+            		this.fileInfoUpdateFlag = false;
+            	}
+            },
+            deep: true
+        },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.userPicFile.getFiles('SMN_USER_V', this.session.USER_ID, 'USER_PIC', null);
+		this.setUser();
+	},
+	//함수
+	methods: {
+		/* 사용자 리스트 조회 */
+		setUser: function(){
+			var self = this;
+			
+			self.mainListLoading.val = true;
+			var returnVal = userApi.getUser(self.session.USER_ID, false);
+			returnVal.then(function(response) {
+				self.userObj = response.data;
+			}).finally(function(){
+				self.mainListLoading.val = false;
+			});
+		},
+		/* 주소 검색 */
+		postSearch: function() {
+			new daum.Postcode({
+		        oncomplete: function(data) {
+		        	vm.userObj['ZIPNO'] = data.zonecode;
+		        	vm.userObj['ADDR1'] = data.roadAddress;
+		        	vm.componentKey++;
+		        }
+		    }).open();
+		},
+		/* 사용자 리스트 저장, 수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+			
+			validate.then(function(response) {
+				if(response){
+					returnVal = userApi.userUpdate(self.userObj, true);
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							
+							if(data == '1' || data._INSERT_ROW_CNT == '1'){
+								notifySubmit('success', '사용자 저장', '저장이 완료되었습니다.', 'icon-save');
+								self.setUser();
+							}else{
+								notifySubmit('warning', '사용자 저장', '저장에 실패하였습니다.', 'icon-caution');
+							}
+						});
+					}
+				}else{
+					notifySubmit('warning', '사용자 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		changeText: function(pText, pGb){
+			var userGroupGb = '';
+			if(pGb == 'search') userGroupGb = this.pUserGroupGb;
+			else userGroupGb = this.userObj.USER_GROUP_GB;
+			
+			if(pText == '가입 일자'){
+				if(userGroupGb == '1') return '입사일자';
+				else if(userGroupGb == '4') return '입학 일자';
+			}else if(pText == '내부 아이디'){
+				if(userGroupGb == '1') return '사번';
+				else if(userGroupGb == '4') return '학번';
+			}else if(pText == '부서 코드'){
+				if(userGroupGb == '1') return '부서 코드';
+				else if(userGroupGb == '4') return '학과 코드';
+				else if(userGroupGb == '4') return '소속 코드';
+			}else if(pText == '부서 명'){
+				if(userGroupGb == '1') return '부서 명';
+				else if(userGroupGb == '4') return '학과 명';
+				else if(userGroupGb == '9') return '소속 명';
+			}else if(pText == '상태 구분'){
+				if(userGroupGb == '1') return '재직 구분';
+				else if(userGroupGb == '4') return '학적상태';
+				else if(userGroupGb == '9') return '사용 여부';
+			}else if(pText == '종류 구분'){
+				if(userGroupGb == '1') return '직종';
+				else if(userGroupGb == '4') return '학년';
+			}else if(pText == '등급 구분'){
+				if(userGroupGb == '1') return '직급';
+				else if(userGroupGb == '4') return '분반';
+			}
+			
+			return pText;
+		},
+		userPicUploadCallback: function(pUploadCnt) {
+			this.fileInfoUpdateFlag = true;
+		},
+		userPicFileDelCallBack: function(pTfVal) {
+			this.fileInfoUpdateFlag = true;
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>

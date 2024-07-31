@@ -1,0 +1,170 @@
+@charset "utf-8";
+
+.circular-chart {
+  display: block;
+  max-height: 250px;
+}
+.circular-chart.type01 {
+  width:32px;
+  margin:0 auto;
+}
+.circular-chart.type02 {
+  width:170px;
+  margin:0 auto;
+}
+.circular-chart.type02 .circle-bg {
+  stroke: #dcdff1;
+  stroke-width: 2.4;
+}
+.circular-chart.type02 .circle {  
+  stroke-width: 2.4;
+}
+.circular-chart.type03 {
+  width:100px;
+  margin:0 auto;
+}
+.circular-chart.type03 .circle-bg {
+  stroke: #dcdff1;
+  stroke-width: 2.4;
+}
+.circular-chart.type03 .circle {  
+  stroke-width: 2.4;
+}
+.circular-chart.type04 {
+  width:80px;
+  margin:0 auto;
+}
+.circular-chart.type04 .circle-bg {
+  stroke: #dcdff1;
+  stroke-width: 2.4;
+}
+.circular-chart.type04 .circle {  
+  stroke-width: 2.4;
+}
+
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
+
+.circle[stroke-dasharray^="0"] {
+  stroke-width: 0 !important;
+}
+
+.circular-chart.orange .circle {
+  stroke: #ff9f00;
+}
+
+.circular-chart.green .circle {
+  stroke: #4CC790;
+}
+
+.circular-chart.blue .circle {
+  stroke: #364085;
+}
+
+.circular-chart.pink .circle {
+  stroke: #f35a7e;
+}
+
+.circular-chart.col01 .circle {
+  stroke: #3459c2;
+}
+.circular-chart.col02 .circle {
+  stroke: #6049a4;
+}
+.circular-chart.col03 .circle {
+  stroke: #b23a9a;
+}
+.circular-chart.col04 .circle {
+  stroke: #d66546;
+}
+.circular-chart.col05 .circle {
+  stroke: #db8b35;
+}
+.circular-chart.col06 .circle {
+  stroke: #ebbd1d;
+}
+.circular-chart.col07 .circle {
+  stroke: #71b620;
+}
+.circular-chart.col08 .circle {
+  stroke: #0bae7a;
+}
+.circular-chart.col09 .circle {
+  stroke: #15b1d2;
+}
+.circular-chart.col10 .circle {
+  stroke: #057fc5;
+}
+
+.percentage {
+  fill: #666;
+  font-family: sans-serif;
+  font-size: 0.5em;
+  text-anchor: middle;
+}
+.percentage.type01 {
+  fill: #fff;
+  font-family:'montserrat';
+  font-size: 0.7rem;
+  text-anchor: middle;
+}
+.percentage.type01.none {
+  fill: #fff;
+  opacity: 0.3;
+  font-family:'montserrat';
+  font-size: 0.7rem;
+  text-anchor: middle;
+}
+.percentage.type02 {
+  fill: #e72956;
+  font-family:'montserrat';
+  font-size: 0.65rem;
+  font-weight:600;
+  text-anchor: middle;
+}
+.percentage.type02 .small {
+  fill: #f35a7e;
+  font-size:0.4rem;
+}
+.percentage.type04 {
+  fill: #fff;
+  font-family:'montserrat';
+  font-size: 0.6rem;
+  text-anchor: middle;
+  font-weight:700;
+}
+.percentage.type04.col01 {
+  fill: #3459c2;
+}
+.percentage.type04.col02 {
+  fill: #6049a4;
+}
+.percentage.type04.col03 {
+  fill: #b23a9a;
+}
+.percentage.type04.col04 {
+  fill: #d66546;
+}
+.percentage.type04.col05 {
+  fill: #db8b35;
+}
+.percentage.type04.col06 {
+  fill: #ebbd1d;
+}

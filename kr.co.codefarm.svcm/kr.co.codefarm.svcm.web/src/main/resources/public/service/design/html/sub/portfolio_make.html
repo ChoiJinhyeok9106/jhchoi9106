@@ -1,0 +1,293 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/portfolio.css" />  
+
+<h2>포트폴리오 관리</h2>
+<section class="sub_cont_box" id="app">
+    <h2 class="h2">포트폴리오 생성</h2>
+    <div class="box-type07">
+        <div class="row form-row">
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput1" class="label-type01">제목</label>
+                <input type="text" id="formGroupExampleInput1" class="size-l" placeholder="제목을 입력하세요">
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="form-group col s12">
+                <label for="formGroupExampleInput1" class="label-type01">url</label>
+                <div class="form-group">
+                    <div class="col-inline">
+                        <span class="pf-link-text">http://www.xcloud.com/user/myportfolio/</span>
+                        <input type="text" name="" id="" class="size-l" placeholder="url입력">.
+                        <span class="pf-link-text">.do</span>
+                        <input type="button" value="중복확인" class="btn type02 size-l">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class="col s12">
+                <label for="formGroupExampleInput1" class="label-type01">등록</label>
+            </div>
+        </div>
+        <div class="row form-row">
+            <div class=" col s12 m6">
+                <div class="checkbox size-m type02">
+                    <input type="checkbox" id="checkbox01">
+                    <label for="checkbox01">일괄선택</label>
+                    <i class="icon-check"></i>
+                </div>
+            </div>
+            <div class=" col s12 m6 right">
+                <div class="array-list">
+                    <a href="#!" class="active">수정순</a>
+                    <a href="#!">목차순</a>
+                </div>
+            </div>
+        </div>
+        <perfect-scrollbar class="pf-table-wrap">
+            <!-- 테이블 -->
+            <table class="table-type05 portfolio response">
+                <caption>포트폴리오 생성 테이블로 체크박스, 번호, 썸네일, 구분, 제목, 날짜 항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="5%">
+                    <col width="3%">
+                    <col width="5%">
+                    <col width="10%">
+                    <col>
+                    <col width="15%">
+                </colgroup>                        
+                <tbody>
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">1</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_ct02.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type02">컨텐츠</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">5G 서비스 아이디어 공모전</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr>
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">2</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_li01.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type06">목차</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">목차</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr>      
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">3</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_pj01.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type04">프로젝트</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">5G 기반의 VR 데이터 비주얼라이제이션 콘텐츠 제작</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr>
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">4</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_re01.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type03">이력서</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">2019 수정 이력서</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr> 
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">5</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_me02.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type05">자기소개서</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">안녕하십니까! 나이 그것은 단지 숫자일뿐이다! 드알리 무하마</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr>  
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">6</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_cv02.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type01">표지</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">표지</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr>   
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">6</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_cv02.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type01">표지</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">표지</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr>                                   
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">7</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_ct08.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type02">컨텐츠</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">[WEB/APP] 부산게스트하우스 서비스 개발기획</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr> 
+                    <tr>                                        
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="portfolio-num">8</span>
+                        </td>
+                        <td data-header="썸네일">
+                            <span class="portfolio-thumb"><img src="/service/design/images/portfolio/mtype_ct01.png" alt=""></span>
+                        </td>
+                        <td data-header="구분">
+                            <span class="page-type-icon type02">컨텐츠</span>
+                        </td>
+                        <td data-header="제목" class="left">
+                            <a href="#!">해양 플라스틱 제로화 캠페인 슬로건 공모전</a>
+                        </td>                                        
+                        <td data-header="날짜">                                            
+                            <span class="portfolio-date">2019.03.15 16:10</span>
+                        </td>                                    
+                    </tr>     
+                </tbody>
+            </table>
+        </perfect-scrollbar>
+        <div class="btn-line center">
+            <a href="#!" class="btn type01 size-l">등록하기</a>
+        </div>
+    </div>    
+    <div class="btn-line center">
+        <p class="info-txt02">위의 정보로 포트폴리오를 생성하시겠습니까?</p>
+        <a href="#!" class="btn type03 size-l">취소</a><a href="#!" class="btn type02 size-l">생성</a>
+    </div>                
+</section>
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ </script>
+            
+
+
+
+

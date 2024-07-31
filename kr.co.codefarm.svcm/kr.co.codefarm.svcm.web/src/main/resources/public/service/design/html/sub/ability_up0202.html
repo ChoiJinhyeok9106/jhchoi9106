@@ -1,0 +1,1170 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability2.css" />  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css">
+<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.js"></script>
+
+<h2>실적성과관리</h2>
+<!-- 아래 result-manage 클래스 옆에 theme01~06까지 원하는 테마를 붙히면 화면이 바뀝니다. 테마를 안붙이면 기본 default -->
+<section class="sub_cont_box result-manage" id="app"> 
+    <div class="result-mng-top">
+        <div class="row form-row">
+            <div class="form-group col s12 m12 xl6">            
+                <span class="department">비교과</span>
+                <div class="title-wrap">
+                	<a href="#!" class="lock icon-lock"></a>
+                	<h2 class="title">간호학과 실습</h2>
+                </div>
+            </div>
+            <div class="form-group col s12 m12 xl6">                                     
+                <div class="mng-top-inner">
+                    <span class="tit">참여자</span>
+                    <div class="people">
+                        <div class="user-thumb-wrap">
+	                    	<div class="user-thumb-list">
+		                        <span class="user purple"><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span>
+		                        <span class="user blue"><img src="/service/design/images/talk/profile-img02.jpg" alt="" /></span>
+		                        <span class="user red"><img src="/service/design/images/talk/profile-img03.jpg" alt="" /></span>
+		                        <button class="btn-more icon-more-horizontal"></button>
+	                    	</div>
+	                    	<div class="user-all-list">
+	                    		<perfect-scrollbar class="user-inner">
+		                    		<ul>
+		                    			<li>
+		                    				<span class="user purple"><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span>
+		                    				<p class="name">김례원</p>
+		                    				<p class="major">간호학부</p>
+		                    			</li>
+		                    			<li>
+		                    				<span class="user blue"><img src="/service/design/images/talk/profile-img02.jpg" alt="" /></span>
+		                    				<p class="name">안소정</p>
+		                    				<p class="major">호텔소믈리에&바리스타과</p>
+		                    			</li>
+		                    			<li>
+		                    				<span class="user red"><img src="/service/design/images/talk/profile-img03.jpg" alt="" /></span>
+		                    				<p class="name">최대건</p>
+		                    				<p class="major">병원서비스경영과</p>
+		                    			</li>
+		                    			<li>
+		                    				<span class="user cyan"><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span>
+		                    				<p class="name">김성래</p>
+		                    				<p class="major">간호학부</p>
+		                    			</li>
+		                    			<li>
+		                    				<span class="user"><img src="/service/design/images/talk/profile-img02.jpg" alt="" /></span>
+		                    				<p class="name">안영준</p>
+		                    				<p class="major">간호학부</p>
+		                    			</li>
+		                    		</ul>
+	                    		</perfect-scrollbar>
+	                    		<a href="#!" class="user-adm"><span class="icon-users">참여자관리</span></a>
+	                    	</div>
+	                    	
+	                    </div>  
+                    </div>   
+                    <div class="btn-box">                               
+                        
+                        <a href="#!" class="btn-mng02"><span class="icon-file-plus"></span>리스트추가</span></a>
+                        <a href="#!" class="btn-mng01"><span class="icon-gear"></span></a>   
+                        <ul class="menu-layer">
+			            	<li><a href="#!">보드수정</a></li>
+			            	<li><a href="#!">보드복제</a></li>
+			            	<li><a href="#!">참여자관리</a></li>
+			            	<li><a href="#!">보드탈퇴</a></li>
+			            </ul>
+			            <a href="#!" class="btn-mng01" title="보드 메인으로"><span class="icon-home"></span></a> 
+                    </div>                                     
+                </div>                                
+            </div>
+        </div>
+    </div>
+    <perfect-scrollbar class="result-mng-list">
+        <div class="list-box">
+            <p class="tit"><span class="user blue"><span class="count">4</span><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span><input type="text" value="성인간호학실습" /></p>            
+            <a href="#!" class="btn-set"><span class="icon-grip1"></span></a>
+            <ul class="list-menu-layer">
+            	<li>
+					<div class="row form-row">
+						<div class="col s7 col-label">
+				            <label for="inlineFormInputName1" class="size-s">사용</label>
+				        </div>
+				        <div class="col s5 right">
+				            <label class="toggle-switch size-s">
+				                <input type="checkbox" checked="">
+				                <span class="slider round"></span>
+				            </label>
+				        </div>
+					</div>
+				</li>
+            	<li><a href="#!">리스트복사</a></li>
+            	<li><a href="#!">리스트이동</a></li>
+            	<li><a href="#!" onclick="modal_open('modal2');return false;">참여자관리</a></li>
+            	<li><a href="#!">삭제</a></li>
+            </ul>
+            <perfect-scrollbar class="inner-wrap">                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<div class="label-wrap">
+                    		<span class="label-list label-clr01"><span>첫번째라벨</span></span><span class="label-list label-clr02"><span>두번째라벨</span></span>
+                    	</div>
+                    	<a href="#!" onclick="modal_open('modal1');return false;">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">부산 성모병원 실습</span>
+                        <span class="cont">수간호사님을 라운딩하며 스스로 느꼈던점을 기록합니다</span>
+                    </div>
+                    <div class="photo-box"><img src="/service/design/images/ability/mng_result_img04.jpg" alt="" /></div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div> 
+                </div>                   
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">해운대백병원 실습</span>                                    
+                    </div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+            </perfect-scrollbar>
+            <a href="#!" class="btn-add"><span class="icon-plus">카드추가</span></a>
+        </div>
+        <div class="list-box">
+            <p class="tit"><span class="user red"><span class="count">7</span><img src="/service/design/images/mypage/noimage.png" alt="" /></span><input type="text" value="간호관리학실습" /></p>
+            <a href="#!" class="btn-set"><span class="icon-grip1"></span></a>
+            <perfect-scrollbar class="inner-wrap">
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">해운대백병원 혈액종양내과</span>
+                        <span class="cont">수간호사님을 라운딩하며 스스로 느꼈던점을 기록합니다</span>
+                    </div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">간호일지</span>                                    
+                    </div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div> 
+                </div>                   
+                </a>
+            </perfect-scrollbar>
+            <a href="#!" class="btn-add"><span class="icon-plus">카드추가</span></a>
+        </div>
+        <div class="list-box">
+            <p class="tit"><input type="text" value="지역사회간호학실습" /></p>
+            <a href="#!" class="btn-lock"><span class="icon-lock"></span></a>
+            <a href="#!" class="btn-set"><span class="icon-grip1"></span></a>
+            <perfect-scrollbar class="inner-wrap lock">
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<div class="label-wrap">
+                    		<span class="label-list label-clr03"><span>첫번째라벨</span></span><span class="label-list label-clr02"><span>두번째라벨</span></span>
+                    	</div>
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">수영구보건소 실습</span>
+                        <span class="cont">실습전 기초자료조사 모음</span>
+                    </div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<div class="label-wrap">
+                    		<span class="label-list label-clr01"><span>첫번째라벨</span></span><span class="label-list label-clr02"><span>두번째라벨</span></span><span class="label-list label-clr04"><span>세번째라벨</span></span>
+                    	</div>
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">통합건강관리센터 실습</span> 
+                        <span class="cont">2018년도 마지막 실습 기록</span>                                   
+                    </div>
+                    <div class="photo-box"><img src="/service/design/images/ability/mng_result_img05.jpg" alt="" /></div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">수영구보건소 실습</span>
+                        <span class="cont">실습전 기초자료조사 모음</span>
+                    </div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">통합건강관리센터 실습</span> 
+                        <span class="cont">2018년도 마지막 실습 기록</span>                                   
+                    </div>
+                    <div class="photo-box"><img src="/service/design/images/ability/mng_result_img05.jpg" alt="" /></div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+            </perfect-scrollbar>
+            <a href="#!" class="btn-add"><span class="icon-plus">카드추가</span></a>
+        </div>
+        <div class="list-box">
+            <p class="tit"><input type="text" value="지역사회간호학실습" /></p>
+            <a href="#!" class="btn-set"><span class="icon-grip1"></span></a>
+            <perfect-scrollbar class="inner-wrap">
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">                     	                   	
+                        <span class="date">2019-02-12</span>
+                        <span class="title">수영구보건소 실습</span>
+                        <span class="cont">실습전 기초자료조사 모음</span>
+                    </div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">통합건강관리센터 실습</span> 
+                        <span class="cont">2018년도 마지막 실습 기록</span>                                   
+                    </div>
+                    <div class="photo-box"><img src="/service/design/images/ability/mng_result_img05.jpg" alt="" /></div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">수영구보건소 실습</span>
+                        <span class="cont">실습전 기초자료조사 모음</span>
+                    </div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+                
+                <div class="inner-box">
+                    <div class="inner-head">
+                    	<a href="#!">
+                        <span class="date">2019-02-12</span>
+                        <span class="title">통합건강관리센터 실습</span> 
+                        <span class="cont">2018년도 마지막 실습 기록</span>                                   
+                    </div>
+                    <div class="photo-box"><img src="/service/design/images/ability/mng_result_img05.jpg" alt="" /></div>
+                    <div class="inner-foot">
+                    	<div class="etc-box">
+	                        <span class="etc icon-image">3</span>
+	                        <span class="etc icon-paperclip">7</span>
+	                        <span class="etc icon-checkbox">2/3</span>
+	                        <span class="etc icon-message-circle">12</span>
+	                    </div>
+                    </div>
+                </div>
+                </a>
+            </perfect-scrollbar>
+            <a href="#!" class="btn-add"><span class="icon-plus">카드추가</span></a>
+        </div>
+        
+    </perfect-scrollbar>
+    
+<!-- modal layer popup -->
+<div class="modal-layer-wrap">        
+    <div id="modal1" class="modal-layer modal-middle">
+        <div class="modal-container note-list-modal">
+            <div class="modal-header" style="background-image:url(/service/design/images/ability/mng_result_img04.jpg);">
+                <p class="list-tit">성인간호학실습</p>
+                <p class="card-tit">부산 성모병원 실습<a href="#!" class="btn-edit icon-edit"></a></p>
+                <div class="row form-row label-member">
+			        <div class="col s12 l7">
+			            <div class="row form-row">
+			            	<div class="form-group col s3 l2">
+			            		<span class="stit">Label</span>
+			            	</div>
+			            	<div class="form-group col s9 l10">
+			            		<div class="label-wrap">
+			            			<span class="label-list label-clr01 on"><span>첫번째라벨</span></span>
+			            			<span class="label-list label-clr02 on"><span>두번째라벨</span></span>
+			            			<span class="label-list label-clr03 on"><span>두번째라벨</span></span>
+			            		</div>
+			            	</div>
+			            </div>
+			        </div>
+			        <div class="col s12 l5">
+			            <div class="row form-row">
+			            	<div class="form-group col s3 l3">
+			            		<span class="stit">Member</span>
+			            	</div>
+			            	<div class="form-group col s9 l9">
+			            		<div class="user-thumb-wrap">
+			                    	<div class="user-thumb-list modal">
+				                        <span class="user"><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span>
+				                        <span class="user"><img src="/service/design/images/talk/profile-img02.jpg" alt="" /></span>
+				                        <span class="user"><img src="/service/design/images/talk/profile-img03.jpg" alt="" /></span>
+				                        <button class="btn-more icon-more-horizontal"></button>
+			                    	</div>
+			                    	<div class="user-all-list">
+			                    		<perfect-scrollbar class="user-inner">
+				                    		<ul>
+				                    			<li>
+				                    				<span class="user purple"><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span>
+				                    				<p class="name">김례원</p>
+				                    				<p class="major">간호학부</p>
+				                    			</li>
+				                    			<li>
+				                    				<span class="user blue"><img src="/service/design/images/talk/profile-img02.jpg" alt="" /></span>
+				                    				<p class="name">안소정</p>
+				                    				<p class="major">호텔소믈리에&바리스타과</p>
+				                    			</li>
+				                    			<li>
+				                    				<span class="user red"><img src="/service/design/images/talk/profile-img03.jpg" alt="" /></span>
+				                    				<p class="name">최대건</p>
+				                    				<p class="major">병원서비스경영과</p>
+				                    			</li>
+				                    			<li>
+				                    				<span class="user cyan"><img src="/service/design/images/talk/profile-img01.jpg" alt="" /></span>
+				                    				<p class="name">김성래</p>
+				                    				<p class="major">간호학부</p>
+				                    			</li>
+				                    			<li>
+				                    				<span class="user"><img src="/service/design/images/talk/profile-img02.jpg" alt="" /></span>
+				                    				<p class="name">안영준</p>
+				                    				<p class="major">간호학부</p>
+				                    			</li>
+				                    		</ul>
+			                    		</perfect-scrollbar>
+			                    		<a href="#!" class="user-adm"><span class="icon-users">참여자관리</span></a>
+			                    	</div>
+			                    	
+			                    </div> 
+			            	</div>
+			            </div>
+			        </div>			        
+			    </div>
+                <div class="dark-bg"></div>
+            </div>
+            <div class="modal-content">
+                <div class="note-card-detail">                	
+                	<ul class="right-btn-box">
+                		<li><a href="#!" class="icon-users"><span>멤버관리</span></a></li>
+                		<li><a href="#!" class="icon-tag"><span>라벨관리</span></a></li>
+                		<li><a href="#!" class="icon-image"><span>사진등록</span></a></li>
+                		<li><a href="#!" class="icon-clip"><span>파일업로드</span></a></li>
+                		<li><a href="#!" class="icon-checkbox"><span>체크리스트</span></a></li>
+                		<li><a href="#!" class="icon-trashcan"><span>삭제</span></a></li>
+                	</ul>
+                	<div class="inner-layer">
+                		<!-- 멤버관리 -->
+                		<div class="member-layer">
+                			<div class="inner-layer-top">
+                				<h2>멤버관리</h2>
+                			</div>
+                			<div class="inner-layer-middle">
+                				<div class="row form-row">
+							        <div class="form-group col s12">
+							            <p class="label-type01">멤버검색</p>				        
+							            <p class="heading-txt2">현재인원을 조회하고 참여할 인원을 검색, 추가, 삭제할 수 있습니다.</p>
+							            <perfect-scrollbar class="group-list-box note-people-adm">
+			                                 <div class="group-list">
+			                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+			                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+			                                     <div class="write-check">						                            
+						                            <label for="write-check01"></label>
+						                         </div>
+			                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+			                                 </div>
+			                                 <div class="group-list">
+			                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+			                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+			                                     <div class="write-check">						                            
+						                            <label for="write-check02"></label>
+						                         </div>
+			                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+			                                 </div>
+			                                 <div class="group-list">
+			                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+			                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+			                                     <div class="write-check">						                            
+						                            <label for="write-check03"></label>
+						                         </div>
+			                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+			                                 </div>
+			                                 <div class="group-list">
+			                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+			                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+			                                     <div class="write-check">						                            
+						                            <label for="write-check04"></label>
+						                         </div>
+			                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+			                                 </div>
+			                                 <div class="group-list">
+			                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+			                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+			                                     <div class="write-check">						                            
+						                            <label for="write-check05"></label>
+						                         </div>
+			                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+			                                 </div>
+			                             </perfect-scrollbar>
+							        </div>
+							    </div>
+							    <div class="row form-row">
+							        <div class="form-group col s12">
+							        	<div class="row form-row">
+			                            	<div class="col s12">
+							            		<p class="label-type01">학생검색</p>	
+							            	</div>
+							            </div>								            
+		                                <div class="box-type05">
+		                                    <div class="row form-row">
+		                                        <div class="form-group col s12">
+		                                            <label for="formGroupExampleInput1" class="label-type01">학과</label>
+		                                            <select id="exampleFormControlInput1" class="size-m">
+														<option value="">확과선택</option>
+													</select>
+		                                        </div>
+		                                    </div>
+		                                    <div class="row form-row">
+		                                        <div class="form-group col s12 l4">
+		                                            <label for="formGroupExampleInput3" class="label-type01">학년</label>
+		                                            <select id="exampleFormControlInput3" class="size-m">
+														<option value="">전체</option>
+													</select>
+		                                        </div>
+		                                        <div class="form-group col s12 l8">
+		                                            <label for="formGroupExampleInput3" class="label-type01">이름</label>
+		                                            <input type="text" id="formGroupExampleInput3" class="size-m">
+		                                        </div>
+		                                    </div>
+		                                    <div class="btn-line right">
+		                                    	<a href="#!" class="btn type01 size-m">검색</a>
+		                                    </div>
+		                                </div>			                            
+							        </div>
+							    </div>
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="#!" class="btn type02 size-m">저장</a>
+                			</div>
+                			<a href="#!" class="btn-close icon-close"></a>
+                		</div>
+                		
+                		<!-- 라벨관리 -->
+                		<div class="label-layer">
+                			<div class="inner-layer-top">
+                				<h2>라벨관리</h2>
+                			</div>
+                			<div class="inner-layer-middle">
+                				<div class="row form-row">
+                                    <div class="col s12">
+                                        <label for="formGroupExampleInput1" class="label-type01">라벨목록</label>
+                                        <ul class="label-list">
+                                    		<li class="list label-clr01">
+                                    			<span>첫번째 라벨</span>
+                                    			<div class="sel-label">
+                                    				<input type="checkbox" id="ex_sel01"> 
+                                    				<label for="ex_sel01"></label>
+                                    			</div>
+                                    		</li>
+                                    		<li class="list label-clr02">
+                                    			<span>두번째 라벨</span>
+                                    			<div class="sel-label">
+                                    				<input type="checkbox" id="ex_sel02"> 
+                                    				<label for="ex_sel02"></label>
+                                    			</div>
+                                    		</li>	
+                                    		<li class="list label-clr03">
+                                    			<span>세번째 라벨</span>
+                                    			<div class="sel-label">
+                                    				<input type="checkbox" id="ex_sel03"> 
+                                    				<label for="ex_sel03"></label>
+                                    			</div>
+                                    		</li>	                                       	
+                                        </ul>
+                                    </div>
+                                </div>
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="#!" class="btn type02 size-m">저장</a>
+                			</div>
+                			<a href="#!" class="btn-close icon-close"></a>
+                		</div>
+                		
+                		<!-- 사진등록 -->
+                		<div class="label-layer">
+                			<div class="inner-layer-top">
+                				<h2>사진등록</h2>
+                			</div>
+                			<div class="inner-layer-middle">
+                				<div class="row form-row">                					
+                					<div class="form-group col s12 center"> 
+           								<div class="photo-add-wrap d-inline-block">
+           									<div class="photo-box"><!----></div> 
+           									<div for="cma_fileUSER_PIC" class="btn-photo">
+           										<label for="cma_fileUSER_PIC">사진등록</label> 
+           										<input type="file" name="cma_fileUSER_PIC" id="cma_fileUSER_PIC" accept="image/*" capture="camera">
+           									</div> 
+           									<a href="#!" class="btn-del-photo disabled"><span class="icon icon-minus2">사진삭제</span></a>
+           								</div>          						
+                					</div>
+                				</div>
+                				<div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="formGroupExampleInput1" class="label-type01">내용</label>
+                                        <textarea id="formGroupExampleInput1" rows="10" class="size-m"></textarea>
+                                    </div>
+                                </div>
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="#!" class="btn type02 size-m">저장</a>
+                			</div>
+                			<a href="#!" class="btn-close icon-close"></a>
+                		</div>
+                		
+                		<!-- 파일관리 -->
+                		<div class="file-layer">
+                			<div class="inner-layer-top">
+                				<h2>파일관리</h2>
+                			</div>
+                			<div class="inner-layer-middle">
+                				
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="#!" class="btn type02 size-m">저장</a>
+                			</div>
+                			<a href="#!" class="btn-close icon-close"></a>
+                		</div>
+                		
+                		<!-- 체크리스트 -->
+                		<div class="checklist-layer">
+                			<div class="inner-layer-top">
+                				<h2>체크리스트</h2>
+                			</div>
+                			<div class="inner-layer-middle">
+                				<div class="row form-row">
+                                    <div class="form-group col s12">
+                                        <label for="formGroupExampleInput1" class="label-type01">제목</label>
+                                        <input type="text" id="formGroupExampleInput1" class="size-m" placeholder="입력하세요">
+                                    </div>
+                                </div>
+                                <div class="row form-row">
+                                    <div class="col s12">
+                                        <label for="formGroupExampleInput1" class="label-type01">항목</label>
+                                        <div class="row form-row">
+                                    		<div class="form-group col s9">
+                                        		<input type="text" id="formGroupExampleInput1" class="size-m" placeholder="입력하세요">
+                                        	</div>
+                                        	<div class="form-group col s3">
+                                        		<a href="#!" class="btn-minus icon-minus-circle"></a><a href="#!" class="btn-plus icon-more"></a>
+                                        	</div>
+                                        </div>
+                                    </div>
+                                </div>
+                			</div>
+                			<div class="inner-layer-bottom center">
+                				<a href="#!" class="btn type02 size-m">저장</a>
+                			</div>
+                			<a href="#!" class="btn-close icon-close"></a>
+                		</div>
+                	</div>
+			        <div class=tit-box><span class="icon-edit-3"></span><h3>설명</h3><a href="#!" class="btn-link">수정</a></div>			            
+			        <div class="cont-box">부산 성모병원에서 실습한 과정, 결과, 과제 등을 정리하는 카드입니다</div>
+			        
+			        <div class=tit-box><span class="icon-image"></span><h3>사진</h3></div>
+			        <div class="cont-box">
+			        	<div class="image-list">
+			        		<span class="image"><img src="/service/design/images/ability/mng_result_img04.jpg" alt="" /></span>
+			        		<div class="right-cont">
+				        		<span class="file-name">Photo_img_01.jpg<span class="file-size">246kb</span></span>
+				        		<div class="text-box">
+				        			보는 너의 가장 반짝이는 같은 기관과 것은 황금시대다. 우리 부패를 풀이 안고, 거선의 실로 황금시대의 피부가 것이다. 
+				        		</div>
+				        		<div class="btn-box">
+				        			<a href="#!" class="btn-link">대표이미지설정</a><a href="#!" class="btn-link">수정</a><a href="#!" class="btn-link">삭제</a>
+				        		</div>
+				        	</div>
+			        	</div>
+			        	<div class="image-list">
+			        		<span class="image"><img src="/service/design/images/ability/mng_result_img04.jpg" alt="" /></span>
+			        		<div class="right-cont">
+				        		<span class="file-name">Photo_img_01.jpg<span class="file-size">246kb</span></span>
+				        		<div class="text-box">
+				        			보는 너의 가장 반짝이는 같은 기관과 것은 황금시대다. 우리 부패를 풀이 안고, 거선의 실로 황금시대의 피부가 것이다. 
+				        		</div>
+				        		<div class="btn-box">
+				        			<a href="#!" class="btn-link">대표이미지설정</a><a href="#!" class="btn-link">수정</a><a href="#!" class="btn-link">삭제</a>
+				        		</div>
+				        	</div>
+			        	</div>
+			        </div>
+			        
+			        <div class=tit-box><span class="icon-edit-3"></span><h3>파일</h3></div>
+			        <div class="cont-box">
+						<div class="file-cont-box">
+							<div class="inner">
+								<span class="file-name">Photo_img_01.jpg<span class="file-size">246kb</span></span> 
+								<div class="row form-row">
+									<div class="col s12 l9">									
+										<span class="etc icon-edit">강준상</span>
+										<span class="etc icon-time">2019-02-13</span>
+									</div>	
+									<div class="col s12 l3">									
+										<a href="#!" class="btn-link">수정</a><a href="#!" class="btn-link">삭제</a>
+									</div>																
+								</div>
+							</div>
+							<a href="#!" class="btn-file"><span class="icon-download"></span></a>
+						</div>
+						<div class="file-cont-box">
+							<div class="inner">
+								<span class="file-name">Photo_img_01.jpg<span class="file-size">246kb</span></span> 
+								<div class="row form-row">
+									<div class="col s12 l9">									
+										<span class="etc icon-edit">강준상</span>
+										<span class="etc icon-time">2019-02-13</span>
+									</div>	
+									<div class="col s12 l3">									
+										<a href="#!" class="btn-link">수정</a><a href="#!" class="btn-link">삭제</a>
+									</div>																
+								</div>
+							</div>
+							<a href="#!" class="btn-file"><span class="icon-download"></span></a>
+						</div>
+					</div>
+					
+					<div class=tit-box><span class="icon-checkbox"></span><h3>체크리스트</h3></div>
+					<div class="cont-box">
+						<div class="checklist-wrap">
+							<div class="checklist-box">
+								<div class="row form-row">
+									<div class="col s12">
+										<span class="title">기본간호 체크리스트</span>
+									</div>
+								</div> 
+								<div class="progress-line">
+									<span class="num col-txt01">50%</span> 
+									<div class="progress-inner">
+										<div class="progress-bar">
+											<span class="inner" style="width: 50%;"></span>
+										</div>
+									</div>
+								</div>
+							</div> 
+							<div class="row form-row">
+								<div class="col s12">
+									<div class="row form-row">
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox01" checked="checked"> 
+												<label for="checkbox01">석션</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div> 
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox02"> 
+												<label for="checkbox02">I/O check</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div>
+									</div>
+								</div> 
+								<div class="col s12">
+									<div class="row form-row">
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox01" checked="checked"> 
+												<label for="checkbox01">욕창간호</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div> 
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox02"> 
+												<label for="checkbox02">호흡중재</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="checklist-wrap">
+							<div class="checklist-box">
+								<div class="row form-row">
+									<div class="col s12">
+										<span class="title">기본간호 체크리스트</span>
+									</div>
+								</div> 
+								<div class="progress-line">
+									<span class="num col-txt01">50%</span> 
+									<div class="progress-inner">
+										<div class="progress-bar">
+											<span class="inner" style="width: 50%;"></span>
+										</div>
+									</div>
+								</div>
+							</div> 
+							<div class="row form-row">
+								<div class="col s12">
+									<div class="row form-row">
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox01" checked="checked"> 
+												<label for="checkbox01">석션</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div> 
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox02"> 
+												<label for="checkbox02">I/O check</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div>
+									</div>
+								</div> 
+								<div class="col s12">
+									<div class="row form-row">
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox01" checked="checked"> 
+												<label for="checkbox01">욕창간호</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div> 
+										<div class="form-group col s6">
+											<div class="checkbox size-s">
+												<input type="checkbox" id="checkbox02"> 
+												<label for="checkbox02">호흡중재</label> 
+												<i class="icon-check"></i>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="comment-box-wrap">
+						<h4>Comment</h4> 
+						<div class="comment-write-box">
+							<div class="photo-zone user-thumb-wrap">
+								<span class="user purple"><img src="/service/design/images/talk/profile-img01.jpg" alt=""></span>
+							</div> 
+							<div class="cont-zone">
+								<span class="name">김례원</span> 
+								<span class="link">@rwkim</span> 
+								<div class="form-group row form-row">
+									<div class="col s12 l10">
+										<textarea id="exampleFormControlInput3" rows="10" placeholder="내용을 작성하세요" class="size-m"></textarea>
+									</div>
+									<div class="col s12 l2">
+										<a href="#!" class="btn type02 btn-comment">등록</a>
+									</div>
+								</div>									
+							</div>
+						</div> 
+						<div class="last-update">Last Update 05:40 <a href="#!"><span class="icon-repeat"></span></a></div> 
+						<div class="comment-list">
+							<div class="list">
+								<div class="photo-zone user-thumb-wrap">
+									<span class="user purple"><img src="/service/design/images/talk/profile-img02.jpg" alt=""></span>
+								</div> 
+								<div class="cont-zone">
+									<span class="name">김례원</span> 
+									<span class="link">@rwkim</span> 
+									<span class="date">2019-02-12</span> 
+									<p class="cont-txt">해운대백병원 실습은 정말 힘들었어..<br>하지만 기억에 많이 남는 곳이야</p>
+								</div>
+							</div> 
+							<div class="list">
+								<div class="photo-zone user-thumb-wrap">
+									<span class="user blue"><img src="/service/design/images/talk/profile-img03.jpg" alt=""></span>
+								</div> 
+								<div class="cont-zone">
+									<span class="name">안소정</span> 
+									<span class="link">@sjahn</span> 
+									<span class="date">2019-02-12</span> 
+									<p class="cont-txt">맞아 준상이 힘들어서 많이 울었지~<br>나중에 돌아보면 다 추억일거야 </p>
+								</div>
+							</div> 
+							<div class="list">
+								<div class="photo-zone user-thumb-wrap">
+									<span class="user red"><img src="/service/design/images/talk/profile-img01.jpg" alt=""></span>
+								</div> 
+								<div class="cont-zone">
+									<span class="name">최대건</span> 
+									<span class="link">@dgchoi</span> 
+									<span class="date">2019-02-12</span> 
+									<p class="cont-txt">너희 실습후기 작성하는거 까먹으면 안되 </p>
+								</div>
+							</div>
+						</div>
+					</div>
+                	
+                </div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type01 size-m layer_close">닫기</a><a href="#!" class="btn type02 size-m">완료</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+    <div id="modal2" class="modal-layer modal-small">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">참여자관리</p>
+            </div>
+            <div class="modal-content">
+                <form>
+				    <div class="row form-row">
+				        <div class="form-group col s12">
+				            <p class="label-type01">참여자목록</p>				        
+				            <p class="heading-txt2">현재인원을 조회하고 참여할 인원을 검색, 추가, 삭제할 수 있습니다.</p>
+				            <perfect-scrollbar class="group-list-box note-people-adm">
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check01">
+			                            <label for="write-check01"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check02">
+			                            <label for="write-check02"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check03">
+			                            <label for="write-check03"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check04">
+			                            <label for="write-check04"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                                 <div class="group-list">
+                                     <div><span class="name">곽미향</span><span class="code-num">9652</span></div>
+                                     <div><span class="major">간호학부</span><span class="grade">3학년</span></div>
+                                     <div class="write-check">
+			                            <input type="checkbox" id="write-check05">
+			                            <label for="write-check05"></label>
+			                         </div>
+                                     <a href="#!" class="btn-close"><span class="icon-minus-circle"></span></a>
+                                 </div>
+                             </perfect-scrollbar>
+				        </div>
+				    </div>
+				   	<div class="row form-row">
+				        <div class="form-group col s12">
+				        	<div class="row form-row">
+                            	<div class="col s12">
+				            		<p class="label-type01">학생검색</p>	
+				            	</div>
+				            </div>	
+				            <form>
+                                <div class="box-type05">
+                                    <div class="row form-row">
+                                        <div class="form-group col s12">
+                                            <label for="formGroupExampleInput1" class="label-type01">학과</label>
+                                            <select id="exampleFormControlInput1" class="size-m">
+												<option value="">확과선택</option>
+											</select>
+                                        </div>
+                                    </div>
+                                    <div class="row form-row">
+                                        <div class="form-group col s12 l4">
+                                            <label for="formGroupExampleInput3" class="label-type01">학년</label>
+                                            <select id="exampleFormControlInput3" class="size-m">
+												<option value="">전체</option>
+											</select>
+                                        </div>
+                                        <div class="form-group col s12 l8">
+                                            <label for="formGroupExampleInput3" class="label-type01">이름</label>
+                                            <input type="text" id="formGroupExampleInput3" class="size-m">
+                                        </div>
+                                    </div>
+                                    <div class="btn-line right">
+                                    	<a href="#!" class="btn type01 size-m">검색</a>
+                                    </div>
+                                </div>
+                            </form>
+				        </div>
+				    </div>
+				</form>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+            
+
+
+
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+//모달레이어팝업
+function modal_open(el) {
+
+    var temp = $('#' + el); //레이어의 id를 temp변수에 저장
+    var bg = temp.prev().hasClass('bg'); //dimmed 레이어를 감지하기 위한 boolean 변수 
+
+    if (bg) {
+        $('.layer').fadeIn();
+    } else {
+        temp.fadeIn(); //bg 클래스가 없으면 일반레이어로 실행한다.
+    }
+
+    // 화면의 중앙에 레이어를 띄운다.
+
+    //if (temp.outerHeight() < $(document).height()) temp.css('margin-top', '-' + temp.outerHeight() / 2 + 'px');
+    //else temp.css('top', '0px');
+    if (temp.outerWidth() < $(document).width()) temp.css('margin-left', '-' + temp.outerWidth() / 2 + 'px');
+    else temp.css('left', '0px');
+
+    temp.find('a.cbtn, a.layer_close, .cbtn2').click(function(e) {
+        if (bg) {
+            $('.layer').fadeOut();
+        } else {
+            temp.fadeOut(); //'닫기'버튼을 클릭하면 레이어가 사라진다.
+        }
+        e.preventDefault();
+    });
+
+    $('.layer .bg').click(function(e) {
+        $('.layer').fadeOut();
+        e.preventDefault();
+    });
+
+    // Prevent mousewheel scroll
+    //$('html').on('wheel.modal mousewheel.modal', function () {
+    //	return false; 
+    //});
+    // Disable browser scrolling
+    $("html").css("overflow", "hidden");
+
+    //Show & hide dialog
+    $('.cbtn, .layer_close, .cbtn2').fadeIn().click(function() {
+        $(this).fadeOut()
+            // Enable scrollbars and mousewheel
+            //	$('html').off('wheel.modal mousewheel.modal');
+        $("html").css("overflow", "auto");
+        $('.modal-layer-wrap').removeClass('on');
+    });
+
+    //modal background dark
+    $('.modal-layer-wrap').find(temp).parent().addClass('on');
+
+}
+
+$(document).ready(function() {
+	// 보드리스트 라벨 이벤트
+	$('.result-mng-list .label-wrap').on('click', function(){
+		var $label = $(this).children('.label-list');		
+		if ($label.hasClass('on')) {
+			$label.removeClass('on');
+		} else {
+			$label.addClass('on');
+		}
+	})
+	
+	//노트 메뉴 레이어
+	$('.mng-top-inner .btn-mng01').click(function(e) {
+		var $menu = $(this).siblings('.menu-layer');
+		if ($menu.hasClass('on')) {
+			$menu.removeClass('on');				
+		} else {
+			$(this).parent().siblings().children('.menu-layer').removeClass('on');
+			$menu.addClass('on');
+		}
+	});
+	$(document).mouseup(function(e){
+		var container = $(".mng-top-inner .btn-mng01");
+		if(container.has(e.target).length === 0){
+			$(".mng-top-inner .menu-layer").removeClass('on');
+		}
+	});
+	
+	//노트 리스트 메뉴 레이어
+	$('.list-box .btn-set').click(function(e) {
+		var $menu = $(this).siblings('.list-menu-layer');
+		if ($menu.hasClass('on')) {
+			$menu.removeClass('on');				
+		} else {
+			$(this).parent().siblings().children('.list-menu-layer').removeClass('on');
+			$menu.addClass('on');
+		}
+	});
+	$(document).mouseup(function(e){
+		var container2 = $(".result-mng-list .btn-set, .list-menu-layer");
+		if(container2.has(e.target).length === 0){
+			$(".result-mng-list .list-menu-layer").removeClass('on');
+		}
+	});
+	
+	// 참여자 레이어
+	$('.user-thumb-list .btn-more').on('click', function(){
+		$(this).parent().next('.user-all-list').fadeToggle(300);
+	});
+	$(document).mouseup(function(e){
+		var container3 = $(".user-thumb-list");
+		if(container3.has(e.target).length === 0){
+			$(".user-thumb-wrap .user-all-list").fadeOut(300);
+		}
+	});
+	
+	// 모달 참여자 레이어
+	$('.note-list-modal .user-thumb-list .btn-more').on('click', function(){
+		$(this).parent().next('.user-all-list.modal').fadeToggle(300);
+	});
+	$(document).mouseup(function(e){
+		var container4 = $(".user-thumb-list.modal");
+		if(container4.has(e.target).length === 0){
+			$(".user-thumb-wrap .user-all-list.modal").fadeOut(300);
+		}
+	});
+	
+	//모달 안의 레이어
+	$('.right-btn-box li a').on('click', function(){
+		var idx =  $(this).parent().index();
+		$('.inner-layer > div').fadeOut();
+		$('.inner-layer > div').eq(idx).fadeIn();
+	});	
+	$('.inner-layer div > .btn-close').on('click', function(){
+		$(this).parent().fadeOut();		
+	});	
+	$('.cbtn, .layer_close, .cbtn2').fadeIn().click(function() {
+		$('.inner-layer > div').fadeOut();
+    });
+});
+</script>

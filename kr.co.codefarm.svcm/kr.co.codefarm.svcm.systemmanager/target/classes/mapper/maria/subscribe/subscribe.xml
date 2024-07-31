@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.subscribe">
+
+	<select id="getSubscribeList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.AUTH_CD
+			 , A.AUTH_NM 
+			 , IF(B.CORP_AUTH_CD IS NULL,IF(C.CORP_AUTH_CD IS NULL, 'NONE', 'WAITING'), 'ACCESS') AS STATUS
+		  FROM SMN_AUTH A
+		  LEFT JOIN SMN_CORP_AUTH B
+		    ON A.AUTH_CD = B.CORP_AUTH_CD
+		   AND B.CORP_ID = #{CORP_ID}
+		  LEFT JOIN SMN_CORP_SUBSCRIPTION C
+		    ON A.AUTH_CD = C.CORP_AUTH_CD
+		   AND C.CORP_ID = #{CORP_ID}
+		 WHERE A.AUTH_GB = '03'
+	</select>
+
+	<select id="getAppList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.APP_ID
+             , A.APP_NM
+             , A.APP_VER
+             , A.APP_ENM
+             , A.ICON
+		  FROM SMN_APP A
+		  JOIN SMN_APP_AUTH B
+		    ON A.APP_ID = B.APP_ID
+		   AND B.AUTH_CD = #{AUTH_CD}
+		 WHERE A.USE_YN = 'Y'
+	</select>
+
+	<insert id="subscription" parameterType="hashMap">
+		INSERT INTO SMN_CORP_SUBSCRIPTION
+			 ( CORP_ID
+			 , CORP_AUTH_CD
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+		VALUES
+			 ( #{CORP_ID}
+			 , #{AUTH_CD}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 )
+	</insert>
+	
+	
+	<select id="getSubscriptionList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.CORP_ID			 
+			 , B.CORP_NM
+			 , A.CORP_AUTH_CD
+			 , C.AUTH_NM
+		  FROM SMN_CORP_SUBSCRIPTION A
+		  JOIN SMN_CORP B
+		    ON A.CORP_ID = B.CORP_ID
+		  JOIN SMN_AUTH C
+		    ON A.CORP_AUTH_CD = C.AUTH_CD
+		 WHERE 1 = 1
+		<if test="pSearchArgv != null and pSerachArgv != ''.toString()">
+		   AND B.CORP_NM LIKE CONCAT('%', #{pSearchArgv}, '%')
+		</if>
+	</select>
+	
+	<delete id="cancelSubscription" parameterType="hashMap">
+		DELETE FROM SMN_CORP_SUBSCRIPTION
+		 WHERE CORP_ID = #{CORP_ID}
+		   AND CORP_AUTH_CD = #{AUTH_CD}
+	</delete>
+	
+	<insert id="acceptService" parameterType="hashMap">
+		DELETE FROM SMN_CORP_SUBSCRIPTION
+		 WHERE CORP_ID = #{CORP_ID}
+		   AND CORP_AUTH_CD = #{CORP_AUTH_CD};
+		   
+		INSERT INTO SMN_CORP_AUTH
+			 ( CORP_ID
+			 , CORP_AUTH_CD
+			 , INSERT_DTTM
+			 , INSERT_ID
+			 , INSERT_IP
+			 , INSERT_PGM
+			 , UPDATE_DTTM
+			 , UPDATE_ID
+			 , UPDATE_IP
+			 , UPDATE_PGM
+			 )
+		VALUES
+			 ( #{CORP_ID}
+			 , #{CORP_AUTH_CD}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 , NOW()
+			 , #{SYSTEM_ID}
+			 , #{SYSTEM_IP}
+			 , #{SYSTEM_PGM}
+			 );
+	</insert>
+	
+	<delete id="rejectService" parameterType="hashMap">
+		DELETE FROM SMN_CORP_SUBSCRIPTION
+		 WHERE CORP_ID = #{CORP_ID}
+		   AND CORP_AUTH_CD = #{CORP_AUTH_CD};
+	</delete>
+
+	<select id="getMySubscribeList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.APP_ID
+			 , A.APP_NM
+			 , A.APP_VER
+			 , A.APP_ENM
+			 , A.ICON
+			 , A.ENDPOINT
+             , NVL(A.APP_TYPE_GB, '') AS APP_TYPE_GB
+             , NVL(A.OPEN_TYPE_GB, '') AS OPEN_TYPE_GB
+		  FROM SMN_APP A
+		 INNER
+		  JOIN VORTAL.SMN_APP_AUTH B
+			ON A.APP_ID = B.APP_ID
+		 INNER
+		  JOIN SMN_CORP_AUTH C
+			ON B.AUTH_CD = C.CORP_AUTH_CD
+		   AND C.CORP_ID = #{CORP_ID}
+		 WHERE A.USE_YN = 'Y'
+	</select>
+</mapper>

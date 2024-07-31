@@ -1,0 +1,182 @@
+<section class="sub_cont_box" id="apireg">
+        <div class="box-type03">
+            <div class="row form-row">
+                <div class="f-right">
+                    <input type="button" value="신규" class="btn type01 size-m" @click="createApi = !createApi; newCd=''; newCdNm='';">
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m12 xl12">
+            <transition name="slidedown">
+                <div class="box-type02" v-if="createApi">
+                    <div class="row form-row">
+                        <div class="form-group col s12 l6 xl3 d-inline-block">
+                            <label class="label-type01">앱명</label>
+                            <input type="text" class="size-l" v-model="newAppNm">
+                        </div>
+                        <div class="form-group col s12 l6 xl3">
+                            <label class="label-type01">파일구분</label>
+                            <select class="size-l" v-model="newFileGb">
+                                <option value="api">API</option>
+                                <option value="css">CSS</option>
+                                <option value="component">COMPONENT</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group col s12 l6 xl3">
+                            <label class="label-type01">파일명</label>
+                            <input type="text" class="size-l" v-model="newFileNm">
+                        </div>
+                    </div>
+                    <div class="f-right">
+                        <input type="button" class="btn type01 size-l" value="등록" @click="insertApi(); newCd=''; newCdNm='';">
+                    </div>
+                </div>
+            </transition>
+
+            <div class="table-type04-wrap">
+                <table class="table-type04 response" id="mainListLoading">
+                    <colgroup>
+                        <col width="25%" />
+                        <col width="25%" />
+                        <col width="25%" />
+                        <col width="25%" />
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col">앱명</th>
+                        <th scope="col">파일구분</th>
+                        <th scope="col">파일명</th>
+                        <th scope="col">삭제</th>
+                    </tr>
+                    </thead>
+                    <tbody v-if="mainList.getRowCount()>0">
+                        <tr v-for="item in mainList.data">
+                            <td class="center" data-header="앱명">{{item.APP_NM}}</td>
+                            <td class="center" data-header="파일구분">{{item.FILE_GB}}</td>
+                            <td class="center" data-header="파일명">{{item.FILE_NM}}</td>
+                            <td class="center" data-header="삭제"><a href="javascript:void(0)" class="icon-trashcan" @click="messageModal.openModal('confirm', '삭제', '코드를 삭제 하시겠습니까?', 'small', 'DELETE', item);"></a></td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <td colspan="100">등록된 코드가 없습니다.</td>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+</section>
+
+<script type="text/javascript">
+    /*******************************************************************************************************************************************************************
+     * vue start
+     ********************************************************************************************************************************************************************/
+
+    var apireg = new Vue({
+        el: '#apireg',
+        //사용할 데이터
+        data: {
+            mainList     : new Dataset(),
+            subList      : new Dataset(),
+            selectUpCd   : '',
+            createApi    : false,
+            newAppNm     : '',
+            newFileGb    : 'api',
+            newFileNm    : '',
+            messageModal : new ModalSet('alarm-modal'),	// confirm 모달
+        },
+        //마운트 된 시점수행
+        mounted: function(){
+            var self = this;
+
+            self.setMainList();
+            
+        },
+        //함수
+        methods: {
+            messagePopupCallback: function(pGb, pId, pData) {	//confirm 확인 callback함수 (확인/취소 등 구분값, confirm 호출 구분 값, 전달 데이터)
+                if(pGb!='confirm') return;
+
+                switch(pId) {
+                    case 'DELETE':
+                        this.deleteApi(pData);
+                        break;
+                }
+            },
+            setMainList: function(){
+                var self = this;
+
+                var returnVal = systemApi.selectApi();
+
+                returnVal.then(function(response) {
+                    self.mainList.setData(response.data);
+                }).finally(function () {
+                    self.setSubList();
+                });
+            },
+
+            insertApi: function(){
+                var self = this;
+
+                var params ={
+                    APP_NM   : self.newAppNm,
+                    FILE_GB  : self.newFileGb,
+                    FILE_NM  : self.newFileNm,
+                }
+
+                var returnVal = systemApi.insertApi(params);
+
+                returnVal.then(function(response) {
+                    if(response.data>0) notifySubmit('success', '신규등록', 'API 등록이 완료되었습니다.', 'icon-trashcan');
+                    else notifySubmit('error', '신규등록', '신규API 등록에 실패하였습니다.', 'icon-error');
+                }).finally(function () {
+                    self.setMainList();
+                    self.createApi = false;
+                    self.newAppNm = '';
+                    self.newFileGb = '';
+                    self.newFileNm = '';
+                });
+            },
+
+            deleteApi: function(delCd){
+                var self = this;
+
+                var params ={
+                    APP_NM   : delCd.APP_NM,
+                    FILE_GB  : delCd.FILE_GB,
+                    FILE_NM  : delCd.FILE_NM,
+                }
+
+                var returnVal = systemApi.deleteApi(params);
+
+                returnVal.then(function(response) {
+                    if(response.data>0) notifySubmit('success', '삭제', 'API 삭제가 완료되었습니다.', 'icon-trashcan');
+                    else notifySubmit('error', '삭제', 'API 삭제에 실패하였습니다.', 'icon-error');
+                }).finally(function () {
+                    self.setMainList();
+                    self.createApi = false;
+                    self.newAppNm = '';
+                    self.newFileGb = '';
+                    self.newFileNm = '';
+                });;
+            },
+        }
+    });
+    /*******************************************************************************************************************************************************************
+     * vue end
+     ********************************************************************************************************************************************************************/
+
+
+    /*******************************************************************************************************************************************************************
+     * javascript start
+     ********************************************************************************************************************************************************************/
+    $(document).ready(function(){
+
+    });
+    /*******************************************************************************************************************************************************************
+     * javascript end
+     ********************************************************************************************************************************************************************/
+
+</script>
+
+

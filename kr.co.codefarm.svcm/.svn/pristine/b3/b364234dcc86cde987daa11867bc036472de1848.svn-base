@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.systemmanager.maria.alertApi">
+	<select id="selectUserUnidentifiedAlarmDataList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.USER_ID
+             , A.ALARM_SEQ
+             , A.ALARM_LIST_SEQ
+             , A.TITLE AS ALARM_TITLE
+             , A.TITLE
+             , A.TEXT
+             , A.LINK
+             , A.ALARM_DTTM
+             , A.ALARM_HWAKIN_DTTM
+             , A.ALARM_HWAKIN_YN
+             , A.ALARM_PYOSI_YN
+             , A.ALARM_DELETE_YN
+             , A.SUBSCRIBE_YN
+             , A.RNUM
+          FROM (
+          	        SELECT A.USER_ID
+			             , A.ALARM_SEQ
+			             , A.ALARM_LIST_SEQ
+			             , B.TITLE AS ALARM_TITLE
+			             , A.TITLE
+			             , A.TEXT
+			             , A.LINK
+			             , DATE_FORMAT(A.ALARM_DTTM, '%Y-%m-%d %H:%i:%s') AS ALARM_DTTM
+			             , DATE_FORMAT(A.ALARM_HWAKIN_DTTM, '%Y-%m-%d %H:%i:%s') AS ALARM_HWAKIN_DTTM
+			             , A.ALARM_HWAKIN_YN
+			             , A.ALARM_PYOSI_YN
+			             , A.ALARM_DELETE_YN
+			             , C.SUBSCRIBE_YN
+			             , ROW_NUMBER() OVER (ORDER BY A.ALARM_DTTM DESC) AS RNUM
+			          FROM SMN_USER_ALARM_DATA A
+			         INNER JOIN SMN_ALARM B
+			            ON A.ALARM_SEQ = B.ALARM_SEQ
+			          LEFT OUTER JOIN SMN_USER_ALARM_SETTING C
+			            ON A.USER_ID = C.USER_ID
+			           AND A.ALARM_SEQ = C.ALARM_SEQ
+			         WHERE 1=1
+			           AND A.USER_ID = #{USER_ID}
+			           AND A.ALARM_HWAKIN_YN = 'N'
+			           AND A.ALARM_DELETE_YN = 'N'
+			           AND (C.SUBSCRIBE_YN = 'Y' OR C.SUBSCRIBE_YN IS NULL)
+               ) A
+		 WHERE A.RNUM &lt;= 5
+         ORDER BY A.RNUM
+	</select>
+	
+	<select id="getUnidentifiedAlarmDataCnt" parameterType="hashMap" resultType="int">
+		SELECT COUNT(*) AS CNT
+          FROM SMN_USER_ALARM_DATA A
+         INNER JOIN SMN_ALARM B
+            ON A.ALARM_SEQ = B.ALARM_SEQ
+          LEFT OUTER JOIN SMN_USER_ALARM_SETTING C
+            ON A.USER_ID = C.USER_ID
+           AND A.ALARM_SEQ = C.ALARM_SEQ
+         WHERE 1=1
+           AND A.USER_ID = #{USER_ID}
+           AND A.ALARM_HWAKIN_YN = 'N'
+           AND A.ALARM_DELETE_YN = 'N'
+           AND (C.SUBSCRIBE_YN = 'Y' OR C.SUBSCRIBE_YN IS NULL)
+	</select>
+</mapper>

@@ -1,0 +1,955 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mileage.css" />  
+
+<h2>마일리지 관리</h2>
+<section class="sub_cont_box" id="app">
+    <div class="tab-outter">
+        <div class="tab-type01">
+            <div class="tab-inner">
+                <div rel="tab1"><a href="#!" class="active">마일리지 내역</a></div>
+                <div rel="tab2"><a href="#!">마일리지 기준관리</a></div>
+                <div rel="tab3"><a href="#!">마일리지 상품관리</a></div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="tab-container">
+        <div id="tab1" class="tab-content">
+            <div class="box-type03 pd20 row form-row">
+                <div class="col s12 l8">
+                    <div class="row form-row">
+                        <div class="form-group col s12 l1">
+                            <label class="label-type00 size-m icon-search">검색</label> 
+                        </div>
+                        <div class="form-group col s12 l2">
+                            <div class="date-form-wrap">
+                                <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                                <input type="text" id="exampleFormControlInput1" class="size-m" placeholder="년도">
+                            </div> 
+                        </div>
+                        <div class="form-group col s12 l2">
+                            <div class="date-form-wrap">
+                                <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                                <input type="text" id="exampleFormControlInput1" class="size-m" placeholder="월">
+                            </div> 
+                        </div>
+                        <div class="form-group col s12 l3">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">마일리지 구분</option>
+                            </select>   
+                        </div>  
+                        <div class="form-group col s12 l3">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">마일리지 상태</option>
+                            </select>   
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 l4">
+                    <div class="row form-row">
+                        <div class="form-group col s12 l9">
+                            <input type="text" id="inlineFormInputName9" class="size-m" placeholder="입력하세요"> 
+                        </div>    
+                        <div class="form-group col s12 l3">                           
+                            <input type="button" value="조회" class="btn type01 size-m"> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-row mileage-array">
+                <div class="form-group col s12 l6">
+                    <h2 class="h2">마일리지 내역</h2>
+                </div>
+                <div class="form-group col s12 l6 right">
+                    <div class="array-list">
+                        <a href="#!" class="active">최신일순</a>
+                        <a href="#!">신청일순</a>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table-type05 response">
+                <caption>마일리지 내역 테이블로 상태, 신청자, 내역, 적립, 누적, 적립횟수, 진행상태, 처리  항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="8%" />
+                    <col width="12%" />
+                    <col>
+                    <col width="10%" />
+                    <col width="12%" />
+                    <col width="12%" />
+                    <col width="10%" />
+                    <col width="12%" />
+                </colgroup>                        
+                <tbody>
+                    <tr>
+                        <!-- 상태아이콘 종류 (icon-alert-circle col2),(icon-slash col01),(icon-checkmark col03) 색상과 아이콘을 셋트로 써야함
+                            진행상태 글자색도 같은색상으로 써야함 상태가col01이면 진행상태도 col01  -->
+                        <td data-header="상태">
+                            <span class="statue-icon icon-alert-circle col02"></span>
+                        </td>
+                        <td data-header="신청자">
+                            <span class=mileage-user">20150021 서태웅</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">장학금</span><span class="mileage-title">도서상품권 5만원</span>
+                        </td>
+                        <td data-header="적립">                                            
+                            <span class="mileage-ing-tit">[적립]</span><span class="mileage-ing-num">500</span>
+                        </td>
+                        <td data-header="누적">                                            
+                            <span class="mileage-accure-tit">[누적]</span><span class="mileage-accure-num"><span class="point">900</span>/1000</span>
+                        </td>
+                        <td data-header="적립횟수">                                            
+                            <span class="mileage-accure-tit">[적립횟수]</span><span class="mileage-accure-num"><span class="point">5</span>/5</span>
+                        </td>
+                        <td data-header="진행상태">
+                            <span class="statue-txt col02">적립신청</span>
+                        </td>
+                        <td data-header="처리">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col01">거부</a>
+                            <a href="#!" class="btn type02 size-s mileage-btn-col02">승인</a>
+                        </td>
+                    </tr>
+                    <tr class="hidden-tr">
+                        <td colspan="8" class="one-col">
+                            <div class="detail-box">
+                                <div class="row form-row">
+                                    <div class="form-group col s12 l1">
+                                        <span class="tit">거부사유</span>
+                                    </div> 
+                                    <div class="form-group col s12 l11">
+                                        <input type="text" id="formGroupExampleInput6" class="size-m" value="최대 적립 횟수 초과입니다.">
+                                    </div> 
+                                </div>  
+                                <div class="btn-line center">
+                                    <a href="#!" class="btn type02 size-m btn-col01">적립거부</a>
+                                </div>                                               
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-alert-circle col02"></span>
+                        </td>
+                        <td data-header="신청자">
+                            <span class=mileage-user">20150021 강백호</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">이력활동</span><span class="mileage-title">외국어역량 추가 마일리지</span>
+                        </td>
+                        <td data-header="적립">                                            
+                            <span class="mileage-ing-tit">[적립]</span><span class="mileage-ing-num">100</span>
+                        </td>
+                        <td data-header="누적">                                            
+                            <span class="mileage-accure-tit">[누적]</span><span class="mileage-accure-num"><span class="point">700</span>/1000</span>
+                        </td>
+                        <td data-header="적립횟수">                                            
+                            <span class="mileage-accure-tit">[적립횟수]</span><span class="mileage-accure-num"><span class="point">4</span>/5</span>
+                        </td>
+                        <td data-header="진행상태">
+                            <span class="statue-txt col02">적립신청</span>
+                        </td>
+                        <td data-header="처리">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col01">거부</a>
+                            <a href="#!" class="btn type02 size-s mileage-btn-col02">승인</a>
+                        </td>
+                    </tr>
+                    <tr class="hidden-tr">
+                        <td colspan="8" class="one-col">
+                            <div class="detail-box">
+                                <div class="row form-row">
+                                    <p class="tit02">상세내역</p>
+                                    <p class="cont02">[학번/성명] 20150021 강백호<br/> 
+                                    [적립신청] 이력활동  - 외국어역량 추가 마일리지 <br/> 
+                                    [적립신청일] 2019.02.25<br/> 
+                                    [적립마일리지] 100 마일리지</p> 
+                                </div>  
+                                <div class="btn-line center">
+                                    <a href="#!" class="btn type02 size-m btn-col02">적립승인</a>
+                                </div>                                               
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-slash col01"></span>
+                        </td>
+                        <td data-header="신청자">
+                            <span class=mileage-user">20150021 정대만</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">장학금</span><span class="mileage-title">도서상품권 5만원</span>
+                        </td>
+                        <td data-header="적립">                                            
+                            <span class="mileage-ing-tit">[반환]</span><span class="mileage-ing-num">1000</span>
+                        </td>
+                        <td data-header="누적">                                            
+                            <span class="mileage-accure-tit">[누적]</span><span class="mileage-accure-num"><span class="point">0</span>/1000</span>
+                        </td>
+                        <td data-header="적립횟수">                                            
+                            <span class="mileage-accure-tit">[적립횟수]</span><span class="mileage-accure-num"><span class="point">2</span>/5</span>
+                        </td>
+                        <td data-header="진행상태">
+                            <span class="statue-txt col01">차감취소</span>
+                        </td>
+                        <td data-header="처리">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">변경</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                        <td data-header="신청자">
+                            <span class=mileage-user">20150021 송태섭</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">장학금</span><span class="mileage-title">도서상품권 10만원</span>
+                        </td>
+                        <td data-header="적립">                                            
+                            <span class="mileage-ing-tit">[반환]</span><span class="mileage-ing-num">1900</span>
+                        </td>
+                        <td data-header="누적">                                            
+                            <span class="mileage-accure-tit">[누적]</span><span class="mileage-accure-num"><span class="point">1000</span>/1000</span>
+                        </td>
+                        <td data-header="적립횟수">                                            
+                            <span class="mileage-accure-tit">[적립횟수]</span><span class="mileage-accure-num"><span class="point">2</span>/5</span>
+                        </td>
+                        <td data-header="진행상태">
+                            <span class="statue-txt col03">차감</span>
+                        </td>
+                        <td data-header="처리">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">변경</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                        <td data-header="신청자">
+                            <span class=mileage-user">20150021 채치수</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">비교과프로그램</span><span class="mileage-title">비교과 수강 마일리지</span>
+                        </td>
+                        <td data-header="적립">                                            
+                            <span class="mileage-ing-tit">[반환]</span><span class="mileage-ing-num">1900</span>
+                        </td>
+                        <td data-header="누적">                                            
+                            <span class="mileage-accure-tit">[누적]</span><span class="mileage-accure-num"><span class="point">1000</span>/1000</span>
+                        </td>
+                        <td data-header="적립횟수">                                            
+                            <span class="mileage-accure-tit">[적립횟수]</span><span class="mileage-accure-num"><span class="point">2</span>/5</span>
+                        </td>
+                        <td data-header="진행상태">
+                            <span class="statue-txt col03">차감</span>
+                        </td>
+                        <td data-header="처리">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">변경</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 페이징 -->
+            <div class="paginate">
+                <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+            </div>
+        </div>
+        <div id="tab2" class="tab-content">
+            <div class="box-type03 pd20 row form-row">
+                <div class="col s12 l6">
+                    <div class="row form-row">
+                        <div class="form-group col s12 l1">
+                            <label class="label-type00 size-m icon-search">검색</label> 
+                        </div>
+                        <div class="form-group col s12 l3">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">마일리지</option>
+                            </select> 
+                        </div>
+                        <div class="form-group col s12 l7">
+                            <input type="text" id="inlineFormInputName9" class="size-m" placeholder="마일리지명 / 코드"> 
+                        </div>                                        
+                    </div>
+                </div>
+                <div class="col s12 l6">
+                    <div class="row form-row">
+                        <div class="form-group col s12 l5">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">인정 구분</option>
+                            </select>
+                        </div>   
+                        <div class="form-group col s12 l5">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">사용 여부</option>
+                            </select>
+                        </div> 
+                        <div class="form-group col s12 l2">                           
+                            <input type="button" value="조회" class="btn type01 size-m"> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-row mileage-array">
+                <div class="form-group col s12 l6">
+                    <h2 class="h2">마일리지 기준관리</h2>
+                </div>
+                <div class="form-group col s12 l6 right">
+                    <a href="#!" class="btn type02 size-s mileage-btn-col01">삭제</a>
+                    <a href="#!" class="btn type02 size-s mileage-btn-col04">신규</a>
+                    <a href="#!" class="btn type02 size-s mileage-btn-col02">저장</a>
+                </div>
+            </div>
+
+            <table class="table-type05 response">
+                <caption>마일리지 기준관리 테이블로 체크박스, 번호, 내역, 기준마일리지, 최대마일리지, 최대횟수, 상태 항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="5%" />
+                    <col width="8%" />
+                    <col>
+                    <col width="12%" />
+                    <col width="12%" />
+                    <col width="12%" />
+                    <col width="10%" />
+                </colgroup>                        
+                <tbody>
+                    <tr>
+                        <!-- 상태아이콘 종류 (icon-alert-circle col2),(icon-slash col01),(icon-checkmark col03) 색상과 아이콘을 셋트로 써야함
+                            진행상태 글자색도 같은색상으로 써야함 상태가col01이면 진행상태도 col01  -->
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="mileage-num">001035</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">이력활동</span><span class="mileage-title">기타역량 추가 마일리지</span>
+                        </td>                                        
+                        <td data-header="기준마일리지">                                            
+                            <span class="mileage-accure-tit">[기준마일리지]</span><span class="mileage-accure-num"><span class="point">500</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대마일리지]</span><span class="mileage-accure-num"><span class="point">1500</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대횟수]</span><span class="mileage-accure-num"><span class="point">15</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                    </tr>
+                    <tr class="hidden-tr">
+                        <td colspan="7" class="one-col">
+                            <div class="row form-row">
+                                <div class="form-group col s12 l4">
+                                    <label for="formGroupExampleInput2" class="label-type01">마일리지 코드</label>
+                                    <input type="text" id="formGroupExampleInput2" class="size-m" value="001032">
+                                </div>
+                                <div class="form-group col s12 l4">
+                                    <label for="formGroupExampleInput3" class="label-type01">마일리지 구분</label>
+                                    <select name="pSearchType" id="pSearchType" class="size-m">
+                                        <option value="">이력활동</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col s12 l4">
+                                    <label for="formGroupExampleInput4" class="label-type01">마일리지 구분</label>
+                                    <select name="pSearchType" id="pSearchType" class="size-m">
+                                        <option value="">승인</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row form-row">
+                                <div class="form-group col s12 l6">
+                                    <label for="formGroupExampleInput2" class="label-type01">마일리지 명</label>
+                                    <input type="text" id="formGroupExampleInput2" class="size-m" value="기타역량 추가 마일리지">
+                                </div>
+                                <div class="form-group col s12 l6">
+                                    <label for="formGroupExampleInput3" class="label-type01">평가방법</label>
+                                    <input type="text" id="formGroupExampleInput2" class="size-m" value="관리자 확인 후 승인">
+                                </div>
+                            </div>
+                            <div class="row form-row">
+                                <div class="form-group col s12 l4">
+                                    <label for="formGroupExampleInput2" class="label-type01">기준 마일리지</label>
+                                    <input type="text" id="formGroupExampleInput2" class="size-m" value="100">
+                                </div>
+                                <div class="form-group col s12 l4">
+                                    <label for="formGroupExampleInput3" class="label-type01">최대 마일리지</label>
+                                    <input type="text" id="formGroupExampleInput2" class="size-m" value="1500">
+                                </div>
+                                <div class="form-group col s12 l4">
+                                    <label for="formGroupExampleInput3" class="label-type01">최대횟수</label>
+                                    <input type="text" id="formGroupExampleInput2" class="size-m" value="5">
+                                </div>
+                            </div>
+                            <div class="row form-row">
+                                <div class="form-group col s12 l8">
+                                    <label for="formGroupExampleInput2" class="label-type01">비고</label>
+                                    <input type="text" id="formGroupExampleInput2" class="size-m" placeholder="내용을 입력해주세요">
+                                </div>
+                                <div class="form-group col s12 l4 form-row">
+                                    <div class="col s12">
+                                        <label for="formGroupExampleInput3" class="label-type01">사용여부</label>
+                                    </div>
+                                    <div class="col s12">
+                                        <label class="toggle-switch size-l">
+                                            <input type="checkbox" checked="" id="form09">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="mileage-num">001031</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">이력활동</span><span class="mileage-title">기타역량 추가 마일리지</span>
+                        </td>                                        
+                        <td data-header="기준마일리지">                                            
+                            <span class="mileage-accure-tit">[기준마일리지]</span><span class="mileage-accure-num"><span class="point">50</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대마일리지]</span><span class="mileage-accure-num"><span class="point">500</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대횟수]</span><span class="mileage-accure-num"><span class="point">10</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-slash col01"></span>
+                        </td>
+                    </tr>
+                    
+
+                    <tr>
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="mileage-num">001031</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">비교과프로그램</span><span class="mileage-title">비교과 수강 마일리지</span>
+                        </td>                                        
+                        <td data-header="기준마일리지">                                            
+                            <span class="mileage-accure-tit">[기준마일리지]</span><span class="mileage-accure-num"><span class="point">30</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대마일리지]</span><span class="mileage-accure-num"><span class="point">1200</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대횟수]</span><span class="mileage-accure-num"><span class="point">40</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="mileage-num">001031</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">이력활동</span><span class="mileage-title">기타역량 추가 마일리지</span>
+                        </td>                                        
+                        <td data-header="기준마일리지">                                            
+                            <span class="mileage-accure-tit">[기준마일리지]</span><span class="mileage-accure-num"><span class="point">50</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대마일리지]</span><span class="mileage-accure-num"><span class="point">500</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대횟수]</span><span class="mileage-accure-num"><span class="point">10</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-slash col01"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="체크박스">
+                            <div class="checkbox size-xs single">
+                                <input type="checkbox" id="checkbox01"><i class="icon-check"></i>
+                            </div>
+                        </td>
+                        <td data-header="번호">
+                            <span class="mileage-num">001031</span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division">비교과프로그램</span><span class="mileage-title">비교과 수강 마일리지</span>
+                        </td>                                        
+                        <td data-header="기준마일리지">                                            
+                            <span class="mileage-accure-tit">[기준마일리지]</span><span class="mileage-accure-num"><span class="point">30</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대마일리지]</span><span class="mileage-accure-num"><span class="point">1200</span></span>
+                        </td>
+                        <td data-header="최대마일리지">                                            
+                            <span class="mileage-accure-tit">[최대횟수]</span><span class="mileage-accure-num"><span class="point">40</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 페이징 -->
+            <div class="paginate">
+                <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+            </div>
+        </div>
+        <div id="tab3" class="tab-content">
+            <div class="box-type03 pd20 row form-row">
+                <div class="col s12 l6">
+                    <div class="row form-row">
+                        <div class="form-group col s12 l1">
+                            <label class="label-type00 size-m icon-search">검색</label> 
+                        </div>
+                        <div class="form-group col s12 l4">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">상품 카테고리</option>
+                            </select> 
+                        </div>
+                        <div class="form-group col s12 l6">
+                            <input type="text" id="inlineFormInputName9" class="size-m" placeholder="상품명 / 코드"> 
+                        </div>                                        
+                    </div>
+                </div>
+                <div class="col s12 l6">
+                    <div class="row form-row">
+                        <div class="form-group col s12 l5">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">마일리지 구분</option>
+                            </select>
+                        </div>   
+                        <div class="form-group col s12 l5">
+                            <select name="pSearchType" id="pSearchType" class="size-m">
+                                <option value="">마일리지 상태</option>
+                            </select>
+                        </div> 
+                        <div class="form-group col s12 l2">                           
+                            <input type="button" value="조회" class="btn type01 size-m"> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-row mileage-array">
+                <div class="form-group col s12 l6">
+                    <h2 class="h2">마일리지 상품관리</h2>
+                </div>                                
+            </div>
+
+            <table class="table-type05 response">
+                <caption>마일리지 상품관리 테이블로 번호, 사진, 내역, 포인트, 게재기간, 재고수량, 상태, 수정 항목별 순서대로 안내하는 표입니다</caption>
+                <colgroup>
+                    <col width="8%" />
+                    <col width="10%" />
+                    <col>
+                    <col width="15%" />
+                    <col width="20%" />
+                    <col width="12%" />
+                    <col width="6%" />
+                    <col width="8%" />
+                </colgroup>                        
+                <tbody>
+                    <tr>
+                        <!-- 상태아이콘 종류 (icon-alert-circle col2),(icon-slash col01),(icon-checkmark col03) 색상과 아이콘을 셋트로 써야함
+                            진행상태 글자색도 같은색상으로 써야함 상태가col01이면 진행상태도 col01  -->                                        
+                        <td data-header="번호">
+                            <span class="mileage-accure-tit">[00101]</span>
+                        </td>
+                        <td data-header="사진">
+                            <span class="mileage-img"><img src="/service/design/images/mileage/mileage_img01.jpg" alt="" /></span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division col01">장학금</span><span class="mileage-title">도서상품권 5만원</span>
+                        </td>                                        
+                        <td data-header="포인트">                                            
+                            <span class="mileage-date-tit">포인트 :</span><span class="mileage-point col02">5000</span>
+                        </td>
+                        <td data-header="게재기간">                                            
+                            <span class="mileage-date-tit">게재기간 :</span><span class="mileage-date">2019.02.16 ~ 2019.05.01</span>
+                        </td>
+                        <td data-header="재고수량">                                            
+                            <span class="mileage-date-tit">재고수량 :</span><span class="mileage-accure-num"><span class="point">58</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                        <td data-header="수정">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">수정</a>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td data-header="번호">
+                            <span class="mileage-accure-tit">[00101]</span>
+                        </td>
+                        <td data-header="사진">
+                            <span class="mileage-img"><img src="/service/design/images/mileage/mileage_img01.jpg" alt="" /></span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division col01">장학금</span><span class="mileage-title">도서상품권 10만원</span>
+                        </td>                                        
+                        <td data-header="포인트">                                            
+                            <span class="mileage-date-tit">포인트 :</span><span class="mileage-point col02">10000</span>
+                        </td>
+                        <td data-header="게재기간">                                            
+                            <span class="mileage-date-tit">게재기간 :</span><span class="mileage-date">2019.02.25 ~ 2019.05.01</span>
+                        </td>
+                        <td data-header="재고수량">                                            
+                            <span class="mileage-date-tit">재고수량 :</span><span class="mileage-accure-num"><span class="point">258</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                        <td data-header="수정">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">수정</a>
+                        </td>
+                    </tr>                                    
+
+                    <tr>
+                        <td data-header="번호">
+                            <span class="mileage-accure-tit">[00101]</span>
+                        </td>
+                        <td data-header="사진">
+                            <span class="mileage-img"><img src="/service/design/images/mileage/mileage_img02.jpg" alt="" /></span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division col02">학내서비스</span><span class="mileage-title">식권10장+1장</span>
+                        </td>                                        
+                        <td data-header="포인트">                                            
+                            <span class="mileage-date-tit">포인트 :</span><span class="mileage-point col02">4500</span>
+                        </td>
+                        <td data-header="게재기간">                                            
+                            <span class="mileage-date-tit">게재기간 :</span><span class="mileage-date">2019.02.25 ~ 2019.05.01</span>
+                        </td>
+                        <td data-header="재고수량">                                            
+                            <span class="mileage-date-tit">재고수량 :</span><span class="mileage-accure-num"><span class="point">9999</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                        <td data-header="수정">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">수정</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="번호">
+                            <span class="mileage-accure-tit">[00101]</span>
+                        </td>
+                        <td data-header="사진">
+                            <span class="mileage-img"><img src="/service/design/images/mileage/mileage_img03.jpg" alt="" /></span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division col04">물건</span><span class="mileage-title">아메리카노 1잔</span>
+                        </td>                                        
+                        <td data-header="포인트">                                            
+                            <span class="mileage-date-tit">포인트 :</span><span class="mileage-point col02">100</span>
+                        </td>
+                        <td data-header="게재기간">                                            
+                            <span class="mileage-date-tit">게재기간 :</span><span class="mileage-date">2019.02.25 ~ 2019.05.01</span>
+                        </td>
+                        <td data-header="재고수량">                                            
+                            <span class="mileage-date-tit">재고수량 :</span><span class="mileage-accure-num"><span class="point">9999</span></span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-checkmark col03"></span>
+                        </td>
+                        <td data-header="수정">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">수정</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-header="번호">
+                            <span class="mileage-accure-tit">[00101]</span>
+                        </td>
+                        <td data-header="사진">
+                            <span class="mileage-img"><img src="/service/design/images/mileage/mileage_img04.jpg" alt="" /></span>
+                        </td>
+                        <td data-header="내역" class="left">
+                            <span class="mileage-division col03">학내상품</span><span class="mileage-title">대학점퍼</span>
+                        </td>                                        
+                        <td data-header="포인트">                                            
+                            <span class="mileage-date-tit">포인트 :</span><span class="mileage-point col02">7000</span>
+                        </td>
+                        <td data-header="게재기간">                                            
+                            <span class="mileage-date-tit">게재기간 :</span><span class="mileage-date">2019.02.25 ~ 2019.05.01</span>
+                        </td>
+                        <td data-header="재고수량">                                            
+                            <span class="mileage-date-tit red">품절</span>
+                        </td>
+                        <td data-header="상태">
+                            <span class="statue-icon icon-slash col01"></span>
+                        </td>
+                        <td data-header="수정">
+                            <a href="#!" class="btn type02 size-s mileage-btn-col03">수정</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 페이징 -->
+            <div class="paginate">
+                <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+                <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+                <span>
+                    <a href="#" class="active" title="1 페이지">1</a>
+                    <a href="#" title="2 페이지">2</a>
+                    <a href="#" title="3 페이지">3</a>
+                    <a href="#" title="4 페이지">4</a>
+                    <a href="#" title="5 페이지">5</a>
+                    <a href="#" title="6 페이지">6</a>
+                    <a href="#" title="7 페이지">7</a>
+                    <a href="#" title="8 페이지">8</a>
+                    <a href="#" title="9 페이지">9</a>
+                    <a href="#" title="10 페이지">10</a>
+                </span>
+                <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+                <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+            </div>
+            <div class="btn-line right">
+                <a href="#!" class="btn type02 size-m">등록</a>
+            </div> 
+
+
+            <!-- 여기서부터 상품등록 -->
+            <div class="row form-row mileage-array">
+                <div class="form-group col s12 l6">
+                    <h2 class="h2">상품등록</h2>
+                </div>   
+                <div class="form-group col s12 l6 right">
+                    <a href="#!" class="btn type01 size-m">이전페이지</a>
+                </div>                             
+            </div>
+            <div class="app-info-layer">
+                <div class="box-type03">
+                    <div class="left-zone">
+                        <div class="left-zone-box">
+                        	<file-uploader :fileset="file" :type="'img'" :fileid="'TEMP_DATA'" :filekey="1" :filehangmok="'file'" :title="'사진등록'" :modify="true" :floatnone="true" :imgwidth="180"></file-uploader>
+                            <!-- <div class="photo-add-wrap">
+                                <div class="photo-box">
+                                    <div id="photo_image" style="display:none"></div>                                               
+                                </div>
+                                <div class="btn-photo" for="cma_file">
+                                    <label for="cma_file">사진등록</label>
+                                    <input type="file" name="cma_file" id="cma_file" accept="image/*" capture="camera" onchange="getThumbnailPrivew(this,$('#photo_image'))" />
+                                </div>
+                                <a href="#!" class="btn-del-photo"><span class="icon icon-minus2">사진삭제</span></a>
+                                <p class="info-txt">제한용량 : 10MB</p>
+                            </div>
+                            <perfect-scrollbar class="mileage-photo-list">
+                                <div class="photo-list">
+                                    <div class="mileage-photo-box">
+                                        <div class="mileage-photo_image" style="display:none"></div>                                               
+                                    </div>
+                                </div>
+                                <div class="photo-list">
+                                    <div class="mileage-photo-box">
+                                        <div class="mileage-photo_image" style="display:none"></div>                                               
+                                    </div>
+                                </div>
+                                <div class="photo-list">
+                                    <div class="mileage-photo-box">
+                                        <div class="mileage-photo_image" style="display:none"></div>                                               
+                                    </div>
+                                </div>
+                                <div class="photo-list">
+                                    <div class="mileage-photo-box">
+                                        <div class="mileage-photo_image" style="display:none"></div>                                               
+                                    </div>
+                                </div>
+                            </perfect-scrollbar> -->
+                        </div> 
+                    </div>
+                    <div class="right-zone">
+                        <div class="row form-row">
+                            <div class="form-group col s12 l6">
+                                <label for="formGroupExampleInput2" class="label-type01">상품 코드</label>
+                                <input type="text" id="formGroupExampleInput2" class="size-m" value="001032">
+                            </div>
+                            <div class="form-group col s12 l6">
+                                <label for="formGroupExampleInput3" class="label-type01">상품 카테고리</label>
+                                <select name="pSearchType" id="pSearchType" class="size-m">
+                                    <option value="">장학금</option>
+                                </select>
+                            </div>                                                
+                        </div>
+                        <div class="row form-row">
+                            <div class="form-group col s12 l6">
+                                <label for="formGroupExampleInput2" class="label-type01">상품명</label>
+                                <input type="text" id="formGroupExampleInput2" class="size-m" value="아메리카노">
+                            </div>
+                            <div class="form-group col s12 l6">
+                                <label for="formGroupExampleInput3" class="label-type01">상품 마일리지</label>
+                                <input type="text" id="formGroupExampleInput2" class="size-m" value="1000" style="width:80%"><span class="form-side-text" style="width:20%">마일리지</span>                                                
+                            </div>                                                
+                        </div>
+                        <div class="row form-row">
+                            <div class="form-group col s12 l6">
+                                <label for="formGroupExampleInput2" class="label-type01">게재 기간</label>
+                                <div class="row form-row">
+                                    <div class="form-group col s12 l6">                                                        
+                                        <div class="date-form-wrap">
+                                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                                            <input type="text" id="exampleFormControlInput1" class="size-m" value="2019.01.01" style="width:90%"><span class="text" style="width:10%">~</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col s12 l6">
+                                        <div class="date-form-wrap">
+                                            <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+                                            <input type="text" id="exampleFormControlInput2" value="2019.01.01" class="size-m" >
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="form-group col s12 l6">
+                                <label for="formGroupExampleInput3" class="label-type01">상품 상태 구분</label>
+                                <select name="pSearchType" id="pSearchType" class="size-m">
+                                    <option value="">상품 상태</option>
+                                </select>                                              
+                            </div>                                                
+                        </div>
+                        <div class="row form-row">
+                            <div class="form-group col s12 l6">
+                                <label for="formGroupExampleInput2" class="label-type01">주의사항</label>
+                                <input type="text" id="formGroupExampleInput2" class="size-m" placeholder="내용을 입력해주세요">
+                            </div>
+                            <div class="form-group col s12 l6">
+                                <div class="form-group col s12 l4 form-row">
+                                    <div class="col s12">
+                                        <label for="formGroupExampleInput3" class="label-type01">사용여부</label>
+                                    </div>
+                                    <div class="col s12">
+                                        <label class="toggle-switch size-l">
+                                            <input type="checkbox" checked="" id="form09">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>                                               
+                            </div>                                                
+                        </div>
+                        <div class="row form-row">
+                            <div class="form-group col s12">
+                                <label for="formGroupExampleInput2" class="label-type01">상품 설명</label>
+                                <textarea id="exampleFormControlInput3" class="size-m" rows="10">웹에디터 적용</textarea>
+                            </div>                                                                                           
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-line right">
+                    <a href="#!" class="btn type02 size-l mileage-btn-col01">삭제</a>
+                    <a href="#!" class="btn type02 size-l mileage-btn-col05">취소</a>
+                    <a href="#!" class="btn type02 size-l mileage-btn-col02">저장</a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    
+</section>
+
+            
+<script>
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+    el: '#app',
+    //사용할 데이터
+    data: {
+    	file: new FileSet('SMN', 10),
+    },
+    //마운트 된 시점수행
+    mounted: function(){
+    },
+    //함수
+    methods: {
+    }
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+ 
+    $(document).ready(function() {
+        // 마일리지 상세 펼치고, 닫침
+        $('.table-type05 tbody tr').not('.hidden-tr').on('click', function() {            
+            if ($(this).hasClass('active')) {
+                $(this).next('.hidden-tr').removeClass('on');
+                $(this).removeClass('active');
+                
+            } else {
+                $('.table-type05 tr').removeClass('active');
+               $('.table-type05 .hidden-tr').removeClass('on');
+                $(this).next('.hidden-tr').addClass('on');
+                $(this).not('.hidden-tr').addClass('active');
+            }
+        });
+
+        //탭메뉴
+        $(".tab-content").hide();
+        $(".tab-content:first").show();
+        $(".tab-type01 .tab-inner div a").click(function() {
+            $(".tab-type01 .tab-inner div a").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").hide()
+            var activeTab = $(this).parent().attr("rel");
+            $("#"+activeTab).fadeIn()
+        });
+    });    
+    // input file 이미지 미리보기
+    function getThumbnailPrivew(html, $target) {
+        if (html.files && html.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $target.css('display', 'block');
+                $target.html('<img src="' + e.target.result + '" border="0" alt="" />');
+            }
+            reader.readAsDataURL(html.files[0]);
+        }
+    }
+</script>

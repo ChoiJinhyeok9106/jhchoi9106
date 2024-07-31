@@ -1,0 +1,441 @@
+<h2 id="top">Project structure</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+    	<h3 class="h3">Service List(Data Management)</h3>
+    	<div class="box-type03" style="line-height:50px;">
+    		<a href="#!" class="btn type01 size-m c-sky left-icon icon-xcloud009" @click="service = 1">시스템 운영 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-green left-icon icon-xcloud022" @click="service = 2">부가 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-blue left-icon icon-xcloud023" @click="service = 3">SNS 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-orange left-icon icon-xcloud026" @click="service = 4">어플리케이션 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-gray left-icon icon-xcloud015" @click="service = 5">웹 빌더 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-red left-icon icon-xcloud007" @click="service = 6">취업지원 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-sky left-icon icon-xcloud029" @click="service = 7">역량진단 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-green left-icon icon-xcloud002" @click="service = 8">실적관리 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-blue left-icon icon-xcloud030" @click="service = 9">상담 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-orange left-icon icon-xcloud001" @click="service = 10">비즈니스 대동</a>
+    		<a href="#!" class="btn type01 size-m c-gray left-icon icon-xcloud014" @click="service = 11">비교과 서비스</a>
+    		<a href="#!" class="btn type01 size-m c-green left-icon icon-xcloud005" @click="service = 12">진로설계</a>
+    		
+	    	<div class="box-type04" style="margin-top:10px;">
+	    		<ul class="list-type01" v-if="service == null">
+	    			<li>서비스를 선택해주세요</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 1">
+	    			<li>기초코드관리</li>
+	    			<li>메뉴관리</li>
+	    			<li>권한관리</li>
+	    			<li>사용자 관리</li>
+	    			<li>REST API 관리</li>
+	    			<li>알림서비스 관리</li>
+	    			<li>로그관리</li>
+	    			<li>데이터축적 관리</li>
+	    			<li>통계</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 2">
+	    			<li>배너 그룹 관리</li>
+	    			<li>배너 관리</li>
+	    			<li>배너 게시 관리</li>
+	    			<li>게시판 등록</li>
+	    			<li>게시판 그룹 설정</li>
+	    			<li>게시판 그룹 등록</li>
+	    			<li>설문 관리</li>
+	    			<li>답변 관리</li>
+	    			<li>설문 통계</li>
+	    			<li>일정 환경 관리</li>
+	    			<li>일정 그룹 관리</li>
+	    			<li>일정 관리</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 3">
+	    			<li>톡 환경관리</li>
+	    			<li>톡 친구목록 관리</li>
+	    			<li>대화방 관리</li>
+	    			<li>톡 관리</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 4">
+	    			<li>앱 관리</li>
+	    			<li>위젯 관리</li>
+	    			<li>앱 스토어</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 5">
+	    			<li>메인설정(위젯 설정 포함)</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 6">
+	    			<li>교내채용정보</li>
+	    			<li>교외채용정보</li>
+	    			<li>취업관련사이트</li>
+	    			<li>교내외아르바이트</li>
+	    			<li>입사지원현황</li>
+	    			<li>교내채용 관리</li>
+	    			<li>교내외아르바이트 관리</li>
+	    			<li>취업관련사이트 관리</li>
+	    			<li>산업체 관리</li>
+	    			<li>입사지원현황 관리</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 7">
+	    			<li>학생역량강화소개</li>
+	    			<li>전체실적확인</li>
+	    			<li>역량진단종합결과</li>
+	    			<li>추천비교과프로그램</li>
+	    			<li>역량성장도</li>
+	    			<li>교과</li>
+	    			<li>비교과</li>
+	    			<li>실적</li>
+	    			<li>역량진단</li>
+	    			<li>역량결과</li>
+	    			<li>MBTI 결과</li>
+	    			<li>홀랜드 결과</li>
+	    			<li>목표 직업 관리</li>
+	    			<li>목표 기업 관리</li>
+	    			<li>목표 설정</li>
+	    			<li>비교과프로그램목록</li>
+	    			<li>비교과프로그램신청</li>
+	    			<li>비교과프로그램결과등록</li>
+	    			<li>실적관리</li>
+	    			<li>실적성과관리(노트관리)</li>
+	    			<li>이력서관리</li>
+	    			<li>역량 관리</li>
+	    			<li>역량 정보</li>
+	    			<li>교과 역량 정보</li>
+	    			<li>기업군 요구 역량</li>
+	    			<li>학생별 역량 진단 실시 현황</li>
+	    			<li>년도별, 학과별, 학년별, 계열별 역량 성장도</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 8">
+	    			<li>실적코드관리</li>
+	    			<li>실적역량 정보</li>
+	    			<li>실적 승인</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 9">
+	    			<li>교수 상담 홈</li>	
+	    			<li>일정관리</li>
+	    			<li>문항관리</li>
+	    			<li>그룹관리</li>
+	    			<li>상담목록</li>
+	    			<li>상담</li>
+	    			<li>온라인상담</li>
+	    			<li>집단상담</li>
+	    			<li>상담이력</li>	
+	    			<li>학생조회</li>	
+	    			<li>상담실시</li>	
+	    			<li>학생별상담이력</li>
+	    			<li>전체분야별 상담 내역</li>
+	    			<li>상담실적현황</li>
+	    			<li>학생 상담 홈</li>	
+	    			<li>기초정보관리</li>	
+	    			<li>상담신청</li>
+	    			<li>기초조사지작성</li>
+	    			<li>온라인상담신청</li>	
+	    			<li>집단상담신청</li>	
+	    			<li>피상담이력</li>	
+	    			<li>온라인상담신청</li>	
+	    			<li>집단상담신청</li>	
+	    			<li>피상담이력</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 10">
+	    			<li>사전진단평가</li>
+	    			<li>시간표확인</li>
+	    			<li>수강신청목록</li>
+	    			<li>학습성과달성률</li>
+	    			<li>사후진단평가</li>
+	    			<li>강의평가</li>
+	    			<li>해당학기 성적조회</li>
+	    			<li>지난학기 성적조회</li>
+	    			<li>분납신청</li>
+	    			<li>재학생 등록금 고지서</li>
+	    			<li>등록금납부 현황</li>
+	    			<li>영수증 출력</li>
+	    			<li>장학신청</li>
+	    			<li>근로장학 근로일지</li>
+	    			<li>NCS이수내역</li>
+	    			<li>봉사입력</li>
+	    			<li>현장실습사전 설문</li>
+	    			<li>현장실습</li>
+	    			<li>현장실습공지</li>
+	    			<li>교직인적성검사신청</li>
+	    			<li>이력관리</li>
+	    			<li>티칭 수업 사전 만족도</li>
+	    			<li>티칭 수업 중간 만족도</li>
+	    			<li>티칭 수업 후기 만족도</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 11">
+	    			<li>비교과프로그램 관리</li>
+	    			<li>대상자 관리</li>
+	    			<li>역량 매핑</li>
+	    			<li>사전, 사후, 만족도 설문</li>
+	    			<li>비교과 출석 관리</li>
+	    			<li>대상자 결과 입력</li>
+	    			<li>결과보고 입력(첨부파일)</li>
+	    			<li>사전, 사후, 만족도 설문 확인</li>
+	    			<li>년도별 프로그램 현황(프로그램, 인원, 만족도점수, 분석보고)</li>
+	    			<li>프로그램별 년도별 만족도 현황</li>
+	    			<li>이수증</li>
+	    		</ul>
+	    		<ul class="list-type01" v-else-if="service == 12">
+	    			<li>검사리스트(홀랜드, MBTI 결과 포함)</li>
+	    			<li>목표기업</li>
+	    			<li>목표직업</li>
+	    		</ul>
+	    	</div>
+    	</div>
+    </section>
+    
+    <section class="cont_box">
+    	<h3 class="h3">Common Project</h3>
+    	<div class="box-type03">
+   			<h2>Common processing</h2>
+    		<div class="box-type01" style="margin-bottom:20px; margin-top:10px;">
+    			<ul class="list-type01" style="margin-top:10px;">
+				    <li>Login (Session), SSO</li>
+				    <li>File Management</li>
+				    <li>....</li>
+				</ul>
+    		</div>
+    		<h2>API Address</h2>
+    		<div class="box-type01" style="margin-bottom:20px; margin-top:10px;">
+	    		<div class="row form-row">
+				    <div class="form-group col s12 l3 form-row">
+				        <div class="col s12 l6 col-label">
+				            <label for="inlineFormInputName9" class="label-type01 size-l">AUTHORITY</label>
+				        </div>
+				        <div class="col s12 l6">
+				            <label class="toggle-switch size-l">
+				                <input type="checkbox" checked="">
+				                <span class="slider round"></span>
+				            </label>
+				        </div>
+				    </div>
+				    <div class="form-group col s12 l3 form-row">
+				        <div class="col s12 l6 col-label">
+				            <label for="inlineFormInputName9" class="label-type01 size-l">LOG</label>
+				        </div>
+				        <div class="col s12 l6">
+				            <label class="toggle-switch size-l">
+				                <input type="checkbox" checked="">
+				                <span class="slider round"></span>
+				            </label>
+				        </div>
+				    </div>
+				    <div class="form-group col s12 l3 form-row">
+				        <div class="col s12 l6 col-label">
+				            <label for="inlineFormInputName9" class="label-type01 size-l">DATA</label>
+				        </div>
+				        <div class="col s12 l6">
+				            <label class="toggle-switch size-l">
+				                <input type="checkbox" checked="">
+				                <span class="slider round"></span>
+				            </label>
+				        </div>
+				    </div>
+				    <div class="form-group col s12 l3 form-row">
+				        <div class="col s12 l6 col-label">
+				            <label for="inlineFormInputName9" class="label-type01 size-l">NOTICE</label>
+				        </div>
+				        <div class="col s12 l6">
+				            <label class="toggle-switch size-l">
+				                <input type="checkbox" checked="">
+				                <span class="slider round"></span>
+				            </label>
+				        </div>
+				    </div>
+				</div>
+			</div>
+    	</div>
+    </section>
+    
+    <section class="cont_box" style="text-align:center;">
+    	<h3 class="h3">↑REST API ↓</h3>
+    </section>
+    
+    <section class="cont_box">
+    	<h3 class="h3">Front-End (HTML)</h3>
+    	<div class="box-type03" style="line-height:50px;">
+    		<h2>Front-End Framework</h2>
+    		<div class="box-type04">
+	    		<ul class="list-type01" style="margin-top:10px;">
+				    <li>Dataset</li>
+				    <li>Template(Component)</li>
+				    <li>Common Popup</li>
+				    <li>Chart</li>
+				    <li>Calendar</li>
+				    <li>... 좌측메뉴 참고</li>
+<!-- 				    <li>Babel</li> -->
+<!-- 				    <li>Gulp</li> -->
+				</ul>
+	    	</div>
+    		<h2>Apps List</h2>
+    		<div id="header">
+	    		<div class="app_layer" id="appListArea">
+				    <div class="app_inner">
+				        <ul>
+			        		<li v-for="(item, index) in subscribeApps.data"><a href="#!"><span class="icon handle" :class="[item.ICON, item.COLOR]" :appId="[item.APP_ID]"></span><span class="txt">{{item.APP_NM}}</span></a></li>
+				        </ul>
+				    </div>
+				</div>
+			</div>
+    	</div>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+var columnInfo = ['APP_ID','APP_NM','APP_VER','APP_JAKSEONGJA_ID','APP_ENM','ENDPOINT','TAG','APP_DESC','ICON','COLOR','USE_DEVICE_GB','DAEPYO_IMG_FILE_NO','USE_YN','DEFAULT_APP_YN','ORD']
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+		subscribeApps: new Dataset(),
+		service: null,
+	},
+	//데이터 감시
+	watch: {
+		
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setSubscribeApps();
+	},
+	//함수
+	methods: {
+		/* 구독중인 app 리스트 조회 */
+		setSubscribeApps: function(){
+			var returnVal = appApiApi.subscribeApps();
+			var self = this;
+			
+			returnVal.then(function(response) {
+				self.subscribeApps.setData(response.data);
+			}).catch(function(error) {
+				console.error('error:', error);
+			});
+		},
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+ 
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+
+ 
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	
+});
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+
+<style>
+/*app 리스트*/
+#header .app_layer {
+/*     position: absolute; */
+/*     top: 0; */
+/*     right: -360px; */
+/*     width: 360px; */
+/*     height: 200px; */
+    z-index: 800;
+    background-color: #fff;
+/*     -webkit-box-shadow: -2px 0px 30px -5px rgba(0, 0, 0, 0.6); */
+/*     -moz-box-shadow: -2px 0px 30px -5px rgba(0, 0, 0, 0.6); */
+/*     box-shadow: -2px 0px 30px -5px rgba(0, 0, 0, 0.6); */
+    text-align: left;
+    overflow: auto;
+}
+
+#header .app_layer .app_inner {
+    position: relative;
+    display: inline-block;
+/*     width: 296px; */
+    /*padding: 0 35px 0 0;*/ 
+/*     margin-bottom: 100px; */
+}
+
+#header .app_layer ul {
+	min-height: 200px;
+	width: 100%;
+    position: relative;
+    display: inline-block;
+    padding: 20px 0 0 15px;
+}
+
+#header .app_layer ul .draggable {
+	min-height: 200px;
+	width: 100%;
+}
+
+#header .app_layer .divider {
+    width: 100%;
+    height: 1px;
+    background-color: #d4d6df;
+}
+
+#header .app_layer ul li {
+    float: left;
+    padding: 10px 5px;
+    width: 100px;
+    text-align: center;
+    height: 130px;
+}
+
+#header .app_layer ul li .icon {
+    display: inline-block;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    color: #fff;
+    line-height: 52px;
+    font-size: 40px;
+}
+
+#header .app_layer ul li .icon:before {
+    filter: drop-shadow(-1px -1px 0 rgba(0, 0, 0, 0.2));
+}
+
+#header .app_layer ul li .txt {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+    font-family: 'noto sans kr';
+    font-weight: 300;
+    text-align: center;
+}
+
+#header .app_layer .app_btn {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.app_color_cyan {
+    background-color: #29b6b1;
+}
+
+.app_color_blue {
+    background-color: #3879c3;
+}
+
+.app_color_orange {
+    background-color: #ef732f
+}
+
+.app_color_lightorange {
+    background-color: #f3ac3c;
+}
+
+.app_color_green {
+    background-color: #7fba2c;
+}
+</style>

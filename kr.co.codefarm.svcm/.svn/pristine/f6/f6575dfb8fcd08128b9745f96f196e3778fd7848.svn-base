@@ -1,0 +1,100 @@
+<h2>팝업-이메일 작성 팝업</h2>
+<section class="sub_cont_box" id="app">
+    <section class="cont_box">
+        <h3 class="h3">이메일 작성 팝업</h3>
+		<div class="form-group row form-row">        	
+	        <ul class="list-type01">
+	        	<li>이메일 작성 팝업 활용법</li>
+	        	<li>ref를 통한 오픈함수를 이용해 팝업을 오픈합니다.</br>ex) this.$refs.popupemail.showEmailPopup();</li>
+	        	<li>'id'를 지정하여 사용합니다.</li>
+	        	<li>:email 에 이메일 주소를 콤마(,)로 구분하여 문자열로 지정할 경우 팝업에 받는 사람 목록에 자동으로 추가 됩니다.</li>
+	        	<li>:modifiable 을 false로 지정할 파라메터로 지정 된 email목록을 수정할 수 없게됩니다.</li>
+	        	<li>:fixedsender 을 true로 지정할 경우 보내는 사람을 수정할 수 없습니다.</li>
+	        	<li>:sender 에 보내는 사람 메일 주소를 입력하여 미리 셋팅할 수 있습니다.</li>
+	        	<li>:placeholder 항목에 이메일 작성 에디터의 placeholder 내용을 지정할 수 있습니다.</li>
+			</ul>
+		</div>
+        <textarea id="codeEditor1"><popup-email ref="[popupemail:String]" ></popup-email>
+
+var vm = new Vue({
+	el: '#app',
+    data: {
+		returnMessage : ''
+    },
+	methods: {
+		callback(message){
+			this.returnMessage = JSON.stringify(message);
+		}
+	}
+});</textarea>
+    </section>
+    
+    <section class="cont_box">
+        <h3 class="h3" @click="openPopup">실행</h3>
+        <div class="row form-row">
+	  		<div class="form-group col s12 l12">
+				<label for="appNm" class="label-type01">email 전송 팝업 테스트</label>
+				<input type="button" value="팝업 열기" class="btn type02 size-m" @click="openPopup">
+			</div>
+		</div>
+        <popup-email id="emailpopoup1" ref="popupemail" :email="'hspark@codefarm.co.kr,hspark@codefarm.co.kr,dukim@codefarm.co.kr,dukim1@codefarm.co.kr,dukim2@codefarm.co.kr,dukim3@codefarm.co.kr,dukim4@codefarm.co.kr,dukim5@codefarm.co.kr,dukim6@codefarm.co.kr,dukim7@codefarm.co.kr,dukim8@codefarm.co.kr,dukim9@codefarm.co.kr,dukim10@codefarm.co.kr'" :modifiable="true" :fixedsender="true" :sender="'portal@codefarm.co.kr'" :placeholder="'메일 내용을 작성해주세요.'"></popup-email>
+        <br/>
+        <textarea id="codeEditor2"><popup-email id="emailpopoup1" ref="popupemail" :email="'hspark@codefarm.co.kr,hspark@codefarm.co.kr,dukim@codefarm.co.kr,dukim1@codefarm.co.kr,dukim2@codefarm.co.kr,dukim3@codefarm.co.kr,dukim4@codefarm.co.kr,dukim5@codefarm.co.kr,dukim6@codefarm.co.kr,dukim7@codefarm.co.kr,dukim8@codefarm.co.kr,dukim9@codefarm.co.kr,dukim10@codefarm.co.kr'" :modifiable="true" :fixedsender="true" :sender="'portal@codefarm.co.kr'" :placeholder="'메일 내용을 작성해주세요.'"></popup-email></textarea>
+    </section>
+</section>
+
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start 
+ ********************************************************************************************************************************************************************/
+ var vm = new Vue({
+     el: '#app',
+     data: {
+         returnMessage : ''
+     },
+     methods: {
+    	 callback: function(message){
+         	this.returnMessage = JSON.stringify(message);
+         },
+         openPopup: function(){
+        	 this.$refs.popupemail.showEmailPopup();	 
+         }
+     }
+ });
+/*******************************************************************************************************************************************************************
+ * vue end 
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * jui script start 
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * jui script end 
+ ********************************************************************************************************************************************************************/
+ 
+/*******************************************************************************************************************************************************************
+ * javascript start 
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	editor('codeEditor1', 300, 'javascript');
+	editor('codeEditor2', 80, 'javascript');
+});
+
+function editor(id, height, dataGb) {
+    var target = document.getElementById(id);
+    var myCodeMirror = CodeMirror.fromTextArea(target, {
+        mode: dataGb,
+        theme: "neo",
+        lineNumbers: true,
+        readOnly: true
+    });
+    
+    myCodeMirror.setSize(null, height);
+}
+/*******************************************************************************************************************************************************************
+ * javascript end 
+ ********************************************************************************************************************************************************************/
+</script>
+

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.codefarm.svcm.additional.maria.bannerApi">
+
+	<select id="getBannerPostList" parameterType="hashMap" resultType="hashMap">
+		SELECT A.BANNER_GROUP_SEQ
+			 , A.BANNER_GROUP_NM
+			 , A.BANNER_DESC
+			 , B.BANNER_SEQ
+			 , C.BANNER_TITLE
+			 , C.BANNER_TEXT
+			 , C.BANNER_GB
+			 , C.TEMPLATE_GB
+			 , C.LINK_URL
+			 , B.POST_SEQ
+			 , B.FR_DT
+			 , B.FR_TM
+			 , B.TO_DT
+			 , B.TO_TM
+			 , B.ORD
+			 , B.ORD_UPDATE_DTTM
+			 , B.GESI_YN
+			 , REPLACE(D.FILE_PATH, '\\', '/') AS FILE_PATH
+		  FROM ADD_BANNER_GROUP A
+		  JOIN ADD_BANNER_POST B
+			ON A.BANNER_GROUP_SEQ = B.BANNER_GROUP_SEQ
+		 INNER JOIN ADD_BANNER C
+			ON B.BANNER_SEQ = C.BANNER_SEQ
+		   AND C.USE_YN = 'Y'
+		  LEFT OUTER JOIN ADD_FILE D 
+			ON D.FILE_ID = 'ADD_BANNER'
+		   AND D.FILE_KEY = C.BANNER_SEQ
+	   	   AND D.FILE_HANGMOK = 'titleImg'
+		   AND NOT EXISTS
+			   (
+				   SELECT 'X'
+					 FROM SMN_FILE SUB_A
+					WHERE 1=1
+					  AND D.FILE_ID = SUB_A.FILE_ID
+					  AND D.FILE_KEY = SUB_A.FILE_KEY
+					  AND D.FILE_HANGMOK = SUB_A.FILE_HANGMOK
+					  AND D.FILE_NO &lt; SUB_A.FILE_NO
+			   )
+		 WHERE 1=1
+		   AND B.GESI_YN = 'Y'
+		   AND DATE_FORMAT(SYSDATE(),'%Y%m%d%H%i%s') BETWEEN CONCAT(CONCAT(FR_DT,FR_TM),'00') AND CONCAT(CONCAT(TO_DT,TO_TM),'59')
+		   AND A.BANNER_GROUP_SEQ = #{BANNER_GROUP_SEQ}
+		 ORDER BY B.ORD
+	</select>
+</mapper>

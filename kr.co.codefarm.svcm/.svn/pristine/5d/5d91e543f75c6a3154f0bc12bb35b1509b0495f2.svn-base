@@ -1,0 +1,1139 @@
+<script type="text/javascript" src="/app-assets/js/api/amanager/acqmgmt.api.js"></script>
+
+
+<h3>취득 > 물품취득관리 ></h3>
+<h2>자산 취득 관리</h2>
+<section class="sub_cont_box" id="app">
+	<section class="cont_box" v-if="!mainList.currentRow">
+		<div class="box-type03">
+			<div class="row form-row">
+				<div class="form-group col s12 l4">
+			        <label for="pSearchType" class="label-type01" style="margin-left:20px;">자산 취득 번호</label>
+		        	<input type="text" v-model="pAssetAcqNo" id="pAssetAcqNo" name="pAssetAcqNo" style="width:175px;" class="size-m" v-on:keyup.13="search()">
+			    </div>
+				
+			    <div class="form-group col s12 l4">
+			        <label for="pSearchType" class="label-type01" style="margin-left:-20px;">물 품 명</label>
+			        <input type="text" v-model="pAssetClKoNm" id="pAssetClKoMm" name="pAssetClKoMm" style="width:250px; margin-left:20px;" class="size-m" v-on:keyup.13="search()">
+			    </div>
+				
+				<div class="form-group col s12 l4" style="display: flex; align-items: center;">
+				    <label for="pSearchType" class="label-type01" style="margin-left: -20px;">물품 목록 번호</label>
+				    <input type="text" v-model="pAssetClNo" id="pAssetClNo" name="pAssetClNo" style="width: 105px; margin-right: 5px;" class="size-m" v-on:keyup.13="search()">
+				    <span style="margin-right: 5px;">-</span>
+				    <input type="text" v-model="pAssetStndNo" id="pAssetStndNo" name="pAssetStndNo" style="width: 105px; margin-right: 5px;" class="size-m" v-on:keyup.13="search()">
+					
+					
+					<button type="button" class="btn type02 size-s" @click.prevent="modal_open('assetSearchModal');return false;" style="width: 20px; display: flex; justify-content: center; align-items: center;">
+				        <span class="icon icon-search"></span>
+				    </button>
+				</div>
+			</div>
+			
+			<div class="row form-row">
+				<div class="form-group col s12 l4">
+			        <label for="pSearchType" class="label-type01" style="margin-left:20px;">기관 자산 번호</label>
+			        <input type="text" v-model="pOrgAssetAcqNo" id="pOrgAssetAcqNo" name="pOrgAssetAcqNo" style="width:175px; " class="size-m" v-on:keyup.13="search()">
+			    </div>
+				
+				<div class="form-group col s12 l4">
+			        <label for="pSearchType" class="label-type01" style="margin-left:-20px;">규 격 명</label>
+			        <input type="text" v-model="pAssetStndKoNm" id="pAssetStndKoMm" name="pAssetStndKoMm" style="width:250px; margin-left:20px;" class="size-m" v-on:keyup.13="search()">
+			    </div>
+				
+				<div class="form-group col s12 l4">
+			        <label for="pSearchType" class="label-type01" style="margin-left:-20px;">구입 단가</label>
+			        <input type="text" v-model="pAssetBuyUprice_S" id="pAssetBuyUprice_S" name="pAssetBuyUprice_S" style="width:124px; margin-left:28px; " class="size-m" v-on:keyup.13="search()">
+					-
+					<input type="text" v-model="pAssetBuyUprice_E" id="pAssetBuyUprice_E" name="pAssetBuyUprice_E" style="width:124px;" class="size-m" v-on:keyup.13="search()">
+			    </div>
+			</div>
+			<div>
+			</div>
+			
+			<div class="row form-row">
+				<div class="form-group col s12 l4" style="display: flex; align-items: center;">
+				    <label for="pServiceType" class="label-type01" style="margin-left:20px;">자산 취득 부서</label> 
+				    <select class="size-m" v-model="pAcqDeptCd" name="pAcqDeptCd" id="pAcqDeptCd" style="width:175px; margin-left: 3px;">
+				        <option v-for="(item, index) in deptCodeSet.data" :value="item.ORGNZT_ID">{{item.ORGNZT_NM}}</option>
+				    </select>
+				    <button type="button" class="btn type02 size-s" @click="" style="width: 20px; margin-left: 10px; display: flex; justify-content: center; align-items: center;">
+				        <span class="icon icon-search"></span>
+				    </button>
+				</div>   
+				
+				 <div class="form-group col s12 l4">
+			        <label for="pServiceType" class="label-type01" style="margin-left:20px;">태그 종류</label> 
+			        <select class="size-m" v-model="pTagKindCd" name="pTagKindCd" id="pTagKindCd" style="width:175px; margin-left:20px;">
+			            <option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0120', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+			        </select>
+			    </div>
+			    
+			    <div class="form-group col s12 l4">
+			        <label for="pServiceType" class="label-type01" style="margin-left:20px;">회계 구분</label> 
+			        <select class="size-m" v-model="pAcntsSeCd" name="pAcntsSeCd" id="pAcntsSeCd" style="width:175px; margin-left:20px;">
+			            <option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'CM0030', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+			        </select>
+			    </div>
+			</div>
+				
+			<div class="row form-row">
+			    <div class="form-group col s12 l4">
+			        <label for="pServiceType" class="label-type01" style="margin-left:20px;">자산 구분</label> 
+			        <select class="size-m" v-model="pAssetSeCd" name="pAssetSeCd" id="pAssetSeCd" style="width:175px; margin-left:31px;">
+			            <option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'CM0034', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+			        </select>
+			    </div>
+			    
+			    <div class="form-group col s12 l4">
+			        <label for="pServiceType" class="label-type01" style="margin-left:20px;">취득 구분</label> 
+			        <select class="size-m" v-model="pAcqSeCd" name="pAcqSeCd" id="pAcqSeCd" style="width:175px; margin-left:20px;">
+			            <option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0010', 'all', '', '', 'CD1')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+			        </select>
+			    </div>
+			    
+			    <div class="form-group col s12 l4">
+			        <label for="pServiceType" class="label-type01" style="margin-left:20px;">반영 여부</label>
+			        <select class="size-m" v-model="pAcqRflcAt" name="pAcqRflcAt" id="pAcqRflcAt" style="width:175px; margin-left:20px;">
+			            <option value="ALL">-전체-</option>
+			            <option value="N">미반영</option>
+			            <option value="Y">반영</option>
+			        </select>
+			    </div>
+			</div>
+			
+			<div class="row form-row">
+				<div class="form-group col s12 l4">
+					<label for="frdt" class="label-type01" style="margin-left:20px;">자산 구입 일자</label>
+					<div class="row form-row" style="margin-left:10px;">
+						<div class="form-group col s12 l6">
+			                <div class="date-form-wrap">
+			                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			                    <date-picker :value="buyDt_S" @input="function(value){ buyDt_S = value }" ></date-picker>
+			                    <input id="pBuyDt_Start" type="hidden" name="targetname" data-vv-as="날짜 " v-model="buyDt_S">
+			                </div>
+			            </div>
+			            <div class="form-group col s12 l6">
+			                <div class="date-form-wrap">
+			                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			                    <date-picker :value="buyDt_E" @input="function(value){ buyDt_E = value }"></date-picker>
+			                    <input id="pBuyDt_End" type="hidden" name="targetname" data-vv-as="날짜 " v-model="buyDt_E">
+			                </div>
+			            </div>
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l4">
+					<label for="frdt" class="label-type01" style="margin-left:20px;">취득 정리 일자</label>
+					<div class="row form-row" style="margin-left:10px;">
+						<div class="form-group col s12 l6">
+			                <div class="date-form-wrap">
+			                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			                    <date-picker :value="acqArngDt_S" @input="function(value){ acqArngDt_S = value }" ></date-picker>
+			                    <input id="pAcqArngDt_Start" type="hidden" name="targetname" data-vv-as="날짜 " v-model="acqArngDt_S">
+			                </div>
+			            </div>
+			            <div class="form-group col s12 l6">
+			                <div class="date-form-wrap">
+			                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			                    <date-picker :value="acqArngDt_E" @input="function(value){ acqArngDt_E = value }"></date-picker>
+			                    <input id="pAcqArngDt_End" type="hidden" name="targetname" data-vv-as="날짜 " v-model="acqArngDt_E">
+			                </div>
+			            </div>
+					</div>
+				</div>
+				
+				<div class="form-group col s12 l4">
+					<label for="frdt" class="label-type01" style="margin-left:20px;">취득 일자</label>
+					<div class="row form-row" style="margin-left:10px;">
+						<div class="form-group col s12 l6">
+			                <div class="date-form-wrap">
+			                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			                    <date-picker :value="acqDt_S" @input="function(value){ acqDt_S = value }" ></date-picker>
+			                    <input id="pAcqDt_Start" type="hidden" name="targetname" data-vv-as="날짜 " v-model="acqDt_S">
+			                </div>
+			            </div>
+			            <div class="form-group col s12 l6">
+			                <div class="date-form-wrap">
+			                    <a href="#!" class="size-m"><span class="icon icon-calendar"></span></a>
+			                    <date-picker :value="acqDt_E" @input="function(value){ acqDt_E = value }"></date-picker>
+			                    <input id="pAcqDt_End" type="hidden" name="targetname" data-vv-as="날짜 " v-model="acqDt_E">
+			                </div>
+			            </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+	
+	<div style="display: flex; align-items: center;">
+	    <div class="col s12 l12" style="flex: 1;">
+	        <span class="board-info-txt size-m">총 <span>{{mainListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{mainListPaging.getCurrentPage()}}</span> / {{mainListPaging.getTotalPage()}})</span>
+	    </div>
+	    <div class="col-inline btn-line right" style="display: flex; justify-content: flex-end;">
+			<a href="#!" class="btn type02 size-m center-icon" @click="resetFields"><span class="icon-refresh"></span></a> 
+			<a href="#!" class="btn type04 size-m left-icon icon-search" @click="search()" style="margin-right: 5px;">조회</a>
+			<a href="#!" class="btn type04 size-m left-icon icon-more" @click="newRow" style="margin-right: 5px;">입력</a>
+			<a href="#!" class="btn type04 size-m left-icon icon-edit" @click="rowCheckClick()" style="margin-right: 5px;">수정</a>
+			<a href="#!" class="btn type04 size-m left-icon icon-trashcan" @click="deleteSelectedRows()" style="margin-right: 5px;">삭제</a>
+			<a href="#!" class="btn type04 size-m bg-gray left-icon icon-checkmark" @click="insertDtl" style="margin-right: 5px;">자산반영</a>
+	    </div>
+	</div>
+	
+
+		<div class="col s12 m12 xl12">
+			<div class="table-type01-wrap">
+				<perfect-scrollbar style="height:500px;">
+				<table class="table-type01 response">
+					<caption></caption>
+					<!--<colgroup>
+						<col width="10%" />
+						<col width="10%" />
+						<col width="" />
+						<col width="7%" />
+						<col width="10%" />
+						<col width="13%" />
+						<col width="13%" />
+					</colgroup>-->
+					<thead class="thead-fixed">
+						<tr>
+							<th><input type="checkbox" v-model="selectAll"/></th>
+							<th scope="col">반영여부</th>
+							<th scope="col">자산취득번호</th>
+							<th scope="col">물품명</th>
+							<th scope="col">규격명</th>
+							<th scope="col">구입일자</th>
+							<th scope="col">구입단가</th>
+							<th scope="col">취득부서</th>
+							<th scope="col">수량</th>
+						</tr>
+					</thead>
+					<tbody v-if="mainList.data.length > 0">
+						<tr v-for="(item, index) in mainList.data" v-if="mainList.getRowType(index) != 8">
+							<td><input type="checkbox" v-model="selectedRows[index]"/></td>
+							<td data-header="자산반영"><a href="#!" @dblclick="rowDbClick(index)">{{ item.ACQ_RFLC_NM }}</a></td>
+							<td data-header="자산취득번호"><a href="#!" @dblclick="rowDbClick(index)">{{ item.ASSET_ACQ_NO }}</a></td>
+							<td data-header="물품명"><a href="#!" @dblclick="rowDbClick(index)">{{ item.ASSET_CL_KO_NM }}</a></td>
+							<td data-header="규격명"><a href="#!" @dblclick="rowDbClick(index)">{{ item.ASSET_STND_KO_NM }}</a></td>
+							<td data-header="구입일자"><a href="#!" @dblclick="rowDbClick(index)">{{ item.BUY_DT | dateFormatter }}</a></td>
+							<td data-header="구입단가"><a href="#!" @dblclick="rowDbClick(index)">{{ numberFormatter(item.BUY_UPRICE) }}</a></td>
+							<td data-header="보유부서"><a href="#!" @dblclick="rowDbClick(index)">{{ item.ACQ_DEPT_NM }}</a></td>
+							<td data-header="수량"><a href="#!" @dblclick="rowDbClick(index)">{{ item.BUY_QTY }}</a></td>
+						</tr>
+					</tbody>
+					<tbody v-else>
+						<tr>
+							<td colspan="100">검색결과가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+				</perfect-scrollbar>
+			</div>
+			<paging :pagingset="mainListPaging" :type="'normal'"></paging>
+		</div>
+	</section>
+	
+	<section class="cont_box" v-if="mainList.currentRow">
+		<h3 class="h3">자산 취득(입력/수정)</h3>
+		<div class="box-type04">
+			<div class="form-group row">
+				<div class="col s6 m6 l2">
+					<label class="label-type01 required size-m" for="assetAcqNo">자산취득번호</label>
+					<input type="text" class="size-m" id="assetAcqNo" name="assetAcqNo" data-vv-as="자산취득번호" placeholder="자산취득번호 자동생성" v-model="mainList.currentRow.ASSET_ACQ_NO" disabled="disabled"/>
+				</div>
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m" for="orgAssetAcqNo">기관자산번호</label>
+					<input type="text" class="size-m" id="orgAssetAcqNo" name="orgAssetAcqNo" data-vv-as="기관자산번호" v-model="mainList.currentRow.ORG_ASSET_ACQ_NO"/>
+				</div>
+				<div class="col s6 m6 l2">
+					<label class="label-type01 required size-m">취득부서</label>
+					<select class="size-m" name="acqDeptCd" id="acqDeptCd" v-model="mainList.currentRow.ACQ_DEPT_CD">
+						<option v-for="(item, index) in deptCodeSet.data" v-bind:value="item.ORGNZT_ID">{{item.ORGNZT_NM}}</option>
+					</select>
+				</div>
+				
+				<div class="form-group col s12 m6 l6" style="display: flex; flex-direction: column;">
+				    <label class="label-type01 size-m">물품목록번호</label>
+				    <div style="display: flex; align-items: center;">
+				        <input type="text" v-model="mainList.currentRow.ASSET_CL_NO" id="assetClNo" name="assetClNo" class="size-m" v-on:keyup.13="search()">
+				        <span style="margin-left: 5px; margin-right: 5px;">-</span>
+				        <input type="text" v-model="mainList.currentRow.ASSET_STND_NO" id="assetStndNo" name="assetStndNo" class="size-m" v-on:keyup.13="search()">
+				        <button type="button" class="btn type02 size-s" @click.prevent="modal_open('assetSearchModal'); return false;" style="width: 20px; display: flex; justify-content: center; align-items: center;">
+				            <span class="icon icon-search"></span>
+				        </button>
+				    </div>
+				</div>
+
+			</div>
+			<div class="form-group row">
+				<div class="col s6 m6 l6">
+					<label class="label-type01 required size-m">물품명</label>
+					<input type="text" class="size-m" id="assetClKoNm" name="assetClKoNm" readonly="readonly" placeholder="물품목록번호 적용시 자동 생성" data-vv-as="물품명" v-model="mainList.currentRow.ASSET_CL_KO_NM"/>
+				</div>
+				<div class="col s6 m6 l6">
+					<label class="label-type01 required size-m">규격명</label>
+					<input type="text" class="size-m" id="assetStndKoNm" name="assetStndKoNm" readonly="readonly" placeholder="물품목록번호 적용시 자동 생성" data-vv-as="규격명" v-model="mainList.currentRow.ASSET_STND_KO_NM"/>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m">취득정리일자</label>
+					<date-picker :value="mainList.currentRow.ACQ_ARNG_DT" @input="updateAcqArngDate" />
+					<input type="text" class="size-m" id="acqArngDt" name="acqArngDt" data-vv-as="취득정리일자" v-model="mainList.currentRow.ACQ_ARNG_DT">
+				</div>
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m">취득일자</label>
+					<date-picker :value="mainList.currentRow.ACQ_DT" @input="updateAcqDate" />
+					<input type="text" class="size-m" id="acqDt" name="acqDt" data-vv-as="취득일자" v-model="mainList.currentRow.ACQ_DT">
+				</div>
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m">구입일자</label>
+					<date-picker :value="mainList.currentRow.BUY_DT" @input="updateBuyDate" />
+					<input type="text" class="size-m" id="butDt" name="buyDt" data-vv-as="구입일자" v-model="mainList.currentRow.BUY_DT">
+				</div>
+				<div class="col s6 m6 l3">
+					<label class="label-type01 required size-m">구입단가</label>
+					<input type="text" class="size-m" id="buyUprice" name="buyUprice" data-vv-as="구입단가" v-model="formattedBuyUprice"/>
+				</div>
+				
+				<div class="col s6 m6 l3">
+					<label class="label-type01 required size-m">구입수량</label>
+					<input type="text" class="size-m" id="buyQty" name="buyQty" data-vv-as="구입수량" v-model="mainList.currentRow.BUY_QTY"/>
+				</div>
+			</div>
+			<div class="form-group row">
+				
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m" for="tagKindCd">태그 종류</label>
+					<select class="size-m" name="tagKindCd" id="tagKindCd" v-model="mainList.currentRow.TAG_KIND_CD">
+						<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0120')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m" for="acntsSeCd">회계 구분</label>
+					<select class="size-m" name="acntsSeCd" id="acntsSeCd" v-model="mainList.currentRow.ACNTS_SE_CD">
+						<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'CM0030')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m" for="acqSeCd">취득 구분</label>
+					<select class="size-m" name="acqSeCd" id="acqSeCd" v-model="mainList.currentRow.ACQ_SE_CD">
+						<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'GM0010')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m" for="astDsCd">자산 구분</label>
+					<select class="size-m" name="astDsCd" id="astDsCd" v-model="mainList.currentRow.AST_DS_CD">
+						<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'CM0034')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m" for="BdgtCd">예산 구분</label>
+					<select class="size-m" name="BdgtCd" id="BdgtCd" v-model="mainList.currentRow.BDGT_CD">
+						<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'CM0031')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+				
+				<div class="col s6 m6 l2">
+					<label class="label-type01 size-m" for="ExpnItemCd">비목 구분</label>
+					<select class="size-m" name="ExpnItemCd" id="ExpnItemCd" v-model="mainList.currentRow.EXPN_ITEM_CD">
+						<option v-for="(item, index) in eamCommcode.getCommcode('EAM', 'CM0032')" v-bind:value="item.CD">{{item.CD_NM}}</option>
+					</select>
+				</div>
+			</div>
+
+		</div>
+		<div class="btn-line right">
+			<a href="#!" class="btn type02 size-m left-icon icon-checkmark" @click="saveRow">저장</a>
+			<a href="#!" class="btn type01 size-m left-icon icon-close" @click="search($event)">닫기</a>
+			<a href="#!" class="btn type01 size-m left-icon icon-trashcan" v-if="mainList.getRowType(mainList.rowposition) == ROWTYPE_NORMAL || mainList.getRowType(mainList.rowposition) == ROWTYPE_UPDATE" @click="messagePopup('ID_DELETE', mainList.currentRow.ASSET_ACQ_NO)">삭제</a>
+		</div>
+	</section>
+	
+	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagePopupCallback"></modal-message>
+
+
+	<!-- modal layer popup -->
+	<div class="modal-layer-wrap">
+	    <div id="assetSearchModal" class="modal-layer modal-large">
+	        <div class="modal-container">
+	            <div class="modal-header">
+	                <p class="modal-title">자산 검색</p>
+	            </div>
+				<section class="sub_cont_box">
+					<section class="cont_box" v-if="!assetmodalList.currentRow">
+						<div class="box-type03">
+							<div class="modal-content">
+								<div class="row form-row">
+									<div class="form-group col s8 l3">
+								        <label for="pSearchType" class="label-type01">물 품 명</label>
+								        <input type="text" v-model="pModalAssetClKoNm" id="pModalAssetClKoNm" name="pModalAssetClKoNm" style="width:200px; " class="size-m" v-on:keyup.13="searchModal()">
+								    </div>
+									
+									<div class="form-group col s8 l5">
+								        <label for="pSearchType" class="label-type01">규 격 명</label>
+								        <input type="text" v-model="pModalAssetStndKoNm" id="pModalAssetStndKoNm" name="pModalAssetStndKoNm" style="width:350px; " class="size-m" v-on:keyup.13="searchModal()">
+								    </div>
+									
+									<div class="form-group col s8 l3">
+										<label for="pSearchType" class="label-type01">물품규격번호</label>
+										<input type="text" v-model="pModalAssetStndNo" id="pModalAssetStndNo" name="pModalAssetStndNo" style="width:200px; margin-right: 10px;" class="size-m" v-on:keyup.13="searchModal()">
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div style="display: flex; align-items: center;">
+						    <div class="col s12 l12" style="flex: 1;">
+						        <span class="board-info-txt size-m">총 <span>{{assetmodalListPaging.totalCnt}}</span>건의 게시물이 있습니다. (<span>{{assetmodalListPaging.getCurrentPage()}}</span> / {{assetmodalListPaging.getTotalPage()}})</span>
+						    </div>
+						    <div class="col-inline btn-line right" style="display: flex; justify-content: flex-end;">
+								<a href="#!" class="btn type02 size-m center-icon" @click="resetFields"><span class="icon-refresh"></span></a> 
+								<a href="#!" class="btn type04 size-m left-icon icon-search" @click="searchModal()" style="margin-right: 5px;">조회</a>
+								<a href="#!" class="btn type04 size-m left-icon icon-close " @click.prevent="closeModal($event)" style="margin-right: 5px;">닫기</a>
+						    </div>
+						</div>
+								
+						<div class="col s12 m12 xl12">
+							<div class="table-type01-wrap">
+								<perfect-scrollbar style="height:400px;">
+								<table class="table-type01 response">
+									<caption></caption>
+									<thead class="thead-fixed">
+										<tr>
+											<th scope="col">사용여부</th>
+											<th scope="col">물품목록번호</th>
+											<th scope="col">물품명</th>
+											<th scope="col">규격명</th>
+											<th scope="col">선택</th>
+										</tr>
+									</thead>
+									<tbody v-if="assetmodalList.data.length > 0" >
+										<tr v-for="(item, index) in assetmodalList.data" v-if="assetmodalList.getRowType(index) != 8">
+											<td data-header="사용여부">{{ item.USE_AT }}</td>
+											<td data-header="물품목록번호">{{ item.CL_STND_CD }}</td>
+											<td data-header="물품명">{{ item.ASSET_CL_KO_NM }}</td>
+											<td data-header="규격명">{{ item.ASSET_STND_KO_NM }}</td>
+											<td data-header="선택"><a href="#!" @click="messagePopup('ASSET_SELECT', index)"><span class="icon-checkmark"></span></a></td>
+										</tr>
+									</tbody>
+									<tbody v-else>
+										<tr>
+											<td colspan="100">검색결과가 없습니다.</td>
+										</tr>
+									</tbody>
+								</table>
+								</perfect-scrollbar>
+							</div>
+							<paging :pagingset="assetmodalListPaging" :type="'normal'"></paging>
+						</div>	
+					</section>	
+				</section>
+	        </div>
+	    </div>
+	</div>
+</section>
+
+
+		
+<script type="text/javascript">
+/*******************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	
+	//사용할 데이터
+	data: function() {
+		return {
+		mainList: new Dataset(),
+		assetmodalList: new Dataset(),
+		initialState: {
+			buyDt_S: '',
+			buyDt_E: '',
+			acqDt_S: '',
+			acqDt_E: '',
+			acqArngDt_S: '',
+			acqArngDt_E: '',
+			pAssetAcqNo: '',
+			pAcqDeptCd: '00',
+			pAssetClNo: '',
+			pAssetClKoNm: '',
+			pModalAssetClKoNm: '',
+			pAssetStndNo: '',
+			pAssetStndKoNm: '',
+			pModalAssetStndNo: '',
+			pModalAssetStndKoNm: '',
+			pOrgAssetAcqNo: '',
+			pTagKindCd: '',
+			pAssetSeCd: '',
+			pAcntsSeCd: '',
+			pAcqSeCd: '',
+			pTagKindCd: '',
+			pAcqRflcAt: 'ALL',
+			pAssetBuyUprice_S: '',
+			pAssetBuyUprice_E: '',
+			pRmk: '',
+		},
+		
+		buyDt_S: '',
+		buyDt_E: '',
+		acqDt_S: '',
+		acqDt_E: '',
+		acqArngDt_S: '',
+		acqArngDt_E: '',
+		pAssetAcqNo: '',
+		pAcqDeptCd: '00',
+		pAssetClNo: '',
+		pAssetClKoNm: '',
+		pModalAssetClKoNm: '',
+		pAssetStndNo: '',
+		pAssetStndKoNm: '',
+		pModalAssetStndNo: '',
+		pModalAssetStndKoNm: '',
+		pOrgAssetAcqNo: '',
+		pTagKindCd: '',
+		pAssetSeCd: '',
+		pAcntsSeCd: '',
+		pAcqSeCd: '',
+		pTagKindCd: '',
+		pAcqRflcAt: 'ALL',
+		pAssetBuyUprice_S: '',
+		pAssetBuyUprice_E: '',
+		pRmk: '',
+		messageModal: new ModalSet('acqmgmt-modal'),
+		mainListPaging: new PagingSet(10,50),
+		assetmodalListPaging: new PagingSet(10,50),
+		deptCodeSet: new CustomcodeSet('/amanager/acqmgmt/dept-list',{}),
+		selectAll: false, 
+		selectedRows: [],
+		};
+	},
+	
+	//생성 될 때
+	beforeCreate: function(){
+	},
+	
+	//계산된 속성 포현 시
+	computed: {
+		formattedBuyDt: {
+	    	get() {
+	    		return this.dateFormatter(this.mainList.currentRow.BUY_DT);
+	    	},
+	    	set(value) {
+	     		this.mainList.currentRow.BUY_DT = value.replace(/-/g, '');
+	     	}
+	   },
+	   
+	   formattedAcqArngDt: {
+   	    	get() {
+   	    		return this.dateFormatter(this.mainList.currentRow.ACQ_ARNG_DT);
+   	    	},
+   	    	set(value) {
+   	     		this.mainList.currentRow.ACQ_ARNG_DT = value.replace(/-/g, '');
+   	     	}
+   	   },
+		
+	   formattedBuyUprice: {
+   		get() {
+           return this.numberFormatter(this.mainList.currentRow.BUY_UPRICE);
+         },
+         set(value) {
+           this.mainList.currentRow.BUY_UPRICE = value.replace(/,/g, '');
+         }
+       }
+	   
+	},
+	
+	filters: {
+		dateFormatter: function(value) {
+			if(!value) return '';
+			return value.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+		}
+	},
+	
+	//데이터 감시
+	watch: {
+		'mainList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.mainList.enableevent){
+					var changeYn = this.mainList.dataCompare(oldVal);
+					var rowType = this.mainList.getRowType(val);
+
+					if(!changeYn){
+						this.mainList.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'mainList.data': {
+			handler: function (val, oldVal) {
+				if(this.mainList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.mainList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.mainList.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+	    },
+		
+	    'mainListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setmainList(null, val)
+			}
+	    },
+		
+		'assetmodalList.rowposition': {
+			handler: function (val, oldVal) {
+				if(this.assetmodalList.enableevent){
+					var changeYn = this.assetmodalList.dataCompare(oldVal);
+					var rowType = this.assetmodalList.getRowType(val);
+
+					if(!changeYn){
+						this.assetmodalList.setDefaultRow(oldVal);
+					}
+
+					this.$validator.reset();
+				}
+			}
+		},
+		
+		'assetmodalList.data': {
+			handler: function (val, oldVal) {
+				if(this.assetmodalList.enableevent){
+					var vm = this;
+				  	val.filter( function( data, rowposition ) {
+				      	return Object.keys(data).some( function( colNm ) {
+				          	var diff = data[colNm] !== vm.assetmodalList.beforeData[rowposition][colNm];
+				          	if(diff) {
+				          		vm.assetmodalList.beforeData[rowposition][colNm] = data[colNm];
+								vm.componentStateChange();
+				          	}
+				      	})
+				  	});
+				}
+			},
+			deep: true
+		},
+		
+		'assetmodalListPaging.currentPage': {
+			handler: function (val, oldVal) {
+				this.setassetmodalList(null, val)
+			}
+	    },
+		
+	},
+	//마운트 된 시험수행
+	mounted: function(){
+		this.setmainList();
+		
+	},
+	//함수
+	methods: {
+		setmainList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				var pAssetAcqNo		= $('#pAssetAcqNo').val();
+				var pOrgAssetAcqNo	= $('#pOrgAssetAcqNo').val();
+				var pAcqDeptCd		= $('#pAcqDeptCd option:selected').val();
+				var pAcntsSeCd		= $('#pAcntsSeCd option:selected').val();
+				var pAssetSeCd		= $('#pAssetSeCd option:selected').val();
+				var pAcqSeCd		= $('#pAcqSeCd option:selected').val();
+				var pTagKindCd		= $('#pTagKindCd option:selected').val();
+				var pAcqRflcAt		= $('#pAcqRflcAt option:selected').val();	
+				var pAssetClNo		= $('#pAssetClNo').val();
+				var pAssetClKoNm	= $('#pAssetClKoNm').val();
+				var pAssetStndNo	= $('#pAssetStndNo').val();
+				var pAssetStndKoNm	= $('#pAssetStndKoNm').val();
+				var pServiceType 	= $('#pServiceType option:selected').val();
+				var pBuyDt_S		= this.buyDt_S
+				var pBuyDt_E		= this.buyDt_E;
+				var pAcqDt_S		= this.acqDt_S
+				var pAcqDt_E		= this.acqDt_E;
+				var pAcqArngDt_S	= this.acqArngDt_S
+				var pAcqArngDt_E	= this.acqArngDt_E;
+                var pageNo 			= pPageNo;
+                var rowCount 		= this.mainListPaging.getRowCnt();
+
+				if(isNull(pAssetAcqNo))			pAssetAcqNo		= '';
+				if(isNull(pAcqDeptCd))			pAcqDeptCd	= '';
+				if(isNull(pAcntsSeCd))			pAcntsSeCd	= '';
+				if(isNull(pAssetSeCd))			pAssetSeCd	= '';
+				if(isNull(pAcqSeCd))			pAcqSeCd	= '';
+				if(isNull(pTagKindCd))			pTagKindCd	= '';
+				if(isNull(pAcqRflcAt))			pAcqRflcAt	= '';
+				if(isNull(pAssetClNo))			pAssetClNo	= '';
+				if(isNull(pAssetClKoNm))		pAssetClKoNm	= '';
+				if(isNull(pAssetStndNo))		pAssetStndNo	= '';
+				if(isNull(pAssetStndKoNm))		pAssetStndKoNm	= '';
+				if(isNull(pBuyDt_S))			pBuyDt_S	= '';
+				if(isNull(pBuyDt_E))			pBuyDt_E	= '';
+				if(isNull(pAcqDt_S))			pAcqDt_S	= '';
+				if(isNull(pAcqDt_E))			pAcqDt_E	= '';
+				if(isNull(pAcqArngDt_S))		pAcqArngDt_S	= '';
+				if(isNull(pAcqArngDt_E))		pAcqArngDt_E	= '';
+				if(isNull(pageNo)) 				pageNo 			= 1;
+				if(isNull(rowCount)) 			rowCount 		= 20;
+				
+				var param = {
+					'pAssetAcqNo' 		: pAssetAcqNo,
+					'pOrgAssetAcqNo' 	: pOrgAssetAcqNo,
+					'pAcqDeptCd'		: pAcqDeptCd,
+					'pAcntsSeCd'		: pAcntsSeCd,
+					'pAssetSeCd'		: pAssetSeCd,
+					'pAcqSeCd'			: pAcqSeCd,
+					'pTagKindCd'		: pTagKindCd,
+					'pAcqRflcAt'		: pAcqRflcAt,
+					'pAssetClNo'		: pAssetClNo,
+					'pAssetClKoNm'		: pAssetClKoNm,
+					'pAssetStndNo'		: pAssetStndNo,
+					'pAssetStndKoNm'	: pAssetStndKoNm,
+					'pBuyDt_S'			: pBuyDt_S,
+					'pBuyDt_E'			: pBuyDt_E,
+					'pAcqDt_S'			: pAcqDt_S,
+					'pAcqDt_E'			: pAcqDt_E,
+					'pAcqArngDt_S'		: pAcqArngDt_S,
+					'pAcqArngDt_E'		: pAcqArngDt_E,
+					'pPageNo'			: pageNo,
+					'pRowCount'			: rowCount
+				};
+				
+				var self = this;
+				
+				var returnVal = acqMgmtApi.getAsstAcqMgmtList(param, true);	
+				
+				returnVal.then(function(response) {
+					self.mainList.setData(response.data);
+					
+					if(self.mainList.getRowCount() > 0){
+						var totalCnt = self.mainList.data[0].CNT;
+						self.mainListPaging.setTotalCnt(totalCnt);
+					} else {
+						self.mainListPaging.setTotalCnt(0);
+					}
+				});
+			}			
+		},
+		
+		setassetmodalList: function(e, pPageNo){
+			if(isNull(e) || e.keyCode == 13 || e.type == 'click'){
+				var pModalAssetClKoNm		= $('#pModalAssetClKoNm').val();
+				var pModalAssetStndKoNm		= $('#pModalAssetStndKoNm').val();
+				var pModalAssetStndNo		= $('#pModalAssetStndNo').val();
+                var pageNo 			= pPageNo;
+                var rowCount 		= this.assetmodalListPaging.getRowCnt();
+
+				if(isNull(pModalAssetClKoNm))	pModalAssetClKoNm		= '';
+				if(isNull(pModalAssetStndKoNm))	pModalAssetStndKoNm		= '';
+				if(isNull(pModalAssetStndNo))	pModalAssetStndNo		= '';
+				if(isNull(pageNo)) 				pageNo 			= 1;
+				if(isNull(rowCount)) 			rowCount 		= 20;
+				
+				var param = {
+					'pModalAssetClKoNm' 	: pModalAssetClKoNm,
+					'pModalAssetStndKoNm' 	: pModalAssetStndKoNm,
+					'pModalAssetStndNo' 	: pModalAssetStndNo,
+					'pPageNo'			: pageNo,
+					'pRowCount'			: rowCount
+				};
+				
+				var self = this;
+				
+				var returnVal = acqMgmtApi.getAsstNoList(param, true);	
+				
+				returnVal.then(function(response) {
+					self.assetmodalList.setData(response.data);
+					
+					if(self.assetmodalList.getRowCount() > 0){
+						var totalCnt = self.assetmodalList.data[0].CNT;
+						self.assetmodalListPaging.setTotalCnt(totalCnt);
+					} else {
+						self.assetmodalListPaging.setTotalCnt(0);
+					}
+				});
+			}			
+		},
+		
+		search: function(e, pPageNo){
+		   var pageNo = this.mainListPaging.getCurrentPage();
+
+		   if(pageNo == 1){
+		       this.setmainList(e, pPageNo);
+		   } else {
+		       this.mainListPaging.movePage(1);
+		   }  
+		},
+		
+		searchModal: function(e, pPageNo){
+		   var pageNo = this.assetmodalListPaging.getCurrentPage();
+
+		   if(pageNo == 1){
+		       this.setassetmodalList(e, pPageNo);
+		   } else {
+		       this.assetmodalListPaging.movePage(1);
+		   }  
+		},
+		
+		updateBuyDate(value) {
+            this.mainList.currentRow.BUY_DT = value;
+        },
+		
+		updateAcqArngDate(value) {
+            this.mainList.currentRow.ACQ_ARNG_DT = value;
+        },
+		
+		updateAcqDate(value) {
+            this.mainList.currentRow.ACQ_DT = value;
+        },
+		
+		numberFormatter(value) {
+	      if (!value) return '';
+	      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	    },
+
+		/* ACQ MGMT 리스트 신규행 추가 */
+		newRow: function(){
+			var addObj = {
+				
+                'ASSET_ACQ_NO': '',
+				'ORG_ASSET_ACQ_NO': '',
+				'ACQ_DEPT_CD': '',
+				'ACNTS_SE_CD': '',
+				'ACQ_SE_CD': '',
+				'ASSET_CL_NO': '',
+				'ASSET_STND_NO': '',
+				'AST_DS_CD': '',
+				'BDGT_CD': '',
+				'EXPN_ITEM_CD': '',
+				'ACQ_DT': '',
+				'ACQ_ARNG_DT': '',
+				'BUY_DT': '',
+				'BUY_QTY': '',
+				'BUY_UPRICE': '',
+				'RMK': '',
+				'REGUSER_ID': '',
+				'REG_DATE': '',
+				'ACQ_RFLC_AT': '',
+				'ASSET_ITEM_CD': '',
+				'AGENCY_ID': '',
+
+            };
+
+			var newRowPosition = this.mainList.addRow(addObj);
+		},
+		
+		/* ACQ MGMT 리스트 저장,수정 */
+		saveRow: function(){
+			var validate = this.$validator.validateAll();
+			var self = this;
+
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.mainList.rowposition;
+					var rowType = self.mainList.getRowType(rowposition);
+					var returnVal = null;
+
+					//신규
+					if(rowType == ROWTYPE_INSERT){
+						returnVal = acqMgmtApi.assetAcqInsert(self.mainList.currentRow, false);
+					}
+					//수정
+					else if(rowType == ROWTYPE_UPDATE){
+						returnVal = acqMgmtApi.assetAcqUpdate(self.mainList.currentRow, false);
+					} else {
+						notifySubmit('info', 'ACQ MGMT 저장', '저장할 내역이 없습니다.', 'icon-message');
+					}
+
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							notifySubmit('success', 'ACQ MGMT 저장', '저장이 완료되었습니다.', 'icon-save');
+							self.setmainList(null, self.mainListPaging.currentPage);
+						}).catch(function(error) {
+							notifySubmit('warning', 'ACQ MGMT 저장', '저장에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				}else{
+					notifySubmit('warning', 'ACQ MGMT 저장', '입력항목을 확인해주세요.', 'icon-caution');
+				}
+			});
+		},
+		
+		/* ACQ MGMT 리스트 삭제(로우단위) --> 구현후 주석 풀것*/
+		deleteRow(assetAcqNo) {
+		    var self = this;
+		    var index = this.mainList.data.findIndex(row => row.ASSET_ACQ_NO === assetAcqNo);
+		    if (index !== -1) {
+		        var rowType = this.mainList.getRowType(index);
+		        var returnVal = null;
+
+		        if (rowType !== ROWTYPE_INSERT) {
+		            returnVal = acqMgmtApi.assetAcqDelete(assetAcqNo, true);
+		            returnVal.then(function(response) {
+		                notifySubmit('success', 'ACQ MGMT 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+		                self.setmainList(null, self.mainListPaging.currentPage);
+						
+		            }).catch(function(error) {
+		                notifySubmit('warning', 'ACQ MGMT 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+		            });
+		        } else {
+		            notifySubmit('success', 'ACQ MGMT 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+		        }
+		    } else {
+		        console.error("유효하지 않은 ASSET_ACQ_NO입니다.");
+		    }
+			self.resetSelectedRows();
+		},
+		
+		deleteSelectedRows() {
+			const checkedIndex = this.selectedRows.findIndex(row => row === true);
+			if (checkedIndex !== -1) {
+				const selectedRow = this.mainList.data[checkedIndex];
+				if (selectedRow.ACQ_RFLC_AT === 'N') {
+			
+				    const selectedAssetAcqNos = [];
+				    this.selectedRows.forEach((isSelected, index) => {
+				        if (isSelected) {
+				            const selectedRowData = this.mainList.data[index];
+				            if (selectedRowData && selectedRowData.ASSET_ACQ_NO) {
+				                selectedAssetAcqNos.push(selectedRowData.ASSET_ACQ_NO);
+				            }
+				        }
+				    });
+		
+				    if (selectedAssetAcqNos.length > 0) {
+				        selectedAssetAcqNos.forEach(assetAcqNo => {
+				             this.messagePopup('ROW_DELETE', assetAcqNo);
+				        });
+				    } else {
+				        console.error("선택된 행에서 유효한 ASSET_ACQ_NO를 찾을 수 없습니다.");
+				    }
+				} else if (selectedRow.ACQ_RFLC_AT === 'Y') {
+					this.messageModal.openModal('message', '이미 반영된 자산', '반영 처리된 취득 자산은 삭제 할 수 없습니다.', 'middle', '', '');
+				}
+			}
+		},
+
+		deleteAssetByAcqNo: function(assetAcqNo){
+		    var self = this;
+		    var returnVal = acqMgmtApi.assetAcqDelete(assetAcqNo, true);
+
+		    returnVal.then(function(response) {
+		        var data = response.data;
+
+		        notifySubmit('success', 'ACQ MGMT 삭제', '삭제가 완료되었습니다.', 'icon-trashcan');
+		        
+		        self.setmainList(null, self.mainListPaging.currentPage);
+		    }).catch(function(error) {
+		        notifySubmit('warning', 'ACQ MGMT 삭제', '삭제에 실패하였습니다.', 'icon-caution');
+		    });
+		},
+		
+		/* ACQ MGMT 리스트 상태 변경에 따른 컴포넌트 상태변경 */
+		componentStateChange: function(){
+		},
+		
+		/* 체크박스 선택 후 수정버튼 클릭 open */
+		rowCheckClick() {
+			const checkedIndex = this.selectedRows.findIndex(row => row === true);
+		    if (checkedIndex !== -1) {
+				const selectedRow = this.mainList.data[checkedIndex];
+				if (selectedRow.ACQ_RFLC_AT === 'Y') {
+					this.messageModal.openModal('message', '이미 반영된 자산', '반영 처리된 취득 자산은 수정 할 수 없습니다.', 'middle', '', '');
+				} else if (selectedRow.ACQ_RFLC_AT === 'N') {
+					this.mainList.currentRow = this.mainList.data[checkedIndex];
+				} else {
+					console.log("ACQ_RFLC_AT의 값이 유효하지 않습니다.");
+				}
+		    } else {
+				console.log("선택된 ROW 없음");
+		    }
+		},
+		
+		/* 특정 Row 더블클릭시 수정창 [index값 기준] open */
+		rowDbClick: function(index){
+			this.mainList.selectRow(index)
+		},
+		
+		/* 자산 반영 기능 구현 후 주석 해제 */
+		insertDtl: function(){
+			/*var validate = this.$validator.validateAll();
+			var self = this;
+	
+			validate.then(function(response) {
+				if(response){
+					var rowposition = self.mainList.rowposition;
+					var rowType = self.mainList.getRowType(rowposition);
+					var returnVal = null;
+	
+						returnVal = acqMgmtApi.assetDtlInsert(self.mainList.currentRow, false);
+					if(!isNull(returnVal)){
+						returnVal.then(function(response) {
+							var data = response.data;
+							notifySubmit('success', 'ACQ DTL 반영', '자산 보유 현황 반영이 완료되었습니다.', 'icon-save');
+							self.setmainList(null, self.mainListPaging.currentPage);
+						}).catch(function(error) {
+							notifySubmit('warning', 'ACQ DTL 반영', '자산 보유 현황 반영에 실패하였습니다.', 'icon-caution');
+						});
+					}
+				} else {
+					notifySubmit('warning', 'ACQ DTL 반영', '자산을 선택해주세요.', 'icon-caution');
+				}
+			}); */
+		}, 
+		
+		/* 물품 목록 번호 적용 */
+		selectAsset: function(row){
+			
+			var self = this;
+			var rowType = this.assetmodalList.getRowType(row);
+			
+			var getAssetClNo = this.assetmodalList.getColumn(row, 'ASSET_CL_NO');
+			var getAssetStndNo = this.assetmodalList.getColumn(row, 'ASSET_STND_NO');
+			
+			if (!this.mainList.currentRow) {
+				this.pAssetClNo = getAssetClNo;
+				this.pAssetStndNo = getAssetStndNo;
+			
+			} else if (this.mainList.currentRow !== null) {
+				this.mainList.currentRow.ASSET_CL_NO = getAssetClNo;
+				this.mainList.currentRow.ASSET_STND_NO = getAssetStndNo;
+			}
+
+			modal_close('assetSearchModal');
+		},
+		
+		/* 메세지창 띄우기*/
+        messagePopup: function(pId, pData) {
+			console.log('messagePopup 호출됨', pId, pData); // 디버깅용 로그
+            var title = '확인';
+            var cont = '해당 작업을 수행하시겠습니까?';
+            var pGb = 'confirm';
+
+            switch(pId) {
+	    		case 'ID_DELETE':
+	    			title = '삭제';
+	    			cont = '해당 자산을 삭제하시겠습니까?<br /><span style="color:#c90000;">(해당 자산 관련 정보들이 영구히 삭제 됩니다.)</span>';
+                    break;
+					
+				case 'ROW_DELETE':
+	    			title = '삭제';
+	    			cont = '선택된 자산을 모두 삭제하시겠습니까?<br /><span style="color:#c90000;">(해당 자산 관련 정보들이 영구히 삭제 됩니다.)</span>';
+                    break;
+					
+				case 'ASSET_SELECT':
+	    			title = '선택 및 적용';
+					
+					var index = pData;
+		            var selectedRow = this.assetmodalList.data[index];
+
+					if (selectedRow) {
+		                var displayAssetClNo = selectedRow.ASSET_CL_NO;
+		                var displayAssetStndNo = selectedRow.ASSET_STND_NO;
+						var displayAssetClNm = selectedRow.ASSET_CL_KO_NM;
+						var displayAssetStndNm = selectedRow.ASSET_STND_KO_NM;
+
+		                cont = '해당 자산 <br /><br /> 물품번호 :  ' + displayAssetClNo + '-' + displayAssetStndNo + 
+							'<br /> 물품명 :  ' + displayAssetClNm + 
+							'<br /> 규격명 :  ' + displayAssetStndNm +
+							'<br /><br />을(를) 선택하시겠습니까?';
+		            } else {
+		                cont = '선택한 자산 정보를 가져올 수 없습니다.';
+		            }
+		            break;
+	    	}
+
+	    	this.messageModal.openModal(pGb, title, cont, 'small', pId, pData);
+        },
+		
+		/* 메시지 콜백 */
+	    messagePopupCallback: function(pGb, pId, pData) {
+	    	if(pGb!='confirm') return;
+
+	    	switch(pId) {
+	    		case 'ID_DELETE':
+	    			this.deleteAssetByAcqNo(pData);
+	    			break;
+					
+				case 'ROW_DELETE':
+					this.deleteRow(pData);
+					break;
+				
+				case 'ASSET_SELECT':
+					this.selectAsset(pData);
+					break;
+	    	}
+		
+	    },
+		
+		/* 검색조건 초기화 */
+		resetFields() {
+            Object.assign(this.$data, JSON.parse(JSON.stringify(this.initialState)));
+        },
+		
+		/* 모달 레이어 팝업 Close */
+		closeModal(event) {
+			if (!this.mainList.currentRow) {
+				modal_close('assetSearchModal');
+				this.search(event);
+		    } else {
+		      modal_close('assetSearchModal');
+		    }
+		},
+		
+		/* 체크박스 선택시 데이터 저장*/
+		toggleRowSelection(index) {
+			if (this.selectedRows.includes(index)) {
+				this.selectedRows = this.selectedRows.filter(i => i !== index);
+				this.mainList.deselectRow(index);
+			} else {
+				this.selectedRows.push(index);
+				this.mainList.selectRow(index);
+		    }
+		},
+		
+		resetSelectedRows() {
+		    this.selectedRows = [];
+		    this.selectAll = false;
+		}
+
+	}	
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+	
+</script>
+
+<style>
+	.thead-fixed {
+	    position: sticky;
+	    top: 0;
+	    z-index: 1;
+	    background-color: #FFF;
+	}
+
+	
+</style>

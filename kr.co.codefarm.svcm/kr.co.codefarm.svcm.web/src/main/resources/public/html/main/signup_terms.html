@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="shortcut icon" href="/favicon.ico">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0 ,maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/assets/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/jui/jui-ui.classic.css">
+<link rel="stylesheet" type="text/css" href="/assets/css/iframe_layout.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/feather.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/xeicon.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/login.css">
+<link rel="stylesheet" type="text/css" href="/assets/css/vue/vue-toast-notification.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/simplebar.css" />
+
+<script type="text/javascript" src="/assets/js/vendor/jquery-3.5.1.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/es6-promise.auto.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/lodash.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/moment.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/slick.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/simplebar.js"></script>
+
+<!-- vue 관련 -->
+<script type="text/javascript" src="/assets/js/vendor/vue/vue.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/vue/axios.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/vue/vee-validate.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/vue/vue-validate-locale-ko.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/vue/vue-toast-notification.js"></script>
+<!-- CF-COMPONENT -->
+<script type="text/javascript" src="/assets/js/cf_component/Dataset.js"></script>
+<script type="text/javascript" src="/assets/js/cf_component/ModalSet.js"></script>
+
+<!-- CF-COMPONENT(Template) -->
+<!-- 프로젝트 공통 -->
+<script type="text/javascript" src="/assets/js/cdf_library.js"></script>
+<script type="text/javascript" src="/assets/js/axios.common.js"></script>
+
+<!-- tui(toast) -->
+<script type="text/javascript" src="/assets/js/vendor/tui/tui-code-snippet.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/tui/tui-chart-all.min.js"></script>
+<script type="text/javascript" src="/assets/js/vendor/tui/tui-color-picker.js"></script>
+
+<script type="text/javascript" src="/app-assets/js/api/systemmanager/defaultinfoApi.api.js"></script>
+</head>
+
+<body class="jui feather">
+	<div id="signup" class="login_wrap signup terms" data-simplebar>
+		<div class="signup-inner">
+			<div class="login-title-layout">
+				<a href="/info/index.html"> <img id="logo" class="login-logo2" src="/images/common/logo.svg">
+				</a>
+				<h3>회원유형 및 약관동의</h3>
+			</div>
+			<div class="signup-terms-form" v-if="!signupGb && !signUpYn">
+				<div class="type-layout">
+					<button type="button" @click="signupGb = 'systemUser'" class="join-check">
+						기업 / 기관<br> <span>관리자</span>
+					</button>
+					<button type="button" @click="signupGb = 'user'" class="join-check">
+						일반<br> <span>사용자</span>
+					</button>
+				</div>
+				<div class="btn-layout">
+					<a href="#" class="btn-text btn-cancel" @click="login">회원가입취소</a>
+				</div>
+			</div>
+			<div class="signup-terms-form" v-if="defaultinfo.currentRow && (signupGb || signUpYn)">
+				<div class="form-group border-bottom">
+					<div class="checks checkbox">
+						<input type="checkbox" id="allChk" name="allChk" true-value="Y" false-value="N" v-model="defaultinfo.currentRow.CHK" @change="allChk"> <label for="allChk">아래 약관에 모두 동의합니다.</label>
+					</div>
+				</div>
+				<div class="form-group terms-box" v-if="defaultinfo.currentRow.AGREE_ITEM1_USE_YN == 'Y'">
+					<div class="checks checkbox ">
+						<input type="checkbox" id="checkbox02" name="checkbox02" true-value="Y" false-value="N" v-model="defaultinfo.currentRow.CHK1">
+						<!-- v-validate="'required'" -->
+						<label for="checkbox02" v-if="defaultinfo.currentRow.AGREE_ITEM1_PILSU_YN == 'Y'">{{ defaultinfo.currentRow.AGREE_ITEM1_NM }}<span class="terms-necessary">(필수)</span></label> <label for="checkbox02" v-if="defaultinfo.currentRow.AGREE_ITEM1_PILSU_YN == 'N'">{{ defaultinfo.currentRow.AGREE_ITEM1_NM }}<span class="terms-optional">(선택)</span></label>
+					</div>
+					<textarea class="size-l" v-model="defaultinfo.currentRow.AGREE_ITEM1_CONTENTS" readonly>
+                    </textarea>
+				</div>
+				<div class="form-group terms-box" v-if="defaultinfo.currentRow.AGREE_ITEM2_USE_YN == 'Y'">
+					<div class="checks checkbox ">
+						<input type="checkbox" id="checkbox03" name="checkbox03" true-value="Y" false-value="N" v-model="defaultinfo.currentRow.CHK2">
+						<!--  v-validate="'required'" -->
+						<label for="checkbox03" v-if="defaultinfo.currentRow.AGREE_ITEM2_PILSU_YN == 'Y'">{{ defaultinfo.currentRow.AGREE_ITEM2_NM }}<span class="terms-necessary">(필수)</span></label> <label for="checkbox03" v-if="defaultinfo.currentRow.AGREE_ITEM2_PILSU_YN == 'N'">{{ defaultinfo.currentRow.AGREE_ITEM2_NM }}<span class="terms-optional">(선택)</span></label>
+					</div>
+					<textarea class="size-l" v-model="defaultinfo.currentRow.AGREE_ITEM2_CONTENTS" readonly>
+                    </textarea>
+				</div>
+				<div class="form-group terms-box" v-if="defaultinfo.currentRow.AGREE_ITEM3_USE_YN == 'Y'">
+					<div class="checks checkbox ">
+						<input type="checkbox" id="checkbox04" name="checkbox04" true-value="Y" false-value="N" v-model="defaultinfo.currentRow.CHK3"> <label for="checkbox04" v-if="defaultinfo.currentRow.AGREE_ITEM3_PILSU_YN == 'Y'">{{ defaultinfo.currentRow.AGREE_ITEM3_NM }}<span class="terms-necessary">(필수)</span></label> <label for="checkbox04" v-if="defaultinfo.currentRow.AGREE_ITEM3_PILSU_YN == 'N'">{{ defaultinfo.currentRow.AGREE_ITEM3_NM }}<span class="terms-optional">(선택)</span></label>
+					</div>
+					<textarea class="size-l" v-model="defaultinfo.currentRow.AGREE_ITEM3_CONTENTS" readonly>
+                    </textarea>
+				</div>
+				<div class="form-group terms-box" v-if="defaultinfo.currentRow.AGREE_ITEM4_USE_YN == 'Y'">
+					<div class="checks checkbox  size-l type02">
+						<input type="checkbox" id="checkbox05" name="checkbox05" true-value="Y" false-value="N" v-model="defaultinfo.currentRow.CHK4"> <label for="checkbox05" v-if="defaultinfo.currentRow.AGREE_ITEM4_PILSU_YN == 'Y'">{{ defaultinfo.currentRow.AGREE_ITEM4_NM }}<span class="terms-necessary">(필수)</span></label> <label for="checkbox05" v-if="defaultinfo.currentRow.AGREE_ITEM4_PILSU_YN == 'N'">{{ defaultinfo.currentRow.AGREE_ITEM4_NM }}<span class="terms-optional">(선택)</span></label>
+					</div>
+					<textarea class="size-l" v-model="defaultinfo.currentRow.AGREE_ITEM4_CONTENTS" readonly>
+                    </textarea>
+				</div>
+				<div class="btn-layout">
+					<button class="btn-text btn-cancel" value="이전으로" @click="signupGb == '' ? login() : signupGb = ''">이전으로</button>
+					<button type="submit" class="btn size-l btn-signup" value="다음" @click="signUp">다음</button>
+				</div>
+			</div>
+		</div>
+		<footer class="copyright">
+			<div>Copyright(C) IDEA IT. Co.,Ltd. All Rights Reserved.</div>
+		</footer>
+		<!--         <modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message> -->
+	</div>
+
+	<script id="notify" type="text/template">
+        <div class="notify <!= color !>">
+        <div class="image"><i class="<!=icon!>" style="font-size: 18px;"></i></div>
+            <div class="title"><!= title !></div>
+            <div class="message"><!= message !></div>
+        <a href="#" class="close"><i class="icon-exit"></i></a>
+        </div>
+    </script>
+</body>
+<script type="text/javascript">
+	/*******************************************************************************************************************************************************************
+	 * vue start 
+	 ********************************************************************************************************************************************************************/
+	Vue.use(VeeValidate, {
+		locale : 'ko'
+	});
+	Vue.use(VueToast);
+	var vm = new Vue({
+		el : '#signup',
+		//사용할 데이터
+		data : {
+			defaultinfo : new Dataset(), //이용약관
+			signupGb : '',
+			signUpYn : getParameterByName('signup'),
+		},
+		/* 생성 될 때 */
+		beforeCreate : function() {
+		},
+		/* 계산된 속성 표현 시 */
+		computed : {
+
+		},
+		/* 데이터 감시 */
+		watch : {
+
+		},
+		/* 마운트 된 시점수행 */
+		mounted : function() {
+			//
+			this.setDefaultinfo();
+		},
+		/* 함수 */
+		methods : {
+			//이용약관
+			setDefaultinfo : function() {
+				var returnVal = defaultinfoApiApi.defaultinfo();
+				var self = this;
+
+				returnVal.then(function(response) {
+					response.data.CHK = 'N';
+					response.data.CHK1 = 'N';
+					response.data.CHK2 = 'N';
+					response.data.CHK3 = 'N';
+					response.data.CHK4 = 'N';
+
+					self.defaultinfo.setData(response.data);
+
+					self.defaultinfo.selectRow(0);
+				});
+			},
+			//전체 체크
+			allChk : function() {
+				//Y일 경우
+				if (this.defaultinfo.currentRow.CHK == 'Y') {
+
+					if (this.defaultinfo.currentRow.AGREE_ITEM1_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK1 = 'Y'
+					}
+					if (this.defaultinfo.currentRow.AGREE_ITEM2_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK2 = 'Y'
+					}
+					if (this.defaultinfo.currentRow.AGREE_ITEM3_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK3 = 'Y'
+					}
+					if (this.defaultinfo.currentRow.AGREE_ITEM4_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK4 = 'Y'
+					}
+				} else {
+					if (this.defaultinfo.currentRow.AGREE_ITEM1_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK1 = 'N'
+					}
+					if (this.defaultinfo.currentRow.AGREE_ITEM2_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK2 = 'N'
+					}
+					if (this.defaultinfo.currentRow.AGREE_ITEM3_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK3 = 'N'
+					}
+					if (this.defaultinfo.currentRow.AGREE_ITEM4_USE_YN == 'Y') {
+						this.defaultinfo.currentRow.CHK4 = 'N'
+					}
+				}
+
+			},
+			//회원가입 detail
+			signUp : function() {
+				var self = this;
+				var cnt = 0;
+				if (this.defaultinfo.currentRow.AGREE_ITEM1_PILSU_YN == 'Y') {
+					if (this.defaultinfo.currentRow.CHK1 == 'N') {
+						cnt++;
+					}
+				}
+				if (this.defaultinfo.currentRow.AGREE_ITEM2_PILSU_YN == 'Y') {
+					if (this.defaultinfo.currentRow.CHK2 == 'N') {
+						cnt++;
+					}
+				}
+				if (this.defaultinfo.currentRow.AGREE_ITEM3_PILSU_YN == 'Y') {
+					if (this.defaultinfo.currentRow.CHK3 == 'N') {
+						cnt++;
+					}
+				}
+				if (this.defaultinfo.currentRow.AGREE_ITEM4_PILSU_YN == 'Y') {
+					if (this.defaultinfo.currentRow.CHK4 == 'N') {
+						cnt++;
+					}
+				}
+
+				if (cnt > 0) {
+					notifySubmit('warning', '이용약관', '이용약관이 필수인 항목을 체크해주세요.',
+							'icon-caution');
+				} else {
+					var paramObj = {};
+
+					var parameter = '';
+					if (self.signupGb != '')
+						parameter += '&signupGb=' + self.signupGb;
+
+					if ($('#checkbox02').prop('checked')) {
+						parameter += '&a1=Y';
+						paramObj.AGREE_ITEM1 = 'Y';
+					}
+					if ($('#checkbox03').prop('checked')) {
+						parameter += '&a2=Y';
+						paramObj.AGREE_ITEM2 = 'Y';
+					}
+					if ($('#checkbox04').prop('checked')) {
+						parameter += '&a3=Y';
+						paramObj.AGREE_ITEM3 = 'Y';
+					}
+					if ($('#checkbox05').prop('checked')) {
+						parameter += '&a4=Y';
+						paramObj.AGREE_ITEM4 = 'Y';
+					}
+
+					if (parameter != '') {
+						parameter = '?' + parameter.substring(1);
+					}
+
+					if (getParameterByName('signup') == 'pass') {
+						$.ajax({
+							url : '/agree',
+							data : paramObj,
+							success : function(data) {
+								document.location.href = '/';
+							}
+						});
+					} else {
+						document.location.href = 'signup.html' + parameter;
+					}
+				}
+			},
+			login : function() {
+				var appUrl = window.location.protocol + "//"
+						+ window.location.host + "/" + "html/main/login.html"
+				window.location.href = appUrl;
+			}
+		}
+	});
+	/*******************************************************************************************************************************************************************
+	 * vue end 
+	 ********************************************************************************************************************************************************************/
+
+	/*******************************************************************************************************************************************************************
+	 * javascript start 
+	 ********************************************************************************************************************************************************************/
+	$(document).ready(function() {
+		try{
+			$.ajax({
+				url: '/system-manager/default-info/representative',
+				success: function(data) {
+					if(data.BG)
+	                	$('#wrap').css('background', 'url("/upload'+data.BG.replaceAll('\\','/')+'"), url("/images/login/login_bg.png") no-repeat')
+	                else
+	                	$('#wrap').css('background', 'rgb(186, 190, 223)')
+	                	
+	                $('#wrap').css('background-size', 'cover')
+	                if(data.LOGO)
+						$('#logo').attr('src','/upload'+data.LOGO);
+	                else
+						$('#logo').attr('src','/images/login/logo.svg');
+					$('#logo').attr('alt',data.SITE_NM);
+					document.title = data.SITE_NM;
+					$('.eng-tit').eq(0).text(data.CO_ENM);
+					$('#login_title').text(data.SITE_NM + ' 로그인');
+				}
+			});	
+		}catch(err){
+			return false;
+		}
+	});
+	function notifySubmit(color, title, message, icon, duration) {
+		//color: success, info, warning, danger
+		//type: success, error, warning, info, default
+		var type = 'default';
+		var durationVal = 3000;
+
+		if (!isNull(duration))
+			durationVal = duration;
+
+		if (color == 'success')
+			type = 'success';
+		else if (color == 'info')
+			type = 'info';
+		else if (color == 'warning')
+			type = 'warning';
+		else if (color == 'danger' || color == 'error')
+			type = 'error';
+
+		Vue.$toast.open({
+			message : message,
+			type : type,
+			position : 'bottom-right',
+			duration : durationVal,
+		// all other options
+		});
+	}
+
+	function getParameterByName(name) {
+		var url = window.location.href;
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex
+				.exec(url);
+
+		if (results == null || results.length != 3) {
+			return '';
+		} else {
+			return results[2];
+		}
+	}
+
+	/********************************************************************************************
+	 * pushSate 셋팅
+	 ********************************************************************************************/
+	function setPushSate(target, state, title, url) {
+		try {
+			if (target == 'parent') {
+				window.history.pushState(state, title, url);
+			} else if (target == 'child') {
+				content.window.history.pushState(state, title, url);
+			}
+		} catch (err) {
+			return false;
+		}
+	}
+	/*******************************************************************************************************************************************************************
+	 * javascript end 
+	 ********************************************************************************************************************************************************************/
+</script>
+</html>

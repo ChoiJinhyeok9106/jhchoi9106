@@ -1,0 +1,287 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/mypage.css" />
+<h2>마이페이지</h2>
+<div id="app">
+	<section class="sub_cont_box mypage-main-box01">
+	    <div class="profile">
+	        <div class="inner">
+	            <p class="name-kor">{{session.USER_NM}}</p>
+	            <!-- <p class="name-eng">{{session.USER_ENM}}</p> -->
+	            <p class="major"><span>{{session.DEPT_NM}}</span><span>{{session.USER_GB == '4' ? session.USER_TYPE_GBNM : session.DEFAULT_AUTH_NM}}</span></p>
+	            <i class="profile-img"><img :src="modiImgAddr(session.USER_PIC)" alt=""></i>
+	            <div class="btn-line">
+	                <!-- <a href="#!" class="btn-photo icon-camera" @click="pageContentsOpen();">사진등록</a> -->
+	                <!-- <a href="#!" class="btn-modify icon-pen" @click="pageContentsOpen();">정보수정</a> -->
+	                <a href="#!" class="btn-logout icon-log-out" @click="logout" title="로그아웃">로그아웃</a>
+	            </div>
+	            <div class="my-state">
+	                <div>
+	                	<a href="#!" onclick="appOpen('calendar', '01000000')">
+		                    <i class="icon-calendar" :class="{'new': pushIljeongCount > 0}"></i>
+		                    <span class="num">{{pushIljeongCount}}</span>
+		                    <p class="tit-eng">Schedule</p>
+		                    <p class="tit-kor">오늘의 일정</p>
+		              	</a>
+	                </div>
+	                <div>
+	                    <a href="#!"onclick="appOpen('mypage', '07000000')">
+	                    	<i class="icon-bell" :class="{'new': pushNotyCount > 0}"></i>
+	                    	<span class="num">{{pushNotyCount}}</span>
+		                    <p class="tit-eng">Notification</p>
+		                    <p class="tit-kor">새로 온 알림</p>
+	                    </a>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</section>
+
+	<section class="sub_cont_box mypage-main-box02">`
+	    <article>
+	        <h3 class="icon-smartphone">연락처</h3>
+<!--	        <a href="#!" class="btn-setting icon-gear" @click="pageContentsOpen();">설정</a>-->
+	        <p class="desc">중요 내용을 알려드릴 때 사용하는 연락처 정보입니다.<br>보다 안전한 정보 보호를 위해 등록된 연락처의 일부만 보여드립니다.</p>
+	        <dl class="list-type05">
+	            <dt>기본 이메일</dt>
+	            <dd >{{mask('email', session.EMAIL) == false ? '-' : mask('email', session.EMAIL)}}</dd>
+	            <dt>휴대전화</dt>
+	            <dd>{{mask('tel*', session.HP_NO) == false ? '-' : mask('tel*', session.HP_NO)}}</dd>
+	        </dl>
+	    </article>
+	    <article>
+	        <h3 class="icon-lock">비밀번호</h3>
+	        <a href="#!" class="btn-setting icon-gear" onclick="appOpen('mypage', '03000000')">설정</a>
+	        <!--2020.12.11 전산실 정우현 선생님 요청으로 "https://sso2.hs.ac.kr/member/modifyUserPasswordChk.do" 링크 주소 변경 contentsOpen('SMN', 'pwdsetting');  -->
+	        <p class="desc">주기적인 비밀번호 변경을 통해 개인정보를 안전하게 보호하세요.</p>
+	        <dl class="list-type05">
+	            <dt>최종 변경일</dt>
+	            <dd>{{userAccountObj.LATEST_PWD_CHG_DT}}</dd>
+	            <dt>최근 로그인 일시</dt>
+	            <dd>{{userAccountObj.LATEST_LOGIN_DTTM}}</dd>
+<!--	            <dt>최근 로그인 도메인</dt>-->
+<!--	            <dd>{{userAccountObj.LATEST_LOGINSIDO_DOMAIN}}</dd>-->
+	        </dl>
+	    </article>
+	    <article>
+	        <h3 class="icon-bell">알림설정</h3>
+	        <a href="#!" class="btn-setting icon-gear" onclick="appOpen('mypage', '08000000');">설정</a>
+	        <p class="desc">포탈에서 제공되는 공지, 뉴스, 정보 등 내 활동에 관련된 모든 알림을 설정할 수 있습니다.</p>
+	        <ul class="alarm-setting-list" id="userAlarmListLoading">
+	            <li v-for="(item, index) in userAlarmList.getData()" v-if="index < 9">
+	                <label class="size-s">{{item.TITLE}}</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" v-model="item.SUBSCRIBE_YN" true-value="Y" false-value="N" @change="insertUserAlarm(item)">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <!-- <li>
+	                <label for="" class="size-s">학교공지 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <li>
+	                <label for="" class="size-s">수강신청 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <li>
+	                <label for="" class="size-s">톡 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="" checked="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <li>
+	                <label for="" class="size-s">학과공지 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="" checked="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <li>
+	                <label for="" class="size-s">수업변동 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="" checked="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <li>
+	                <label for="" class="size-s">일정 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="" checked="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <li>
+	                <label for="" class="size-s">상담 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="" checked="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li>
+	            <li>
+	                <label for="" class="size-s">설문 알림</label>
+	                <label class="toggle-switch size-s">
+	                    <input type="checkbox" id="" checked="">
+	                    <span class="slider round bg-red"></span>
+	                </label>
+	            </li> -->
+	        </ul>
+	    </article>
+	</section>
+<!-- 	<modal-message :modalset="messageModal" v-on:messagepoppupcallback="messagepoppupcallback"></modal-message> -->
+</div>
+<script type="text/javascript">
+/********************************************************************************************************************************************************************
+ * vue start
+ ********************************************************************************************************************************************************************/
+var vm = new Vue({
+	el: '#app',
+	//사용할 데이터
+	data: {
+        userAlarmList: new Dataset(),
+        userAccountObj: {},
+        userAlarmListLoading: {id:'userAlarmListLoading', val:false},
+    	pushMailCount: 0,
+    	pushIljeongCount: 0,
+    	pushNotyCount: 0,
+    	pushMsgCount: 0,
+    	serviceNm: globalParam.SERVICE_NM,
+    	programNm: globalParam.PROGRAM_NM,
+	},
+	//데이터 감시
+	watch: {
+	    'userAlarmListLoading.val': {
+	    	handler: function (val, oldVal) {
+				this.LoadingOverlay($('#'+this.userAlarmListLoading.id), val);
+			}
+	    },
+	},
+	//마운트 된 시점수행
+	mounted: function(){
+		this.setUserAlarmsList();
+		this.setUserAccount();
+
+		if(self == top){
+			this.setPushCount(staticVue.pushAlarmCount);
+		}else{
+			this.setPushCount(parent.staticVue.pushAlarmCount);
+		}
+	},
+	//함수
+	methods: {
+		setPushCount: function (pCntObj) {
+    		var cntObj = pCntObj;
+    		var headerEmailClass = 'new';
+    		var headerNotiClass = 'new';
+    		var headerTalkClass = 'new';
+
+    		this.pushMailCount = cntObj.mailCnt;
+    		this.pushIljeongCount = cntObj.iljeongCnt;
+    		this.pushNotyCount = cntObj.notyCnt;
+    		this.pushMsgCount = cntObj.msgCnt;
+    	},
+		setUserAlarmsList: function(){
+            var self = this;
+            self.userAlarmListLoading.val = true;
+            var returnVal = alertApi.userAlarms(false);
+
+            returnVal.then(function(response) {
+            	self.userAlarmList.setData(response.data);
+            }).finally(function(){
+				self.userAlarmListLoading.val = false;
+			});
+        },
+        insertUserAlarm: function(pEntry){
+        	var self = this;
+            self.userAlarmListLoading.val = true;
+            var returnVal = alertApi.userAlarmSettingInsert(pEntry, false);
+
+            returnVal.then(function(response) {
+            	var data = response.data;
+            	notifySubmit('success', '알림설정 저장', '저장이 완료되었습니다.', 'icon-save');
+            }).catch(function(error) {
+                notifySubmit('warning', '알림설정 저장', '저장에 실패하였습니다.', 'icon-caution');
+            }).finally(function(){
+				self.userAlarmListLoading.val = false;
+			});
+        },
+        setUserAccount: function(){
+            var self = this;
+            var returnVal = userApi.getUserAccount(self.session.USER_ID, false);
+
+            returnVal.then(function(response) {
+            	var data = response.data;
+            	self.userAccountObj = data;
+            	self.userAccountObj['LATEST_PWD_CHG_DT'] = self.userAccountObj['LATEST_PWD_CHG_DT'] ? moment(self.userAccountObj['LATEST_PWD_CHG_DT'],'YYYYMMDD').format('YYYY[년] MM[월] DD[일]') : '-';
+            	self.userAccountObj['LATEST_LOGINSIDO_DOMAIN'] = self.userAccountObj['LATEST_LOGINSIDO_DOMAIN'] ? self.userAccountObj['LATEST_LOGINSIDO_DOMAIN'] : '-';
+            });
+        },
+        groupWareEmailLink: function(){
+        	var self = this;
+        	var groupWareEmailLinkUrl = self.defaultInfo.GROUPWARE_EMAIL_LINK_URL;
+
+        	if(!isNull(groupWareEmailLinkUrl)){
+        		parent.linkOpen(groupWareEmailLinkUrl);
+        	}else {
+        		notifySubmit('warning', '이메일 링크', '등록 된 이메일 링크 정보가 없습니다.', 'icon-caution');
+        	}
+        },
+        talkOpen: function(){
+        	$('#appListArea > div.menu_bar > span', parent.document).click();
+        },
+		insertMemberDetail: function(){
+			var self = this;
+			var idSysGb = document.querySelector('input[name="idSysGb"]:checked').value;
+			var pUserId = document.getElementById('pUserId').value;
+
+			var returnVal = userApi.insertMemberDetail(idSysGb, pUserId, true);
+
+			returnVal.then(function(response) {
+				var notiType = '';
+
+				if(response.data.resultCode == '-1' || response.data.resultCode == '4') notiType = 'error';
+				else if(response.data.resultCode == '3') notiType = 'success';
+				else notiType = 'warning';
+
+				notifySubmit(notiType, '내부사용자 등록', response.data.resultMessage, 'icon-save');
+			});
+		},
+        pageContentsOpen: function(){
+        	contentsOpen(this.serviceNm, this.programNm);
+        },
+        modiImgAddr: function(pAddr){
+			var modiAddr = '';
+
+			if(!isNull(pAddr)){
+				modiAddr = pAddr.replace(/\\/g, '/');
+
+				if(modiAddr.substring(1,4) == 'SMN'){
+					modiAddr = '/upload' + modiAddr;
+				}
+			}else{
+				modiAddr = '/service/design/images/mypage/noimage.png';
+			}
+
+			return modiAddr;
+		}
+	}
+});
+/*******************************************************************************************************************************************************************
+ * vue end
+ ********************************************************************************************************************************************************************/
+
+
+/*******************************************************************************************************************************************************************
+ * javascript start
+ ********************************************************************************************************************************************************************/
+$(document).ready(function(){
+	$('.profile-img img').on('error', function() {$(this).attr('src', '/service/design/images/mypage/noimage.png');});
+});
+/*******************************************************************************************************************************************************************
+ * javascript end
+ ********************************************************************************************************************************************************************/
+</script>

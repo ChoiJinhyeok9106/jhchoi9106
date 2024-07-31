@@ -1,0 +1,370 @@
+<link rel="stylesheet" type="text/css" href="/service/design/assets/css/ability.css" />  
+
+<h2>실적관리</h2>
+<section class="sub_cont_box">
+    <div class="achieve-box">
+        <div class="title-line"><span class="icon icon-checkbox"></span><span class="txt">달성 / 목표</span></div>
+        <div class="cont-box">
+            <ul>
+                <li>
+                    <span class="tit">학점</span>
+                    <span class="score"><span class="type01">4.0</span> 점 <span class="type02">/</span> <span class="type02">4.5</span> 점</span>
+                </li>
+                <li>
+                    <span class="tit">수상</span>
+                    <span class="score"><span class="type01">1</span> 회 <span class="type02">/</span> <span class="type02">3</span> 회</span>
+                </li>
+                <li>
+                    <span class="tit">봉사</span>
+                    <span class="score"><span class="type01">4</span> 회 <span class="type02">/</span> <span class="type02">6</span> 회</span>
+                </li>
+                <li>
+                    <span class="tit">실무</span>
+                    <span class="score"><span class="type01">4</span> 회 <span class="type02">/</span> <span class="type02">6</span> 회</span>
+                </li>
+                <li>
+                    <span class="tit">어학</span>
+                    <span class="score"><span class="type01">355</span> 점 <span class="type02">/</span> <span class="type02">400</span> 점</span>
+                </li>
+                <li>
+                    <span class="tit">자격증</span>
+                    <span class="score"><span class="type01">7</span> 개 <span class="type02">/</span> <span class="type02">8</span> 개</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <h2 class="h2">검색조건</h2>
+    <div class="box-type03">
+        <div class="row form-row">
+            <div class="form-group col s12 l3">
+                <label for="formGroupExampleInput2" class="label-type01">실적구분</label>
+                <select name="" id="formGroupExampleInput2" class="size-m">
+                    <option selected="">실적구분</option>
+                </select>
+            </div>
+            <div class="form-group col s12 l3">
+                <label for="formGroupExampleInput3" class="label-type01">승인구분</label>
+                <select name="" id="formGroupExampleInput3" class="size-m">
+                    <option selected="">선택하세요</option>
+                </select>
+            </div>
+            <div class="form-group col s12 l6">
+                <label for="formGroupExampleInput4" class="label-type01">이력명</label>
+                <input type="number" id="formGroupExampleInput4" class="size-m">
+            </div>
+        </div>                                
+    </div>
+    <div class="btn-line right">
+        <a href="#!" class="btn type02 size-m">조회</a>
+    </div>
+
+    <div class="row form-row board">
+        <div class="col s12 l5">
+            <span class="board-info-txt size-m">총 <span>380</span>건의 게시물이 있습니다. (<span>3</span> / 98)</span>
+        </div>                                
+    </div>
+    <!-- 테이블 -->
+    <table class="table-type02 response">
+        <caption>실적관리 테이블로 실적구분, 실적명, 기관명, 승인구분, 등록일자, 노트 항목별 순서대로 안내하는 표입니다</caption>
+        <colgroup>
+            <col width="12%">
+            <col width="15%">
+            <col>
+            <col width="10%">
+            <col width="15%">
+            <col width="8%">
+            <col width="8%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th scope="col">실적구분</th>
+                <th scope="col">실적명</th>
+                <th scope="col">기관명</th>
+                <th scope="col">승인구분</th>
+                <th scope="col">등록일자</th>
+                <th scope="col">관리</th>
+                <th scope="col">노트</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-header="실적구분">어학</td>
+                <td data-header="실적명">TOEIC</td>
+                <td data-header="기관명">한국 TOEIC 위원회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s" onclick="modal_open('modal1');return false;">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">어학</td>
+                <td data-header="실적명">TOEIC</td>
+                <td data-header="기관명">한국 TOEIC 위원회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">봉사</td>
+                <td data-header="실적명">병원자원봉사</td>
+                <td data-header="기관명">대동병원</td>
+                <td data-header="승인구분">승인완료</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">자격증</td>
+                <td data-header="실적명">BLS</td>
+                <td data-header="기관명">대한심폐소생협회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">자격증</td>
+                <td data-header="실적명">BLS</td>
+                <td data-header="기관명">대한심폐소생협회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">자격증</td>
+                <td data-header="실적명">BLS</td>
+                <td data-header="기관명">대한심폐소생협회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">자격증</td>
+                <td data-header="실적명">BLS</td>
+                <td data-header="기관명">대한심폐소생협회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">자격증</td>
+                <td data-header="실적명">BLS</td>
+                <td data-header="기관명">대한심폐소생협회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">자격증</td>
+                <td data-header="실적명">BLS</td>
+                <td data-header="기관명">대한심폐소생협회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>
+            <tr>
+                <td data-header="실적구분">자격증</td>
+                <td data-header="실적명">BLS</td>
+                <td data-header="기관명">대한심폐소생협회</td>
+                <td data-header="승인구분">미승인</td>
+                <td data-header="등록일자">2018-10-20</td>
+                <td data-header="관리"><a href="#!" class="btn type01 size-s">보기</a></td>
+                <td data-header="노트"><a href="#!" class="btn type02 size-s">작성</a></td>
+            </tr>                            
+        </tbody>
+    </table>
+    <!-- 페이징 -->
+    <div class="paginate">
+        <a href="#" class="first" title="처음 페이지"><span class="icon-chevrons-left"></span></a>
+        <a href="#" class="prev" title="이전 페이지"><span class="icon-chevron-left"></span></a>
+        <span>
+            <a href="#" class="active" title="1 페이지">1</a>
+            <a href="#" title="2 페이지">2</a>
+            <a href="#" title="3 페이지">3</a>
+            <a href="#" title="4 페이지">4</a>
+            <a href="#" title="5 페이지">5</a>
+            <a href="#" title="6 페이지">6</a>
+            <a href="#" title="7 페이지">7</a>
+            <a href="#" title="8 페이지">8</a>
+            <a href="#" title="9 페이지">9</a>
+            <a href="#" title="10 페이지">10</a>
+        </span>
+        <a href="#" class="next" title="다음페이지"><span class="icon-chevron-right"></span></a>
+        <a href="#" class="last" title="마지막페이지"><span class="icon-chevrons-right"></span></a>
+    </div>
+    <div class="btn-line right">
+        <a href="#!" class="btn type02 size-m" onclick="modal_open('modal2');return false;">신규</a>
+    </div>
+</section>
+
+<!-- modal layer popup -->
+<div class="modal-layer-wrap">
+
+	<div id="modal1" class="modal-layer modal-middle">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">실적상세</p>
+            </div>
+            <div class="modal-content">
+                <div class="list-label">
+				    <dl class="row">
+				        <dt class="col s12 l3 label-type01">이력제목</dt>
+				        <dd class="col s12 l9">이력제목</dd>
+				        <dt class="col s12 l3 label-type01">이력제목</dt>
+				        <dd class="col s12 l9">이력제목</dd>
+				        <dt class="col s12 l3 label-type01">이력제목</dt>
+				        <dd class="col s12 l9">이력제목</dd>
+				        <dt class="col s12 l3 label-type01">이력제목</dt>
+				        <dd class="col s12 l9">이력제목</dd>
+				        <dt class="col s12 l3 label-type01">이력제목</dt>
+				        <dd class="col s12 l9">보이는 이것은 불러 용감하고 위하여서, 어디 주는 아니한 이것이다. 그들에게 생생하며, 자신과 우는 힘차게 따뜻한 현저하게 같이, 청춘의 황금시대다. 산야에 있는 그림자는 하여도 같은 보배를 속에서 충분히 위하여서. 그들에게 물방아 아름답고 이상, 보내는 두기 청춘에서만 그리하였는가? </dd>
+				    </dl>
+				</div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type01 size-m layer_close">닫기</a>
+                <a href="#!" class="btn type02 size-m">수정</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal2" class="modal-layer modal-middle">
+        <div class="modal-container">
+            <div class="modal-header">
+                <p class="modal-title">신규입력</p>
+            </div>
+            <div class="modal-content">
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">이력제목</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <input type="text" id="formGroupExampleInput5" class="size-m">
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">이력구분</label>
+                    </div>
+                    <div class="col s12 l4">
+                        <select id="exampleFormControlInput4" class="size-m">
+                                <option value="">선택하세요</option>
+                        </select>
+                    </div>
+                    <div class="col s12 l5">
+                        <select id="exampleFormControlInput4" class="size-m">
+                                <option value="">선택하세요</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">세부마일리지</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <select id="exampleFormControlInput4" class="size-m">
+                                <option value="">선택하세요</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3 col-label">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">첨부파일</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <div class="input-file-box">
+							<div class="file-input-div">
+								<a href="#!" class="btn type02 size-m"><span>찾아보기</span></a>
+								<input type="file" class="file-input-hidden size-m" onchange="javascript: document.getElementById('fileName').value = this.value" title="파일명">
+							</div>
+							<input id="fileName" class="size-m" readonly="readonly"  title="파일명">										
+						</div>	
+                    </div>
+                </div>
+                <div class="form-group row form-row">
+                    <div class="col s12 l3">
+                        <label for="formGroupExampleInput5" class="label-type01 size-m">내용</label>
+                    </div>
+                    <div class="col s12 l9">
+                        <textarea id="exampleFormControlInput3" class="size-m" rows="10"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer center">
+                <a href="#!" class="btn type01 size-m layer_close">닫기</a>
+                <a href="#!" class="btn type02 size-m">저장</a>
+            </div>
+            <div class="btn-r">
+                <a href="#" class="cbtn" style="display: inline-block;" title="모달창 닫기"><span class="icon-exit"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //모달레이어팝업
+    function modal_open(el) {
+
+        var temp = $('#' + el); //레이어의 id를 temp변수에 저장
+        var bg = temp.prev().hasClass('bg'); //dimmed 레이어를 감지하기 위한 boolean 변수 
+
+        if (bg) {
+            $('.layer').fadeIn();
+        } else {
+            temp.fadeIn(); //bg 클래스가 없으면 일반레이어로 실행한다.
+        }
+
+        // 화면의 중앙에 레이어를 띄운다.
+
+        //if (temp.outerHeight() < $(document).height()) temp.css('margin-top', '-' + temp.outerHeight() / 2 + 'px');
+        //else temp.css('top', '0px');
+        if (temp.outerWidth() < $(document).width()) temp.css('margin-left', '-' + temp.outerWidth() / 2 + 'px');
+        else temp.css('left', '0px');
+
+        temp.find('a.cbtn, a.layer_close, .cbtn2').click(function(e) {
+            if (bg) {
+                $('.layer').fadeOut();
+            } else {
+                temp.fadeOut(); //'닫기'버튼을 클릭하면 레이어가 사라진다.
+            }
+            e.preventDefault();
+        });
+
+        $('.layer .bg').click(function(e) {
+            $('.layer').fadeOut();
+            e.preventDefault();
+        });
+
+        // Prevent mousewheel scroll
+        //$('html').on('wheel.modal mousewheel.modal', function () {
+        //	return false; 
+        //});
+        // Disable browser scrolling
+        $("html").css("overflow", "hidden");
+
+        //Show & hide dialog
+        $('.cbtn, .layer_close, .cbtn2').fadeIn().click(function() {
+            $(this).fadeOut()
+                // Enable scrollbars and mousewheel
+                //	$('html').off('wheel.modal mousewheel.modal');
+            $("html").css("overflow", "auto");
+            $('.modal-layer-wrap').removeClass('on');
+        });
+
+        //modal background dark
+        $('.modal-layer-wrap').find(temp).parent().addClass('on');
+
+
+    }
+</script>
+
+            
